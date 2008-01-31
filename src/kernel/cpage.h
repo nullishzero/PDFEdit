@@ -15,6 +15,11 @@
 // all basic includes
 #include "kernel/static.h"
 
+// TextSearchParams 
+#include "kernel/textsearchparams.h"
+// DisplayParams
+#include "kernel/displayparams.h"
+
 // CDict
 #include "kernel/cobject.h"
 // CContentstream
@@ -33,218 +38,6 @@ namespace pdfobjects {
 //=====================================================================================
 
 
-//=====================================================================================
-// Display parameters (loose xpdf parameters put into a simple structure)
-// 	--  default values are in cpage.cc because we do not want to have global variables.
-//=====================================================================================
-
-/** 
- * Graphical state parameters. 
- *
- * These parameters are used by xpdf when updating bounding boxex of content stream operators,
- * displaying page etc.
- */
-typedef struct DisplayParams
-{
-	/** Paramaters */
-	double 		hDpi;		/**< Horizontal DPI. */
-	double 		vDpi; 		/**< Vertical DPI. 	*/
-	libs::Rectangle 	pageRect;	/**< Page libs::Rectangle. */
-	int 		rotate;		/**< Page rotation. 	*/
-	GBool		useMediaBox;/**< Use page media box. */
-	GBool		crop;		/**< Crop the page. 	*/
-	GBool		upsideDown;	/**< Upside down. 	*/
-	
-	/** Constructor. Default values are set. */
-	DisplayParams () : 
-		hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
-		pageRect (libs::Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
-		rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gTrue) 
-		{}
-
-
-
-	/** Equality operator. */
-	bool operator== (const DisplayParams& dp) const
-	{
-		return (hDpi == dp.hDpi && vDpi == dp.vDpi &&
-				pageRect == dp.pageRect && rotate == dp.rotate &&
-				useMediaBox == dp.useMediaBox && crop == dp.crop &&
-				upsideDown == dp.upsideDown);
-	}
-
-	/** Converting position from pixmap of viewed page to pdf position.
-	 * @param fromX	X position on viewed page.
-	 * @param fromY	Y position on viewed page.
-	 *
-	 * @param toX	return X position in pdf page.
-	 * @param toY	return Y position in pdf page.
-	 *
-	 * @see convertPdfPosToPixmapPos
-	 */
-	void convertPixmapPosToPdfPos( double fromX, double fromY, double & toX, double & toY ) const {
-		double * ctm /*[6]*/;
-		double h;
-		PDFRectangle pdfRect ( pageRect.xleft, pageRect.yleft, pageRect.xright, pageRect.yright );
-		GfxState state (hDpi, vDpi, &pdfRect, rotate, upsideDown );
-		ctm = state.getCTM();
-
-		h = (ctm[0]*ctm[3] - ctm[1]*ctm[2]);
-
-		assert( h != 0 );
-
-		toX = (fromX*ctm[3] - ctm[2]*fromY + ctm[2]*ctm[5] - ctm[4]*ctm[3]) / h;
-		toY = (ctm[0]*fromY + ctm[1]*ctm[4] - ctm[0]*ctm[5] - ctm[1]*fromX) / h;
-	}
-
-	/** Converting pdf position to position on pixmap of viewed page.
-	 * @param fromX	X position in pdf page.
-	 * @param fromY	Y position in pdf page.
-	 *
-	 * @param toX	return X position on viewed page.
-	 * @param toY	return Y position on viewed page.
-	 *
-	 * @see convertPixmapPosToPdfPos
-	 */
-	void convertPdfPosToPixmapPos( double fromX, double fromY, double & toX, double & toY ) const {
-		PDFRectangle pdfRect ( pageRect.xleft, pageRect.yleft, pageRect.xright, pageRect.yright );
-		GfxState state (hDpi, vDpi, &pdfRect, rotate, upsideDown );
-
-		state.transform( fromX, fromY, &toX, &toY );
-	}
-
-	//
-	// Default values
-	// -- small hack to declare them as ints, to be able to init
-	// them here (if double, we could not init them here because of the non
-	// integral type compilator error))
-	// 
-	static const int DEFAULT_HDPI 	= 72;		/**< Default horizontal dpi. */
-	static const int DEFAULT_VDPI 	= 72;		/**< Default vertical dpi. */
-	static const int DEFAULT_ROTATE	= 0;		/**< No rotatation. */
-
-	static const int DEFAULT_PAGE_LX = 0;		/**< Default x position of left upper corner. */
-	static const int DEFAULT_PAGE_LY = 0;		/**< Default y position of right upper corner. */
-	static const int DEFAULT_PAGE_RX = 612;		/**< Default A4 width on a device with 72 horizontal dpi. */
-	static const int DEFAULT_PAGE_RY = 792;		/**< Default A4 height on a device with 72 vertical dpi. */
-
-} DisplayParams;
-
-
-//=====================================================================================
-// Text search parameters (loose xpdf parameters put into a simple structure)
-// 	--  default values are in cpage.cc because we do not want to pollute global space.
-//=====================================================================================
-
-/** 
- * Text search parameters. 
- *
- * These parameters are used by xpdf when serching a text string.
- */
-typedef struct TextSearchParams
-{
-	/** Paramaters */
-	GBool startAtTop;		/**< Start searching from the top.    */
-	double xStart; 			/**< Start searching from x position. */
-	double yStart; 			/**< Start searching from y position. */
-	double xEnd; 			/**< Stop searching from x position.  */
-	double yEnd; 			/**< Stop searching from y position.  */
-
-	/** Constructor. Default values are set. */
-	TextSearchParams () : 
-		startAtTop (DEFAULT_START_AT_TOP),
-		xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
-	{}
-
-	//
-	// Default values  
-	// -- small hack to declare them as ints, to be able to init
-	// them here (if double, we could not init them here because of the non
-	// integral type compilator error))
-	//
-	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Start at top. */
-
-	static const int DEFAULT_X_START = 0;	/**< Default x position of left upper corner. */
-	static const int DEFAULT_Y_START = 0;	/**< Default y position of left upper corner. */
-	static const int DEFAULT_X_END = 0;		/**< Default x position of right upper corner. */
-	static const int DEFAULT_Y_END = 0;		/**< Default y position of right upper corner. */
-
-
-} TextSearchParams;
-
-
-//=====================================================================================
-// Comparators Point/Rectangle
-//=====================================================================================
-
-/** 
- * Comparator that we can use to find out if another rectangle intersects
- * rectangle specified by this comparator.
- */
-struct PdfOpCmpRc
-{
-	/** 
-	 * Consructor. 
-	 *
-	 * @param rc Rectangle used when comparing.
-	 */
-	PdfOpCmpRc (const libs::Rectangle& rc) : rc_(rc) {}
-	
-	/** 
-	 * Is the intersection of supplied rectangle and rectangle specified in the
-	 * constructor not empty. 
-	 *
-	 * Our rectangle does NOT contain another rectangle if
-	 * <ul>
-	 * 	<li>min (xleft-our, xright-our) >= min (xleft, xright)</li>
-	 * 	<li>max (xleft-our, xright-our) <= max (xleft, xright)</li>
-	 * 	<li>min (yleft-our, yright-our) >= min (yleft, yright)</li>
-	 * 	<li>max (yleft-our, yright-our) <= max (yleft, yright)</li>
-	 * </ul>
-	 */
-	bool operator() (const libs::Rectangle& rc) const
-		{ return libs::Rectangle::isInitialized (libs::rectangle_intersect (rc_, rc)); }
-
-private:
-	const libs::Rectangle rc_;	/**< libs::Rectangle to be compared. */
-};
-
-
-/** 
- * Comparator that we can use to find out if a rectange contains point specified
- * by this comparator.
- */
-struct PdfOpCmpPt
-{
-	/** 
-	 * Consructor. 
-	 * 
-	 * @param pt Point that we use when comparing.
-	 */
-	PdfOpCmpPt (const Point& pt) : pt_(pt) {}
-	
-	/** 
-	 * Is point in a rectangle. 
-	 * 
-	 * @param rc Rectangle.
-	 */
-	bool operator() (const libs::Rectangle& rc) const
-	{
-		return (rc.contains (pt_.x, pt_.y));
-	}
-
-private:
-	const Point pt_;	/**< Point to be compared. */
-};
-
-/** Sets unitialized inheritable page attributes.
- * @param pageDict Page dictionary reference where to set values.
- *
- * Gets InheritedPageAttr structure for given pageDict (uses
- * fillInheritedPageAttr helper function) and sets all fields which are not
- * present in given dictionary to found values.
- */
-void setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict);
 
 //=====================================================================================
 // CPage
@@ -257,7 +50,7 @@ class CPage;
 
 
 //
-//
+// Typedefs
 //
 typedef observer::ObserverHandler<CPage> CPageObserverSubject;
 
@@ -1216,9 +1009,9 @@ public:
 };
 
 
-//==========================================================
+//=====================================================================================
 // Helper functions
-//==========================================================
+//=====================================================================================
 
 /**
  * Check whether iproperty claimed to be a page is conforming to the pdf specification.
@@ -1227,6 +1020,17 @@ public:
  * @param ip IProperty.
  */
 bool isPage (boost::shared_ptr<IProperty> ip);
+
+
+/** Sets unitialized inheritable page attributes.
+ * @param pageDict Page dictionary reference where to set values.
+ *
+ * Gets InheritedPageAttr structure for given pageDict (uses
+ * fillInheritedPageAttr helper function) and sets all fields which are not
+ * present in given dictionary to found values.
+ */
+void setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict);
+
 
 
 //=====================================================================================

@@ -38,222 +38,187 @@ static const char * PDFEDIT_FONTID = "PDFEDIT_F";
 namespace {
 // =====================================================================================
 
-/** 
- * Page attributes structure of dictionary properties which can be inherited from a parent 
- * in the page tree.
- *
- * If an inheritable property is not present in a page it is defined in one of
- * its parents in the page tree.
- */
-struct InheritedPageAttr
-{
-	boost::shared_ptr<CDict> resources;
-	boost::shared_ptr<CArray> mediaBox;
-	boost::shared_ptr<CArray> cropBox;
-	boost::shared_ptr<CInt> rotate;
-};
-
-/** 
- * Fills InheritedPageAttr structure for a given page dictionary.
- *
- * Recursive function which checks given pageDict whether it contains
- * uninitialized (NULL values) from a given attribute structure. If true, sets
- * the value from the dictionary. If at least one property is still not 
- * initialized, repeats the process for the parent dictionary (dereferenced 
- * "Parent" property). End if the "Parent" property is not present (in root 
- * of a page tree).
- * <br>
- * Use default value when a property was not initialized.
- * <br>
- * Note that attrs structure comes out allways initialized when recursion is
- * finished.
- *
- * @param pageDict Page dictionary.
- * @param attrs Output attribute structure where correct values are put.
- *
- * @throw NotImplementedException at this moment.
- */
-void 
-fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
-{
-	int initialized=0;
-
-	// TODO consolidate code - get rid of copy & paste
-	
-	// resource field
-	if(!attrs.resources.get())
+	/** 
+	 * Page attributes structure of dictionary properties which can be inherited from a parent 
+	 * in the page tree.
+	 *
+	 * If an inheritable property is not present in a page it is defined in one of
+	 * its parents in the page tree.
+	 */
+	struct InheritedPageAttr
 	{
-		// attrs.resources field is not specified yet, so tries this dictionary
-		if(pageDict->containsProperty("Resources"))
+		boost::shared_ptr<CDict> resources;
+		boost::shared_ptr<CArray> mediaBox;
+		boost::shared_ptr<CArray> cropBox;
+		boost::shared_ptr<CInt> rotate;
+	};
+
+	/** 
+	 * Fills InheritedPageAttr structure for a given page dictionary.
+	 *
+	 * Recursive function which checks given pageDict whether it contains
+	 * uninitialized (NULL values) from a given attribute structure. If true, sets
+	 * the value from the dictionary. If at least one property is still not 
+	 * initialized, repeats the process for the parent dictionary (dereferenced 
+	 * "Parent" property). End if the "Parent" property is not present (in root 
+	 * of a page tree).
+	 * <br>
+	 * Use default value when a property was not initialized.
+	 * <br>
+	 * Note that attrs structure comes out allways initialized when recursion is
+	 * finished.
+	 *
+	 * @param pageDict Page dictionary.
+	 * @param attrs Output attribute structure where correct values are put.
+	 *
+	 * @throw NotImplementedException at this moment.
+	 */
+	void 
+	fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
+	{
+		int initialized=0;
+
+		// TODO consolidate code - get rid of copy & paste
+		
+		// resource field
+		if(!attrs.resources.get())
 		{
-			shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
-			if(isRef(prop))
+			// attrs.resources field is not specified yet, so tries this dictionary
+			if(pageDict->containsProperty(Specification::CPage::RESOURCES))
 			{
-				attrs.resources=getCObjectFromRef<CDict>(prop);
-				++initialized;
+				shared_ptr<IProperty> prop=pageDict->getProperty(Specification::CPage::RESOURCES);
+				if(isRef(prop))
+				{
+					attrs.resources=getCObjectFromRef<CDict>(prop);
+					++initialized;
+				}
+				else
+					if(isDict(prop))
+					{
+						attrs.resources=IProperty::getSmartCObjectPtr<CDict>(prop);
+						++initialized;
+					}
 			}
-			else
-				if(isDict(prop))
-				{
-					attrs.resources=IProperty::getSmartCObjectPtr<CDict>(prop);
-					++initialized;
-				}
-		}
-	}else
-		++initialized;
-
-	// mediabox field
-	if(!attrs.mediaBox.get())
-	{
-		// attrs.mediaBox field is not specified yet, so tries this array
-		if(pageDict->containsProperty("MediaBox"))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
-			if(isRef(prop))
-			{
-				attrs.mediaBox=getCObjectFromRef<CArray>(prop);
-				++initialized;
-			}else
-				if(isArray(prop))
-				{
-					attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-					++initialized;
-				}
-		}
-	}else
-		++initialized;
-
-	// cropbox field
-	if(!attrs.cropBox.get())
-	{
-		// attrs.cropBox field is not specified yet, so tries this array
-		if(pageDict->containsProperty("CropBox"))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty("CropBox");
-			if(isRef(prop))
-			{
-				attrs.cropBox=getCObjectFromRef<CArray>(prop);
-				++initialized;
-			}else
-				if(isArray(prop))
-				{
-					attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-					++initialized;
-				}
-		}
-	}else
-		++initialized;
-
-	// rotate field
-	if(!attrs.rotate.get())
-	{
-		// attrs.rotate field is not specified yet, so tries this array
-		if(pageDict->containsProperty("Rotate"))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty("Rotate");
-			if(isRef(prop))
-			{
-				attrs.rotate=getCObjectFromRef<CInt>(prop);
-				++initialized;
-			}else
-				if(isInt(prop))
-				{
-					attrs.rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
-					++initialized;
-				}
-		}
-	}else
-		++initialized;
-
-	// all values available from this dictionary are set now
-	if(initialized<4)
-	{
-		// not everything from InheritedPageAttr is initialized now
-		// tries to initialize from parent.
-		// If parent is not present (root of page tree hierarchy is reached),
-		// stops recursion and initializes values with default
-		if(pageDict->containsProperty("Parent"))
-		{
-			shared_ptr<IProperty> parentRef=pageDict->getProperty("Parent");
-			if(!isRef(parentRef))
-				// this should not happen - malformed page tree structure
-				return;
-
-			shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentRef);
-			fillInheritedPageAttr(parentDict, attrs);
 		}else
+			++initialized;
+
+		// mediabox field
+		if(!attrs.mediaBox.get())
 		{
-			// Resources is required and at least empty dictionary should be
-			// specified 
-			if(!attrs.resources.get())
-				attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
-
-			// default A4 sized box
-			libs::Rectangle defaultRect(
-					DisplayParams::DEFAULT_PAGE_LX, 
-					DisplayParams::DEFAULT_PAGE_LY, 
-					DisplayParams::DEFAULT_PAGE_RX, 
-					DisplayParams::DEFAULT_PAGE_RY
-					);
-
-			// MediaBox is required and specification doesn't say anything about
-			// default value - we are using standard A4 format
-			if(!attrs.mediaBox.get())
-				attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
-
-			// CropBox is optional and specification doesn't say anything about
-			// default value - we are using standard A4 format
-			if(!attrs.cropBox.get())
-				attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
-			
-			// Rotate is optional and specification defines default value to 0
-			if(!attrs.rotate.get())
+			// attrs.mediaBox field is not specified yet, so tries this array
+			if(pageDict->containsProperty(Specification::CPage::MEDIABOX))
 			{
-				// gcc workaround
-				// direct usage of static DEFAULT_ROTATE value caused linkage
-				// error
-				int defRot=DisplayParams::DEFAULT_ROTATE;
-				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(defRot));
+				shared_ptr<IProperty> prop=pageDict->getProperty(Specification::CPage::MEDIABOX);
+				if(isRef(prop))
+				{
+					attrs.mediaBox=getCObjectFromRef<CArray>(prop);
+					++initialized;
+				}else
+					if(isArray(prop))
+					{
+						attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+						++initialized;
+					}
+			}
+		}else
+			++initialized;
+
+		// cropbox field
+		if(!attrs.cropBox.get())
+		{
+			// attrs.cropBox field is not specified yet, so tries this array
+			if(pageDict->containsProperty(Specification::CPage::CROPBOX))
+			{
+				shared_ptr<IProperty> prop=pageDict->getProperty(Specification::CPage::CROPBOX);
+				if(isRef(prop))
+				{
+					attrs.cropBox=getCObjectFromRef<CArray>(prop);
+					++initialized;
+				}else
+					if(isArray(prop))
+					{
+						attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+						++initialized;
+					}
+			}
+		}else
+			++initialized;
+
+		// rotate field
+		if(!attrs.rotate.get())
+		{
+			// attrs.rotate field is not specified yet, so tries this array
+			if(pageDict->containsProperty(Specification::CPage::ROTATE))
+			{
+				shared_ptr<IProperty> prop=pageDict->getProperty(Specification::CPage::ROTATE);
+				if(isRef(prop))
+				{
+					attrs.rotate=getCObjectFromRef<CInt>(prop);
+					++initialized;
+				}else
+					if(isInt(prop))
+					{
+						attrs.rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
+						++initialized;
+					}
+			}
+		}else
+			++initialized;
+
+		// all values available from this dictionary are set now
+		if(initialized<4)
+		{
+			// not everything from InheritedPageAttr is initialized now
+			// tries to initialize from parent.
+			// If parent is not present (root of page tree hierarchy is reached),
+			// stops recursion and initializes values with default
+			if(pageDict->containsProperty(Specification::CPage::PARENT))
+			{
+				shared_ptr<IProperty> parentRef=pageDict->getProperty(Specification::CPage::PARENT);
+				if(!isRef(parentRef))
+					// this should not happen - malformed page tree structure
+					return;
+
+				shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentRef);
+				fillInheritedPageAttr(parentDict, attrs);
+			}else
+			{
+				// Resources is required and at least empty dictionary should be
+				// specified 
+				if(!attrs.resources.get())
+					attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
+
+				// default A4 sized box
+				libs::Rectangle defaultRect(
+						DisplayParams::DEFAULT_PAGE_LX, 
+						DisplayParams::DEFAULT_PAGE_LY, 
+						DisplayParams::DEFAULT_PAGE_RX, 
+						DisplayParams::DEFAULT_PAGE_RY
+						);
+
+				// MediaBox is required and specification doesn't say anything about
+				// default value - we are using standard A4 format
+				if(!attrs.mediaBox.get())
+					attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+
+				// CropBox is optional and specification doesn't say anything about
+				// default value - we are using standard A4 format
+				if(!attrs.cropBox.get())
+					attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+				
+				// Rotate is optional and specification defines default value to 0
+				if(!attrs.rotate.get())
+				{
+					// gcc workaround
+					// direct usage of static DEFAULT_ROTATE value caused linkage
+					// error
+					int defRot=DisplayParams::DEFAULT_ROTATE;
+					attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(defRot));
+				}
 			}
 		}
 	}
-}
 
-
-// =====================================================================================
-} // namespace
-// =====================================================================================
-
-//
-//
-//
-void 
-setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict)
-{
-
-	InheritedPageAttr attrs;
-	fillInheritedPageAttr(pageDict, attrs);
-
-	// checks Resources
-	if(!pageDict->containsProperty("Resources"))
-		pageDict->addProperty("Resources", *(attrs.resources));
-	
-	// checks MediaBox
-	if(!pageDict->containsProperty("MediaBox"))
-		pageDict->addProperty("MediaBox", *(attrs.mediaBox));
-	
-	// checks CropBox
-	if(!pageDict->containsProperty("CropBox"))
-		pageDict->addProperty("CropBox", *(attrs.cropBox));
-	
-	// checks Rotate
-	if(!pageDict->containsProperty("Rotate"))
-		pageDict->addProperty("Rotate", *(attrs.rotate));
-}
-
-// =====================================================================================
-namespace {
-// =====================================================================================
 		
 	/** Helper method to extract annotations array from page dictionary.
 	 * @param pageDict Page dictionary.
@@ -354,6 +319,7 @@ typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
 //=====================================================================================
 // CPage
 //=====================================================================================
+
 void CPage::unregisterAnnotsObservers(boost::shared_ptr<IProperty> & annots)
 {
 using namespace boost;
@@ -685,9 +651,8 @@ void
 CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue, 
 								boost::shared_ptr<const IProperty::ObserverContext> context) const throw()
 {
-	kernelPrintDbg(debug::DBG_DBG, "");
-	assert (context);
-	kernelPrintDbg (debug::DBG_DBG, "context type=" << context->getType());
+		assert (context);
+		kernelPrintDbg (debug::DBG_DBG, "context type=" << context->getType());
 	
 	switch(context->getType())
 	{
@@ -701,7 +666,7 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue,
 				if (ctxtdict)
 				{
 						// if it is not about Contents do nothing
-						if ("Contents" != ctxtdict->getValueId())
+						if (Specification::CPage::CONTENTS != ctxtdict->getValueId())
 							break;
 					
 					// get old value
@@ -712,10 +677,11 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue,
 						// Unregister observer
 						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, page->contentsWatchDog);
 						
-					}else
+					}else 
 					{
 						page->registerContentsObserver();
 					}
+
 					break;
 				}
 				//
@@ -732,6 +698,8 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue,
 			assert (!"Unsupported context type");
 			break;
 	}
+
+	// TODO not always is reparsing needed
 
 	// Parse content streams (add or delete of object)
 	page->parseContentStream ();
@@ -769,10 +737,10 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 	// Workaround: pages that miss contents entry
 	//  -- it is not a global solution one can delete and add
 	//  contents entry of a page
-	if (!dictionary->containsProperty("Contents"))
+	if (!dictionary->containsProperty(Specification::CPage::CONTENTS))
 	{
 		CArray array;
-		dictionary->addProperty ("Contents",array);
+		dictionary->addProperty (Specification::CPage::CONTENTS,array);
 	}	
 	dictionary->unlockChange();
 	
@@ -837,7 +805,7 @@ CPage::setRotation (int rot)
 {
 	assert (valid);
 	CInt crot (rot);
-	dictionary->setProperty ("Rotate", crot);
+	dictionary->setProperty (Specification::CPage::ROTATE, crot);
 }
 
 
@@ -1010,7 +978,7 @@ CPage::setMediabox (const libs::Rectangle& rc)
 	r.setValue (rc.yright);
 	mb.addProperty (r);
 		
-	dictionary->setProperty ("MediaBox",mb);
+	dictionary->setProperty (Specification::CPage::MEDIABOX,mb);
 }
 
 //
@@ -1116,7 +1084,7 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 	Object* obj = atr.resources->_makeXpdfObject ();
 	assert (obj); assert (objDict == obj->getType());
 	res = boost::shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
-	freeXpdfObject (obj);
+	xpdf::freeXpdfObject (obj);
 	
 	//
 	// Init Gfx state
@@ -1156,9 +1124,9 @@ bool CPage::parseContentStream ()
 	// and finally instantiate CContentStream
 	//
 
-	if (!dictionary->containsProperty ("Contents"))
+	if (!dictionary->containsProperty (Specification::CPage::CONTENTS))
 		return true;
-	shared_ptr<IProperty> contents = getReferencedObject (dictionary->getProperty ("Contents"));
+	shared_ptr<IProperty> contents = getReferencedObject (dictionary->getProperty (Specification::CPage::CONTENTS));
 	assert (contents);
 	
 	CContentStream::CStreams streams;
@@ -1218,11 +1186,11 @@ CPage::registerContentsObserver () const
 	if (contentsWatchDog)
 	{ // Register contents observer
 		
-		if (dictionary->containsProperty("Contents"))
+		if (dictionary->containsProperty(Specification::CPage::CONTENTS))
 		{
 			// Register dictionary and Contents observer
 			REGISTER_SHAREDPTR_OBSERVER(dictionary, contentsWatchDog);
-			shared_ptr<IProperty> prop = dictionary->getProperty("Contents");
+			shared_ptr<IProperty> prop = dictionary->getProperty(Specification::CPage::CONTENTS);
 			REGISTER_SHAREDPTR_OBSERVER(prop, contentsWatchDog);
 		}
 		
@@ -1247,9 +1215,9 @@ CPage::unregisterContentsObserver () const
 		// Unregister dictionary observer
 		UNREGISTER_SHAREDPTR_OBSERVER(dictionary, contentsWatchDog);
 		// Unregister contents observer
-		if (dictionary->containsProperty("Contents"))
+		if (dictionary->containsProperty(Specification::CPage::CONTENTS))
 		{
-			shared_ptr<IProperty> prop = dictionary->getProperty("Contents");
+			shared_ptr<IProperty> prop = dictionary->getProperty(Specification::CPage::CONTENTS);
 			UNREGISTER_SHAREDPTR_OBSERVER(prop, contentsWatchDog);
 		}
 	}else
@@ -1385,15 +1353,15 @@ CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 	}
 
 	// Resources is an inheritable property, must be present
-	if (!dictionary->containsProperty ("Resources"))
+	if (!dictionary->containsProperty (Specification::CPage::RESOURCES))
 	{
 		InheritedPageAttr atr;
 		fillInheritedPageAttr (dictionary,atr);
-		dictionary->addProperty ("Resources", *(atr.resources));
+		dictionary->addProperty (Specification::CPage::RESOURCES, *(atr.resources));
 	}
 	
-	// Get "Resources"
-	boost::shared_ptr<CDict> res = getCDictFromDict (dictionary, "Resources");
+	// Get Resources
+	boost::shared_ptr<CDict> res = getCDictFromDict (dictionary, Specification::CPage::RESOURCES);
 	
 	if (!res->containsProperty ("Font"))
 	{	
@@ -1611,15 +1579,15 @@ namespace {
 
 		void toFront (CRef& ref)
 		{
-			if (!_dict->containsProperty ("Contents"))
+			if (!_dict->containsProperty (Specification::CPage::CONTENTS))
 			{
 				CArray arr;
 				arr.addProperty (ref);
-				_dict->addProperty ("Contents", arr);
+				_dict->addProperty (Specification::CPage::CONTENTS, arr);
 				
 			}else
 			{
-				shared_ptr<IProperty> content = _dict->getProperty ("Contents");
+				shared_ptr<IProperty> content = _dict->getProperty (Specification::CPage::CONTENTS);
 				shared_ptr<IProperty> realcontent = getReferencedObject(content);
 				assert (content);
 				// Contents can be either stream or an array of streams
@@ -1628,7 +1596,7 @@ namespace {
 					CArray arr;
 					arr.addProperty (ref);
 					arr.addProperty (*content);
-					_dict->setProperty ("Contents", arr);
+					_dict->setProperty (Specification::CPage::CONTENTS, arr);
 			
 				}else if (isArray (realcontent))
 				{
@@ -1646,15 +1614,15 @@ namespace {
 	
 		void toBack (CRef& ref)
 		{
-			if (!_dict->containsProperty ("Contents"))
+			if (!_dict->containsProperty (Specification::CPage::CONTENTS))
 			{
 				CArray arr;
 				arr.addProperty (ref);
-				_dict->addProperty ("Contents", arr);
+				_dict->addProperty (Specification::CPage::CONTENTS, arr);
 				
 			}else
 			{
-				shared_ptr<IProperty> content = _dict->getProperty ("Contents");
+				shared_ptr<IProperty> content = _dict->getProperty (Specification::CPage::CONTENTS);
 				shared_ptr<IProperty> realcontent = getReferencedObject(content);
 				assert (content);
 				// Contents can be either stream or an array of streams
@@ -1663,7 +1631,7 @@ namespace {
 					CArray arr;
 					arr.addProperty (*content);
 					arr.addProperty (ref);
-					_dict->setProperty ("Contents", arr);
+					_dict->setProperty (Specification::CPage::CONTENTS, arr);
 			
 				}else if (isArray (realcontent))
 				{
@@ -1685,12 +1653,12 @@ namespace {
 		template<typename Cont>
 		void setContents (const Cont& cont)
 		{
-			if (_dict->containsProperty ("Contents"))
-				_dict->delProperty ("Contents");
+			if (_dict->containsProperty (Specification::CPage::CONTENTS))
+				_dict->delProperty (Specification::CPage::CONTENTS);
 			
 			//
 			// Loop throug all content streams and add all cstreams from each
-			// content streams to "Contents" entry of page dictionary
+			// content streams to Contents entry of page dictionary
 			//
 			typedef vector<shared_ptr<CStream> > Css;
 			Css css;
@@ -1714,12 +1682,12 @@ namespace {
 		 */
 		void remove (shared_ptr<const CContentStream> cs)
 		{
-			if (!_dict->containsProperty ("Contents"))
+			if (!_dict->containsProperty (Specification::CPage::CONTENTS))
 				throw CObjInvalidOperation ();
 			
 			//
 			// Loop throug all content streams and add all cstreams from each
-			// content streams to "Contents" entry of page dictionary
+			// content streams to Contents entry of page dictionary
 			//
 			typedef vector<shared_ptr<CStream> > Css;
 			Css css;
@@ -1738,13 +1706,13 @@ namespace {
 			}
 		}
 
-private:
+	private:
 		/**
 		 * Remove one indiref from Contents entry.
 		 */
 		void remove (const IndiRef& rf)
 		{
-			shared_ptr<IProperty> content = _dict->getProperty ("Contents");
+			shared_ptr<IProperty> content = _dict->getProperty (Specification::CPage::CONTENTS);
 			shared_ptr<IProperty> realcontent = getReferencedObject (content);
 			assert (content);
 			// Contents can be either stream or an array of streams
@@ -1752,7 +1720,7 @@ private:
 			{
 				// Set empty contents
 				CArray arr;
-				_dict->setProperty ("Contents", arr);
+				_dict->setProperty (Specification::CPage::CONTENTS, arr);
 		
 			}else if (isArray (realcontent))
 			{
@@ -2138,10 +2106,10 @@ CPage::getPagePosition () const
 	throw CObjInvalidOperation ();
 }
 
+
 // =====================================================================================
 // Helper functions
 // =====================================================================================
-
 
 //
 //
@@ -2162,6 +2130,34 @@ isPage (boost::shared_ptr<IProperty> ip)
 
 	return true;
 }
+
+//
+//
+//
+void 
+setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict)
+{
+
+	InheritedPageAttr attrs;
+	fillInheritedPageAttr(pageDict, attrs);
+
+	// checks Resources
+	if(!pageDict->containsProperty(Specification::CPage::RESOURCES))
+		pageDict->addProperty(Specification::CPage::RESOURCES, *(attrs.resources));
+	
+	// checks MediaBox
+	if(!pageDict->containsProperty(Specification::CPage::MEDIABOX))
+		pageDict->addProperty(Specification::CPage::MEDIABOX, *(attrs.mediaBox));
+	
+	// checks CropBox
+	if(!pageDict->containsProperty(Specification::CPage::CROPBOX))
+		pageDict->addProperty(Specification::CPage::CROPBOX, *(attrs.cropBox));
+	
+	// checks Rotate
+	if(!pageDict->containsProperty(Specification::CPage::ROTATE))
+		pageDict->addProperty(Specification::CPage::ROTATE, *(attrs.rotate));
+}
+
 
 // =====================================================================================
 } // namespace pdfobjects
