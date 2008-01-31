@@ -40,6 +40,7 @@ all: $(TARGET)
 staticlib: $(TARGET)
 
 deps: $(SOURCES) $(HEADERS)
+	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
 
 $(TARGET): deps $(OBJECTS)
 	-$(DEL_FILE) $(TARGET)
