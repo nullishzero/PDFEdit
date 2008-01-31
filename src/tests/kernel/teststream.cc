@@ -12,6 +12,7 @@
 #include "kernel/static.h"
 #include <errno.h>
 #include "tests/kernel/testmain.h"
+#include "tests/kernel/testcpdf.h"
 
 class TestStream: public CppUnit::TestFixture
 {
@@ -176,7 +177,7 @@ public:
 						BaseStream * cloneBaseStream=xpdfContentClone->getStream()->getBaseStream();
 						CPPUNIT_ASSERT(compareStreams(cloneBaseStream, baseStream));
 
-						freeXpdfObject(xpdfContentClone);
+						xpdf::freeXpdfObject(xpdfContentClone);
 					}else
 						printf("\t\tstream cloning failed. Stream kind is %d\n", xpdfContentClone->getStream()->getKind());
 						
@@ -190,7 +191,7 @@ public:
 					CPPUNIT_ASSERT(compareStreams(baseStream, baseStreamFetched));
 					
 					// deallocates all objects
-					freeXpdfObject(xpdfContentStr);
+					xpdf::freeXpdfObject(xpdfContentStr);
 					fetchedContentStr.free();
 				}
 			}catch(ElementNotFoundException & e)

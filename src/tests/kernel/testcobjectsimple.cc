@@ -342,7 +342,7 @@ namespace
 			cl.setValue (var);
 			obj = cl._makeXpdfObject ();
 			ip_validate (obj,expected);
-			utils::freeXpdfObject (obj);
+			xpdf::freeXpdfObject (obj);
 	}
 
 }

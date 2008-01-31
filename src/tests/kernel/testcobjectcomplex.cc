@@ -370,21 +370,21 @@ c_xpdf (const example& e)
 	arTest1.getStringRepresentation (tmp);
 	ip_validate (obj, e.arTest1);
 	ip_validate (obj, tmp);
-	utils::freeXpdfObject (obj);
+	xpdf::freeXpdfObject (obj);
 
 	makeDcTest1 (dcTest1);
 	obj = dcTest1._makeXpdfObject ();
 	dcTest1.getStringRepresentation (tmp);
 	ip_validate (obj, e.dcTest1, false);
 	ip_validate (obj, tmp);
-	utils::freeXpdfObject (obj);
+	xpdf::freeXpdfObject (obj);
 
 	makeArTest2 (arTest2, arTest1, dcTest1);
 	obj = arTest2._makeXpdfObject ();
 	arTest2.getStringRepresentation (tmp);
 	ip_validate (obj, e.arTest2, false);
 	ip_validate (obj, tmp);
-	utils::freeXpdfObject (obj);
+	xpdf::freeXpdfObject (obj);
 
 
 	makeDcTest2 (dcTest2, arTest1, dcTest1);
@@ -392,7 +392,7 @@ c_xpdf (const example& e)
 	dcTest2.getStringRepresentation (tmp);
 	ip_validate (obj, e.dcTest2, false);
 	ip_validate (obj, tmp);
-	utils::freeXpdfObject (obj);
+	xpdf::freeXpdfObject (obj);
 
 	return true;
 }

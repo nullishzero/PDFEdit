@@ -233,7 +233,6 @@ ip_validate (const T& val, const T& expected)
 	{
 		OUTPUT << "DOES NOT MATCH: " << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -252,7 +251,6 @@ ip_validate (const IndiRef& val, const IndiRef& expected)
 	{
 		OUTPUT << "DOES NOT MATCH: " << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -277,7 +275,6 @@ ip_validate (Object* o, const string& expected,__attribute__((unused)) bool out 
 	{
 		OUTPUT << "DOES NOT MATCH: " << str << " with " << expected << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -304,7 +301,6 @@ ip_validate (Object& o, IProperty& ip,__attribute__((unused)) bool out = true)
 	{
 		OUTPUT << "DOES NOT MATCH: " << str << " with " << str1 << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -328,7 +324,6 @@ ip_validate (const IProperty& ip, const string& expected,__attribute__((unused))
 	{
 		OUTPUT << "DOES NOT MATCH: " << str << " with " << expected << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -350,7 +345,6 @@ ip_validate (const IProperty& ip1, const IProperty& ip2)
 	{
 		OUTPUT << "DOES NOT MATCH: " << str1 << " with " << str2 << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -368,7 +362,6 @@ ip_validate (PropertyType tp1, PropertyType tp2)
 	{
 		OUTPUT << "does not match: " << tp1 << " with " << tp2 << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -386,7 +379,6 @@ ip_validate (size_t n, size_t m)
 	{
 		OUTPUT << "does not match: " << n << " with " << m << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -410,7 +402,6 @@ ip_validate (vector<string>& n, vector<string>& m)
 				OUTPUT << *it << "|";
 		OUTPUT << endl;
 		throw;
-		return false;
 	}
 }
 
@@ -422,7 +413,7 @@ getTestStreamContent (boost::shared_ptr<CPage> page)
 {
 	boost::shared_ptr<CDict> dict = page->getDictionary();
 	assert (dict);
-	boost::shared_ptr<IProperty> ccs = utils::getReferencedObject (dict->getProperty("Contents"));
+	boost::shared_ptr<IProperty> ccs = utils::getReferencedObject (dict->getProperty(Specification::CPage::CONTENTS));
 	if (isStream(ccs))
 		return IProperty::getSmartCObjectPtr<CStream> (ccs);
 	else if (isArray(ccs))
