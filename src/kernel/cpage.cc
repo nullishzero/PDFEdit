@@ -700,8 +700,12 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue,
 					dynamic_pointer_cast<const CDict::CDictComplexObserverContext, const IChangeContext<IProperty> > (context); 
 				if (ctxtdict)
 				{
-					shared_ptr<IProperty> oldValue = ctxtdict->getOriginalValue ();
-			
+						// if it is not about Contents do nothing
+						if ("Contents" != ctxtdict->getValueId())
+							break;
+					
+					// get old value
+					shared_ptr<IProperty> oldValue = ctxtdict->getOriginalValue();
 					// Contents entry was removed
 					if (isNull(newValue))
 					{
@@ -710,9 +714,7 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue,
 						
 					}else
 					{
-						// New contents entry
-						if ("Contents" == ctxtdict->getValueId ())
-								page->registerContentsObserver ();
+						page->registerContentsObserver();
 					}
 					break;
 				}
