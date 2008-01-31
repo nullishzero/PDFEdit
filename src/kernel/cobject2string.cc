@@ -133,7 +133,7 @@ void
 simpleValueToString<pReal> (double val, string& str)
 {
 	char buf[64];
-	sprintf(buf, "%f", val);
+	sprintf(buf, "%g", val);
  	str.assign(buf);
 }
 
