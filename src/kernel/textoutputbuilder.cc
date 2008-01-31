@@ -126,7 +126,6 @@ namespace {
 		{
 			ostringstream oss;
 			GfxFont* font = f._res->lookupFont (f._font_tag.c_str());
-			assert (font);
 
 			if (font)
 			{

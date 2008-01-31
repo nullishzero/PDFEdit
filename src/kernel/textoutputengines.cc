@@ -90,9 +90,8 @@ namespace {
 		// Get real text from operators using xpdf (see the crazy code below)
 		//
 		GfxFont* font = (const_cast<GfxState&>(state)).getFont();
-		assert (font);
-		if (!font)
-			return text;
+			if (!font)
+				return text;
 		char* p = const_cast<char*> (text.c_str ());
 		size_t len = text.size();
 		int n = 0, uLen = 0;
@@ -302,10 +301,12 @@ SimpleWordEngine::operator() (const PdfOperatorPtr op, const GfxState& gfx_state
 			sfrag->add (res);
 			// Set fragment font
 			GfxFont* font = s->getFont();
-			assert (font);
-			sfrag->add (string (font->getTag()->getCString()));
-			// Set invalid font (because of crazy xpdf) BUT correct font size in state object
-			s->setFont (NULL, s->getFontSize());
+			if (font) 
+			{
+				sfrag->add (string (font->getTag()->getCString()));
+				// Set invalid font (because of crazy xpdf) BUT correct font size in state object
+				s->setFont (NULL, s->getFontSize());
+			}
 			
 			// Store simple fragment and create a new one
 			sfrags.push_back (sfrag);
