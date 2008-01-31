@@ -1841,7 +1841,7 @@ using namespace utils;
 	xref->changeObject(ref.num, ref.gen, obj);
 
 	// xpdf object has to be deallocated
-	freeXpdfObject(obj);
+	xpdf::freeXpdfObject(obj);
 
 	// creates return value from xpdf reference structure
 	// and returns
@@ -2144,7 +2144,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	Object * propObject=prop->_makeXpdfObject();
 	kernelPrintDbg(DBG_DBG, "Registering change to the XRefWriter");
 	xref->changeObject(indiRef.num, indiRef.gen, propObject);
-	utils::freeXpdfObject(propObject);
+	xpdf::freeXpdfObject(propObject);
 
 	// checks whether prop is same instance as one in mapping. If so, keeps
 	// indirect mapping, because it has just changed some of its direct fields. 
