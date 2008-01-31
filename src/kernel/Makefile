@@ -14,14 +14,15 @@ HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/iterator.h $(UTILSROOT)/obs
 	  factories.h pdfwriter.h indiref.h iproperty.h cobject.h cobjectsimple.h \
 	  cobjectsimpleI.h carray.h cdict.h cstream.h cstreamsxpdfreader.h \
 	  cobjecthelpers.h ccontentstream.h pdfoperators.h pdfoperatorsiter.h \
+	  displayparams.h textsearchparams.h  \
 	  cpage.h cpdf.h streamwriter.h cinlineimage.h coutline.h \
 	  stateupdater.h cannotation.h textoutput.h textoutputbuilder.h \
 	  textoutputentities.h textoutputengines.h	\
 	  delinearizator.h pdfspecification.h
 
-SOURCES = static.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
+SOURCES = static.cc xpdf.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
 	  cxref.cc xrefwriter.cc streamwriter.cc iproperty.cc carray.cc \
-	  cdict.cc cstream.cc cobject.cc cobjecthelpers.cc \
+	  cdict.cc cstream.cc cobject.cc cobject2xpdf.cc cobject2string.cc cobjecthelpers.cc \
 	  ccontentstream.cc pdfoperators.cc pdfoperatorsiter.cc \
 	  stateupdater.cc pdfwriter.cc cinlineimage.cc coutline.cc \
 	  cpage.cc cpdf.cc textoutputengines.cc textoutputentities.cc \
@@ -39,7 +40,6 @@ all: $(TARGET)
 staticlib: $(TARGET)
 
 deps: $(SOURCES) $(HEADERS)
-	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
 
 $(TARGET): deps $(OBJECTS)
 	-$(DEL_FILE) $(TARGET)
