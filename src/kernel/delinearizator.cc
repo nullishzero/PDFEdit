@@ -188,7 +188,7 @@ using namespace debug;
 	utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects("<<objectList.size()<<").");
 	for(IPdfWriter::ObjectList::iterator i=objectList.begin(); i!=objectList.end(); i++)
 	{
-		freeXpdfObject(i->second);
+		xpdf::freeXpdfObject(i->second);
 		i->second=NULL;
 	}
 

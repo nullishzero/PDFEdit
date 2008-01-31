@@ -225,7 +225,7 @@ protected:
 	 * <br>
 	 * Returned object has to be deallocated by Object::free and gfree methods 
 	 * (first one for value deallocation and second for Object instance itself)
-	 * or by pdfobjects::utils::freeXpdfObject method.
+	 * or by pdfobjects::xpdf::freeXpdfObject method.
 	 *
 	 * @return Object instance with given type or 0 if not able to create.
 	 */

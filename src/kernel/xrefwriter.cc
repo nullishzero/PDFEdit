@@ -202,7 +202,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	Object * oldValue=CXref::changeObject(ref, obj);
 	// deallocates previous changed value (if any)
 	if(oldValue)
-		utils::freeXpdfObject(oldValue);
+		xpdf::freeXpdfObject(oldValue);
 }
 
 ::Object * XRefWriter::changeTrailer(const char * name, ::Object * value)

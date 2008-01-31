@@ -52,7 +52,7 @@ using namespace debug;
 		}
 
 		kernelPrintDbg(DBG_DBG, "Deallocating entry for "<<ref<<" index="<<index<<")");
-		utils::freeXpdfObject(entry->object);
+		xpdf::freeXpdfObject(entry->object);
 		delete entry;
 		i->second=NULL;
 	}

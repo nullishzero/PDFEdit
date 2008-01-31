@@ -378,7 +378,7 @@ using namespace boost;
 		// other party which uses stream trailers for all.
 		Object * prev=trailer.getDict()->del("Prev");
 		if(prev)
-			freeXpdfObject(prev);
+			xpdf::freeXpdfObject(prev);
 		utilsPrintDbg(DBG_DBG, "No previous xref section. Removing Trailer::Prev.");
 	}else
 	{
@@ -392,7 +392,7 @@ using namespace boost;
 			// and to free key, because it is not stored in update
 			utilsPrintDbg(DBG_DBG, "Removing old Trailer::Prev="<<originalPrev->getInt());
 			free(key);
-			freeXpdfObject(originalPrev);
+			xpdf::freeXpdfObject(originalPrev);
 		}
 		utilsPrintDbg(DBG_DBG, "Linking to previous xref section. Trailer::Prev="<<newPrev.getInt());
 	}
@@ -408,7 +408,7 @@ using namespace boost;
 		// and to free key, because it is not stored in update
 		utilsPrintDbg(DBG_DBG, "Removing old Trailer::Size="<<originalSize->getInt());
 		free(key);
-		freeXpdfObject(originalSize);
+		xpdf::freeXpdfObject(originalSize);
 	}
 	utilsPrintDbg(DBG_DBG, "Setting Trailer::Size="<<newSize.getInt());
 
