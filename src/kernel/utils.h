@@ -12,6 +12,8 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
+#include "utils/types.h"
+
 //=====================================================================================
 // Deallocator
 //=====================================================================================
@@ -101,6 +103,84 @@ inline unsigned short setNthBitsShort(U mask, U mask1, U mask2, U mask3)
 template<class U>
 inline unsigned short setNthBitsShort(U mask, U mask1, U mask2, U mask3, U mask4)
 	{ return setNthBitsShort (mask,mask1,mask2,mask3) | setNthBitsShort (mask4); }
+
+
+//=====================================================================================
+// Comparators Point/Rectangle
+//=====================================================================================
+
+/** 
+ * Comparator that we can use to find out if another rectangle intersects
+ * rectangle specified by this comparator.
+ */
+struct PdfOpCmpRc
+{
+	/** 
+	 * Consructor. 
+	 *
+	 * @param rc Rectangle used when comparing.
+	 */
+	PdfOpCmpRc (const _JM_NAMESPACE::Rectangle& rc) : rc_(rc) {}
+	
+	/** 
+	 * Is the intersection of supplied rectangle and rectangle specified in the
+	 * constructor not empty. 
+	 *
+	 * Our rectangle does NOT contain another rectangle if
+	 * <ul>
+	 * 	<li>min (xleft-our, xright-our) >= min (xleft, xright)</li>
+	 * 	<li>max (xleft-our, xright-our) <= max (xleft, xright)</li>
+	 * 	<li>min (yleft-our, yright-our) >= min (yleft, yright)</li>
+	 * 	<li>max (yleft-our, yright-our) <= max (yleft, yright)</li>
+	 * </ul>
+	 */
+	bool operator() (const _JM_NAMESPACE::Rectangle& rc) const
+		{ return _JM_NAMESPACE::Rectangle::isInitialized (_JM_NAMESPACE::rectangle_intersect (rc_, rc)); }
+
+private:
+	const _JM_NAMESPACE::Rectangle rc_;	/**< Rectangle to be compared. */
+};
+
+
+/** 
+ * Comparator that we can use to find out if a rectange contains point specified
+ * by this comparator.
+ */
+struct PdfOpCmpPt
+{
+	/** 
+	 * Consructor. 
+	 * 
+	 * @param pt Point that we use when comparing.
+	 */
+	PdfOpCmpPt (const Point& pt) : pt_(pt) {}
+	
+	/** 
+	 * Is point in a rectangle. 
+	 * 
+	 * @param rc Rectangle.
+	 */
+	bool operator() (const _JM_NAMESPACE::Rectangle& rc) const
+	{
+		return (rc.contains (pt_.x, pt_.y));
+	}
+
+private:
+	const Point pt_;	/**< Point to be compared. */
+};
+
+
+//=====================================================================================
+// Comparators Point/Rectangle
+//=====================================================================================
+
+/** Case insensitive comparator. */
+inline bool 
+nocase_compare (char c1, char c2)
+{
+	return toupper(c1) == toupper(c2);
+}
+
 
 #endif // _UTILS_H_
 

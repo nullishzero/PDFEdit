@@ -16,57 +16,50 @@ using namespace std;
 namespace pdfobjects {
 // =====================================================================================
 
-	// Object Null std::string Specification::representation. */
-	const std::string Specification::CNULL_NULL = "null";
-		
-	// Object Bool false repersentation. */
-	const std::string Specification::CBOOL_TRUE  = "true";
-	// Object Bool true representation. */
-	const std::string Specification::CBOOL_FALSE = "false";
+	// Null
+	const std::string Specification::CNULL_NULL ("null");
+	// Bool		
+	const std::string Specification::CBOOL_TRUE  ("true");
+	const std::string Specification::CBOOL_FALSE ("false");
+	// Name
+	const std::string Specification::CNAME_PREFIX ("/");
+	// String
+	const std::string Specification::CSTRING_PREFIX ("(");
+	const std::string Specification::CSTRING_SUFFIX (")");
+	// Ref
+	const std::string Specification::CREF_MIDDLE (" ");
+	const std::string Specification::CREF_SUFFIX (" R");
 
-	// Object Name std::string Specification::representation. */
-	const std::string Specification::CNAME_PREFIX = "/";
+	// Array
+	const std::string Specification::CARRAY_PREFIX ("[");
+	const std::string Specification::CARRAY_MIDDLE (" ");
+	const std::string Specification::CARRAY_SUFFIX (" ]");
+	// Dict
+	const std::string Specification::CDICT_PREFIX ("<<");
+	const std::string Specification::CDICT_MIDDLE ("\n/");
+	const std::string Specification::CDICT_BETWEEN_NAMES (" ");
+	const std::string Specification::CDICT_SUFFIX ("\n>>");
+	// Stream
+	const std::string Specification::CSTREAM_HEADER ("\nstream\n");
+	const std::string Specification::CSTREAM_FOOTER ("\nendstream");
+	// Indirect
+	const std::string Specification::INDIRECT_HEADER ("obj ");
+	const std::string Specification::INDIRECT_FOOTER ("\nendobj");
 
-	// Object String representation prefix string. */
-	const std::string Specification::CSTRING_PREFIX = "(";
-	// Object String representation suffix string. */
-	const std::string Specification::CSTRING_SUFFIX = ")";
+	// Object Error
+	const std::string Specification::OBJERROR ("\n");
 
-	// Object Ref representation middle string. */
-	const std::string Specification::CREF_MIDDLE = " ";
-	// Object Ref representation std::string Specification::suffix. */
-	const std::string Specification::CREF_SUFFIX = " R";
 
-	// CObjectComplex
-	// Object Array representation prefix string. */
-	const std::string Specification::CARRAY_PREFIX = "[";
-	// Object Array representation middle string. */
-	const std::string Specification::CARRAY_MIDDLE = " ";
-	// Object Array representation suffix string. */
-	const std::string Specification::CARRAY_SUFFIX = " ]";
-
-	// Object Dictionary representation specifics. */
-	const std::string Specification::CDICT_PREFIX = "<<";
-	// Object Dictionary representation specifics. */
-	const std::string Specification::CDICT_MIDDLE = "\n/";
-	// Object Dictionary representation specifics. */
-	const std::string Specification::CDICT_BETWEEN_NAMES = " ";
-	// Object Dictionary representation specifics. */
-	const std::string Specification::CDICT_SUFFIX = "\n>>";
-
-	// Object Stream std::string Specification::representation specifics. */
-	const std::string Specification::CSTREAM_HEADER = "\nstream\n";
-	// Object Stream std::string Specification::representation specifics. */
-	const std::string Specification::CSTREAM_FOOTER = "\nendstream";
-
-	// Xpdf error object std::string Specification::representation specifics. */
-	const std::string Specification::OBJERROR = "\n";
-
-	// Indirect Object heaser. */
-	const std::string Specification::INDIRECT_HEADER = "obj ";
-	// Indirect Object footer. */
-	const std::string Specification::INDIRECT_FOOTER = "\nendobj";
-
+	// 
+	// CPage
+	//
+	const std::string Specification::CPage::PARENT   ("Parent");
+	const std::string Specification::CPage::CONTENTS ("Contents");
+	const std::string Specification::CPage::RESOURCES("Resources");
+	const std::string Specification::CPage::MEDIABOX ("MediaBox");
+	const std::string Specification::CPage::CROPBOX  ("CropBox");
+	const std::string Specification::CPage::ROTATE   ("Rotate");
+	const std::string Specification::CPage::ANNOTS   ("Annots");
 
 // =====================================================================================
 } // namespace pdfobjects

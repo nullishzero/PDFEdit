@@ -78,6 +78,27 @@ namespace pdfobjects {
 		/** Indirect Object footer. */
 		static const std::string INDIRECT_FOOTER;  // "\nendobj";
 
+		//
+		// CPage
+		//
+		struct CPage 
+		{
+			/** Page Resource entry. */
+			static const std::string PARENT;
+			/** Page Contents entry. */
+			static const std::string CONTENTS;
+			/** Page Resource entry. */
+			static const std::string RESOURCES;
+			/** Page Mediabox entry. */
+			static const std::string MEDIABOX;
+			/** Page Cropbox entry. */
+			static const std::string CROPBOX;
+			/** Page Rotate entry. */
+			static const std::string ROTATE;
+			/** Page Annotation entry. */
+			static const std::string ANNOTS;
+		};
+
 	}; // struct Specification
 
 

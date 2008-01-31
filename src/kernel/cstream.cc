@@ -291,7 +291,7 @@ CStream::getDecodedStringRepresentation (string& str) const
 	utils::getStringFromXpdfStream (str, *obj);
 
 	// Clean-up
-	utils::freeXpdfObject (obj);
+	xpdf::freeXpdfObject (obj);
 }
 
 //
@@ -390,7 +390,7 @@ CStream::open ()
 		assert (!"Open an opened stream.");
 		curObj.free ();
 		delete parser; parser = NULL;
-		freeXpdfObject (tmpObj); tmpObj = NULL;
+		xpdf::freeXpdfObject (tmpObj); tmpObj = NULL;
 		throw CObjInvalidOperation ();
 	}
 	
@@ -412,7 +412,7 @@ CStream::close ()
 	{
 		curObj.free ();
 		delete parser; parser = NULL;
-		freeXpdfObject (tmpObj); tmpObj = NULL;
+		xpdf::freeXpdfObject (tmpObj); tmpObj = NULL;
 
 	}else
 	{
@@ -499,7 +499,7 @@ CStream::~CStream ()
 		assert (!"Stream not closed.");
 		curObj.free ();
 		delete parser; parser = NULL;
-		freeXpdfObject (tmpObj); tmpObj = NULL;
+		xpdf::freeXpdfObject (tmpObj); tmpObj = NULL;
 		
 	}else
 	{

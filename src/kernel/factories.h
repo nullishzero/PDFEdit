@@ -97,7 +97,7 @@ public:
 /** Factory class for xpdf Objects.
  *
  * Creates instance of xpdf Object class. Instances has to be deallocated by
- * gfree method or pdfobjects::utils::freeXpdfObject.
+ * gfree method or pdfobjects::xpdf::freeXpdfObject.
  */
 class XPdfObjectFactory
 {

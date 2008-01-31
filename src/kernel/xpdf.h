@@ -120,6 +120,17 @@ public:
 typedef MassiveIdiocyWrapper<Object> XpdfObject;
 
 
+/**
+ * Free an object. We assume that all child objects (if any)
+ * have been already freed.
+ *
+ * Copy & paste from Object.h
+ * 
+ * @param obj Object to be freed.
+ */
+void freeXpdfObject (::Object* obj);
+
+
 //=====================================================================================
 } // namespace xpdf
 //=====================================================================================

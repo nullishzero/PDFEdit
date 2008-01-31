@@ -509,16 +509,6 @@ template <PropertyType Tp> void simpleValueToString (const IndiRef& val,std::str
 //=========================================================
 
 /**
- * Free an object. We assume that all child objects (if any)
- * have been already freed.
- *
- * Copy & paste from Object.h
- * 
- * @param obj Object to be freed.
- */
-void freeXpdfObject (Object* obj);
-
-/**
  * Returns true if object has a parent.
  *
  * \exception ObjInvalidOperation Thrown when the object does not belong

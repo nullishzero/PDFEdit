@@ -17,8 +17,6 @@
 #include "kernel/pdfoperators.h"
 #include "kernel/cobject.h"
 
-//fabs
-#include <math.h>
 
 //==========================================================
 namespace pdfobjects {

@@ -471,15 +471,13 @@ size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBu
  */
 void xpdfObjToString (Object& obj, std::string& str);
 
-
 /**
  * Get string from xpdf stream object.
  *
  * @param str Output string.
  * @param obj Xpdf stream object.
  */
-void
-getStringFromXpdfStream (std::string& str, ::Object& obj);
+void getStringFromXpdfStream (std::string& str, ::Object& obj);
 
 
 //=========================================================

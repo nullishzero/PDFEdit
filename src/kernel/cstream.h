@@ -581,14 +581,6 @@ void parseStreamToContainer (T& container, ::Object& obj);
 template<typename ITERATOR, typename OUTITERATOR>
 void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out);
 
-/**
- * Makes a valid pdf representation of a stream using streamToString function.
- * 
- * @param strDict Dictionary string representation.
- * @param streambuf Raw stream buffer.
- * @param outbuf Output buffer.
- */
-size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf);
 
 //=========================================================
 //	CDict "get type" helper methods
