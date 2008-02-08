@@ -776,6 +776,13 @@ protected:
 	 */
 	IndiRef subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs);
 private:
+
+	/** File handle for document.
+	 * Initialized in getInstance and may be used *ONLY* in close method (to 
+	 * close). All other operations must be done on top of stream object 
+	 * which wrapps file handle.
+	 */
+	FILE * file;
 	
 	/** Identificator for this pdf instance.
 	 */

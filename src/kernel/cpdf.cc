@@ -2197,6 +2197,7 @@ using namespace std;
 	try
 	{
 		CPdf * instance=new CPdf(stream, mode);
+		instance->file = file;
 		kernelPrintDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
 		return instance;
 	}catch(exception &e)
@@ -2217,7 +2218,14 @@ int CPdf::close(bool saveFlag)
 	
 	// deletes this instance
 	// all clean-up is made in destructor
+	FILE * f = file;
 	delete this;
+	if(fclose(f))
+	{
+		int err = errno;
+		kernelPrintDbg(debug::DBG_ERR, "Unable to close file handle (cause=\""
+				<<strerror(err) << "\"");
+	}
 
 	kernelPrintDbg(debug::DBG_INFO, "Instance deleted.")
 	return 0;
