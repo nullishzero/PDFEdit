@@ -2937,6 +2937,10 @@ void CPdf::save(bool newRevision)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
+	// Saving linearized document results in demaged documents
+	if(isLinearized())
+		throw NotImplementedException("Linearized PDF save is not supported");
+
 	if(getMode()==ReadOnly)
 	{
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
@@ -2969,6 +2973,10 @@ using namespace debug;
 		return;
 	}
 	
+	// Saving linearized document results in demaged documents
+	if(isLinearized())
+		throw NotImplementedException("Linearized PDF cloning is not supported");
+
 	// delagates to XRefWriter
 	xref->cloneRevision(file);
 }
