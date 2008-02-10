@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdfedit", "pdfedit\pdfedit.vcproj", "{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kernel", "kernel\kernel.vcproj", "{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{005F915C-B7B1-4448-AC1D-A99336E67078} = {005F915C-B7B1-4448-AC1D-A99336E67078}
 	EndProjectSection
@@ -16,18 +16,24 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug-Tests|Win32 = Debug-Tests|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}.Debug|Win32.Build.0 = Debug|Win32
+		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}.Debug-Tests|Win32.ActiveCfg = Debug-Tests|Win32
+		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}.Debug-Tests|Win32.Build.0 = Debug-Tests|Win32
 		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}.Release|Win32.ActiveCfg = Release|Win32
 		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}.Release|Win32.Build.0 = Release|Win32
 		{005F915C-B7B1-4448-AC1D-A99336E67078}.Debug|Win32.ActiveCfg = Debug|Win32
 		{005F915C-B7B1-4448-AC1D-A99336E67078}.Debug|Win32.Build.0 = Debug|Win32
+		{005F915C-B7B1-4448-AC1D-A99336E67078}.Debug-Tests|Win32.ActiveCfg = Debug|Win32
+		{005F915C-B7B1-4448-AC1D-A99336E67078}.Debug-Tests|Win32.Build.0 = Debug|Win32
 		{005F915C-B7B1-4448-AC1D-A99336E67078}.Release|Win32.ActiveCfg = Release|Win32
 		{005F915C-B7B1-4448-AC1D-A99336E67078}.Release|Win32.Build.0 = Release|Win32
 		{30B3E720-FD92-47C5-940B-9E5CB0213F12}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30B3E720-FD92-47C5-940B-9E5CB0213F12}.Debug-Tests|Win32.ActiveCfg = Debug|Win32
 		{30B3E720-FD92-47C5-940B-9E5CB0213F12}.Release|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
