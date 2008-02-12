@@ -1732,7 +1732,7 @@ CPdf::CPdf(StreamWriter * stream, OpenMode openMode)
 
 	// sets id as address of this instance
 	// FIXME make more unique
-	this->id=(cpdf_id_t)this;
+	this->id=reinterpret_cast<cpdf_id_t>(this);
 }
 
 CPdf::~CPdf()

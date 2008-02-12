@@ -14,6 +14,8 @@
 
 #include "kernel/static.h"
 
+#include <inttypes.h>
+
 // xpdf
 #include "kernel/xpdf.h"
 
@@ -227,7 +229,7 @@ public:
 
 	/** Type for pdf identificator.
 	 */
-	typedef unsigned long long cpdf_id_t;
+	typedef uintptr_t cpdf_id_t;
 
 	/** Constant for pdf id of no pdf.
 	 * This is used for properties which comes from no pdf. Each CPdf instance
