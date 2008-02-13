@@ -570,8 +570,8 @@ using namespace observer;
 			kernelPrintDbg(DBG_WARN, "Target of Annots "<<ref<<" is not an array");
 		}
 	}else
-		if(isArray(oldValue))
-			newArray=IProperty::getSmartCObjectPtr<CArray>(oldValue);
+		if(isArray(newValue))
+			newArray=IProperty::getSmartCObjectPtr<CArray>(newValue);
 	if(newArray.get())
 		page->registerAnnotsObservers(newArray);
 	
