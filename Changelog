@@ -17,7 +17,7 @@
 		- delinearizator moved from src/utils/ to src/kernel
 	  - Improved testing environment
 	* Code cleanups by Gwurk
-	* Bugs 164, 168, 169, 175, 179, 180, 182, 183, 187, 201 fixed
+	* Bugs 164, 168, 169, 175, 179, 180, 182, 183, 187, 201, 208 fixed
 	* Added Tango icon theme from Tiziano Mattei.
 	* Fixed bug with operator-only command available for non-operators too,
 	  leading to errors
