@@ -856,6 +856,7 @@ public:
 		dictElem3->addProperty(*arrayElem1);
 		dictProp->addProperty("Elem3", *dictElem3);
 		// adds dictionary
+		printf("\tno follow case\n");
 		addedRef=pdf->addIndirectProperty(dictProp);
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(isDict(*added));
@@ -869,6 +870,23 @@ public:
 		ref = getValueFromSimple<CRef>(addedDict->getProperty("Elem2"));
 		CPPUNIT_ASSERT(isNull(* pdf->getIndirectProperty(ref)));
 		CPPUNIT_ASSERT(isArray(*(addedDict->getProperty("Elem3"))));
+
+		// adds the same dictionary, with followRef now!
+		printf("\tfollow case\n");
+		IndiRef followAddedRef = pdf->addIndirectProperty(dictProp, true);
+		CPPUNIT_ASSERT(!(followAddedRef == addedRef));
+		added=pdf->getIndirectProperty(followAddedRef);
+		CPPUNIT_ASSERT(isDict(*added));
+		shared_ptr<CDict> followAddedDict=IProperty::getSmartCObjectPtr<CDict>(added);
+		CPPUNIT_ASSERT(followAddedDict->getIndiRef()==followAddedRef);
+		CPPUNIT_ASSERT(followAddedDict->getPropertyCount()==3);
+		CPPUNIT_ASSERT(isReal(*(followAddedDict->getProperty("Elem1"))));
+		CPPUNIT_ASSERT(isRef(*(followAddedDict->getProperty("Elem2"))));
+		// target of Elem2 has to be CNull - it makes no sense to 
+		// dereference without document
+		ref = getValueFromSimple<CRef>(followAddedDict->getProperty("Elem2"));
+		CPPUNIT_ASSERT(isNull(* pdf->getIndirectProperty(ref)));
+		CPPUNIT_ASSERT(isArray(*(followAddedDict->getProperty("Elem3"))));
 
 		printf("TC04:\taddIndirectProperty with CRef from same pdf\n");
 		// uses root of page tree, which has to be reference
