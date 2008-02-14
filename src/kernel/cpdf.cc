@@ -1815,7 +1815,7 @@ using namespace debug;
 }
 
 
-IndiRef CPdf::registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef ref)
+IndiRef CPdf::registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef &ref)
 {
 using namespace debug;
 using namespace utils;
@@ -1851,7 +1851,8 @@ using namespace utils;
 	return reference;
 }
 
-IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, ResolvedRefStorage & storage, bool followRefs )
+IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef &indiRef, 
+		ResolvedRefStorage & storage, bool followRefs )
 {
 	kernelPrintDbg(DBG_DBG, "");
 	
@@ -1884,14 +1885,17 @@ IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, Reso
  * @param container Resolved mapping container.
  * @param xref XRefWriter for new reference reservation.
  * @param oldRef Original reference.
+ * @param entry Pointer for resolved ref mapping entry.
  *
- * Reserves new reference with XRefWriter::reserveRef method and if oldRef is
- * valid reference (checks with isValidRef method) also creates mapping [oldRef,
- * newRef to given container.
+ * Reserves a new reference with XRefWriter::reserveRef method and if oldRef is
+ * valid reference (checks with isRefValid method) also creates mapping [oldRef,
+ * newRef to given container with STATE_NEW state and given entry will point
+ * to the mapping entry pointer.
  *
- * @return newly reseved reference.
+ * @return newly reseved reference entry.
  */
-IndiRef createMapping(ResolvedRefStorage & container, XRefWriter & xref, IndiRef oldRef)
+IndiRef createMapping(ResolvedRefStorage & container, XRefWriter & xref, 
+		IndiRef &oldRef, ResolvedRefEntry ** entry)
 {
 using namespace debug;
 
@@ -1906,18 +1910,23 @@ using namespace debug;
 	// object is indirect and if mapping is not in container yet
 	if(isRefValid(&oldRef))
 	{
-		if(container.find(oldRef)==container.end())
+		ResolvedRefStorage::iterator i = container.find(oldRef);
+		if(i == container.end())
 		{
-			container.insert(ResolvedRefStorage::value_type(oldRef, indiRef));
+			*entry = new ResolvedRefEntry(indiRef, STATE_NEW);
+			container.insert(ResolvedRefStorage::value_type(oldRef, *entry));
 			kernelPrintDbg(DBG_DBG, "Created mapping from "<<oldRef<<" to "<<indiRef);
-		}
-	}
+		}else
+			*entry = i->second;
+	}else
+		*entry = NULL;
 
 	// returns new reference.
 	return indiRef;
 }
 
-IndiRef CPdf::subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs)
+IndiRef CPdf::subsReferencies(boost::shared_ptr<IProperty> ip, 
+		ResolvedRefStorage & container, bool followRefs)
 {
 using namespace utils;
 
@@ -1927,7 +1936,9 @@ using namespace utils;
 	// this method makes sense only for properties from different pdf	
 	assert(this!=ip->getPdf());
 	
-	kernelPrintDbg(debug::DBG_DBG,"property type="<<ip->getType()<<" ResolvedRefStorage size="<<container.size());
+	kernelPrintDbg(debug::DBG_DBG,"property type="
+			<<ip->getType()<<" ResolvedRefStorage size="
+			<<container.size());
 
 	PropertyType type=ip->getType();
 	ChildrenStorage childrenStorage;
@@ -1939,44 +1950,46 @@ using namespace utils;
 			// checks if this reference has already been considered to prevent
 			// endless loops for cyclic structures
 			ResolvedRefStorage::iterator i;
+			ResolvedRefEntry * refEntry = NULL;
 			IndiRef ipRef=getValueFromSimple<CRef>(ip);
-			IndiRef indiRef;
 			if((i=container.find(ipRef))!=container.end())
 			{
 				// this reference has already been processed, so reuses
 				// reference which already has been created/reserved
-				kernelPrintDbg(DBG_DBG, ipRef<<" already mapped to "<<i->second);
-				if(!isNull(*getIndirectProperty(i->second)))
-				{
-					// object with mapped reference is already initialized and
-					// so it can be directly returned
-					return i->second;
-				}
-			}else
+				refEntry = i->second;
+				kernelPrintDbg(DBG_DBG, ipRef<<" already mapped to "<<refEntry->first);
+			}else 
+			{
 				// No mapping for ipRef
 				// reserves new reference and creates mapping
-				indiRef=createMapping(container, *xref, ipRef);
+				// refEntry may be null if ipRef is not valid (stand alone
+				// object)
+				IndiRef ref = createMapping(container, *xref, ipRef, &refEntry);
+			}
 
-			// if followRefs is true, adds also target property too. Reference
-			// is already registered now and so registerIndirectProperty will
-			// use it correctly
-			if(followRefs)
+			// if followRefs is true and target reference is not resolved yet, 
+			// adds target property too. Reference  is already registered now
+			// and so registerIndirectProperty will use it correctly
+			// Following referencies of property with no PDF has no sense
+			// so we skipp it too.
+			if(followRefs && hasValidPdf(ip) && refEntry->second == STATE_NEW)
 			{
-				kernelPrintDbg(DBG_DBG, "Following reference "<<ipRef<<" mapped to "<<indiRef);	
-				// ip may be stand alone and in such case uses CNull
-				shared_ptr<IProperty> followedIp;
-				if(!hasValidPdf(ip))
-					followedIp=shared_ptr<IProperty>(CNullFactory::getInstance());
-				else
-					// ip is from read pdf and so dereferences target value 					
-					followedIp=ip->getPdf()->getIndirectProperty(ipRef);
+				assert(refEntry);
+				kernelPrintDbg(DBG_DBG, "Following reference "<<ipRef<<" mapped to "
+						<<refEntry->first);	
+				// ip is from read pdf and so dereferences target value 					
+				shared_ptr<IProperty> followedIp=ip->getPdf()->getIndirectProperty(ipRef);
 
 				// adds dereferenced value using addProperty with collected
-				// container. returned reference must be same as registered one 
-				IndiRef addIndiRef=addProperty(followedIp, indiRef, container, followedIp);
-				assert(addIndiRef==indiRef);
+				// container. Current mapping is set to resolving state to 
+				// prevent from endless loops for cyclick referencies
+				// returned reference must be same as registered one 
+				refEntry->second = STATE_RESOLVING;
+				IndiRef addIndiRef=addProperty(followedIp, refEntry->first, container, followedIp);
+				assert(addIndiRef==refEntry->first);
+				refEntry->second = STATE_RESOLVED;
 			}			
-			return indiRef;
+			return refEntry->first;
 		}	
 		// complex types (pArray, pDict and pStream) collects their children to the 
 		// container
@@ -2053,7 +2066,8 @@ using namespace boost;
 		// ip is from same pdf and so all possible referencies are already in 
 		// pdf too. We can clearly register with given indiRef
 		kernelPrintDbg(DBG_DBG, "Property from same pdf");
-		return registerIndirectProperty(ip, xref->reserveRef());
+		IndiRef ref = xref->reserveRef();
+		return registerIndirectProperty(ip, ref);
 	}
 
 	// ip is from different pdf.
@@ -2070,7 +2084,8 @@ using namespace boost;
 		// pdf (represented by its id and newly created resolvedStorage).
 		resolvedStorage=new ResolvedRefStorage();
 		resolvedRefMapping.insert(ResolvedRefMapping::value_type(id, resolvedStorage));
-		kernelPrintDbg(DBG_DBG, "No resolvedRefMapping entry for "<<id<<" pdf. Created new entry");
+		kernelPrintDbg(DBG_DBG, "No resolvedRefMapping entry for "<<id
+				<<" pdf. Created new entry");
 	}else
 		// uses already created storage
 		resolvedStorage=i->second;
@@ -2078,36 +2093,56 @@ using namespace boost;
 	// If given ip is indirect and there already is mapping in resolvedStorage,
 	// this property or reference to it has already been processed
 	ResolvedRefStorage::iterator resIter;
+	ResolvedRefEntry * refEntry = NULL;
 	IndiRef indiRef;
 	if(hasValidRef(ip)&&
 	  (resIter=resolvedStorage->find(ip->getIndiRef()))!=resolvedStorage->end())
 	{
-		kernelPrintDbg(DBG_DBG, "Property with "<<ip->getIndiRef()<<" already in mapping. Mapped to "<<resIter->second);
+		refEntry = resIter->second;
+		kernelPrintDbg(DBG_DBG, "Property with "<<ip->getIndiRef()
+				<<" already in mapping. Mapped to "
+				<<refEntry->second);
 
-		// If property associated with mapped reference is not CNull,
-		// value has been initialized and so this property is not stored
-		// again and just its reference - in this pdf - is returned
-		if(!isNull(*getIndirectProperty(resIter->second)))
+		// entry state must not be resolving, because we are starting
+		// resolution and STATE_RESOLVING would mean that that object
+		// couldn't have been completely resolved 
+		assert(refEntry->second != STATE_RESOLVING);
+
+		// If property associated with mapped reference is already resolved,
+		// there is not much to do
+		if(refEntry->second == STATE_RESOLVED)
 		{
-			kernelPrintDbg(DBG_INFO, "Property with "<<ip->getIndiRef()<<" already stored as "<<resIter->second);
-			return resIter->second;
+			kernelPrintDbg(DBG_INFO, "Property with "<<ip->getIndiRef()
+					<<" already stored as "<<refEntry->second);
+			return refEntry->first;
 		}
-		indiRef=resIter->second;
-	}
-
-	// Uses already reserved reference or create new one in createMapping
-	if(!isRefValid(&indiRef))
+		indiRef = refEntry->first;
+	}else
+	{
 		// reserves reference for new indirect object and if given ip is indirect
 		// object too, creates also resolved mapping for it
-		indiRef=createMapping(*resolvedStorage, *xref, ip->getIndiRef());
+		// refEntry will be NULL for ip with invalid reference (with no PDF)
+		IndiRef ipRef = ip->getIndiRef();
+		indiRef = createMapping(*resolvedStorage, *xref, 
+				ipRef, &refEntry);
+	}
+	assert(isRefValid(&indiRef));
 
 	// everything is checked now and all the work is delegated to recursive
 	// addProperty method
 	kernelPrintDbg(DBG_DBG, "Adding new indirect object.");
-	IndiRef addRef=addProperty(ip, indiRef, *resolvedStorage, followRefs);
-	assert(addRef==indiRef);
+	if(refEntry)
+		refEntry->second = STATE_RESOLVING;
+	IndiRef addRef = addProperty(ip, indiRef, *resolvedStorage, followRefs);
+	assert(addRef == indiRef);
+	// sets state to resolved only for follow referencies case because
+	// otherwise we have only reserved referencies otherwise falls back
+	// to new
+	if(refEntry)
+		refEntry->second = (followRefs)?STATE_RESOLVED:STATE_NEW;
 
-	kernelPrintDbg(DBG_INFO, "New indirect object added with "<<indiRef<<" with type="<<ip->getType());
+	kernelPrintDbg(DBG_INFO, "New indirect object added with "
+			<<indiRef<<" with type="<<ip->getType());
 
 	return indiRef;
 }

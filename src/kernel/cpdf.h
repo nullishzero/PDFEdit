@@ -74,15 +74,41 @@ typedef std::map<IndiRef, size_t, utils::IndComparator> PageTreeNodeCountCache;
  */
 typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache;
 
-/** Type for resolv mapping.
+/** State of reference translation.
+ * <ul>
+ * <li><b>STATE_NEW</b> represents a new mapping. This means that a new
+ * reference was for translation and it is not backed up by any real 
+ * object.
+ * <li><b>STATE_RESOLVING</b> represents mapping which is currently 
+ * in translation meaning that the real object which will be backed by
+ * translated reference is in progress of construction.
+ * <li><b>STATE_RESOLVED</b> represents mapping which is finally backed
+ * by real indirect object.
+ * </ul>
+ */
+enum ResolveRefState {STATE_NEW, STATE_RESOLVING, STATE_RESOLVED};
+
+/** Entry for reference translation mapping.
+ * Firts value stands for the new reference (translated one) and the second
+ * keeps state of the translation. 
+ */
+typedef std::pair<IndiRef, enum ResolveRefState> ResolvedRefEntry;
+
+/** Type for reference translation mappings.
  * Key stands for reference in original property and associated value stands 
- * for reserved reference which should replace original one.
+ * for reserved reference (with its current resolvetion state) which stands
+ * for resolved reference.
  * <br>
- * Mapping is used for adding indirect properties from different pdf.
+ * Mapping is used for adding indirect properties from different pdf. Referncies
+ * are bound to (unique in) specific document. If we want to insert subtree of
+ * indirect properties from one document to another we have to translate all 
+ * referenced indirect objects which all needs translation. Therefore a new
+ * reference is created for each and this mapping holds translation from 
+ * the original to the created one. 
  *
  * @see CPdf::addIndirectProperty
  */
-typedef std::map<IndiRef, IndiRef, utils::IndComparator > ResolvedRefStorage;
+typedef std::map<IndiRef, ResolvedRefEntry*, utils::IndComparator > ResolvedRefStorage;
 
 /** CPdf special object.
  *
@@ -665,7 +691,7 @@ protected:
 	 * 
 	 * @return Reserved reference to changed object.
 	 */
-	IndiRef registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef ref);
+	IndiRef registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef &ref);
 	
 	/** Registers page tree observers.
 	 * @param prop Page tree node reference or dictionary.
@@ -729,7 +755,8 @@ protected:
 	 * @see subsReferencies
 	 * @return reference of added property.
 	 */
-	IndiRef addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, ResolvedRefStorage & storage, bool followRefs);
+	IndiRef addProperty(boost::shared_ptr<IProperty> ip, IndiRef &indiRef, 
+			ResolvedRefStorage & storage, bool followRefs);
 
 	/** Substitues reference(s) with valid in this pdf.
 	 * @param ip Property to examine.
