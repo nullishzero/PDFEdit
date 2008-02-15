@@ -62,7 +62,7 @@ public:
 class CPage;
 //class COutline;
 
-
+	
 /** Type for page tree node count chache.
  * It is mapping where key is indirect reference of page tree node and
  * associated value is current number of direct pages under this node.
@@ -109,6 +109,20 @@ typedef std::pair<IndiRef, enum ResolveRefState> ResolvedRefEntry;
  * @see CPdf::addIndirectProperty
  */
 typedef std::map<IndiRef, ResolvedRefEntry*, utils::IndComparator > ResolvedRefStorage;
+
+/**
+ * Indirect properties mapping type.
+ */
+typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
+
+/** Type for pdf identificator.
+ */
+typedef uintptr_t cpdf_id_t;
+
+/** Type for mapping from pdfs to their resolved storage.
+ * Maps pdf identificators to their resolved reference storage.
+ */
+typedef std::map<cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
 
 /** CPdf special object.
  *
@@ -253,17 +267,35 @@ public:
 	 */
 	enum OpenMode {ReadOnly, ReadWrite, Advanced};
 
-	/** Type for pdf identificator.
-	 */
-	typedef uintptr_t cpdf_id_t;
-
 	/** Constant for pdf id of no pdf.
 	 * This is used for properties which comes from no pdf. Each CPdf instance
 	 * must have id different from this value.
 	 */
 	static const cpdf_id_t NO_PDF_ID=0;
-	
+
 protected:
+	/** Type for list of all alive pdfs.
+	 */
+	typedef std::vector<cpdf_id_t> CPdfListContainer;
+
+	/** List of all aive pdfs.
+	 */
+	static CPdfListContainer allPdfs;
+
+	/** Sets pdf id.
+	 * Should be called only from constructor context.
+	 * <br>
+	 * Currently adds id to the allPdfs static array.
+	 */
+	void setPdfId();
+
+	/** Releases pdf id.
+	 * Should be called only from destructor context.
+	 * <br>
+	 * Currently removes id from the allPdfs static array and from all alive
+	 * pdfs' resolve mappings.
+	 */
+	void releasePdfId();
 
 	/** Observer for page tree root synchronization.
 	 * 
@@ -546,37 +578,14 @@ protected:
 	 */
 	void unregisterPageObservers();
 
-	/**
-	 * Indirect properties mapping type.
-	 */
-	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
-
-	
-	/** Type for mapping from pdfs to their resolved storage.
-	 * Maps pdf identificators to their resolved reference storage.
-	 * 
-	 */
-	typedef std::map<CPdf::cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
-
 	/** Mapping for pdf's to their resolved storage.
-	 * This mapping is used during new indirect property adding. When object
-	 * from different pdf is about to be inserted, this storage contains
-	 * mapping from original references (from such pdf) to newly created
-	 * referencies in this pdf. Whenever object is from unknown (not present 
-	 * in this mapping) pdf, new entry is created with new associated storage. 
-	 * Helper methods like addProperty, subsReferencies then uses this 
-	 * storage.
-	 * <p>
-	 * <b>REMARK</b>:<br>
-	 * This enables proper insertion of shared objects from different pdf
-	 * because each original reference is mapped to one reserved in this pdf.
-	 * If mapping already exists, it is reused.
+	 * This mapping is used during new indirect property addition. Each separate
+	 * document requires its own resolve storage because this storage contains
+	 * translation mappings from that document the those used for current 
+	 * document. 
 	 * <br>
-	 * Set of objects can be inserted and their cross referencies are kept
-	 * also for this pdf (with referencies suitable for this pdf).
+	 * Indirect objects with no PDF are associated with NO_PDF_ID id.
 	 *
-	 * @see addProperty
-	 * @see subsReferencies
 	 */
 	ResolvedRefMapping resolvedRefMapping;
 
