@@ -3072,7 +3072,7 @@ void CPdf::save(bool newRevision)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
-	// Saving linearized document results in demaged documents
+	// Saving linearized document results in damaged documents
 	if(isLinearized())
 		throw NotImplementedException("Linearized PDF save is not supported");
 
