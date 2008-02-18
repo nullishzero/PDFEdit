@@ -17,7 +17,13 @@
  */
 #ifdef __GNUC__
 #define USE_GCC_PRAGMAS
+#else
+/*
+ * Do not use GCC specifics for non-gcc compilers
+ */
+#define __attribute__(a)
 #endif
+
 /* There is a bug in the version of gcc which ships with MacOS X 10.2 */
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <AvailabilityMacros.h>
@@ -33,13 +39,6 @@
  */
 #if defined(_WIN32) && !defined(WIN32)
 #  define WIN32
-#endif
-
-/*
- * Do not use GCC specifics if in win
- */
-#ifndef __GNUC__
-	#define __attribute__(a)
 #endif
 
 #endif
