@@ -10,9 +10,6 @@ To install unpack the archive into ~/.pdfedit/icon or (as root) into <prefix>/sh
 
 To choose the theme go to Tools > Options > Look and Feel, select Tango and restart the program.
 
-
-This application icon theme was created by Tiziano Mattei using existing icons from various Tango sets; some icons have been re-assembled or drawn from scratch. The later are licensed under CC-BY-SA, the remaining ones are either under the same license or GPL.
-
 2) CREDITS - LICENSE
 
 Based on icons from the following projects:
@@ -29,9 +26,9 @@ Based on icons from the following projects:
 
 Many thanks to all the original authors.
 
-Icons are licensed under CC-by-nc-sa 2.5 (http://creativecommons.org/licenses/by-nc-sa/2.5/)
+Icons are licensed under CC-by-sa 2.5 (http://creativecommons.org/licenses/by-sa/2.5/)
 _or_ GPL 2.0 (http://creativecommons.org/licenses/GPL/2.0/) license, depending on their origin.
-My own icons are GPL.
+My own icons are GPL or CC-by-sa at YOUR choice.
 
 3) AUTHOR
 
