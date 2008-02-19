@@ -680,6 +680,9 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
   } catch (ReadOnlyDocumentException &e) {
    base->setError(tr("Document is in read-only mode"));
    return false;
+  } catch (NotImplementedException &e) {
+   base->setError(tr("Saving not implemented: %1").arg(e.what()));
+   return false;
   } catch (...) {
    base->setError(tr("Unknown error occured while saving document"));
    return false;
