@@ -680,7 +680,7 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
    base->setError(tr("Document is in read-only mode"));
    return false;
   } catch (NotImplementedException &e) {
-   base->setError(tr("Saving not implemented: %1").arg(e.what()));
+   base->setError(tr("Saving not implemented:\n%1").arg(e.what()));
    return false;
   } catch (...) {
    base->setError(tr("Unknown error occured while saving document"));
@@ -732,7 +732,7 @@ bool PdfEditWindow::saveCopy(const QString &name) {
  QString errorString;
  bool res=util::saveCopy(document,name,&errorString);
  if (!res) {
-  base->setError(tr("Error occured while saving copy: %1").arg(errorString));
+  base->setError(tr("Error occured while saving copy:\n%1").arg(errorString));
  }
  return res;
 }

@@ -80,7 +80,7 @@ bool QSPdf::saveAs(QString name) {
  if (name.isNull()) return false;//No empty names!
  QString errorStr;
  bool resultOk=util::saveCopy(obj,name,&errorStr);
- if (!resultOk) base->errorException("Pdf","saveAs",tr("Unable to save: %1").arg(errorStr));
+ if (!resultOk) base->errorException("Pdf","saveAs",tr("Unable to save:\n%1").arg(errorStr));
  return resultOk;
 }
 
