@@ -84,7 +84,7 @@ public:
  static bool isList(const QString &line);
  static QString parseName(QString &line, const QString &name=QString::null) throw (InvalidMenuException);
  const QPixmap* getIcon(const QString &name);
- const QIcon* getIconSet(const QString &name);
+ const QIconSet* getIconSet(const QString &name);
  void loadItem(const QString &name,QMenuData *parent=NULL,QStringList prev=QStringList()) throw (InvalidMenuException);
  static bool chopCommand(QString &line, const QString &command);
  static void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);

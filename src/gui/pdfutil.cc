@@ -266,17 +266,31 @@ bool isSimple(boost::shared_ptr<IProperty> prop) {
  Save currently active revision in document under different filename
  @param obj Pdf document
  @param name New name
+ @param error String that will receive error message if saving failed. If null, no message will b e received
  @return true if success, false if failure
 */
-bool saveCopy(CPdf *obj,const QString &name) {
+bool saveCopy(CPdf *obj, const QString &name, QString *error) {
  FILE *f=fopen(name,"wb");
- if (!f) return false; ///failed to open file
+ if (!f) {
+  char *err=strerror(errno);
+  if (err) {
+   (*error)=QObject::tr("Unable to open file: %1").arg(err);
+  } else {
+   (*error)=QObject::tr("Unable to open file: %1").arg(errno);
+  }
+  return false; ///failed to open file
+ }
  try {
   obj->clone(f);
   fclose(f);
   return true;
+ } catch (NotImplementedException &e) {
+  fclose(f);
+  (*error)=QObject::tr("Not implemented: %1").arg(e.what());
+  return false;
  } catch (...) {
   fclose(f);
+  (*error)=QObject::tr("Unknown error");
   return false;
  }
 }

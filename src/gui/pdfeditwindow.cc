@@ -729,9 +729,10 @@ bool PdfEditWindow::saveCopy(const QString &name) {
   base->setError(tr("No document to save"));
   return false;
  }
- bool res=util::saveCopy(document,name);
+ QString errorString;
+ bool res=util::saveCopy(document,name,&errorString);
  if (!res) {
-  base->setError(tr("Error occured while saving copy"));
+  base->setError(tr("Error occured while saving copy: %1").arg(errorString));
  }
  return res;
 }

@@ -78,7 +78,10 @@ bool QSPdf::referenceValid(int valueNum,int valueGen) {
 bool QSPdf::saveAs(QString name) {
  if (nullPtr(obj,"saveAs")) return false;
  if (name.isNull()) return false;//No empty names!
- return util::saveCopy(obj,name);
+ QString errorStr;
+ bool resultOk=util::saveCopy(obj,name,&errorStr);
+ if (!resultOk) base->errorException("Pdf","saveAs",tr("Unable to save: %1").arg(errorStr));
+ return resultOk;
 }
 
 /**
