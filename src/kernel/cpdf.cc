@@ -2324,6 +2324,12 @@ using namespace std;
 	try
 	{
 		CPdf * instance=new CPdf(stream, mode);
+		// We don't want to enable editing linearized documents because
+		// it leads to almost 100% damage of content - we are not able
+		// to store changes to such a document. So it is simpler to
+		// prevent from changes at all.
+		if(instance->isLinearized())
+			instance->mode = ReadOnly;
 		instance->file = file;
 		kernelPrintDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
 		return instance;
