@@ -285,11 +285,17 @@ bool saveCopy(CPdf *obj, const QString &name, QString *error) {
   fclose(f);
   return true;
  } catch (NotImplementedException &e) {
+  //Close the file
   fclose(f);
+  //Erase the file in case of error to prevent clobbering of disk with empty or broken files
+  unlink(name);
   (*error)=QObject::tr("Not implemented: %1").arg(e.what());
   return false;
  } catch (...) {
+  //Close the file
   fclose(f);
+  //Erase the file in case of error to prevent clobbering of disk with empty or broken files
+  unlink(name);
   (*error)=QObject::tr("Unknown error");
   return false;
  }
