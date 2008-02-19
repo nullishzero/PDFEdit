@@ -1,14 +1,14 @@
 #!/bin/sh
 autoconf
-./configure && make
-cd src/gui
-make menugenerator && ./make-lang
 export INSTALL_ROOT=/tmp/pdfedit-package
+./configure --with-root-dir=$INSTALL_ROOT/ && make
+cd src/gui
+make -f Makefile.gui menugenerator && ./make-lang
 strip pdfedit.exe
+cd ../..
 mkdir -p $INSTALL_ROOT
 make install
-cp -f ../../doc/README.cygwin $INSTALL_ROOT/readme.txt
-cd ../..
+cp -f doc/README.cygwin $INSTALL_ROOT/readme.txt
 VERSION=`./getversion`
 cd $INSTALL_ROOT
 echo 7z a -mx -r -tzip -x!*.bat -x!*.zip pdfedit-$VERSION-cygwin.zip >pack.bat
