@@ -1,6 +1,6 @@
 *.lock
 moc_*.cpp
-Makefile
+Makefile.qt
 pdfedit
 menugenerator
 .moc

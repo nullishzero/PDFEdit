@@ -8,3 +8,4 @@ config.status
 Makefile
 Makefile.flags
 autom4te.cache
+configure
