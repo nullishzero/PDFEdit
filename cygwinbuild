@@ -1,4 +1,5 @@
 #!/bin/sh
+autoconf
 ./configure && make
 cd src/gui
 make menugenerator && ./make-lang
