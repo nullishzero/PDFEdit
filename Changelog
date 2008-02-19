@@ -1,4 +1,4 @@
-????-??-?? PDF Editor 0.?.?
+????-??-?? PDF Editor 0.4.0
 	* some memory leaks fixed - thanks to Gwurk
 	* new XPDF 3.02 imported to the tree - this fixed some security
 	  vulnerabilities reported by secunia as well as provide with 
