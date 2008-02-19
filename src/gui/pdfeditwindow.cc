@@ -662,7 +662,6 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
  base->setError("");//No error
  if (!document) {
   base->setError(tr("No document to save"));
-  base->print(base->error());
   return false;
  }
  if (fileName.isNull()) { //We need a name
@@ -728,7 +727,6 @@ bool PdfEditWindow::saveCopy(const QString &name) {
  base->setError("");//No error
  if (!document) {
   base->setError(tr("No document to save"));
-  base->print(base->error());
   return false;
  }
  bool res=util::saveCopy(document,name);

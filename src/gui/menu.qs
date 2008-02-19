@@ -42,8 +42,14 @@ function showHide(win,item) {
 function func_savecopy() {
  var name=fileSaveDialog(filename());
  if (!name) return false;
- print(tr("Saving as")+" "+name);
- return saveCopy(name);
+ if (!saveCopy(name)) {
+  err=error();
+  warn(err);
+  return false;
+ } else {
+  print(tr("Saved as")+" "+name);
+  return true;
+ }
 }
 
 /** Open new file (action from menu/toolbar) */
