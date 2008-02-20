@@ -23,12 +23,22 @@ SOURCES = testcobjectsimple.cc \
 		testtextoutput.cc \
 		testparams.cc \
 		main.cc
+HEADERS = testcobject.h \
+	  testcpage.h \
+	  testcpdf.h \
+	  testmain.h \
+	  testparams.h
+DEP_LIBS = $(KERNELROOT)/libkernel.a \
+	   $(UTILSROOT)/libutils.a \
+	   $(XPDFROOT)/xpdf/libxpdf.a $(XPDFROOT)/fofi/libfofi.a \
+	   $(XPDFROOT)/goo/libGoo.a $(XPDFROOT)/splash/libsplash.a
+
 OBJECTS = $(SOURCES:.cc=.o)
 TARGET   = kernel_tests
 
 all: $(TARGET)
 
-$(TARGET): deps $(OBJECTS)
+$(TARGET): deps $(OBJECTS) $(DEP_LIBS)
 	$(LINK) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(MANDATORY_LIBS)
 
 clean:
@@ -38,7 +48,7 @@ clean:
 distclean: clean
 	-$(DEL_FILE) $(TARGET)
 
-deps: $(SOURCES)
+deps: $(HEADERS)
 	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
 
 # FIXME FreeBSD make is not able to include non existent file

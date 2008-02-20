@@ -48,4 +48,6 @@ then
 fi
 
 cd ${DOC_DIR}/user 
-make online_help
+# TODO: Perhaps correctly determine how to invoke GNU make (or fix the Makefile)
+# BSD make will not work for generating online help
+gmake online_help || make online_help

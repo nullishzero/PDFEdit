@@ -8,8 +8,8 @@
 REL_ADDR = ../../
 include $(REL_ADDR)/Makefile.rules
 
-C_FLAGS += $(EXTRA_UTILS_CFLAGS)
-CXX_FLAGS += $(EXTRA_UTILS_CXXFLAGS)
+CFLAGS += $(EXTRA_UTILS_CFLAGS)
+CXXFLAGS += $(EXTRA_UTILS_CXXFLAGS)
 
 # Source files for library
 SOURCES=debug.cc \

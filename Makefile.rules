@@ -14,17 +14,17 @@ include $(REL_ADDR)Makefile.flags
 .SUFFIXES: .c .o .cpp .cc .cxx .C
 
 .cpp.o:
-	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(MANDATORY_INCPATH) -o $@ $<
 
 .cc.o:
-	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(MANDATORY_INCPATH) -o $@ $<
 
 .cxx.o:
-	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(MANDATORY_INCPATH) -o $@ $<
 
 .C.o:
-	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(MANDATORY_INCPATH) -o $@ $<
 
 .c.o:
-	$(CC) -c $(C_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+	$(CC) -c $(CFLAGS) $(MANDATORY_INCPATH) -o $@ $<
 

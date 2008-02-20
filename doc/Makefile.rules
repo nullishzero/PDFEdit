@@ -15,8 +15,8 @@
 %.pdf: %.xml
 	$(TOP_DIR)/tools/docbook2pdf $< $@ || true
 
-#rule for generating manpages
-%.1: %.xml $(TOP_DIR)/tools/docbook2man.pl
+#rule for generating manpages. Regenerate also when version or script for generating changes
+%.1: %.xml $(TOP_DIR)/tools/docbook2man.pl $(TOP_DIR)/user/version.xml
 	$(TOP_DIR)/tools/docbook2man.pl $< >$@
 
 #rule for generating HTML documentation to be placed in application help directory

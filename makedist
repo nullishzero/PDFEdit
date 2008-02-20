@@ -27,9 +27,6 @@ then
 fi
 
 # Make documentation before making tarball
-# FIXME can we get rid of this? It can be problem when we make without
-# configuration
-#(cd doc && make doc_dist)
 #Translate all .ts files to .qm
 (cd src/gui/lang && lrelease *.ts)
 #Get version number

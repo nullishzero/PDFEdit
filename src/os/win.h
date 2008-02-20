@@ -65,11 +65,4 @@ localtime_r (const time_t *clock, struct tm *result) {
 //
 #define snprintf _snprintf
 
-//
-// Do not use GCC specifics if in win
-//
-#ifdef WIN32
-	#define __attribute__(a)
-#endif
-
 #endif // _WIN_H_

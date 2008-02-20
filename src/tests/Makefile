@@ -11,10 +11,10 @@ include $(REL_ADDR)Makefile.rules
 # TDOD add all, install and uninstall targets depending on configuration
 
 kernel_tests:
-	cd $(KERNELTESTSROOT) && make kernel_tests
+	cd $(KERNELTESTSROOT) && $(MAKE) kernel_tests
 
 clean:
-	cd $(KERNELTESTSROOT) && make clean
+	cd $(KERNELTESTSROOT) && $(MAKE) clean
 
 distclean: 
-	cd $(KERNELTESTSROOT) && make distclean
+	cd $(KERNELTESTSROOT) && $(MAKE) distclean

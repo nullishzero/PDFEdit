@@ -19,7 +19,7 @@
 #pragma implementation
 #endif
 
-#include "TextOutputDev.h"
+#include "xpdf/TextOutputDev.h"
 
 #include "QOutputDev.h"
 

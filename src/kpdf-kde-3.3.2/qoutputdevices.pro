@@ -11,22 +11,29 @@ include(../../Makefile.flags)
 contains( E_RELEASE, no ) {
  CONFIG += debug
  CONFIG -= release
- QMAKE_CXXFLAGS += -g
 }
 contains( E_RELEASE, yes ) {
  # release mode
  # turns on optimalizations
  CONFIG += release
  CONFIG -= debug
- QMAKE_CXXFLAGS += -O2 -DNDEBUG
 }
 
 #Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored
 #Note Qt4 is not (yet) supported
 QT += qt3support
 
-#include headers from kernel and used by kernel
-INCLUDEPATH += ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash ../xpdf/fofi
+# include headers from kernel and used by kernel
+INCPATH += $(MANDATORY_PATHS)
+
+# Flags from configuration
+QMAKE_CXXFLAGS += $(CONFIG_CXXFLAGS)
+
+# Force configure compiler
+QMAKE_CC = $(CONFIG_CC)
+QMAKE_CPP = $(CONFIG_CXX)
+QMAKE_LINK = $(CONFIG_LINK)
+QMAKE_LINK_SHLIB = $(CONFIG_LINK)
 
 #QOutputDevices source files
 HEADERS += QOutputDevPixmap.h

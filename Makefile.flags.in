@@ -1,11 +1,20 @@
 E_RELEASE= @enable_release@
 QMAKE 	 = @QMAKE@
-CC       = @CC@
-CXX      = @CXX@
-LINK	 = $(CXX)
+
+# We need to add one level of indirect definition because of qmake which
+# uses QMAKE_{CC,CXX,LINK} to define compiler specific stuff, however 
+# if we do QMAKE_CC = $(CC) then we will get CC =$(CC) in the result makefile
+# which is bad
+CONFIG_CC = @CC@
+CONFIG_CXX = @CXX@
+CONFIG_LINK = $(CONFIG_CXX)
+CC = $(CONFIG_CC)
+CXX = $(CONFIG_CXX)
+LINK = $(CONFIG_LINK)
 # TODO from autoconf
 AR       = ar cqs
-RANLIB 	 = @RANLIB@
+CONFIG_RANLIB = @RANLIB@
+RANLIB = $(CONFIG_RANLIB)
 # TODO from autoconf
 COPY     = cp -f
 COPY_FILE= $(COPY)
@@ -23,7 +32,7 @@ MOVE     = mv -f
 # TODO from autoconf
 CHK_DIR_EXISTS= test -d
 MKDIR    = mkdir -p
-SHELL	 = /bin/sh
+SHELL	 = @SHELL@
 DOXYGEN_BIN = @DOXYGEN_BIN@
 # TODO from autoconf ?
 LIBPREFIX = lib
@@ -32,14 +41,27 @@ LIBPREFIX = lib
 # Installation directories
 ###########################################
 
-# TODO set in configure 
+# Installation root directory (empty for / otherwise including trailing slash)
 INSTALL_ROOT	= @root_dir@
-PREFIX		= @prefix@
-DATAROOTDIR	= $(PREFIX)/share
-DATA_PATH	= $(DATAROOTDIR)/pdfedit
-DOC_PATH	= $(DATAROOTDIR)/doc/pdfedit
-MAN_PATH	= $(DATAROOTDIR)/man/man1
-BIN_PATH	= $(PREFIX)/bin
+
+# extracts values from configure used by others
+version		= @PACKAGE_VERSION@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
+package_name	= $(PACKAGE_TARNAME)
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+datarootdir	= @datarootdir@
+bindir		= @bindir@
+docdir		= @docdir@
+mandir		= @mandir@
+datadir		= @datadir@/$(package_name)
+
+# Our abstraction of configure variables reused also in gui
+PREFIX		= $(prefix)
+DATA_PATH	= $(datadir)
+DOC_PATH	= $(docdir)
+MAN_PATH	= $(mandir)/man1
+BIN_PATH	= $(bindir)
 
 #############################################
 # Flags definition
@@ -53,12 +75,7 @@ OPTIM	 = @OPTIM@
 # TODO how to find out?
 ARCH	 = 
 # Warning options
-# TODO accoring release => no warnings
-# FIXME do we really want to use -pedantic here (i had some compilation
-# prblems in gui (ANSI C++ forbids long long)
-WARN	 = -W -Wall -Wconversion -Wwrite-strings \
-	   -Wno-unused-variable -Wunused-function -Wwrite-strings\
-	   -Wunused-macros 
+WARN	 = @WARN@ 
 # TODO check whether this is ok also for other platforms
 C_EXTRA	 = -fmessage-length=0 -D_FORTIFY_SOURCE=2 @STACK_PROTECTOR_FLAGS@\
 	   -fno-strict-aliasing
@@ -89,10 +106,12 @@ EXTRA_KERNEL_CXXFLAGS =
 EXTRA_TESTS_CXXFLAGS = 
 EXTRA_GUI_CXXFLAGS = -D CONFIG_DATA_PATH="$(DATA_PATH)"
 
-# we don't use CFLAGS and CXXFLAGS because this doesn't work very well
-# with qmake Makefiles generation
-C_FLAGS   	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(C_EXTRA) -pipe 
-CXX_FLAGS   	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(CXX_EXTRA) $(OBSERVER_CXXFLAGS) -pipe 
+# same like for compiler stuff we also define 2 levels 
+CONFIG_CFLAGS  	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(C_EXTRA) -pipe 
+CONFIG_CXXFLAGS	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(CXX_EXTRA) $(OBSERVER_CXXFLAGS) -pipe 
+
+CFLAGS = $(CONFIG_CFLAGS)
+CXXFLAGS = $(CONFIG_CXXFLAGS)
 
 #######################################
 # Absolute paths for all components
@@ -121,7 +140,6 @@ BOOSTFLAGS 	 = @BOOST_CPPFLAGS@
 CPPUNITFLAGS	 = @CPPUNIT_CFLAGS@
 FREETYPEFLAGS	 = @FT2_CFLAGS@
 T1FLAGS		 = @t1_CFLAGS@
-# TODO we can remove this but xpdf subtree including has to be corrected first
 XPDFLAGS 	 = -I$(XPDFROOT)/ 
 # This is required for qmake which always forces -I when specifying 
 # INCLUDEPATH

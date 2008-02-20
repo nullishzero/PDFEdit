@@ -1,0 +1,20 @@
+################################################################################
+# Workaround for proper Makefile.flags inclusion into the qmake generated 
+# makefile.
+#
+# I am able to use configuration specific variables from ../../Makefile.flags
+# in pdfedit.pro, however I am not able to force qmake to insert include 
+# ../../Makefile.flags at the beginning of the generated makefile, so my
+# variables are not visible.
+# This file shouldn't be named Makefile, because qmake run by accident will
+# overwrite it. 
+# If you want to compile *always* use this makefile rather than generated
+# one.
+################################################################################
+
+include ../../Makefile.flags
+
+QTMAKEFILE = Makefile.qt
+
+include $(QTMAKEFILE)
+

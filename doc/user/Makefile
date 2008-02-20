@@ -65,9 +65,6 @@ cs/keyboard.xml: $(TOOL_DIR)/kbd_gen.pl ../../src/gui/pdfeditrc cs/keyboard-src.
 pdfedit.xml: cmdline/pdfedit.head cmdline/description.xml cmdline/localization.xml cmdline/pdfedit.tail
 	cat $+ >$@
 
-# Re-create manpage when version change
-pdfedit.1: version.xml
-
 # special rules rule for generating docbook XML from .leaf files (some tex-like Trolltech format)
 scripts/qsa-inputdialog.xml: qsa-inputdialog.leaf $(TOP_DIR)/tools/leaf2xml.pl
 	$(TOP_DIR)/tools/leaf2xml.pl <$< >$@ no
@@ -81,4 +78,3 @@ version.xml: ../../src/gui/version.h
 
 # include rules to generate various documentation formats
 include $(TOP_DIR)/Makefile.rules
-

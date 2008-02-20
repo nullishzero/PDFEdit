@@ -16,6 +16,8 @@
 //  WINDOWS
 //============================================
 
+#include <os/compiler.h>
+
 #ifdef WIN32
 #include <os/win.h>
 #endif

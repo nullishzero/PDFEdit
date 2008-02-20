@@ -214,6 +214,13 @@ exists( .menu-trans.h  ) {
  HEADERS += .menu-trans.h 
 }
 
+# Force configure compiler
+QMAKE_CC = $(CONFIG_CC)
+QMAKE_CXX = $(CONFIG_CXX)
+QMAKE_LINK = $(CONFIG_LINK)
+QMAKE_LINK_SHLIB = $(CONFIG_LINK)
+QMAKE_RANLIB = $(CONFIG_RANLIB)
+
 # QSA include
 INCPATH += $(QSAPATH)
 # QSA lib
@@ -230,7 +237,7 @@ INCPATH += $(MANDATORY_PATHS)
 LIBS += $(MANDATORY_LIBS)
 
 # Flags from configuration
-QMAKE_CXXFLAGS += $(CXX_FLAGS)
+QMAKE_CXXFLAGS += $(CONFIG_CXXFLAGS)
 
 # directories to creating files
 unix {

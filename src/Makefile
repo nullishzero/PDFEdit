@@ -16,11 +16,11 @@ xpdf:
 	cd $(XPDFROOT) && $(MAKE) libxpdf
 
 # PDF editor
-pdfedit: utils kernel xpdf qoutputdevices qsa gui
+pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
 
 # generates QT makefile for gui
-# This monkey stuff is here because i was not able to persuate qmake
+# This monkey stuff is here because i was not able to persuade qmake
 # to include our Makefile.flags which contains all configuration stuff
 # Therefore we are building in two stages:
 # * gui/Makefile.gui simply generates gui/Makefile from gui/pdfedit.pro
@@ -32,7 +32,10 @@ pdfedit: utils kernel xpdf qoutputdevices qsa gui
 # Seems to be complicated and if someone finds better solution how to
 # get include ../../Makefile.flags into the generated makefile then
 # it can be safely removed.
-gui: $(GUIROOT)/Makefile.gui
+# We need to generate online help (unless it is generated yet) before
+# QT makefile is created (because of file expansion used in project
+# file)
+$(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfedit.pro
 	$(SHELL) $(ROOT)/tools/generate_online_help.sh "$(DOCROOT)" "$(GUIROOT)"
 	cd $(GUIROOT) && $(QMAKE) pdfedit.pro -o Makefile.qt
 
@@ -40,12 +43,13 @@ gui: $(GUIROOT)/Makefile.gui
 # kernel) libraries
 pdfedit-devel: utils kernel xpdf qoutputdevices
 
-# QOutputDevices
-qoutputdevices: xpdf $(QOUTPUTDEVROOT)/Makefile
-	cd $(QOUTPUTDEVROOT) && $(MAKE) staticlib
+# QOutputDevices - uses same trick with Makefile.{gui.qt} like
+# gui - see above
+qoutputdevices: xpdf $(QOUTPUTDEVROOT)/Makefile.qt
+	cd $(QOUTPUTDEVROOT) && $(MAKE) -f Makefile.gui staticlib
 
-$(QOUTPUTDEVROOT)/Makefile: $(QOUTPUTDEVROOT)/qoutputdevices.pro
-	cd $(QOUTPUTDEVROOT) && $(QMAKE)
+$(QOUTPUTDEVROOT)/Makefile.qt: $(QOUTPUTDEVROOT)/Makefile.gui $(QOUTPUTDEVROOT)/qoutputdevices.pro
+	cd $(QOUTPUTDEVROOT) && $(QMAKE) -o Makefile.qt
 
 # Utils
 utils: xpdf
@@ -76,6 +80,7 @@ clean:
 	cd $(XPDFROOT) && $(MAKE) clean || true
 	cd $(QOUTPUTDEVROOT) && $(MAKE) clean || true
 	$(DEL_FILE) $(GUIROOT)/Makefile.qt 
+	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile.qt
 
 
 # Dist Cleanup
@@ -86,7 +91,8 @@ distclean:
 	cd $(TESTSROOT) && $(MAKE) distclean || true
 	cd $(UTILSROOT) && $(MAKE) distclean || true
 	cd $(XPDFROOT) && $(MAKE) distclean || true
-	cd $(QOUTPUTDEVROOT) && $(MAKE) distclean || true
+	cd $(QOUTPUTDEVROOT) && $(MAKE) -f Makefile.gui distclean || true
 	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile || true
 	$(DEL_FILE) $(UTILSROOT)/aconf.h || true
-	$(DEL_FILE $(GUIROOT)/config.h $(GUIROOT)/Makefile.qt $(GUIROOT)/menugenerator $(GUIROOT)/pdfedit
+	$(DEL_FILE $(GUIROOT)/config.h $(GUIROOT)/Makefile.qt $(GUIROOT)/menugenerator $(GUIROOT)/pdfedit || true
+	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile.qt

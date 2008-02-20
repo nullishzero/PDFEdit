@@ -30,20 +30,9 @@ then
  type=xhtml
 fi
 
-# list of space separated paths where $sheet can possibly be
-# wildcards (like *) are allowed
-# Entries are tried from firt to last until $sheet is found
-# TODO use parameter for PATH
-#FreeBSD
-XSLPATHS="/usr/local/share/xsl/docbook/$type /usr/share/xsl/docbook/$type"
-#Gentoo
-XSLPATHS="$XSLPATHS /usr/share/sgml/docbook/xsl-stylesheets*/$type /usr/local/share/sgml/docbook/xsl-stylesheets*/$type"
-#Debian, Ubuntu
-XSLPATHS="$XSLPATHS /usr/share/xml/docbook/stylesheet/nwalsh/$type"
-#Cygwin
-XSLPATHS="$XSLPATHS /usr/share/docbook-xsl/$type"
-# OpenSuse10.3 (Tested with Docbook 4 and 5)
-XSLPATHS="$XSLPATHS /usr/share/xml/docbook/stylesheet/nwalsh*/*/$type"
+# list of space separated paths 
+LOCATION=`dirname $0`
+XSLPATHS=`cat ${LOCATION}/docbook_xslt_paths`
 
 # look for stylesheet
 xslpath=""

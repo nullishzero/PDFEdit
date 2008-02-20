@@ -21,15 +21,15 @@
 #endif
 
 #include <stdlib.h>
-#include <GfxState.h>
+#include <xpdf/GfxState.h>
 
 #include <qpixmap.h>
 #include <qimage.h>
 
 //#include <kdebug.h>
 
-#include "SplashBitmap.h"
-#include "SplashTypes.h"
+#include "splash/SplashBitmap.h"
+#include "splash/SplashTypes.h"
 
 #include "QOutputDevPixmap.h"
 
