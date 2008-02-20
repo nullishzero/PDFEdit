@@ -14,9 +14,10 @@
 		  no more a part of CVS tree (simply run autoconf without
 		  any parameters).
 		- delinearizator moved from src/utils/ to src/kernel
-	  - Improved testing environment
+		- Improved testing environment
 	* Code cleanups by Gwurk
-	* Bugs 164, 168, 169, 175, 179, 180, 182, 183, 187, 201, 202, 203, 204,
+	* Bugs 123, 137, 144, 147, 152, 153, 154, 155, 156, 162, 164, 165,
+	  168, 169, 175, 178, 179, 180, 182, 183, 187, 201, 202, 203, 204,
 	  208 fixed
 	* Added Tango icon theme from Tiziano Mattei.
 	* Fixed bug with operator-only command available for non-operators too,
