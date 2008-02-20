@@ -14,10 +14,11 @@
 
 /**
  * Parameter class.
- *	-files files to test
- *	-all
- *	-dir input directory
- *	-tests tests to execute
+ *	-all - prints all output
+ *	-dir dirname - input directory
+ *	-debug_level level - level of verbosity 0 - minimum; 5 - maximum
+ *	all other parameters are treated as file (if they stand for regular file)
+ *	or test name otherwise
  */
 class TestParams : public libs::Singleton<TestParams>
 {
@@ -29,12 +30,12 @@ public:
 	// Default test pdf file
 	static const char* DEFAULT_PDF;
 	static const char* DEFAULT_DIR;
+	static const unsigned int DEFAULT_DEBUG_LEVEL;
 	
 	//
 	// Params
 	//
 	FileList files;		// input pdf files
-	static const std::string FILES;
 	
 	std::string input_dir; // directory for special input files, configuration, multiversion
 	static const std::string INPUT_DIR;
@@ -45,6 +46,8 @@ public:
 	FileList tests;	// selected lists
 	static const std::string TESTS;
 
+	static const std::string DEBUG_LEVEL;
+	unsigned int debugLevel;
 	//
 	// Methods
 	//

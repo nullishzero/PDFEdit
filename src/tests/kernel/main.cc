@@ -25,22 +25,24 @@ using namespace debug;
 
 /**
  *  Test main
- *	-files files to test
- *	-all
- *	-dir input directory
- *	-tests tests to execute
+ *	-all - prints all output
+ *	-dir dirname - input directory
+ *	-debug_level level - level of verbosity 0 - minimum; 5 - maximum
+ *	all other parameters are treated as file (if they stand for regular file)
+ *	or test name otherwise
+ * Note that -debug_level takes effect only if -all parameter was specified, 
+ * otherwise all debug output is suppressed.
  */
 int 
 main (int argc, char* argv[])
 {
-	changeDebugLevel (debug::DBG_WARN);
-
 	// Parse params
 	if (!TestParams::init (argc, argv))
 	{
 		std::cout << "Invalid parameters." << std::endl;
 		return -1;
 	}
+	changeDebugLevel (TestParams::instance().debugLevel);
 
 	// If first parameter is "all" clear it
 	CHECK_OUTPUT (TestParams::instance().all_output);

@@ -19,10 +19,11 @@
 //
 const char* TestParams::DEFAULT_DIR = "../../../testset/";
 const char* TestParams::DEFAULT_PDF = "zadani.pdf";
-const std::string TestParams::FILES	("-files");
 const std::string TestParams::INPUT_DIR	("-dir");
 const std::string TestParams::ALL_OUTPUT("-all");
 const std::string TestParams::TESTS("-tests");
+const std::string TestParams::DEBUG_LEVEL("-debug_level");
+const unsigned int TestParams::DEFAULT_DEBUG_LEVEL = debug::DBG_WARN;
 
 
 // Test parameters
@@ -32,6 +33,7 @@ TestParams::init (int argc, char* argv[])
 	// init
 	instance().all_output = false;
 	instance().input_dir = DEFAULT_DIR;
+	instance().debugLevel = TestParams::DEFAULT_DEBUG_LEVEL;
 
 	// 
 	while (1 < argc)
@@ -42,16 +44,31 @@ TestParams::init (int argc, char* argv[])
 		if (ALL_OUTPUT == param) 
 		{
 			instance().all_output = true;
+			continue;
 		
 		}else if (INPUT_DIR == param) 
 		{
 			param = argv[1];
 			--argc;++argv;
-			if (0 < argc)
+			if (0 < argc) {
 				instance().input_dir = param;
+				continue;
+			}
 			else
 				return false;
 		
+		}else if (DEBUG_LEVEL == param)
+		{
+			param = argv[1];
+			--argc;++argv;
+			if(0 < argc) {
+				int val = atoi(param);
+				if(val < 0 || val > (int)debug::DBG_DBG)
+					return false;
+				instance().debugLevel = (unsigned int)val;
+				continue;
+			}else
+				return false;
 		}else {
 
 			struct stat info;
@@ -62,9 +79,13 @@ TestParams::init (int argc, char* argv[])
 				{
 					// Push all files for testing into this conatiner	
 					instance().files.push_back (param);
+					continue;
 				}
 			}
 		}
+
+		// none of special parameters, so fallback to the testname
+		instance().tests.push_back(param);
 	
 	} // while
 
