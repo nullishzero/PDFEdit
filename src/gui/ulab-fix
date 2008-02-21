@@ -1,5 +1,0 @@
-#!/bin/sh
-export HOME2=`echo $HOME | sed 's,/,\\\/,g'`
-sed 's/$(SUBLIBS) -L$(QTDIR)/$(SUBLIBS) -L'$HOME2'\/qsa -L$(QTDIR)/' <Makefile >Makefile.out
-sed 's/INCPATH  = -I\/usr\/qt/INCPATH  = -I'$HOME2'\/qsa -I\/usr\/qt/' <Makefile.out >Makefile
-rm Makefile.out
