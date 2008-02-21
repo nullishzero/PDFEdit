@@ -1,4 +1,5 @@
 .cvsignore
+autom4te.cache
 CVS
 TODO
 FEATURES
