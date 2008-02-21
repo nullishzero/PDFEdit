@@ -18,7 +18,7 @@
 #ifdef __GNUC__
 	
 #define USE_GCC_PRAGMAS
-#endif
+
 /* There is a bug in the version of gcc which ships with MacOS X 10.2 */
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <AvailabilityMacros.h>
@@ -27,6 +27,7 @@
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_2
 #    undef USE_GCC_PRAGMAS
 #  endif
+#endif
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface
