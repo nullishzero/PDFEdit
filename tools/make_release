@@ -1,18 +1,24 @@
 #!/bin/sh
 
-#run in sufficiently empty directory!
+# Run in sufficiently empty directory!
 
+# Terminate on any error
+set -e
+
+# Reasonable umask for files
 umask 022
 if [ -e tarball ]
 then
-echo directory tarball already exist
-exit 1
+ echo directory tarball already exist
+ exit 1
 fi
 
+# Export CVS sources into "tarball" directory
 mkdir tarball
 cd tarball
 cvs export -D now pdfedit
 cd pdfedit
+# Generate files that should be in the distribution by default
 ./makedist
 cd ..
 
