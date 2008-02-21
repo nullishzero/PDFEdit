@@ -5,6 +5,9 @@
 # It is expected that the directory in which the sources are exported is named 
 # 'pdfedit'
 
+# Terminate on any error, so if something fails, broken or incomplete packages won't be generated
+set -e
+
 AUTOCONF=`which autoconf`
 # Checks for configure script and generates it if either
 # existing one is older than configure.in or it doesn't exist at all
