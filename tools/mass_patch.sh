@@ -6,7 +6,7 @@ usage()
 {
 	echo "$PROG_NAME usage:"
 	echo -e "\t$PROG_NAME patch_file [-dry] [-revert] files*"
-	echo -e "\n\tpatch_file\tpatch to apply. Note that patch file has to be without file header (contains only hunks)"
+	echo -e "\n\tpatch_file\tpatch to apply."
 	echo -e "\tfiles\tfiles to be used"
 	echo -e "\t-dry\tdry run - don't do any changes just try what would be done."
 	echo -e "\t-revert\trevers given patch"
