@@ -5,10 +5,11 @@ PROG_NAME=`basename $0`
 usage()
 {
 	echo "$PROG_NAME usage:"
-	echo -e "\t$PROG_NAME patch_file [dir]* [-dry]"
+	echo -e "\t$PROG_NAME patch_file [-dry] [-revert] files*"
 	echo -e "\n\tpatch_file\tpatch to apply. Note that patch file has to be without file header (contains only hunks)"
-	echo -e "\tdir\tdirectory to process (multiple are possible). Current one is used if none specified"
+	echo -e "\tfiles\tfiles to be used"
 	echo -e "\t-dry\tdry run - don't do any changes just try what would be done."
+	echo -e "\t-revert\trevers given patch"
 	exit 1
 }
 
@@ -18,22 +19,30 @@ then
 fi	
 
 PATCH_FILE=$1
-DIR=
+FILES=
 DRY=
+REVERT=
 
 shift
 for param in $*
 do
-	if [ -d $1 ]
+	if [ "i$1" = "i-dry" ]
 	then
-		DIR="$DIR \"$1\""
+		DRY=--dry-run
 		shift
 		continue
 	fi
 
-	if [ "i$1" = "i-dry" ]
+	if [ "i$1" = "i-revert" ]
 	then
-		DRY=--dry-run
+		REVERT=-R
+		shift
+		continue
+	fi
+
+	if [ -f $1 ]
+	then
+		FILES="$FILES $1"
 		shift
 		continue
 	fi
@@ -42,19 +51,15 @@ do
 	shift
 done
 
-if [ -z $DIR ]
-then
-	DIR="."
-fi
-
 echo patch to be used: $PATCH_FILE
-echo directories to be checked: $DIR
-echo dry-run $DRY
+echo files to be patched: $FILES
+[ -n "$DRY" ] && echo dry-run
+[ -n "$REVERT" ] && echo reverting
 
-for FILE in `find $DIR -type f -iname "*\.cc" -o -iname "*\.h" -o -iname "*\.c" -o -iname "*\.qs"`
+for FILE in $FILES
 do
 	echo -n "Patching $FILE "
 #	cat $PATCH_FILE | sed -e "s/\(^---\)\s\(.*\)\s.*/\1 ${FILE}/" -e "s/\(^+++\)\s\(.*\)\s.*/\1 ${FILE}/" | patch -p0 --dry-run && echo ok || echo failed
 
-	patch <$PATCH_FILE -p0 $DRY $FILE >& /dev/null && echo -e "\tok" || echo -e "\tfailed"
+	patch <$PATCH_FILE -p0 $DRY $REVERT $FILE >& /dev/null && echo -e "\tok" || echo -e "\tfailed"
 done
