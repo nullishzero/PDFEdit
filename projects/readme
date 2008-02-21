@@ -9,14 +9,16 @@ Windows Project Files
 
 
    a) open the project file according to your development environment
+   
+   b) compile BOOST (http://www.boost-consulting.com/products/free) and CPPUNIT (http://sourceforge.net/project/downloading.php?groupname=cppunit&filename=cppunit-1.12.0.tar.gz&use_mirror=surfnet)
+   
+   c) set BOOST & CPPUNIT includes in either Tools->Options->Project&Solutions->VC++ Directories->Include Files-> OR pdfedit->Property Pages->C/C++->General->Additional Include Directories
 
-   b) set BOOST & CPPUNIT includes in either Tools->Options->Project&Solutions->VC++ Directories->Include Files-> OR pdfedit->Property Pages->C/C++->General->Additional Include Directories
+   d) set debug parameters pdfedit->Property Pages->Configuration Properties->Debugging->Command Arguments to e.g. "-all -dir ..\testset -files ..\doc\zadani.pdf" 
 
-   c) set debug parameters pdfedit->Property Pages->Configuration Properties->Debugging->Command Arguments to e.g. "-all -dir ..\testset -files ..\doc\zadani.pdf" 
+   e) build solution
 
-   d) build solution
-
-   e) run tests 
+   f) run tests 
 
 
 
