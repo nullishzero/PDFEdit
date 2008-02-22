@@ -11,6 +11,7 @@ doc/doxygen.warnings
 doc/navrh
 doc/programmer
 doc/xpdf_analyse
+doc/copyright.files
 src/config_xpdf_variables
 src/gui/.moc
 src/gui/.obj
