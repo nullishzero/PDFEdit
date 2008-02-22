@@ -35,7 +35,6 @@ gui/consolewritergui.cc
 gui/consolewritergui.h
 gui/consolewriter.h
 gui/delinearize.qs
-gui/delinearize.qs.orig
 gui/dialog.cc
 gui/dialog.h
 gui/dialog_lib.qs
@@ -165,7 +164,6 @@ gui/scripts/_count_childs.qs
 gui/scripts/_crash.qs
 gui/scripts/delinearize.qs
 gui/scripts/_miro.qs
-gui/scripts/_miro.qs.orig
 gui/scripts/pdftoxml.qs
 gui/scripts/update.qs
 gui/selectpagesdialog.cc
