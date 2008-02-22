@@ -6,6 +6,7 @@ FEATURES
 maintains
 dist-exclude
 makedist
+testset
 doc/README.cygwin
 doc/doxygen.warnings
 doc/navrh
