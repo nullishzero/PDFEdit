@@ -33,7 +33,6 @@ src/kernel/*.o
 src/kernel/.obj
 src/kernel/kernel
 src/kernel/kernel.gch
-src/kernel/Makefile
 src/utils/.keepme
 src/xpdf/Makefile
 src/xpdf/aconf.h
