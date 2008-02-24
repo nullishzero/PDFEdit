@@ -19,6 +19,13 @@ contains( E_RELEASE, yes ) {
  CONFIG -= debug
 }
 
+# cygwin hack 
+# FIXME where do we define this? Is it qmake feature?
+#contains( QMAKE_CYGWIN_EXE, 1 ) {
+#TARGET   = pdfedit.exe
+#}
+
+
 # Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored
 # Note Qt4 is not (yet) supported
 QT += qt3support
@@ -42,6 +49,9 @@ TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pd
 DUMMY = $$system(lrelease $$TRANSLATIONS 2>/dev/null)
 
 # Installation details
+
+# Binary file installed in binary path (typically /usr/bin)
+target.path    = $$BIN_PATH
 
 # Data files installed in application data path (typically /usr/share/pdfedit)
 # Basic data files
@@ -85,23 +95,16 @@ doc_gui_images.path	= $$DOC_PATH/gui/images
 doc_gui_images.files	= ../../doc/user/gui/images/*.png
 doc_gui_m_images.path	= $$DOC_PATH/gui/menuAndToolbarsFun/images
 doc_gui_m_images.files	= ../../doc/user/gui/menuAndToolbarsFun/images/*.png
-doc_examples.path 	= $$DOC_PATH/examples
-doc_examples.files	= ../../doc/examples/*.qs
 
-# Binary file installed in binary path (typically /usr/bin)
-pdfedit.path    = $$BIN_PATH
-pdfedit.files   = pdfedit
-
-# cygwin hack
-contains( QMAKE_CYGWIN_EXE, 1 ) {
-pdfedit.files   += pdfedit.exe
-}
+# TODO where are examples
+#doc_examples.path 	= $$DOC_PATH/examples
+#doc_examples.files	= ../../doc/examples/*.qs
 
 # List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_icon_tango data_help data_help_cs data_help_images data_lang data_scripts
 INSTALLS += doc doc_images doc_gui_images doc_gui_m_images
-INSTALLS += doc_examples
-INSTALLS += pdfedit
+#INSTALLS += doc_examples
+INSTALLS += target 
 
 # too complicated for small utility.
 menugenerator.target     = menugenerator
