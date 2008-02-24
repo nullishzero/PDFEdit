@@ -32,7 +32,7 @@
 /** Application name shown in various About boxes, window titles, etc .... */
 #define APP_NAME "PDFedit"
 /** Version of application. */
-#define VERSION "0.4.0"
+#define VERSION "0.4.1"
 /** Compile time of this program */
 #define COMPILE_TIME (__DATE__ ", " __TIME__)
 

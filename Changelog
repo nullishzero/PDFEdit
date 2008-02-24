@@ -1,3 +1,8 @@
+2008-02-24 PDF Editor 0.4.1
+	* Missing src/kernel/Makefile in source tarball fixed
+	* Fixed bug in pdfedit.pro which could result in pdfedit binary
+	  not being installed
+
 2008-02-22 PDF Editor 0.4.0
 	* some memory leaks fixed - thanks to Gwurk
 	* new XPDF 3.02 imported to the tree - this fixed some security
