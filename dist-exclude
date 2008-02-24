@@ -7,7 +7,6 @@ maintains
 dist-exclude
 makedist
 testset
-doc/README.cygwin
 doc/doxygen.warnings
 doc/navrh
 doc/programmer
@@ -24,10 +23,10 @@ src/gui/obr
 src/gui/pdfedit
 src/gui/run-pdfedit-nd
 src/gui/ulab-fix
-src/gui/Makefile
+src/gui/Makefile.qt
 src/kpdf-kde-3.3.2/*.a
 src/kpdf-kde-3.3.2/*.o
-src/kpdf-kde-3.3.2/Makefile
+src/kpdf-kde-3.3.2/Makefile.qt
 src/kernel/*.a
 src/kernel/*.o
 src/kernel/.obj
