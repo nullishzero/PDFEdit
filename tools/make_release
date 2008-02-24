@@ -2,21 +2,38 @@
 
 # Run in sufficiently empty directory!
 
+TARBALL=`pwd`/tarball
+fail_cleanup()
+{
+	if [ -d $TARBALL ]
+	then
+		echo cleaning $TARBALL directory
+		rm -rf $TARBALL
+	fi
+	exit 1
+}
+
 # Terminate on any error
 set -e
 
+if [ -z $CVSROOT ]
+then
+  echo CVSROOT is not defined
+  exit 1
+fi
+
 # Reasonable umask for files
 umask 022
-if [ -e tarball ]
+if [ -e $TARBALL ]
 then
- echo directory tarball already exist
+ echo directory $TARBALL already exist
  exit 1
 fi
 
-# Export CVS sources into "tarball" directory
-mkdir tarball
-cd tarball
-cvs export -D now pdfedit
+# Export CVS sources into "$TARBALL" directory
+mkdir $TARBALL
+cd $TARBALL
+cvs export -D now pdfedit || fail_cleanup
 cd pdfedit
 # Generate files that should be in the distribution by default
 ./makedist
