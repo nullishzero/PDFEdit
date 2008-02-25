@@ -66,7 +66,7 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
   +tr("Homepage")+" : http://pdfedit.petricek.net/<br>"
   +tr("Project page")+" : http://sourceforge.net/projects/pdfedit";
 
- QString authors=QString("<b>Copyright (C) 2006, 2007 PDFedit team:</b><br>")
+ QString authors=QString("<b>Copyright (C) 2006, 2007, 2008 PDFedit team:</b><br>")
   +QString::fromUtf8("&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Mišutka<br>&nbsp; Martin Petříček<br>");
 
  QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1>"+tr("Compiled")+": "+COMPILE_TIME
