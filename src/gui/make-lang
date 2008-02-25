@@ -21,6 +21,9 @@
 #
 # Project is hosted on http://sourceforge.net/projects/pdfedit
 
+# (re)build menugenerator
+make -f Makefile.gui menugenerator || exit 1
+
 # Update language files specified in projectfile according to sources
 ./menugenerator -trans || exit 1
 
