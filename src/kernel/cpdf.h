@@ -28,7 +28,7 @@
 
 #include "kernel/static.h"
 
-#include <inttypes.h>
+//#include <inttypes.h>
 
 // xpdf
 #include "kernel/xpdf.h"
