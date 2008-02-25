@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Check release before actually releasing
+
+#TODO: unpack tarball elsewhere, run checks on unpacked stuff
+
+error=0
+
+#Check completeness of translations
+
+check_trans() {
+ un=`grep 'type="unfinished"' <$1 |wc -l`
+ obs=`grep 'type="obsolete"' <$1 |wc -l`
+ echo "$1 $un unfinished, $obs obsolete"
+ if test ! $un -eq 0
+ then
+  error=1
+ fi
+}
+
+echo "Checking translations"
+cd src/gui/lang
+for i in *.ts
+do
+ check_trans $i
+done
+
+# Return results of check
+
+if test $error -eq 0
+then
+ echo "Everything is OK"
+else
+ echo "Some errors encountered"
+fi
+
+exit $error
