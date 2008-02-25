@@ -53,7 +53,7 @@
 //
 // We don't have gcc
 //
-	#define __atribute__(x)
+	#define __attribute__(x)
 #endif
 
 #endif
