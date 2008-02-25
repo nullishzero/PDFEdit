@@ -30,7 +30,7 @@ contains( E_RELEASE, yes ) {
 # Note Qt4 is not (yet) supported
 QT += qt3support
 
-# must be specified, otherwise namespace debug will clash with debug() in QT
+# QT_CLEAN_NAMESPACE must be specified, otherwise namespace debug will clash with debug() in QT
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions $(EXTRA_GUI_CXXFLAGS)
 
 # Check installation prefix
@@ -44,7 +44,7 @@ isEmpty( PREFIX ) {
 DEPENDPATH += lang
 TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts
 
-# .qm files must exist before continuing, otherwise translations may be omitted from installing etc. (qmake bug)
+# All .qm files must exist before continuing, otherwise translations may be omitted from installing. (qmake bug)
 # In release, qm file are already compiled, so lrelease is not necessary
 DUMMY = $$system(lrelease $$TRANSLATIONS 2>/dev/null)
 
