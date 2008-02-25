@@ -315,10 +315,6 @@ Data: %3
         <translation>Změněna revize:</translation>
     </message>
     <message>
-        <source>Saving as</source>
-        <translation>Ukládám jako</translation>
-    </message>
-    <message>
         <source>Operators</source>
         <translation>Operátory</translation>
     </message>
@@ -1079,6 +1075,22 @@ Data: %3
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
         <translation>Použijte &apos;%1 --help&apos; k zobrazení seznamu přepínačů na příkazové řádce a jejich parametrů</translation>
     </message>
+    <message>
+        <source>Saved as</source>
+        <translation>Uloženo jako</translation>
+    </message>
+    <message>
+        <source>Unable to open file: %1</source>
+        <translation>Nelze otevřít soubor: %1</translation>
+    </message>
+    <message>
+        <source>Not implemented: %1</source>
+        <translation>Nepodporováno: %1</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>Neznámá chyba</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1804,10 +1816,6 @@ Režim zvýraznění</translation>
         <translation>Neznámá chyba při ukládání dokumentu</translation>
     </message>
     <message>
-        <source>Error occured while saving copy</source>
-        <translation>Při ukládání kopie došlo k chybě</translation>
-    </message>
-    <message>
         <source>Linearized PDF</source>
         <translation>Linearizované PDF</translation>
     </message>
@@ -1826,6 +1834,18 @@ Režim zvýraznění</translation>
     <message>
         <source>Selected annotations</source>
         <translation>Vybrané anotace</translation>
+    </message>
+    <message>
+        <source>Saving not implemented:
+%1</source>
+        <translation>Ukládání není implementováno:
+%1</translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy:
+%1</source>
+        <translation>Při ukládání kopie došlo k chybě:
+%1</translation>
     </message>
 </context>
 <context>
@@ -1924,6 +1944,12 @@ Režim zvýraznění</translation>
     <message>
         <source>Unknown error occured while saving document</source>
         <translation>Neznámá chyba při ukládání dokumentu</translation>
+    </message>
+    <message>
+        <source>Unable to save:
+%1</source>
+        <translation>Nelze uložit:
+%1</translation>
     </message>
 </context>
 <context>

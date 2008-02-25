@@ -246,11 +246,7 @@ void BaseCore::runScript(const QString &script) {
  preRun(script);
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addScriptingObjects();
-#ifdef QT4
- QVariant ret;
-#else
  QSArgument ret;
-#endif
  try {
   ret=qs->evaluate(script,this,"<GUI>");
  } catch (...) {
@@ -258,7 +254,6 @@ void BaseCore::runScript(const QString &script) {
  }
 
  if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
-#ifndef QT4
   switch (ret.type()) {
    case QSArgument::QObjectPtr: { //QObject -> print type
     QObject *ob=ret.qobject();
@@ -271,9 +266,6 @@ void BaseCore::runScript(const QString &script) {
    }
    case QSArgument::Variant: { //Variant - simple type.
     QVariant v=ret.variant();
-#else
-    QVariant v=ret;
-#endif
     if (!v.isNull()) {
      //Null -> nothing to show
      QString retVar=v.toString();
@@ -297,14 +289,12 @@ void BaseCore::runScript(const QString &script) {
       }
      }
     }
-#ifndef QT4
     break;
    }
    default: {
     //Invalid - print nothing (void, etc ...)
    }
   }
-#endif
  }
 /*
 //Error would be printed directly by the handler

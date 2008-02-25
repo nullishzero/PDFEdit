@@ -617,7 +617,7 @@
     </message>
     <message>
         <source>Saving as</source>
-        <translation>Сохраняется как</translation>
+        <translation type="obsolete">Сохраняется как</translation>
     </message>
     <message>
         <source>Warning: This document is linearized PDF!</source>
@@ -1074,6 +1074,22 @@ Data: %3
     </message>
     <message>
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saved as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1796,7 +1812,7 @@ Data: %3
     </message>
     <message>
         <source>Error occured while saving copy</source>
-        <translation>При сохранении копии произошла неизвестная ошибка</translation>
+        <translation type="obsolete">При сохранении копии произошла неизвестная ошибка</translation>
     </message>
     <message>
         <source>viewing revision</source>
@@ -1821,6 +1837,16 @@ Data: %3
     <message>
         <source>Loaded file</source>
         <translation>Загружен файл</translation>
+    </message>
+    <message>
+        <source>Saving not implemented:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy:
+%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1919,6 +1945,11 @@ Data: %3
     <message>
         <source>Page not found</source>
         <translation>Страница не найдена</translation>
+    </message>
+    <message>
+        <source>Unable to save:
+%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

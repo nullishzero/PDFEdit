@@ -316,7 +316,7 @@ Datos: %3
     </message>
     <message>
         <source>Saving as</source>
-        <translation>Guardando como</translation>
+        <translation type="obsolete">Guardando como</translation>
     </message>
     <message>
         <source>Operators</source>
@@ -1079,6 +1079,22 @@ Datos: %3
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Saved as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1820,7 +1836,7 @@ Datos: %3
     </message>
     <message>
         <source>Error occured while saving copy</source>
-        <translation>Error ocurrido mientras se guardaba una copia</translation>
+        <translation type="obsolete">Error ocurrido mientras se guardaba una copia</translation>
     </message>
     <message>
         <source>Linearized PDF</source>
@@ -1841,6 +1857,16 @@ Datos: %3
     <message>
         <source>Selected annotations</source>
         <translation>Anotaciones seleccionadas</translation>
+    </message>
+    <message>
+        <source>Saving not implemented:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy:
+%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1939,6 +1965,11 @@ Datos: %3
     <message>
         <source>Unknown error occured while saving document</source>
         <translation>Error desconocido ocurrido mientras se guardaba el documento</translation>
+    </message>
+    <message>
+        <source>Unable to save:
+%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

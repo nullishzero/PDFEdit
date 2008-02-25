@@ -312,10 +312,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Saving as</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Operators</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1076,6 +1072,22 @@ Data: %3
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Saved as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1799,10 +1811,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error occured while saving copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Linearized PDF</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1820,6 +1828,16 @@ Data: %3
     </message>
     <message>
         <source>Selected annotations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving not implemented:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1918,6 +1936,11 @@ Data: %3
     </message>
     <message>
         <source>Unknown error occured while saving document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to save:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

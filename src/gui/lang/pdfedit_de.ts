@@ -617,7 +617,7 @@
     </message>
     <message>
         <source>Saving as</source>
-        <translation>Speicher als</translation>
+        <translation type="obsolete">Speicher als</translation>
     </message>
     <message>
         <source>Warning: This document is linearized PDF!</source>
@@ -1076,6 +1076,22 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saved as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1802,10 +1818,6 @@ Daten: %3</translation>
         <translation>Ein unbekannter Fehler trat während des Speicherns des Dokuments auf</translation>
     </message>
     <message>
-        <source>Error occured while saving copy</source>
-        <translation>Ein Fehler trat während des Speichern einer Kopie auf</translation>
-    </message>
-    <message>
         <source>viewing revision</source>
         <translation>Änderung der Ansicht</translation>
     </message>
@@ -1828,6 +1840,17 @@ Daten: %3</translation>
     <message>
         <source>Loaded file</source>
         <translation>Datei geladen</translation>
+    </message>
+    <message>
+        <source>Saving not implemented:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy:
+%1</source>
+        <translation>Ein Fehler trat während des Speichern einer Kopie auf:
+%1</translation>
     </message>
 </context>
 <context>
@@ -1926,6 +1949,11 @@ Daten: %3</translation>
     <message>
         <source>Page not found</source>
         <translation>Seite wurde nicht gefunden</translation>
+    </message>
+    <message>
+        <source>Unable to save:
+%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
