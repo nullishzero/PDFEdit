@@ -317,6 +317,36 @@ See http://packages.debian.org/unstable/utils/pdfedit
 The package for the Ubuntu can by found at 
 http://packages.ubuntu.com/gutsy/utils/pdfedit
 
+And if you want to create deb package by your self, Eric Doviak 
+(thanks for this howto) suggests:
+
+First, install the packages necessary to build PDF Editor.
+
+# apt-get install dh-make libboost-dev libboost-iostreams-dev
+
+Then, download the tarball from Sourceforge and extracted the files:
+
+$ tar -zxf pdfedit_0.4.1.tar.gz
+
+Next, enter the pdfedit-0.4.1/ directory and run dh_make
+
+$ cd pdfedit-0.4.1/
+$ dh_make --createorig
+
+Choose to create a single binary. After running dh_make, open the
+pdfedit-0.4.1/debian/rules file and comment out (#) line 48:
+
+# $(MAKE) distclean
+
+Then, run:
+
+$ export QTDIR=/usr/share/qt3
+$ dpkg-buildpackage
+
+That creates the DEB package that you can install with:
+
+# dpkg -i pdfedit_0.4.1-1_i386.deb
+
 
 RPM based distros
 =================
