@@ -817,7 +817,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	scoped_ptr<Parser> parser(
 			new Parser (xref, 
 				new Lexer (xref,
-					new MemStream (pStr, 0, len, &dct, true)
+					new MemStream (pStr, 0, len, &dct, gTrue)
 					),
 				gTrue
 				)
