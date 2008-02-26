@@ -36,6 +36,10 @@
 #include <os/win.h>
 #endif
 
+#ifdef _POSIX_SOURCE
+#include <os/posix.h>
+#endif
+
 //============================================
 //  POSIX
 //============================================

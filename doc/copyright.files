@@ -307,6 +307,7 @@ kernel/xpdf.h
 kernel/xrefwriter.cc
 kernel/xrefwriter.h
 os/compiler.h
+os/posix.h
 os/win.h
 tests/kernel/main.cc
 tests/kernel/testccontentstream.cc
