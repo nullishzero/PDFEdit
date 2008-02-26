@@ -27,11 +27,11 @@
 #define _PDFEDIT_POSIX_H_
 
 #ifndef _POSIX_SOURCE
-#error This is not a Posix compliant system
+#error This is not a POSIX compliant system
 #endif
 
-// posix specific includes and defiens which are not platform 
-// independant - mostly not portable to windows
+// POSIX specific includes and defines which are not platform 
+// independent - mostly not portable to Windows
 
 #include <inttypes.h>
 
