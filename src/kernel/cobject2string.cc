@@ -136,9 +136,32 @@ void
 simpleValueToString<pInt> (int val, string& str)
 {
 	char buf[24];
-	sprintf(buf,"%d",val);
+	snprintf(buf, sizeof(buf)-1, "%d",val);
 	str=buf;
 }
+
+/** Removes trailing zeros from given number in string
+ * form.
+ *
+ * @param number_str Number in string representation.
+ *
+ * Note that number must be in [-+]nnnn.nnnn form.
+ */
+void trim_trailing_zero(char * number_str)
+{
+	char * p, *decimal = strchr(number_str, '.');
+	if(!decimal)
+		return;
+	for(p=&number_str[strlen(number_str)-1];
+			decimal < p && *p=='0'; --p)
+		*p= '\0';
+
+	// get rid of decimal point with no trailing decimal numbers
+	if(p == decimal)
+		*p='\0';
+	
+}
+
 //
 //
 //
@@ -147,7 +170,21 @@ void
 simpleValueToString<pReal> (double val, string& str)
 {
 	char buf[64];
-	sprintf(buf, "%g", val);
+
+	/* PDF specification doesn't allow [-]dd.dddE+-EXP
+	 * real number format. So we have to make sure that
+	 * all numbers have [-]dd.dddd format.
+	 * PDF specification also says that we are using 5
+	 * significant decimal digits.
+	 * Note that %g produce required output only if 
+	 * exponent is lower than precision and if it is
+	 * higher than -4 (precision has different meaning
+	 * here saying the max. number of all shown digits).
+	 * We will simply use %f with fixed precision and 
+	 * remove trailing zeros to reduce used space.
+	 */
+	snprintf(buf, sizeof(buf)-1, "%.5f", val);
+	trim_trailing_zero(buf);
  	str.assign(buf);
 }
 
