@@ -337,6 +337,11 @@ public:
 	using namespace utils;
 
 		printf("%s\n", __FUNCTION__);
+		if(pdf->isLinearized())
+		{
+			printf("Usecase is not suitable becuase document is linearized\n");
+			return;
+		}
 
 		size_t pageCount=pdf->getPageCount();
 		if (0 == pageCount)
@@ -696,6 +701,64 @@ public:
 		CPPUNIT_ASSERT(pdf->isChanged());
 	}
 
+	void linearizedTC(CPdf * pdf)
+	{
+		printf("%s\n", __FUNCTION__);
+		if(!pdf->isLinearized())
+		{
+			printf("Usecase is not suitable becuase document is not linearized\n");
+			return;
+		}
+		printf("TC01:\tPdf mustn't be modified\n");
+		CPPUNIT_ASSERT(!pdf->isChanged());
+		printf("TC02:\tAll modification methods have to fail with exception\n");
+		shared_ptr<CInt> prop(pdfobjects::CIntFactory::getInstance(1));
+		try
+		{
+			pdf->addIndirectProperty(prop);
+			CPPUNIT_FAIL("CPdf::addIndirectProperty should have failed");
+		}catch(ReadOnlyDocumentException e)
+		{
+			// ok should have failed
+		}
+		try
+		{
+			pdf->changeIndirectProperty(prop);
+			CPPUNIT_FAIL("CPdf::changeIndirectProperty should have failed");
+		}catch(ReadOnlyDocumentException e)
+		{
+			// ok should have failed
+		}
+		shared_ptr<CPage> page = pdf->getFirstPage();
+		try
+		{
+			pdf->insertPage(page, 1);
+			CPPUNIT_FAIL("CPdf::insertPage should have failed");
+		}catch(ReadOnlyDocumentException e)
+		{
+			// ok should have failed
+		}
+		try
+		{
+			pdf->removePage(1);
+			CPPUNIT_FAIL("CPdf::removePage should have failed");
+		}catch(ReadOnlyDocumentException e)
+		{
+			// ok should have failed
+		}
+		try
+		{
+			pdf->canChange();
+			CPPUNIT_FAIL("CPdf::canChange should have failed");
+		}catch(ReadOnlyDocumentException e)
+		{
+			// ok should have failed
+		}
+		
+		printf("TC03:\tLinearized document has only one revision\n");
+		CPPUNIT_ASSERT(pdf->getRevisionsCount() == 1);	
+	}
+
 /** Multiversion file name. */
 #define MV_F "multiversion.pdf"
 
@@ -825,6 +888,11 @@ public:
 	using namespace utils;
 	
 		printf("%s\n", __FUNCTION__);
+		if(pdf->isLinearized())
+		{
+			printf("Usecase is not suitable becuase document is linearized\n");
+			return;
+		}
 
 		printf("TC01:\taddIndirectProperty with simple property with no pdf\n");
 		// creates new property and adds it
@@ -1095,6 +1163,7 @@ public:
 			cloneTC(pdf, fileName);
 			indirectPropertyTC(pdf);
 			pageManipulationTC(pdf);
+			linearizedTC(pdf);
 			pdf->close();
 
 			delinearizatorTC(fileName);
