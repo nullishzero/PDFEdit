@@ -3149,6 +3149,9 @@ void CPdf::changeRevision(revision_t revisionNum)
 
 void CPdf::canChange () const
 {
+	if (xref->isLinearized())
+		throw ReadOnlyDocumentException("Dcoument is linearized");
+
 	//
 	// Not in lates revision
 	//
