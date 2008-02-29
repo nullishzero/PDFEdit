@@ -34,7 +34,7 @@ DEP_LIBS = $(KERNELROOT)/libkernel.a \
 	   $(XPDFROOT)/goo/libGoo.a $(XPDFROOT)/splash/libsplash.a
 
 OBJECTS = $(SOURCES:.cc=.o)
-TARGET   = kernel_tests
+TARGET   = test_bin
 
 all: $(TARGET)
 
