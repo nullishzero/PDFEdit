@@ -195,7 +195,8 @@ XRef::XRef(BaseStream *strA) {
   str = strA;
   // gets position of last xref section
   Guint pos = getStartXref();
-  initInternals(pos);
+  if(errCode == errNone)
+    initInternals(pos);
 }
 
 /** Initializes all XRef internal structures.
@@ -285,8 +286,9 @@ XRef::~XRef() {
 // Read the 'startxref' position.
 Guint XRef::getStartXref() {
   char buf[xrefSearchSize+1];
-  char *p;
   int c, n, i;
+
+  errCode = errNone;
 
   // read last xrefSearchSize bytes
   str->setPos(xrefSearchSize, -1);
@@ -305,12 +307,15 @@ Guint XRef::getStartXref() {
     }
   }
   if (i < 0) {
+    errCode = errDamaged;
     return 0;
   }
-  for (p = &buf[i+9]; isspace(*p); ++p) ;
-  lastXRefPos = strToUnsigned(p);
 
-  // p points to file offset value for startxref now, we will try to 
+  // get value for startxref
+  for (i += strlen("startxref"); isspace(buf[i]); ++i) ;
+  lastXRefPos = strToUnsigned(&buf[i]);
+
+  // We are immediatelly after startxref value now. We will try to 
   // find %%EOF from here. If not found, we will use end of buffer as
   // end of file position
   for(; i<n; i++)
