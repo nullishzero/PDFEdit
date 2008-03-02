@@ -78,7 +78,7 @@ clean:
 	cd $(TESTSROOT) && $(MAKE) clean || true
 	cd $(UTILSROOT) && $(MAKE) clean
 	cd $(XPDFROOT) && $(MAKE) clean || true
-	cd $(QOUTPUTDEVROOT) && $(MAKE) clean || true
+	cd $(QOUTPUTDEVROOT) && $(MAKE) -f Makefile.gui clean || true
 	$(DEL_FILE) $(GUIROOT)/Makefile.qt 
 	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile.qt
 
