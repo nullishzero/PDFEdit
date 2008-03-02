@@ -118,7 +118,7 @@ AC_SUBST(DEBUG)
 AC_SUBST(E_RELEASE)
 AC_SUBST(WARN)
 
-dnl Enable observer debugging (disabled by default
+dnl Enable observer debugging (disabled by default)
 AC_ARG_ENABLE(observer-debug,
 [AS_HELP_STRING([--enable-observer-debug],
 		[Turn on observer debugging (disabled by default)])],
