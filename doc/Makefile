@@ -12,9 +12,11 @@ include Makefile.rules
 all: doc_dist
 
 # Build man pages and doxygen doc if required
-doc_dist: doc_man $(DOXYGEN_TARGET) $(ADVANCED_DOC_TARGET)
+doc_dist: doc_man $(DOXYGEN_TARGET) $(ADVANCED_DOC_TARGET) $(USER_MANUAL_TARGET)
 
-doc_dist_install: doc_man_install $(DOXYGEN_INSTALL_TARGET) \
+doc_dist_install: doc_man_install \
+	$(USER_MANUAL_INSTALL_TARGET) \
+	$(DOXYGEN_INSTALL_TARGET) \
 	$(ADVANCED_DOC_INSTALL_TARGET)
 	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/;
 	$(COPY_FILE) LICENSE.GPL ../README ../Changelog AUTHORS README-* \
@@ -43,8 +45,19 @@ doc_doxygen_install: doc_doxygen
 	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/doxygen;
 	$(COPY_DIR) programmer/html/* $(INSTALL_ROOT)$(DOC_PATH)/doxygen
 
-# User documentation (installation target is part of gui)
+# User documentation
 doc_user: doc_user_nopdf
+
+doc_user_install: doc_user
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/manual;
+	$(COPY_FILE) user/*.html $(INSTALL_ROOT)$(DOC_PATH)/manual;
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/manual/images ;
+	$(COPY_FILE) user/images/*.png $(INSTALL_ROOT)$(DOC_PATH)/manual/images;
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/manual/gui/images;
+	$(COPY_FILE) user/gui/images/*.png $(INSTALL_ROOT)$(DOC_PATH)/manual/gui/images;
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/manual/examples;
+	$(COPY_FILE) user/examples/*.qs $(INSTALL_ROOT)$(DOC_PATH)/manual/examples
+	
 
 doc_user_nopdf:
 	cd user && $(MAKE) all_no_pdf

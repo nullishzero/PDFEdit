@@ -166,8 +166,7 @@ QOUTPUTDEV_LIBS	 = -lqoutputdevices -L$(QOUTPUTDEVROOT)/
 QSALIB		 = -lqsa_pdfedit -L$(QSAROOT)/lib/
 PDFEDIT_LIBS     = -lkernel -L$(KERNELROOT) -lutils -L$(UTILSROOT) \
 		   -lxpdf -L$(XPDFROOT)/xpdf -lfofi -L$(XPDFROOT)/fofi \
-		   -lGoo -L$(XPDFROOT)/goo -lsplash -L$(XPDFROOT)/splash \
-		   -lutils -L$(UTILSROOT) 
+		   -lGoo -L$(XPDFROOT)/goo -lsplash -L$(XPDFROOT)/splash 
 # given from configure parameters
 STANDARD_LIBS	 = @LIBS@
 STANDARD_LDFLAGS = @LDFLAGS@
@@ -176,6 +175,13 @@ STANDARD_LDFLAGS = @LDFLAGS@
 MANDATORY_LIBS	 = $(BOOST_LIBS) $(BOOST_IOSTREAMS_LIB) $(PDFEDIT_LIBS) \
 		   $(FREETYPE_LIBS) $(T1_LIBS)
 
+# all necessary libraries in file with path form (mainly for qmake projects
+# to enable dependency on them)
+# TODO use more generic library names (LIBPREFIX, suffix according static/
+# dynamic library)
+MANDATORY_LIB_FILES = $(KERNELROOT)/libkernel.a $(UTILSROOT)/libutils.a \
+		      $(XPDFROOT)/xpdf/libxpdf.a $(XPDFROOT)/fofi/libfofi.a \
+		      $(XPDFROOT)/goo/libGoo.a $(XPDFROOT)/splash/libsplash.a
 
 ########################################
 # Compilation targets
@@ -183,10 +189,21 @@ MANDATORY_LIBS	 = $(BOOST_LIBS) $(BOOST_IOSTREAMS_LIB) $(PDFEDIT_LIBS) \
 
 # configure parameter --enable-gui
 GUI_TARGET	 = @GUI_TARGET@
+
 # configure parameter --enable-kernel-tests
-TESTS_TARGET 	 = @TESTS_TARGET@
+KERNEL_TESTS_TARGET = @KERNEL_TESTS_TARGET@
+
+# Cumulative target for all possible tests
+TEST_TARGETS = $(KERNEL_TESTS_TARGET)
+
+# configure parameter --enable-doxygen-doc
 DOXYGEN_TARGET	 = @DOXYGEN_TARGET@
 DOXYGEN_INSTALL_TARGET = @DOXYGEN_INSTALL_TARGET@
-# Extended documentation (design)
+
+# configure parameter --enable-advanced-doc
 ADVANCED_DOC_TARGET = @ADVANCED_TARGET@
 ADVANCED_DOC_INSTALL_TARGET = @ADVANCED_INSTALL_TARGET@
+
+# configure parameter --enable-user-manual
+USER_MANUAL_TARGET = @USER_MANUAL_TARGET@
+USER_MANUAL_INSTALL_TARGET = @USER_MANUAL_INSTALL_TARGET@

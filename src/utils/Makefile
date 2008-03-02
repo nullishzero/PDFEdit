@@ -19,18 +19,38 @@ SOURCES=debug.cc \
 BINS=debug.o \
      confparser.o
 
+HEADERS= \
+	aconf.h \
+	algorithms.h \
+	confparser.h \
+	debug.h \
+	doxygen.h \
+	iterator.h \
+	objectstorage.h \
+	observer.h \
+	rulesmanager.h \
+	types.h \
+
 # FIXME use LIBPREFIX
 TARGET = libutils.a
 
 all: $(TARGET)
-$(TARGET): $(BINS)
+$(TARGET): deps $(BINS)
 	-$(DEL_FILE) $(TARGET)
 	$(AR) $(TARGET) $(BINS)
 	$(RANLIB) $(TARGET)
 
 .PHONY: clean distclean
 clean:
-	$(DEL_FILE) $(BINS)
+	$(DEL_FILE) $(BINS) deps
 
 distclean: clean
 	$(DEL_FILE) $(TARGET)
+	
+deps: $(HEADERS)
+	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
+
+# This requires GNU make (or compatible) because deps file doesn't
+# exist in time when invoked for the first time and thus has to
+# be generated
+include deps

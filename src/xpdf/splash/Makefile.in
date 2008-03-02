@@ -32,6 +32,31 @@ CXX_SRC = \
 	SplashXPath.cc \
 	SplashXPathScanner.cc
 
+HEADERS = \
+	Splash.h\
+	SplashBitmap.h\
+	SplashClip.h\
+	SplashErrorCodes.h\
+	SplashFTFont.h\
+	SplashFTFontEngine.h\
+	SplashFTFontFile.h\
+	SplashFont.h\
+	SplashFontEngine.h\
+	SplashFontFile.h\
+	SplashFontFileID.h\
+	SplashGlyphBitmap.h\
+	SplashMath.h\
+	SplashPath.h\
+	SplashPattern.h\
+	SplashScreen.h\
+	SplashState.h\
+	SplashT1Font.h\
+	SplashT1FontEngine.h\
+	SplashT1FontFile.h\
+	SplashTypes.h\
+	SplashXPath.h\
+	SplashXPathScanner.h\
+
 #------------------------------------------------------------------------
 
 all: $(LIBPREFIX)splash.a
@@ -59,7 +84,7 @@ SPLASH_OBJS = \
 	SplashXPath.o \
 	SplashXPathScanner.o
 
-$(LIBPREFIX)splash.a: $(SPLASH_OBJS)
+$(LIBPREFIX)splash.a: deps $(SPLASH_OBJS)
 	$(DEL_FILE) $(LIBPREFIX)splash.a
 	$(AR) $(LIBPREFIX)splash.a $(SPLASH_OBJS)
 	$(RANLIB) $(LIBPREFIX)splash.a
@@ -67,14 +92,14 @@ $(LIBPREFIX)splash.a: $(SPLASH_OBJS)
 #------------------------------------------------------------------------
 
 clean:
-	$(DEL_FILE) $(SPLASH_OBJS) $(LIBPREFIX)splash.a
+	$(DEL_FILE) $(SPLASH_OBJS) $(LIBPREFIX)splash.a deps
 
 #------------------------------------------------------------------------
 
-# FIXME Makefile.dep fails because of SplashFTFont*.h which include from 
-# macro defined file name
-Makefile.dep:
-	-$(CXX) $(XPDFLAGS) -MM $(CXX_SRC) >Makefile.dep
+deps: $(HEADERS)
+	-$(CXX) $(MANDATORY_INCPATH) -M $(CXX_SRC) > deps
 
-# FIXME  FreeBSD make is not able to include non existent file
-#include Makefile.dep
+# This requires GNU make (or compatible) because deps file doesn't
+# exist in time when invoked for the first time and thus has to
+# be generated
+include deps

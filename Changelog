@@ -1,5 +1,6 @@
 ????-??-?? PDF Editor 0.4.2
 	* Bugs 217 fixed
+	* Print summary information with used options after running configure script
 	
 2008-02-24 PDF Editor 0.4.1
 	* Missing src/kernel/Makefile in source tarball fixed

@@ -28,11 +28,4 @@ clean:
 distclean: clean
 	$(DEL_FILE) aconf.h || true
 	$(DEL_FILE) Makefile goo/Makefile xpdf/Makefile fofi/Makefile splash/Makefile || true
-	$(DEL_FILE) goo/Makefile.dep fofi/Makefile.dep splash/Makefile.dep xpdf/Makefile.dep || true
 	$(DEL_FILE) goo/Makefile.in.bak fofi/Makefile.in.bak splash/Makefile.in.bak xpdf/Makefile.in.bak || true
-
-depend:
-	cd goo && $(MAKE) Makefile.dep
-	cd fofi && $(MAKE) Makefile.dep
-	cd splash && $(MAKE) Makefile.dep
-	cd xpdf && $(MAKE) Makefile.dep

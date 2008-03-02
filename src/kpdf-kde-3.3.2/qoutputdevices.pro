@@ -1,22 +1,33 @@
 TEMPLATE = lib
+TARGET = qoutputdevices
 
 CONFIG += staticlib
 
-TARGET = qoutputdevices
+# We want to have debug functionality and warnings under controll
+QMAKE_CFLAGS -= -g -Wall
+QMAKE_CXXFLAGS -= -g -Wall
+QMAKE_CFLAGS_RELEASE -= -g -Wall
+QMAKE_CXXFLAGS_RELEASE -= -g -Wall
 
 # include basic definitions from configuration process
 include(../../Makefile.flags)
 
-#check debug/release
+# check debug/release
 contains( E_RELEASE, no ) {
- CONFIG += debug
+ # debug mode
+ # turns off optimalizations
  CONFIG -= release
+ CONFIG -= warn_off
+ CONFIG *= debug
+ CONFIG *= warn_on
 }
 contains( E_RELEASE, yes ) {
  # release mode
  # turns on optimalizations
- CONFIG += release
  CONFIG -= debug
+ CONFIG -= warn_on
+ CONFIG *= warn_off
+ CONFIG *= release
 }
 
 #Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored

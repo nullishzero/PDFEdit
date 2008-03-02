@@ -54,20 +54,65 @@ CXX_SRC = \
 	TextOutputDev.cc \
 	UnicodeMap.cc \
 	UnicodeTypeTable.cc \
-	XPDFApp.cc \
-	XPDFCore.cc \
-	XPDFTree.cc \
-	XPDFViewer.cc \
-	XpdfPluginAPI.cc \
 	XRef.cc \
 	pdftops.cc \
 	pdftotext.cc \
 	pdfinfo.cc \
 	pdffonts.cc \
 	pdftoppm.cc \
-	pdfimages.cc \
-	xpdf.cc
-
+	pdfimages.cc 
+HEADERS = \
+	Annot.h \
+	Array.h \
+	BuiltinFont.h \
+	BuiltinFontTables.h \
+	CMap.h \
+	Catalog.h \
+	CharCodeToUnicode.h \
+	CharTypes.h \
+	CompactFontTables.h \
+	CoreOutputDev.h \
+	Decrypt.h \
+	Dict.h \
+	Error.h \
+	ErrorCodes.h \
+	FontEncodingTables.h \
+	Function.h \
+	Gfx.h \
+	GfxFont.h \
+	GfxState.h \
+	GlobalParams.h \
+	ImageOutputDev.h \
+	JArithmeticDecoder.h \
+	JBIG2Stream.h \
+	JPXStream.h \
+	Lexer.h \
+	Link.h \
+	NameToCharCode.h \
+	NameToUnicodeTable.h \
+	Object.h \
+	Outline.h \
+	OutputDev.h \
+	PDFCore.h \
+	PDFDoc.h \
+	PDFDocEncoding.h \
+	PSOutputDev.h \
+	PSTokenizer.h \
+	Page.h \
+	Parser.h \
+	PreScanOutputDev.h \
+	SecurityHandler.h \
+	SplashOutputDev.h \
+	Stream-CCITT.h \
+	Stream.h \
+	TextOutputDev.h \
+	UTF8.h \
+	UnicodeMap.h \
+	UnicodeMapTables.h \
+	UnicodeTypeTable.h \
+	XRef.h \
+	XpdfPluginAPI.h \
+	config.h \
 #------------------------------------------------------------------------
 
 all: all-no-x
@@ -122,7 +167,7 @@ XpdfPluginAPI.o
 
 libxpdf:	$(LIBPREFIX)xpdf.a
 
-$(LIBPREFIX)xpdf.a: $(LIBXPDF_OBJS)
+$(LIBPREFIX)xpdf.a: deps $(LIBXPDF_OBJS)
 	$(DEL_FILE) $(LIBPREFIX)xpdf.a
 	$(AR) $(LIBPREFIX)xpdf.a $(LIBXPDF_OBJS)
 	$(RANLIB) $(LIBPREFIX)xpdf.a
@@ -137,12 +182,14 @@ SecurityHandler.x.o: SecurityHandler.cc
 
 clean:
 	$(DEL_FILE) *.o
-	$(DEL_FILE) $(LIBPREFIX)xpdf.a
+	$(DEL_FILE) $(LIBPREFIX)xpdf.a deps
 
 #------------------------------------------------------------------------
 
-Makefile.dep:
-	$(CXX) $(XPDFLAGS) -MM $(CXX_SRC) >Makefile.dep
+deps: $(HEADERS)
+	$(CXX) $(MANDATORY_INCPATH) -M $(CXX_SRC) > deps
 
-# FIXME FreeBSD make is not able to include non existent file
-#include Makefile.dep
+# this requires gnu make (or compatible) because deps file doesn't
+# exist in time when invoked for the first time and thus has to
+# be generated
+include deps

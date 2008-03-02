@@ -1,4 +1,7 @@
 # Makefile for documentation
+# TODO clean up - remove all unused stuff from here.
+# 	we would like to keep onlu online_help and all (all_no_pdf)
+# 	targets and everything else should go away
 
 # root of doc/ directory
 TOP_DIR=..

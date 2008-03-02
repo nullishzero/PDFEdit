@@ -2,6 +2,12 @@
 TEMPLATE = app
 TARGET = pdfedit
 
+# We want to have debug functionality and warnings under controll
+QMAKE_CFLAGS -= -g -Wall
+QMAKE_CXXFLAGS -= -g -Wall
+QMAKE_CFLAGS_RELEASE -= -g -Wall
+QMAKE_CXXFLAGS_RELEASE -= -g -Wall
+
 # include basic definitions from configuration process
 include(../../Makefile.flags)
 
@@ -9,14 +15,18 @@ include(../../Makefile.flags)
 contains( E_RELEASE, no ) {
  # debug mode
  # turns off optimalizations
- CONFIG += debug
  CONFIG -= release
+ CONFIG -= warn_off
+ CONFIG *= debug
+ CONFIG *= warn_on
 }
 contains( E_RELEASE, yes ) {
  # release mode
  # turns on optimalizations
- CONFIG += release
  CONFIG -= debug
+ CONFIG -= warn_on
+ CONFIG *= warn_off
+ CONFIG *= release
 }
 
 # cygwin hack 
@@ -31,7 +41,7 @@ contains( E_RELEASE, yes ) {
 QT += qt3support
 
 # QT_CLEAN_NAMESPACE must be specified, otherwise namespace debug will clash with debug() in QT
-QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions $(EXTRA_GUI_CXXFLAGS)
+QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions
 
 # Check installation prefix
 isEmpty( PREFIX ) {
@@ -52,6 +62,8 @@ DUMMY = $$system(lrelease $$TRANSLATIONS 2>/dev/null)
 
 # Binary file installed in binary path (typically /usr/bin)
 target.path    = $$BIN_PATH
+
+TARGETDEPS	+= $(MANDATORY_LIB_FILES)
 
 # Data files installed in application data path (typically /usr/share/pdfedit)
 # Basic data files
@@ -85,16 +97,16 @@ data_scripts.path	= $$DATA_PATH/scripts
 data_scripts.files 	= scripts/[a-z0-9A-Z]*.qs
 
 # Documentation installed in documentation path (typically /usr/share/doc)
-doc.path        = $$DOC_PATH
-doc.files       = ../../doc/user/*.html ../../doc/user/*.pdf  
+#doc.path        = $$DOC_PATH
+#doc.files       = ../../doc/user/*.html ../../doc/user/*.pdf  
 
 # FIXME what is difference between user/images and user/gui/images?
-doc_images.path		= $$DOC_PATH/images
-doc_images.files	= ../../doc/user/images/*.png
-doc_gui_images.path	= $$DOC_PATH/gui/images
-doc_gui_images.files	= ../../doc/user/gui/images/*.png
-doc_gui_m_images.path	= $$DOC_PATH/gui/menuAndToolbarsFun/images
-doc_gui_m_images.files	= ../../doc/user/gui/menuAndToolbarsFun/images/*.png
+#doc_images.path	= $$DOC_PATH/images
+#doc_images.files	= ../../doc/user/images/*.png
+#doc_gui_images.path	= $$DOC_PATH/gui/images
+#doc_gui_images.files	= ../../doc/user/gui/images/*.png
+#doc_gui_m_images.path	= $$DOC_PATH/gui/menuAndToolbarsFun/images
+#doc_gui_m_images.files	= ../../doc/user/gui/menuAndToolbarsFun/images/*.png
 
 # TODO where are examples
 #doc_examples.path 	= $$DOC_PATH/examples
@@ -102,7 +114,7 @@ doc_gui_m_images.files	= ../../doc/user/gui/menuAndToolbarsFun/images/*.png
 
 # List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_icon_tango data_help data_help_cs data_help_images data_lang data_scripts
-INSTALLS += doc doc_images doc_gui_images doc_gui_m_images
+#INSTALLS += doc doc_images doc_gui_images doc_gui_m_images
 #INSTALLS += doc_examples
 INSTALLS += target 
 
@@ -240,7 +252,8 @@ INCPATH += $(MANDATORY_PATHS)
 LIBS += $(MANDATORY_LIBS)
 
 # Flags from configuration
-QMAKE_CXXFLAGS += $(CONFIG_CXXFLAGS)
+QMAKE_CFLAGS += $(CONFIG_CFLAGS)
+QMAKE_CXXFLAGS += $(CONFIG_CXXFLAGS) $(EXTRA_GUI_CXXFLAGS)
 
 # directories to creating files
 unix {

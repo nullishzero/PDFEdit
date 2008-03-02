@@ -9,7 +9,7 @@ include $(REL_ADDR)Makefile.rules
 
 # make PDF editor - source and documentation
 # targets are determined during configure
-all: kernel $(TESTS_TARGET) $(GUI_TARGET)
+all: kernel tests $(GUI_TARGET)
 
 # XPdf
 xpdf:
@@ -67,8 +67,8 @@ kernel: xpdf utils
 	cd $(KERNELROOT) && $(MAKE)
 
 # kernel tests
-kernel_tests: kernel
-	cd $(TESTSROOT) && $(MAKE) kernel_tests
+tests: kernel
+	cd $(TESTSROOT) && $(MAKE) 
 
 # Cleanup
 clean:

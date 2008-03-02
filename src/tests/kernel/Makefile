@@ -51,5 +51,7 @@ distclean: clean
 deps: $(HEADERS)
 	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
 
-# FIXME FreeBSD make is not able to include non existent file
-#-include deps
+# This requires GNU make (or compatible) because deps file doesn't
+# exist in time when invoked for the first time and thus has to
+# be generated
+include deps

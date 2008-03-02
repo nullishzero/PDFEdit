@@ -65,6 +65,7 @@ distclean: clean
 	-$(DEL_FILE) $(TARGET)
 
 
-# FIXME change this because we are force to include this even if we want
-# to do make clean. FreeBSD make is not able to include non existent file
-#-include deps
+# This requires GNU make (or compatible) because deps file doesn't
+# exist in time when invoked for the first time and thus has to
+# be generated
+include deps

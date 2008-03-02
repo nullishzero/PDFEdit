@@ -8,13 +8,17 @@ include $(REL_ADDR)Makefile.rules
 
 .PHONY: distclean clean kernel_tests
 
-# TDOD add all, install and uninstall targets depending on configuration
+# TODO add install and uninstall targets depending on configuration
 
+# Compiles only configured tests
+all: $(TEST_TARGETS)
+
+# Defined by KERNEL_TESTS_TARGET variable
 kernel_tests:
 	cd $(KERNELTESTSROOT) && $(MAKE) kernel_tests
 
-clean:
-	cd $(KERNELTESTSROOT) && $(MAKE) clean
+clean: 
+	[ -n $(KERNEL_TESTS_TARGET) ] && cd $(KERNELTESTSROOT) && $(MAKE) clean
 
 distclean: 
-	cd $(KERNELTESTSROOT) && $(MAKE) distclean
+	[ -n $(KERNEL_TESTS_TARGET) ] && cd $(KERNELTESTSROOT) && $(MAKE) distclean

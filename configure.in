@@ -221,6 +221,19 @@ AC_SUBST(QSA_DIR)
 AC_SUBST(INSTALL_TARGET)
 AC_SUBST(UNINSTALL_TARGET)
 
+AC_ARG_WITH([root-dir],
+	    AS_HELP_STRING([--with-root-dir=DIR], 
+			   [Install files under different root directory (path to prepend before
+			    the prefix, empty by default - use if you are packager and want to create
+			    package, or if you are installing into chrooted environment).]
+			   ),
+			   [
+				root_dir="$withval/"
+			   ],
+			   [root_dir=""]
+	    )
+AC_SUBST(root_dir)
+
 dnl TODO handle also dev package (exclusive with gui case)
 
 dnl Sets TESTS_TARGET and cppunit stuff, if we want to have 
@@ -234,7 +247,7 @@ AC_ARG_ENABLE(kernel-tests,
 AC_MSG_CHECKING(whether we want to compile kernel tests too)
 if test "x$enable_kernel_tests" = "xyes"; then
 	AC_MSG_RESULT(yes)
-	TESTS_TARGET="$TESTS_TARGET kernel_tests"
+	KERNEL_TESTS_TARGET="$KERNEL_TESTS_TARGET kernel_tests"
 	dnl FIXME check the version - it is required by macro - I have used some
 	dnl random one
 	AM_PATH_CPPUNIT(1.10.0)
@@ -245,7 +258,7 @@ if test "x$enable_kernel_tests" = "xyes"; then
 else
 	AC_MSG_RESULT(no)
 fi
-AC_SUBST(TESTS_TARGET)
+AC_SUBST(KERNEL_TESTS_TARGET)
 
 AC_ARG_ENABLE(doxygen-doc,
 	      [AS_HELP_STRING([--enable-doxygen-doc],
@@ -273,7 +286,7 @@ AC_SUBST(DOXYGEN_TARGET)
 AC_SUBST(DOXYGEN_INSTALL_TARGET)
 AC_SUBST(DOXYGEN_BIN)
 
-
+dnl Enable building advanced documentation?
 AC_ARG_ENABLE(advanced-doc,
 	      [AS_HELP_STRING([--enable-advanced-doc],
 			      [Creates advanced documentation (advanced 
@@ -284,16 +297,49 @@ AC_MSG_CHECKING(whether we want to build advanced documentation)
 if test "x$enable_advanced_doc" = "xyes"
 then
 	AC_MSG_RESULT(yes)
+	ADVANCED_TARGET="$ADVANCED_TARGET doc_advanced"
+	ADVANCED_INSTALL_TARGET="$ADVANCED_INSTALL_TARGET doc_advanced_install"
+	xsl_tools_required=yes
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(ADVANCED_TARGET)
+AC_SUBST(ADVANCED_INSTALL_TARGET)
+
+dnl Enable building user manual?
+AC_ARG_ENABLE(user-manual,
+	      [AS_HELP_STRING([--enable-user-manual],
+			      [Creates user manual])],
+			      ,
+			      [enable_user_manual=no])
+AC_MSG_CHECKING(whether we want to build user manual)
+if test "x$enable_user_manual" = "xyes"
+then
+	AC_MSG_RESULT(yes)
+	USER_MANUAL_TARGET="$USER_MANUAL_TARGET doc_user"
+	USER_MANUAL_INSTALL_TARGET="$USER_MANUAL_INSTALL_TARGET doc_user_install"
+	xsl_tools_required=yes
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(USER_MANUAL_TARGET)
+AC_SUBST(USER_MANUAL_INSTALL_TARGET)
+
+if test "x$xsl_tools_required" = "xyes"
+then
+	dnl check for xsltproc
 	AC_MSG_CHECKING(for xsltproc binary)
 	CHK_EXECUTABLE(xsltproc,xsltproc,[/usr/bin /usr/local/bin],[])
 	if test -z ${xsltproc_bin}
 	then
 		AC_MSG_ERROR(unable to find xsltproc binary)
+	else 
+		AC_MSG_RESULT(found at ${xsltproc_bin})
 	fi
-	AC_MSG_RESULT(found at ${xsltproc_bin})
 
+	dnl check for docbook xsl
 	dnl TODO create macro for detecting
-	AC_MSG_CHECKING(Checking docbook xsl)
+	AC_MSG_CHECKING(for docbook xsl)
 	docbook_xsl=""
 	for i in `cat doc/tools/docbook_xslt_paths`
 	do
@@ -305,29 +351,12 @@ then
 	done
 	if test -z ${docbook_xsl}
 	then
-		AC_MSG_ERROR(unable to find docbook.xsl)
+		AC_MSG_ERROR(unable to find docbook.xsl stylesheet)
+	else
+		AC_MSG_RESULT(found at ${docbook_xsl})
 	fi
-	AC_MSG_RESULT(found at ${docbook_xsl})
 	dnl TODO: if xsltproc and stylesheet is missing, docbook2html from jade can be used
-
-	ADVANCED_TARGET="$ADVANCED_TARGET doc_advanced"
-	ADVANCED_INSTALL_TARGET="$ADVANCED_INSTALL_TARGET doc_advanced_install"
-else
-	AC_MSG_RESULT(no)
 fi
-AC_SUBST(ADVANCED_TARGET)
-AC_SUBST(ADVANCED_INSTALL_TARGET)
-
-AC_ARG_WITH([root-dir],
-	    AS_HELP_STRING([--with-root-dir=DIR], 
-			   [Use different installation root (path to prepend before the prefix, empty by default).]
-			   ),
-			   [
-				root_dir="$withval/"
-			   ],
-			   [root_dir=""]
-	    )
-AC_SUBST(root_dir)
 
 AC_CONFIG_FILES([Makefile Makefile.flags])
 
@@ -400,3 +429,18 @@ fi
 
 dnl ##### Write the makefiles.
 AC_OUTPUT(src/xpdf/Makefile src/xpdf/goo/Makefile src/xpdf/fofi/Makefile src/xpdf/splash/Makefile src/xpdf/xpdf/Makefile )
+
+echo ""
+echo "Configuration complete"
+echo " Building in release mode      : $enable_release"
+echo " Include debugging information : $enable_debug_info"
+echo " Enable observer debugging     : $enable_observer_debug"
+echo " Build user manual             : $enable_user_manual"
+echo " Build doxygen documentation   : $enable_doxygen_doc"
+echo " Build advanced documentation  : $enable_advanced_doc"
+echo " Build kernel tests            : $enable_kernel_tests"
+echo " Build GUI                     : $enable_gui"
+echo " Install into                  : $prefix"
+echo ""
+echo "Type 'make' to build $PACKAGE_STRING"
+echo ""

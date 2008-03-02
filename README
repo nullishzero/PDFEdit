@@ -77,6 +77,14 @@ There are 3 levels of documentation in this project.
 	    --enable-doxygen-doc parameter to ./configure
 	    Result documentation is placed in the DOC_PATH/doxygen
 	    directory (DOC_PATH is PREFIX/share/doc/pdfedit)
+* user manual - html pages with user manual about PDFedit usage.
+	    This documentation is not created by default and you
+	    have to enable it by configure parameter
+	    --enable-user-manual. We are using xml based docbook
+	    format, so you have to have docbook xsl and xsltproc
+	    installed. 
+	    Result documentation is placed in the DOC_PATH/manual
+	    directory.
 * advanced - design documentation which describes inner data 
 	    structures, algorithms and relations from the 
 	    programmer perspective. This one is useful if you
@@ -145,9 +153,13 @@ uses this feature):
 	 programmers. Disabled by default. Note that doxygen has to be
 	 installed for this feature.
 
+	-user-manual - generates also docbook user manual documentation.
+	 Disabled by default. Note that docbook and its prerequisites
+	 have to be installed for this feature.
+
 	-advanced-doc - generates also docbook design documentation.
 	 Disabled by default. Note that docbook and its prerequisites
-	 has to be installed for this feature.
+	 have to be installed for this feature.
 
 
 Libraries and binaries specification
@@ -212,10 +224,15 @@ files and scripts are copied to PREFIX/share/pdfedit and man page is
 copied to PREFIX/share/man/man1.
 
 If you need to change installation root (e. g. if you are packager and
-want to create package) use
+want to create package or use chrooted environment) use
 	--with-root-dir=YOUR_INSTALLATION_ROOT_DIR
-configure parameter and all data will be moved to the selected directory
-after you do make install (using correct PREFIX and EPREFIX of course)
+Everything will then be installed with complete directory structure relative
+to that directory instead of real root directory (using correct PREFIX and
+EPREFIX of course). Note that you cannot just execute PDFedit from that
+directory straight away, as the files must be present in real root directory
+for editor to function properly.
+If you want just to move the installation elsewhere (in your home directory,
+for example), use --prefix parameter for that.
 
 Installation directories for specific parts (binary, documentation, 
 configuration files) can be also controlled by configure parameters.

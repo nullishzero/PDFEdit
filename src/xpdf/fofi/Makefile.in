@@ -19,6 +19,12 @@ CXX_SRC = \
 	FoFiType1.cc \
 	FoFiType1C.cc
 
+HEADERS = \
+	FoFiBase.h \
+	FoFiEncodings.h \
+	FoFiTrueType.h \
+	FoFiType1.h \
+	FoFiType1C.h \
 #------------------------------------------------------------------------
 
 all: $(LIBPREFIX)fofi.a
@@ -32,7 +38,7 @@ FOFI_OBJS = \
 	FoFiType1.o \
 	FoFiType1C.o
 
-$(LIBPREFIX)fofi.a: $(FOFI_OBJS)
+$(LIBPREFIX)fofi.a: deps $(FOFI_OBJS)
 	$(DEL_FILE) $(LIBPREFIX)fofi.a
 	$(AR) $(LIBPREFIX)fofi.a $(FOFI_OBJS)
 	$(RANLIB) $(LIBPREFIX)fofi.a
@@ -40,12 +46,14 @@ $(LIBPREFIX)fofi.a: $(FOFI_OBJS)
 #------------------------------------------------------------------------
 
 clean:
-	$(DEL_FILE) $(FOFI_OBJS) $(LIBPREFIX)fofi.a
+	$(DEL_FILE) $(FOFI_OBJS) $(LIBPREFIX)fofi.a deps
 
 #------------------------------------------------------------------------
 
-Makefile.dep:
-	$(CXX) $(XPDFLAGS) -MM $(CXX_SRC) >Makefile.dep
+deps: $(HEADERS)
+	$(CXX) $(MANDATORY_INCPATH) -M $(CXX_SRC) > deps
 
-# FIXME  FreeBSD make is not able to include non existent file
-#include Makefile.dep
+# This requires GNU make (or compatible) because deps file doesn't
+# exist in time when invoked for the first time and thus has to
+# be generated
+include deps
