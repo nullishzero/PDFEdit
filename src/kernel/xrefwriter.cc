@@ -50,14 +50,10 @@ bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
 	// searches num gen obj entry. Starts from stream begining
 	stream.reset();
 	Object obj;
-	Parser parser=Parser(
-			xref, new Lexer(
-				NULL, stream.makeSubStream(stream.getPos(), false, 0, &obj)
-				),
-			gTrue
-			);
+	Stream * subStr = stream.makeSubStream(stream.getPos(), false, 0, &obj);
+	Parser parser=Parser(xref, new Lexer(NULL, subStr), gTrue);
 
-	while(stream.getPos() < FIRST_LINEARIZED_BLOCK)
+	while(subStr->getPos() < FIRST_LINEARIZED_BLOCK)
 	{
 		Object obj1, obj2, obj3;
 		parser.getObj(&obj1);
