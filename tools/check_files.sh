@@ -186,14 +186,15 @@ then
 	TEST_NAMES=`grep CPPUNIT_TEST_SUITE_NAMED_REGISTRATION ${TEST_DIR}*.cc ${TEST_DIR}*.h | sed 's/.*\"\(.*\)\".*/\1/'`
 fi
 
-echo TEST_BIN $TEST_BIN
-echo TEST_PARAMS $TEST_PARAMS
-echo TEST_DIR $TEST_DIR
-echo TEST_DOC $TEST_DOC
-echo TEST_NAMES $TEST_NAMES
-echo LOG_DIR $LOG_DIR
+# for debugging
+#echo TEST_BIN $TEST_BIN
+#echo TEST_PARAMS $TEST_PARAMS
+#echo TEST_DIR $TEST_DIR
+#echo TEST_DOC $TEST_DOC
+#echo TEST_NAMES $TEST_NAMES
+#echo LOG_DIR $LOG_DIR
 
-if [ -z $TEST_DOC ]
+if [ -z "$TEST_DOC" ]
 then
 	echo "No test document specified"
 	exit 0	
