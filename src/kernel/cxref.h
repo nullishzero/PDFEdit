@@ -264,14 +264,7 @@ public:
 	 * @throw MalformedFormatExeption if XRef creation fails (instance is
 	 * unusable in such situation).
 	 */
-	CXref(BaseStream * stream):XRef(stream)
-	{
-		if(getErrorCode() !=errNone)
-		{
-			// xref is corrupted
-			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode());
-		}
-	}
+	CXref(BaseStream * stream);
 
 	/** Initialize constructor with cache.
 	 * @param stream Stream with file data.

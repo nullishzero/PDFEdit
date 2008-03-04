@@ -28,6 +28,17 @@
 #include "kernel/factories.h"
 
 using namespace pdfobjects;
+CXref::CXref(BaseStream * stream):XRef(stream)
+{
+	if(!isOk())
+	{
+		// xref is corrupted
+		kernelPrintDbg(debug::DBG_ERR, 
+				"Unable to parse xref table. errorCode="
+				<<getErrorCode());
+		throw MalformedFormatExeption("bad xref");
+	}
+}
 
 void CXref::cleanUp()
 {
@@ -541,6 +552,12 @@ using namespace debug;
 	kernelPrintDbg(DBG_INFO, ref<<" is not changed - using Xref");
 	Object tmpObj;
 	XRef::fetch(num, gen, &tmpObj);
+	if (!isOk())
+	{
+		kernelPrintDbg(DBG_ERR, ref<<" object fetching failed with code="
+				<<errCode);
+		throw MalformedFormatExeption("bad stream");
+	}
 
 	// clones fetched object
 	// this has to be done because return value may be stream and we want to
