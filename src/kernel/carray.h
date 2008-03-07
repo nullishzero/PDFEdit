@@ -385,7 +385,7 @@ template <typename T> void complexValueToString (const typename T::Value& val, s
  */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
-getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)__attribute__((deprecated));
+getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position) DEPRECATED;
 
 // gcc doesn't like __attribute__ in function definition
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
@@ -424,7 +424,7 @@ getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position
 /** \copydoc getSimpleValueFromArray */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
-getSimpleValueFromArray (const boost::shared_ptr<IProperty>& array, size_t position)__attribute__((deprecated));
+getSimpleValueFromArray (const boost::shared_ptr<IProperty>& array, size_t position) DEPRECATED;
 	
 // gcc doesn't like __attribute__ in function definition
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
@@ -515,7 +515,7 @@ getRefFromArray (const IP& ip, size_t position)
  */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInArray (const CArray& array, size_t position, const Value& val)__attribute__((deprecated));
+setSimpleValueInArray (const CArray& array, size_t position, const Value& val) DEPRECATED;
 
 // gcc doesn't like __attribute__ in function definition
 template<typename Value, typename ItemType, PropertyType ItemPType>
@@ -558,7 +558,7 @@ setSimpleValueInArray (const CArray& array, size_t position, const typename Item
 /** \copydoc setSimpleValueInArray */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInArray (const IProperty& array, size_t position, const Value& val)__attribute__((deprecated));
+setSimpleValueInArray (const IProperty& array, size_t position, const Value& val) DEPRECATED;
 	
 // gcc doesn't like __attribute__ in function definition
 template<typename Value, typename ItemType, PropertyType ItemPType>
@@ -634,7 +634,7 @@ setDoubleInArray (const IP& ip, size_t position, double val)
  */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)__attribute__((deprecated));
+getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos) DEPRECATED;
 
 // gcc doesn't like __attribute__ in function definition
 template<typename ItemType, PropertyType ItemPType>
@@ -695,7 +695,7 @@ getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 /** \copydoc getTypeFromArray */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<IProperty>& array, size_t pos)__attribute__((deprecated));
+getTypeFromArray (const boost::shared_ptr<IProperty>& array, size_t pos) DEPRECATED;
 
 // gcc doesn't like __attribute__ in function definition
 template<typename ItemType, PropertyType ItemPType>

@@ -85,24 +85,24 @@ public:
   // returns false, the page display is aborted.  Typically, an
   // OutputDev will use some alternate means to display the page
   // before returning false.
-  virtual GBool checkPageSlice(__attribute__((unused))Page *page, 
-		  __attribute__((unused))double hDPI, 
-		  __attribute__((unused))double vDPI,
-		  __attribute__((unused))int rotate, 
-		  __attribute__((unused))GBool useMediaBox, 
-		  __attribute__((unused))GBool crop,
-		  __attribute__((unused))int sliceX, 
-		  __attribute__((unused))int sliceY, 
-		  __attribute__((unused))int sliceW, 
-		  __attribute__((unused))int sliceH,
-		  __attribute__((unused))GBool printing, 
-		  __attribute__((unused))Catalog *catalog,
-		  __attribute__((unused))GBool (*abortCheckCbk)(void *data) = NULL,
-		  __attribute__((unused))void *abortCheckCbkData = NULL)
+  virtual GBool checkPageSlice(UNUSED_PARAM Page *page, 
+		  UNUSED_PARAM double hDPI, 
+		  UNUSED_PARAM double vDPI,
+		  UNUSED_PARAM int rotate, 
+		  UNUSED_PARAM GBool useMediaBox, 
+		  UNUSED_PARAM GBool crop,
+		  UNUSED_PARAM int sliceX, 
+		  UNUSED_PARAM int sliceY, 
+		  UNUSED_PARAM int sliceW, 
+		  UNUSED_PARAM int sliceH,
+		  UNUSED_PARAM GBool printing, 
+		  UNUSED_PARAM Catalog *catalog,
+		  UNUSED_PARAM GBool (*abortCheckCbk)(void *data) = NULL,
+		  UNUSED_PARAM void *abortCheckCbkData = NULL)
     { return gTrue; }
 
   // Start a page.
-  virtual void startPage(__attribute__((unused))int pageNum, __attribute__((unused))GfxState *state) {}
+  virtual void startPage(UNUSED_PARAM int pageNum, UNUSED_PARAM GfxState *state) {}
 
   // End a page.
   virtual void endPage() {}
@@ -120,103 +120,103 @@ public:
   double *getDefICTM() { return defICTM; }
 
   //----- save/restore graphics state
-  virtual void saveState(__attribute__((unused))GfxState *state) {}
-  virtual void restoreState(__attribute__((unused))GfxState *state) {}
+  virtual void saveState(UNUSED_PARAM GfxState *state) {}
+  virtual void restoreState(UNUSED_PARAM GfxState *state) {}
 
   //----- update graphics state
   virtual void updateAll(GfxState *state);
-  virtual void updateCTM(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double m11, 
-		  __attribute__((unused))double m12,
-		  __attribute__((unused))double m21, 
-		  __attribute__((unused))double m22, 
-		  __attribute__((unused))double m31, 
-		  __attribute__((unused))double m32) {}
-  virtual void updateLineDash(__attribute__((unused))GfxState *state) {}
-  virtual void updateFlatness(__attribute__((unused))GfxState *state) {}
-  virtual void updateLineJoin(__attribute__((unused))GfxState *state) {}
-  virtual void updateLineCap(__attribute__((unused))GfxState *state) {}
-  virtual void updateMiterLimit(__attribute__((unused))GfxState *state) {}
-  virtual void updateLineWidth(__attribute__((unused))GfxState *state) {}
-  virtual void updateStrokeAdjust(__attribute__((unused))GfxState *state) {}
-  virtual void updateFillColorSpace(__attribute__((unused))GfxState *state) {}
-  virtual void updateStrokeColorSpace(__attribute__((unused))GfxState *state) {}
-  virtual void updateFillColor(__attribute__((unused))GfxState *state) {}
-  virtual void updateStrokeColor(__attribute__((unused))GfxState *state) {}
-  virtual void updateBlendMode(__attribute__((unused))GfxState *state) {}
-  virtual void updateFillOpacity(__attribute__((unused))GfxState *state) {}
-  virtual void updateStrokeOpacity(__attribute__((unused))GfxState *state) {}
-  virtual void updateFillOverprint(__attribute__((unused))GfxState *state) {}
-  virtual void updateStrokeOverprint(__attribute__((unused))GfxState *state) {}
-  virtual void updateTransfer(__attribute__((unused))GfxState *state) {}
+  virtual void updateCTM(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double m11, 
+		  UNUSED_PARAM double m12,
+		  UNUSED_PARAM double m21, 
+		  UNUSED_PARAM double m22, 
+		  UNUSED_PARAM double m31, 
+		  UNUSED_PARAM double m32) {}
+  virtual void updateLineDash(UNUSED_PARAM GfxState *state) {}
+  virtual void updateFlatness(UNUSED_PARAM GfxState *state) {}
+  virtual void updateLineJoin(UNUSED_PARAM GfxState *state) {}
+  virtual void updateLineCap(UNUSED_PARAM GfxState *state) {}
+  virtual void updateMiterLimit(UNUSED_PARAM GfxState *state) {}
+  virtual void updateLineWidth(UNUSED_PARAM GfxState *state) {}
+  virtual void updateStrokeAdjust(UNUSED_PARAM GfxState *state) {}
+  virtual void updateFillColorSpace(UNUSED_PARAM GfxState *state) {}
+  virtual void updateStrokeColorSpace(UNUSED_PARAM GfxState *state) {}
+  virtual void updateFillColor(UNUSED_PARAM GfxState *state) {}
+  virtual void updateStrokeColor(UNUSED_PARAM GfxState *state) {}
+  virtual void updateBlendMode(UNUSED_PARAM GfxState *state) {}
+  virtual void updateFillOpacity(UNUSED_PARAM GfxState *state) {}
+  virtual void updateStrokeOpacity(UNUSED_PARAM GfxState *state) {}
+  virtual void updateFillOverprint(UNUSED_PARAM GfxState *state) {}
+  virtual void updateStrokeOverprint(UNUSED_PARAM GfxState *state) {}
+  virtual void updateTransfer(UNUSED_PARAM GfxState *state) {}
 
   //----- update text state
-  virtual void updateFont(__attribute__((unused))GfxState *state) {}
-  virtual void updateTextMat(__attribute__((unused))GfxState *state) {}
-  virtual void updateCharSpace(__attribute__((unused))GfxState *state) {}
-  virtual void updateRender(__attribute__((unused))GfxState *state) {}
-  virtual void updateRise(__attribute__((unused))GfxState *state) {}
-  virtual void updateWordSpace(__attribute__((unused))GfxState *state) {}
-  virtual void updateHorizScaling(__attribute__((unused))GfxState *state) {}
-  virtual void updateTextPos(__attribute__((unused))GfxState *state) {}
-  virtual void updateTextShift(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double shift) {}
+  virtual void updateFont(UNUSED_PARAM GfxState *state) {}
+  virtual void updateTextMat(UNUSED_PARAM GfxState *state) {}
+  virtual void updateCharSpace(UNUSED_PARAM GfxState *state) {}
+  virtual void updateRender(UNUSED_PARAM GfxState *state) {}
+  virtual void updateRise(UNUSED_PARAM GfxState *state) {}
+  virtual void updateWordSpace(UNUSED_PARAM GfxState *state) {}
+  virtual void updateHorizScaling(UNUSED_PARAM GfxState *state) {}
+  virtual void updateTextPos(UNUSED_PARAM GfxState *state) {}
+  virtual void updateTextShift(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double shift) {}
 
   //----- path painting
-  virtual void stroke(__attribute__((unused))GfxState *state) {}
-  virtual void fill(__attribute__((unused))GfxState *state) {}
-  virtual void eoFill(__attribute__((unused))GfxState *state) {}
-  virtual void tilingPatternFill(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))Object *str,
-		  __attribute__((unused))int paintType, 
-		  __attribute__((unused))Dict *resDict,
-		  __attribute__((unused))double *mat, 
-		  __attribute__((unused))double *bbox,
-		  __attribute__((unused))int x0, 
-		  __attribute__((unused))int y0, 
-		  __attribute__((unused))int x1, 
-		  __attribute__((unused))int y1,
-		  __attribute__((unused))double xStep, 
-		  __attribute__((unused))double yStep) {}
-  virtual GBool functionShadedFill(__attribute__((unused))GfxState *state,
-		  __attribute__((unused))GfxFunctionShading *shading)
+  virtual void stroke(UNUSED_PARAM GfxState *state) {}
+  virtual void fill(UNUSED_PARAM GfxState *state) {}
+  virtual void eoFill(UNUSED_PARAM GfxState *state) {}
+  virtual void tilingPatternFill(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM Object *str,
+		  UNUSED_PARAM int paintType, 
+		  UNUSED_PARAM Dict *resDict,
+		  UNUSED_PARAM double *mat, 
+		  UNUSED_PARAM double *bbox,
+		  UNUSED_PARAM int x0, 
+		  UNUSED_PARAM int y0, 
+		  UNUSED_PARAM int x1, 
+		  UNUSED_PARAM int y1,
+		  UNUSED_PARAM double xStep, 
+		  UNUSED_PARAM double yStep) {}
+  virtual GBool functionShadedFill(UNUSED_PARAM GfxState *state,
+		  UNUSED_PARAM GfxFunctionShading *shading)
     { return gFalse; }
-  virtual GBool axialShadedFill(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))GfxAxialShading *shading)
+  virtual GBool axialShadedFill(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM GfxAxialShading *shading)
     { return gFalse; }
-  virtual GBool radialShadedFill(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))GfxRadialShading *shading)
+  virtual GBool radialShadedFill(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM GfxRadialShading *shading)
     { return gFalse; }
 
   //----- path clipping
-  virtual void clip(__attribute__((unused))GfxState *state) {}
-  virtual void eoClip(__attribute__((unused))GfxState *state) {}
-  virtual void clipToStrokePath(__attribute__((unused))GfxState *state) {}
+  virtual void clip(UNUSED_PARAM GfxState *state) {}
+  virtual void eoClip(UNUSED_PARAM GfxState *state) {}
+  virtual void clipToStrokePath(UNUSED_PARAM GfxState *state) {}
 
   //----- text drawing
-  virtual void beginStringOp(__attribute__((unused))GfxState *state) {}
-  virtual void endStringOp(__attribute__((unused))GfxState *state) {}
-  virtual void beginString(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))GString *s) {}
-  virtual void endString(__attribute__((unused))GfxState *state) {}
-  virtual void drawChar(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double x, 
-		  __attribute__((unused))double y,
-		  __attribute__((unused))double dx, 
-		  __attribute__((unused))double dy,
-		  __attribute__((unused))double originX, 
-		  __attribute__((unused))double originY,
-		  __attribute__((unused))CharCode code, 
-		  __attribute__((unused))int nBytes, 
-		  __attribute__((unused))Unicode *u, 
-		  __attribute__((unused))int uLen) {}
-  virtual void drawString(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))GString *s) {}
+  virtual void beginStringOp(UNUSED_PARAM GfxState *state) {}
+  virtual void endStringOp(UNUSED_PARAM GfxState *state) {}
+  virtual void beginString(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM GString *s) {}
+  virtual void endString(UNUSED_PARAM GfxState *state) {}
+  virtual void drawChar(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double x, 
+		  UNUSED_PARAM double y,
+		  UNUSED_PARAM double dx, 
+		  UNUSED_PARAM double dy,
+		  UNUSED_PARAM double originX, 
+		  UNUSED_PARAM double originY,
+		  UNUSED_PARAM CharCode code, 
+		  UNUSED_PARAM int nBytes, 
+		  UNUSED_PARAM Unicode *u, 
+		  UNUSED_PARAM int uLen) {}
+  virtual void drawString(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM GString *s) {}
   virtual GBool beginType3Char(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       CharCode code, Unicode *u, int uLen);
-  virtual void endType3Char(__attribute__((unused))GfxState *state) {}
-  virtual void endTextObject(__attribute__((unused))GfxState *state) {}
+  virtual void endType3Char(UNUSED_PARAM GfxState *state) {}
+  virtual void endTextObject(UNUSED_PARAM GfxState *state) {}
 
   //----- image drawing
   virtual void drawImageMask(GfxState *state, Object *ref, Stream *str,
@@ -244,48 +244,48 @@ public:
 #endif
 
   //----- Type 3 font operators
-  virtual void type3D0(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double wx, 
-		  __attribute__((unused))double wy) {}
-  virtual void type3D1(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double wx, 
-		  __attribute__((unused))double wy,
-		  __attribute__((unused))double llx, 
-		  __attribute__((unused))double lly, 
-		  __attribute__((unused))double urx, 
-		  __attribute__((unused))double ury) {}
+  virtual void type3D0(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double wx, 
+		  UNUSED_PARAM double wy) {}
+  virtual void type3D1(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double wx, 
+		  UNUSED_PARAM double wy,
+		  UNUSED_PARAM double llx, 
+		  UNUSED_PARAM double lly, 
+		  UNUSED_PARAM double urx, 
+		  UNUSED_PARAM double ury) {}
 
   //----- form XObjects
-  virtual void drawForm(__attribute__((unused))Ref id) {}
+  virtual void drawForm(UNUSED_PARAM Ref id) {}
 
   //----- PostScript XObjects
-  virtual void psXObject(__attribute__((unused))Stream *psStream, 
-		  __attribute__((unused))Stream *level1Stream) {}
+  virtual void psXObject(UNUSED_PARAM Stream *psStream, 
+		  UNUSED_PARAM Stream *level1Stream) {}
 
   //----- transparency groups and soft masks
-  virtual void beginTransparencyGroup(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double *bbox, 
-		  __attribute__((unused))GfxColorSpace *blendingColorSpace,
-		  __attribute__((unused))GBool isolated, 
-		  __attribute__((unused))GBool knockout,
-		  __attribute__((unused))GBool forSoftMask) {}
-  virtual void endTransparencyGroup(__attribute__((unused))GfxState *state) {}
-  virtual void paintTransparencyGroup(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double *bbox) {}
-  virtual void setSoftMask(__attribute__((unused))GfxState *state, 
-		  __attribute__((unused))double *bbox, 
-		  __attribute__((unused))GBool alpha,
-		  __attribute__((unused))Function *transferFunc, 
-		  __attribute__((unused))GfxColor *backdropColor) {}
-  virtual void clearSoftMask(__attribute__((unused))GfxState *state) {}
+  virtual void beginTransparencyGroup(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double *bbox, 
+		  UNUSED_PARAM GfxColorSpace *blendingColorSpace,
+		  UNUSED_PARAM GBool isolated, 
+		  UNUSED_PARAM GBool knockout,
+		  UNUSED_PARAM GBool forSoftMask) {}
+  virtual void endTransparencyGroup(UNUSED_PARAM GfxState *state) {}
+  virtual void paintTransparencyGroup(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double *bbox) {}
+  virtual void setSoftMask(UNUSED_PARAM GfxState *state, 
+		  UNUSED_PARAM double *bbox, 
+		  UNUSED_PARAM GBool alpha,
+		  UNUSED_PARAM Function *transferFunc, 
+		  UNUSED_PARAM GfxColor *backdropColor) {}
+  virtual void clearSoftMask(UNUSED_PARAM GfxState *state) {}
 
   //----- links
-  virtual void processLink(__attribute__((unused))Link *link, 
-		  __attribute__((unused))Catalog *catalog) {}
+  virtual void processLink(UNUSED_PARAM Link *link, 
+		  UNUSED_PARAM Catalog *catalog) {}
 
 #if 1 //~tmp: turn off anti-aliasing temporarily
   virtual GBool getVectorAntialias() { return gFalse; }
-  virtual void setVectorAntialias(__attribute__((unused))GBool vaa) {}
+  virtual void setVectorAntialias(UNUSED_PARAM GBool vaa) {}
 #endif
 
 private:

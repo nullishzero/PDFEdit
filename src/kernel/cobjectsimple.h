@@ -570,7 +570,7 @@ boost::shared_ptr<IProperty> getReferencedObject (boost::shared_ptr<IProperty> i
  */
 template<typename ItemType, PropertyType ItemPType, typename Value>
 inline Value
-getValueFromSimple (const boost::shared_ptr<IProperty>& ip) __attribute__((deprecated));
+getValueFromSimple (const boost::shared_ptr<IProperty>& ip) DEPRECATED;
 
 // function definition (gcc doesn't like __attribute__ in function definition
 template<typename ItemType, PropertyType ItemPType, typename Value>

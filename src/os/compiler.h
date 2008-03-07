@@ -26,12 +26,28 @@
 #ifndef _COMPILER_H_
 #define _COMPILER_H_
 
+// default definitions for compiler specific attributes 
+#define UNUSED_PARAM
+#define WARN_UNUSED_RESULT
+#define DEPRECATED
 
 //
 // GCC specific stuff
 //
 #ifdef __GNUC__
-	
+
+// Note that gcc >= 4.3 reports error when macro is redefined, so 
+// we need to undefine already existing macros
+
+#undef UNUSED_PARAM
+#define UNUSED_PARAM __attribute__((unused))
+
+#undef WARN_UNUSED_RESULT 
+#define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+
+#undef DEPRECATED
+#define DEPRECATED __attribute__((deprecated))
+
 #define USE_GCC_PRAGMAS
 
 /* There is a bug in the version of gcc which ships with MacOS X 10.2 */
@@ -48,12 +64,13 @@
 #pragma interface
 #endif
 
-#else
+#endif // GCC specific stuff
 
-//
-// We don't have gcc
-//
-	#define __attribute__(x)
+#if defined(_MSC_VER)
+#	if _MSC_VER >= 2000
+#		undef DEPRECATED
+#		define DEPRECATED __declspec(deprecated) 
+#	endif
 #endif
 
 #endif

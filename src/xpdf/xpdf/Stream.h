@@ -134,8 +134,8 @@ public:
   virtual GBool isEncoder() { return gFalse; }
 
   // Get image parameters which are defined by the stream contents.
-  virtual void getImageParams(__attribute__((unused))	int *bitsPerComponent,
-			      __attribute__((unused))	StreamColorSpaceMode *csMode) {}
+  virtual void getImageParams(UNUSED_PARAM int *bitsPerComponent,
+			      UNUSED_PARAM StreamColorSpaceMode *csMode) {}
 
   // Return the next stream in the "stack".
   virtual Stream *getNextStream() { return NULL; }
@@ -787,8 +787,8 @@ public:
   virtual Stream * clone();
   virtual int getChar() { return EOF; }
   virtual int lookChar() { return EOF; }
-  virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent)  { return NULL; }
-  virtual GBool isBinary(__attribute__((unused))	GBool last = gTrue) { return gFalse; }
+  virtual GString *getPSFilter(UNUSED_PARAM	int psLevel, UNUSED_PARAM	char *indent)  { return NULL; }
+  virtual GBool isBinary(UNUSED_PARAM	GBool last = gTrue) { return gFalse; }
 };
 
 //------------------------------------------------------------------------
@@ -805,7 +805,7 @@ public:
   virtual int getChar();
   virtual Stream * clone();
   virtual int lookChar();
-  virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent) { return NULL; }
+  virtual GString *getPSFilter(UNUSED_PARAM	int psLevel, UNUSED_PARAM	char *indent) { return NULL; }
   virtual GBool isBinary(GBool last = gTrue);
   virtual GBool isEncoder() { return gTrue; }
 
@@ -831,8 +831,8 @@ public:
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent) { return NULL; }
-  virtual GBool isBinary(__attribute__((unused))	GBool last = gTrue) { return gFalse; }
+  virtual GString *getPSFilter(UNUSED_PARAM	int psLevel, UNUSED_PARAM	char *indent) { return NULL; }
+  virtual GBool isBinary(UNUSED_PARAM	GBool last = gTrue) { return gFalse; }
   virtual GBool isEncoder() { return gTrue; }
 
 private:
@@ -862,8 +862,8 @@ public:
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent) { return NULL; }
-  virtual GBool isBinary(__attribute__((unused))	GBool last = gTrue) { return gFalse; }
+  virtual GString *getPSFilter(UNUSED_PARAM	int psLevel, UNUSED_PARAM	char *indent) { return NULL; }
+  virtual GBool isBinary(UNUSED_PARAM	GBool last = gTrue) { return gFalse; }
   virtual GBool isEncoder() { return gTrue; }
 
 private:
@@ -893,8 +893,8 @@ public:
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent) { return NULL; }
-  virtual GBool isBinary(__attribute__((unused))	GBool last = gTrue) { return gTrue; }
+  virtual GString *getPSFilter(UNUSED_PARAM	int psLevel, UNUSED_PARAM	char *indent) { return NULL; }
+  virtual GBool isBinary(UNUSED_PARAM	GBool last = gTrue) { return gTrue; }
   virtual GBool isEncoder() { return gTrue; }
 
 private:

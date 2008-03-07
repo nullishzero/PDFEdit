@@ -113,7 +113,7 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict);
  * object is not CDict instance.
  * @return CDict instance wrapper by shared_ptr smart pointer.
  */
-boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)__attribute__((deprecated));
+boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)DEPRECATED;
 
 /** Gets dictionary from reference and pdf instance.
  * @param pdf Pdf istance.
@@ -126,7 +126,7 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)__a
  * @throw ElementBadTypeException if indirect object is not CDict instance.
  * @return CDict instance wrapper by shared_ptr smart pointer.
  */
-boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref)__attribute__((deprecated));
+boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref)DEPRECATED;
 
 /** Helper method for property printing.
  * @param ip Property to print.

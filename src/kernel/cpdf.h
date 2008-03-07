@@ -1871,7 +1871,7 @@ bool isEncrypted(CPdf & pdf, std::string * filterName);
  * @return CType instance wrapped by shared_ptr smart pointer.
  */
 template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)__attribute__((deprecated));
+boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)DEPRECATED;
 
 // gcc doesn't like __attribute__ in function definition
 template<typename CType, PropertyType pType>
@@ -1906,7 +1906,7 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
  * @return CType instance wrapped by shared_ptr smart pointer.
  */
 template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)__attribute__((deprecated));
+boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)DEPRECATED;
 
 // gcc doesn't like __attribute__ in function definition
 template<typename CType, PropertyType pType>
