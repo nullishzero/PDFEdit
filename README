@@ -367,7 +367,9 @@ That creates the DEB package that you can install with:
 
 RPM based distros
 =================
-NEEDS update
+* OpenSUSE provides package via the Packman repository
+  (http://ftp.skynet.be/pub/packman/suse/10.3/)
+* Package for Mandriva can be obtained from http://rpmlinux.org
 
 Gentoo package
 ==============
