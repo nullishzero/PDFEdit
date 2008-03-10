@@ -2349,6 +2349,7 @@ using namespace std;
 		return instance;
 	}catch(exception &e)
 	{
+		fclose(file);
 		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. cause="<<e.what());
 		string what=string("CPdf open failed. reason=")+e.what();
 		throw PdfOpenException(what);
