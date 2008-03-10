@@ -2351,7 +2351,6 @@ using namespace std;
 	{
 		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. cause="<<e.what());
 		string what=string("CPdf open failed. reason=")+e.what();
-		delete stream;
 		throw PdfOpenException(what);
 	}
 }
