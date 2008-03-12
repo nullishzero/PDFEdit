@@ -223,6 +223,12 @@ CDict::addProperty (const string& propertyName, const IProperty& newIp)
 	// Check whether we can make the change
 	this->canChange();
 
+	// check whether we contain such a property
+	//	-- pdf spec allows objects having two identical names, we forbid it!!!
+	//		-- e.g. because of double contents entry etc..
+	if (containsProperty(propertyName))
+		throw CObjInvalidObject ();
+
 	// Clone the added property
 	shared_ptr<IProperty> newIpClone = newIp.clone ();
 	if (newIpClone)

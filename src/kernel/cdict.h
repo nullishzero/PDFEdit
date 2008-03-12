@@ -253,16 +253,14 @@ public:
 	 * the cloned object is added.
 	 * Indicate that this object has changed and return the pointer to the cloned object.
 	 *
-	 * @param newIp New property.
+	 * If a property with the same name is already in this dictionary an exception is thrown.
+	 *
+	 * @param propertyName property name
+	 * @param newIp new property
 	 * @return Pointer to the new property.
 	 *
 	 * \exception OutOfRange Thrown when property not found.
-	 */
-	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
-	
-	/**
-	 * \copydoc addProperty
-	 * @param propertyName 	Name of the created property.
+	 * \exception CObjInvalid When the object is invalid
 	 */
 	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, const IProperty& newIp);
 
