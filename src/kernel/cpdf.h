@@ -258,7 +258,7 @@ typedef std::map<cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
  * method.
  *
  */
-class CPdf
+class CPdf: public noncopyable
 {
 public:
 	// NOTE: this declaration has to be here, because mode field is private and
