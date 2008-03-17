@@ -69,7 +69,7 @@ using namespace boost;
 //=====================================================================================
 
 bool
-mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char* fileName)
+mediabox (UNUSED_PARAM ostream& UNUSED_PARAM oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -109,7 +109,7 @@ mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const ch
 //=====================================================================================
 
 bool
-display (__attribute__((unused)) ostream& oss, const char* fileName)
+display (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -146,7 +146,7 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-_export (__attribute__((unused)) ostream& oss, const char* fileName)
+_export (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -167,7 +167,7 @@ _export (__attribute__((unused)) ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-findtext (__attribute__((unused)) ostream& oss, const char* fileName)
+findtext (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -205,7 +205,7 @@ findtext (__attribute__((unused)) ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
+getSetFonts (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	{
 		// Open pdf and get the first page	
@@ -296,7 +296,7 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 
 
 //=====================================================================================
-bool setattr(__attribute__((unused)) ostream& oss, const char* fileName)
+bool setattr(UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -317,7 +317,7 @@ bool setattr(__attribute__((unused)) ostream& oss, const char* fileName)
 }
 
 //=====================================================================================
-bool change(__attribute__((unused))	ostream& oss, const char* fileName)
+bool change(UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -380,7 +380,7 @@ bool change(__attribute__((unused))	ostream& oss, const char* fileName)
 }
 
 //=====================================================================================
-bool move(__attribute__((unused)) ostream& oss, const char* fileName)
+bool move(UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -417,7 +417,7 @@ bool move(__attribute__((unused)) ostream& oss, const char* fileName)
 
 
 //=====================================================================================
-bool getcc (__attribute__((unused)) ostream& oss, const char* fileName)
+bool getcc (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -458,7 +458,7 @@ bool getcc (__attribute__((unused)) ostream& oss, const char* fileName)
 
 
 //=====================================================================================
-bool creation (__attribute__((unused)) ostream& oss)
+bool creation (UNUSED_PARAM ostream& oss)
 {
 	shared_ptr<CDict> dict (CDictFactory::getInstance());
 	CArray array;

@@ -40,7 +40,7 @@ using namespace boost;
 using namespace std;
 
 //=====================================================================================
-bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
+bool setbuffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileName)
 {
 	typedef CStream::Buffer Buffer;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -116,7 +116,7 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 
 
 //=====================================================================================
-bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
+bool buffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -191,7 +191,7 @@ bool getString (std::ostream& oss, const char* fileName)
 
 //=========================================================================
 
-bool getPdfString (__attribute__((unused)) std::ostream& oss, const char* fileName)
+bool getPdfString (UNUSED_PARAM std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -235,7 +235,7 @@ bool getFilter (std::ostream& oss, const char* fileName)
 
 
 //=========================================================================
-bool testdict (__attribute__((unused)) std::ostream& oss, const char* fileName)
+bool testdict (UNUSED_PARAM std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -251,7 +251,7 @@ bool testdict (__attribute__((unused)) std::ostream& oss, const char* fileName)
 }
 
 //=========================================================================
-bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileName)
+bool testmakexpdf (UNUSED_PARAM std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 

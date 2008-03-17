@@ -148,7 +148,7 @@ operator << (ostream& os, Object* o)
 //
 //
 inline void
-print (__attribute__((unused)) ostream& os, Object* o, XRef* xref)
+print (UNUSED_PARAM ostream& os, Object* o, XRef* xref)
 {
 	if (!o->isStream())
 		throw;
@@ -269,7 +269,7 @@ ip_validate (const IndiRef& val, const IndiRef& expected)
 }
 
 inline bool
-ip_validate (Object* o, const string& expected,__attribute__((unused)) bool out = true)
+ip_validate (Object* o, const string& expected,UNUSED_PARAM bool out = true)
 {
 	string str;
 	assert (NULL != o);
@@ -293,7 +293,7 @@ ip_validate (Object* o, const string& expected,__attribute__((unused)) bool out 
 }
 
 inline bool
-ip_validate (Object& o, IProperty& ip,__attribute__((unused)) bool out = true)
+ip_validate (Object& o, IProperty& ip,UNUSED_PARAM bool out = true)
 {
 	string str;
 	utils::xpdfObjToString (o,str);
@@ -319,7 +319,7 @@ ip_validate (Object& o, IProperty& ip,__attribute__((unused)) bool out = true)
 }
 
 inline bool
-ip_validate (const IProperty& ip, const string& expected,__attribute__((unused)) bool out = true)
+ip_validate (const IProperty& ip, const string& expected,UNUSED_PARAM bool out = true)
 {
 	string str;
 	ip.getStringRepresentation (str);

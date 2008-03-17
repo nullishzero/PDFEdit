@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)..\src\xpdf\splash&quot;;&quot;$(SolutionDir)..\src\xpdf\goo&quot;;&quot;$(SolutionDir)..\src\xpdf\fofi&quot;"
+				AdditionalIncludeDirectories="&quot;K:\temp\pdfedit\pdfedit-trunk\pdfedit\src&quot;;&quot;$(SolutionDir)..\src\xpdf&quot;;&quot;$(SolutionDir)..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)..\src\xpdf\splash&quot;;&quot;$(SolutionDir)..\src\xpdf\goo&quot;;&quot;$(SolutionDir)..\src\xpdf\fofi&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)..\src\xpdf\splash&quot;;&quot;$(SolutionDir)..\src\xpdf\goo&quot;;&quot;$(SolutionDir)..\src\xpdf\fofi&quot;"
+				AdditionalIncludeDirectories="&quot;K:\temp\pdfedit\pdfedit-trunk\pdfedit\src&quot;;&quot;$(SolutionDir)..\src\xpdf&quot;;&quot;$(SolutionDir)..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)..\src\xpdf\splash&quot;;&quot;$(SolutionDir)..\src\xpdf\goo&quot;;&quot;$(SolutionDir)..\src\xpdf\fofi&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -174,22 +174,10 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+		<File
+			RelativePath="..\..\..\src\xpdf\xpdf\pdftops.cc"
 			>
-			<File
-				RelativePath="..\..\src\xpdf\xpdf\pdftops.cc"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

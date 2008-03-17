@@ -40,7 +40,7 @@ using namespace std;
 using namespace boost;
 	
 bool
-getout (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char* fileName)
+getout (UNUSED_PARAM ostream& UNUSED_PARAM oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 

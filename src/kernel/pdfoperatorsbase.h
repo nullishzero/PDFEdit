@@ -172,8 +172,8 @@ public:
 	 * iterator list. If not specified, it is assumed that children are not
 	 * empty and that the last item is not a composite.
 	 */
-	virtual void push_back ( __attribute__((unused)) const boost::shared_ptr<PdfOperator> oper, 
-							__attribute__((unused)) boost::shared_ptr<PdfOperator> _prev = boost::shared_ptr<PdfOperator> ())
+	virtual void push_back (UNUSED_PARAM const boost::shared_ptr<PdfOperator> oper, 
+							UNUSED_PARAM boost::shared_ptr<PdfOperator> _prev = boost::shared_ptr<PdfOperator> ())
 		{ throw NotImplementedException ("PdfOperator::push_back ()"); }
 
 protected:

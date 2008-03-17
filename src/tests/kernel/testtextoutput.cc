@@ -41,8 +41,8 @@ using namespace boost;
 using namespace textoutput;
 
 //=====================================================================================
-bool text_cpageout (__attribute__((unused)) std::ostream& oss, 
-			   __attribute__((unused)) const char* file_name)
+bool text_cpageout (UNUSED_PARAM std::ostream& oss, 
+			   UNUSED_PARAM const char* file_name)
 {
 
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (file_name), pdf_deleter());

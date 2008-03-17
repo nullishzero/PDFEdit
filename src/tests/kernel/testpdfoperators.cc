@@ -44,7 +44,7 @@ using namespace boost;
 //=====================================================================================
 
 bool
-textIter (__attribute__((unused))	ostream& oss, const char* fileName)
+textIter (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
@@ -82,7 +82,7 @@ textIter (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-setCS (__attribute__((unused))	ostream& oss, const char* fileName)
+setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
@@ -135,7 +135,7 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-delOper (__attribute__((unused))	ostream& oss, const char* fileName)
+delOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
@@ -234,7 +234,7 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
+delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
@@ -361,7 +361,7 @@ delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
+insertOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
@@ -416,7 +416,7 @@ insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-cloneoper (__attribute__((unused))	ostream& oss, const char* fileName)
+cloneoper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
@@ -460,7 +460,7 @@ cloneoper (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
+changeColor (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();

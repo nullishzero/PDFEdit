@@ -70,7 +70,7 @@
 #if defined(_MSC_VER)
 #	if _MSC_VER >= 1400
 #		undef DEPRECATED
-#		define DEPRECATED __declspec(deprecated) 
+#		define DEPRECATED // must be at the beginning __declspec(deprecated) 
 #	endif
 #endif
 

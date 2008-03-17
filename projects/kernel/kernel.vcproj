@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\output\"
+			IntermediateDirectory="$(SolutionDir)\output\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -92,8 +92,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\output\"
+			IntermediateDirectory="$(SolutionDir)\output\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -174,8 +174,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug-Tests|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\output\"
+			IntermediateDirectory="$(SolutionDir)\output\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -231,7 +231,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
 				OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
-				AdditionalLibraryDirectories="$(SolutionDir)\libs"
+				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"
 			/>
 			<Tool
@@ -514,11 +514,43 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\kernel\contentschangetag.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\kernel\coutline.h"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\cpage.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpageannots.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpageattributes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagechanges.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagecontents.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagedisplay.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagefonts.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagemodule.h"
 					>
 				</File>
 				<File
@@ -575,6 +607,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\pdfoperators.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\pdfoperatorsbase.h"
 					>
 				</File>
 				<File
@@ -674,11 +710,39 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\kernel\contentschangetag.cc"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\kernel\coutline.cc"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\cpage.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpageannots.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpageattributes.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagechanges.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagecontents.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagedisplay.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\cpagefonts.cc"
 					>
 				</File>
 				<File
@@ -715,6 +779,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\pdfoperators.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\pdfoperatorsbase.cc"
 					>
 				</File>
 				<File
@@ -818,6 +886,14 @@
 			Name="os"
 			>
 			<File
+				RelativePath="..\..\src\os\compiler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\os\posix.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\os\win.h"
 				>
 			</File>
@@ -854,6 +930,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\utils\iterator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utils\listitem.h"
 					>
 				</File>
 				<File

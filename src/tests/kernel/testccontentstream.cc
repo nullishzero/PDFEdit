@@ -40,7 +40,7 @@ using namespace boost;
 //=====================================================================================
 
 bool
-setCS (__attribute__((unused))	ostream& oss, const char* fileName)
+setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecnt = ppdf->getPageCount ();
@@ -301,7 +301,7 @@ namespace  {
 } // namespace
 
 bool
-opcount (__attribute__((unused))	ostream& oss, const char* fileName)
+opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	/// Intermezzo
@@ -401,7 +401,7 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
+printContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
@@ -431,7 +431,7 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 //=========================================================================
 
 bool
-addcc (__attribute__((unused))	ostream& oss, const char* fileName)
+addcc (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
@@ -481,7 +481,7 @@ addcc (__attribute__((unused))	ostream& oss, const char* fileName)
 //=========================================================================
 
 bool
-settm (__attribute__((unused))	ostream& oss, const char* fileName)
+settm (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t num = ppdf->getPageCount ();
@@ -519,7 +519,7 @@ settm (__attribute__((unused))	ostream& oss, const char* fileName)
 
 
 bool
-primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
+primitiveprintContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	{// what if file is corrupted etc..
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -585,7 +585,7 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 //=========================================================================
 
 bool
-cstreamsreader (__attribute__((unused))	ostream& oss, const char* fileName)
+cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
