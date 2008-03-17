@@ -34,6 +34,25 @@ namespace pdfobjects {
 
 /**
  * Base class for all page modules.
+ *
+ * CPage represents a page according to pdf specification. Page is a dictionary 
+ * containing several mandatory and several optional entries. The basic idea
+ * behind page modules is that most of these entries are complex and standalone and 
+ * therefore they are detached from CPage implementation.
+ *
+ * We can choose which optional entries to support and create new module for it. The
+ * implementation of CPage is kept simple and clear.
+ *
+ * A module initialisation can fail e.g. when the pdf file is damaged. This should be 
+ * announced in the init() function. 
+ *
+ * Module deinitialisation can fail too and it should be announced in the reset() function.
+ *
+ * TODO: 
+ * 1) for performance issues these functions can be called multiple times during the module
+ * lifecycle
+ * 2) create a page module initialisation/deinitialisation exception
+ *
  */
 class ICPageModule : public noncopyable
 {

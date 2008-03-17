@@ -124,6 +124,11 @@ CPage::~CPage ()
 	_changes.reset ();
 	_annots.reset ();
 	_dict.reset ();
+		assert (0 == _contents.use_count());
+		assert (0 == _display.use_count());
+		assert (0 == _fonts.use_count());
+		assert (0 == _annots.use_count());
+		assert (0 == _changes.use_count());
 }
 
 

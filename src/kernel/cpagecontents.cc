@@ -135,7 +135,12 @@ CPageContents::ContentsWatchDog::notify (shared_ptr<IProperty> newValue,
 	}
 
 	// Parse content streams (add or delete of object)
-	_cnt->parse ();
+	try {
+		_cnt->parse ();
+	}catch (...)
+	{
+		_cnt->_page->invalidate ();
+	}
 }
 
 
