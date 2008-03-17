@@ -306,6 +306,23 @@ kernel/xpdf.cc
 kernel/xpdf.h
 kernel/xrefwriter.cc
 kernel/xrefwriter.h
+kernel/contentschangetag.cc 
+kernel/contentschangetag.h 
+kernel/cpageannots.cc
+kernel/cpageannots.h 
+kernel/cpageattributes.cc 
+kernel/cpageattributes.h
+kernel/cpagechanges.cc 
+kernel/cpagechanges.h 
+kernel/cpagecontents.cc
+kernel/cpagecontents.h 
+kernel/cpagedisplay.cc 
+kernel/cpagedisplay.h 
+kernel/cpagefonts.cc
+kernel/cpagefonts.h 
+kernel/cpagemodule.h 
+kernel/pdfoperatorsbase.cc
+kernel/pdfoperatorsbase.h
 os/compiler.h
 os/posix.h
 os/win.h
@@ -343,4 +360,5 @@ utils/rulesmanager.h
 utils/types/basic_types.h
 utils/types/coordinates.h
 utils/types.h
+utils/listitem.h
 
