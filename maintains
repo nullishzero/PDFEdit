@@ -1,9 +1,10 @@
 jozo
 ====
-utils/algorithms, types, iterator, 
+utils/algorithms, types, iterator, listitem
 tests/* except michal's
 kernel/* except michal's
-
+os/win*, os/compiler(WIN stuff)
+projects/*
 gui/ few script functions where content stream is handled directly
 
 
@@ -23,7 +24,8 @@ miro
 miso
 ====
 xpdf - (changes must be approved by jozo and vice versa)
-kernel/cannotation*, cpdf*, cxref*, modecontroller*, pdfwriter*, xrefwriter*, streamwriter*, exceptions.h (with Jozo), cpage*(with Jozo)
+kernel/cannotation*, cpdf*, cxref*, modecontroller*, pdfwriter*, xrefwriter*, streamwriter*, exceptions.h (with Jozo)
+os/compiler*(all but WIN stuff), posix*
 tests/testcpdf*, testutils*, testcpage* (with Jozo)
 utils/confparser*,delinearizator*, debug*, objectstorage*, observer*, confparser*, rulesmanager*
 configure & make files (with Martin)
