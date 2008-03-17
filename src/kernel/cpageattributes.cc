@@ -175,7 +175,12 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 			// CropBox is optional and specification doesn't say anything about
 			// default value - we are using standard A4 format
 			if(!attrs._cropBox.get())
-				attrs._cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+			{
+					libs::Rectangle mediaRect;
+					getRectangleFromProperty(attrs._mediaBox, mediaRect);
+					attrs._cropBox=IProperty::getSmartCObjectPtr<CArray>(
+							getIPropertyFromRectangle(mediaRect));
+			}
 			
 			// Rotate is optional and specification defines default value to 0
 			if(!attrs._rotate.get())

@@ -263,6 +263,21 @@ using namespace boost;
 	return array;
 }
 
+void getRectangleFromProperty(const shared_ptr<IProperty> prop, libs::Rectangle & rect)
+{
+	if(!isArray(prop))
+		throw CObjBadValue();
+	
+	shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(prop);
+	if(array->getPropertyCount() != 4)
+		throw CObjBadValue();
+
+	rect.xleft = getDoubleFromArray(array, 0);
+	rect.yleft = getDoubleFromArray(array, 1);
+	rect.xright = getDoubleFromArray(array, 2);
+	rect.yright = getDoubleFromArray(array, 3);
+}
+
 boost::shared_ptr<IProperty> getIPropertyFromDate(const tm * time)
 {
 using namespace boost;

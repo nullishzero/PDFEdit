@@ -301,6 +301,17 @@ getPropertyId(const boost::shared_ptr<Complex> & parent, const boost::shared_ptr
  */
 boost::shared_ptr<IProperty> getIPropertyFromRectangle(const libs::Rectangle & rect);
 
+/** Gets rectangle value from given property.
+ * @param prop Array property with exactly 4 elements.
+ * @param rect Rectangle which will be filled with values stored in given 
+ * property.
+ *
+ * Array property is transformed into the given rect object.
+ * @throw CObjBadValue if given property has not valid rectangle representation.
+ */
+void getRectangleFromProperty(const boost::shared_ptr<IProperty> prop, libs::Rectangle & rect);
+
+
 /** Creates property with correct pdf time representation.
  * @param time Time to convert.
  * 
