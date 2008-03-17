@@ -31,6 +31,7 @@
 
 #include "kernel/factories.h"
 #include "kernel/cpage.h"
+#include "kernel/cannotation.h"
 
 
 //=====================================================================================
@@ -465,7 +466,7 @@ bool creation (__attribute__((unused)) ostream& oss)
 	shared_ptr<CPage> page (new CPage(dict));
 	//CPPUNIT_ASSERT (false == page->parseContentStream ());
 
-	dict->addProperty ("Contents", array);
+	//dict->addProperty ("Contents", array);
 	//CPPUNIT_ASSERT (true == page->parseContentStream ());
 
 	return true;
@@ -479,7 +480,7 @@ bool annotsTests(ostream &, const char * fname)
 	for(size_t pos=1; pos<=pageCount; pos++)
 	{
 		shared_ptr<CPage> page=pdf->getPage(pos);
-		CPage::AnnotStorage annots;
+		CPage::Annotations annots;
 		page->getAllAnnotations(annots);
 		if(annots.empty())
 			continue;
@@ -674,7 +675,7 @@ public:
 			CPdf * pdf=getTestCPdf((*it).c_str());
 			if(pdf->getPageCount()==0)
 				break;
-			CPage::AnnotStorage annotsList;
+			CPage::Annotations annotsList;
 			size_t pos=1;
 			shared_ptr<CPage> page;
 			do
@@ -698,7 +699,7 @@ public:
 					if(annotsArray.get())
 					{
 						// collects all annotation referencies from array
-						CPage::AnnotStorage storage;
+						CPage::Annotations storage;
 						for(size_t i=0; i<annotsArray->getPropertyCount(); i++)
 						{
 							shared_ptr<IProperty> child=annotsArray->getProperty(i);

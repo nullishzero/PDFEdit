@@ -128,7 +128,7 @@ namespace {
 				GString * xpdfString=obj.getString();
 				for(size_t i=0; i< len; ++i)
 				{
-					char c = xpdfString->getChar(i);
+					char c = xpdfString->getChar(static_cast<int>(i));
 					val += c;
 				}
 				assert (len == val.length());
@@ -208,7 +208,7 @@ namespace {
 			Object* operator() (Storage obj, Val val)
 			{
 				const char * str = val.c_str();
-				return obj->initString (new GString(str, val.length()));
+				return obj->initString (new GString(str, static_cast<int>(val.length())));
 			}
 	};
 
@@ -810,14 +810,14 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	
 	// xpdf MemStream frees buf 
 	size_t len = str.size ();
-	char* pStr = (char *)gmalloc(len + 1);
+	char* pStr = (char *)gmalloc(static_cast<int>(len + 1));
 	memcpy(pStr, str.c_str(), len);
 	pStr[len] = '\0';
 					
 	scoped_ptr<Parser> parser(
 			new Parser (xref, 
 				new Lexer (xref,
-					new MemStream (pStr, 0, len, &dct, gTrue)
+					new MemStream (pStr, 0, static_cast<int>(len), &dct, gTrue)
 					),
 				gTrue
 				)
@@ -853,7 +853,7 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	//
 	// Copy buffer and use parser to make stream object
 	//
-	char* tmpbuf = static_cast<char*> (gmalloc (buffer.size() + Specification::CSTREAM_FOOTER.length()));
+	char* tmpbuf = static_cast<char*> (gmalloc (static_cast<int>(buffer.size() + Specification::CSTREAM_FOOTER.length())));
 	size_t i = 0;
 	for (CStream::Buffer::const_iterator it = buffer.begin(); it != buffer.end (); ++it)
 		tmpbuf [i++] = static_cast<char> ((unsigned char)(*it));
@@ -865,7 +865,10 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	::Object* objDict = dict._makeXpdfObject ();
 	// Only undelying dictionary is used from objDict, so we can free objDict normally (this is 
 	// due to the strange implementation of xpdf streams, no dict reference counting is used there
-	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), objDict, true);
+	::Stream* stream = new ::MemStream (tmpbuf, 
+										static_cast<Guint>(0), 
+										static_cast<Guint>(buffer.size()), 
+										objDict, true);
 	// Set filters
 	stream = stream->addFilters (objDict);
 	stream->reset ();

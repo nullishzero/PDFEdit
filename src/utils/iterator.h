@@ -31,12 +31,12 @@
 namespace iterator {
 //==========================================================
 
-/** Invalid iterator exception. */
+/** Iterator exception. */
 struct IteratorInvalidObjectException : public std::exception
 {
-	char const* what() const throw() {return "Iterating over invalid object.";}
+	char const* what() const throw() 
+		{return "Iterating over invalid object.";}
 };
-
 
 /**
  * Iterator implementation. 
@@ -66,50 +66,45 @@ struct IteratorInvalidObjectException : public std::exception
  * This is a very powerful feature which gives us enormous flexibilty over a list queue. We can easily iterate 
  * only over specific items.
  */
-template<typename ITEM>
-class SharedDoubleLinkedListIterator
+template<typename Item>
+class DoubleListIterator
 {
 
-		//
-		// Position
-		//
-private:
-		/** Actual position state. */
-		enum _Position { _end, _begin, _valid, _invalid };
-		static const _Position pend 		= _end; 	/**< The end. Not a valid item. */
-		static const _Position pbegin		= _begin;	/**< The beggining. Not a valid item. */
-		static const _Position pvalid		= _valid;	/**< Valid position in the list. */
-		static const _Position pinvalid 	= _invalid;	/**< Invalid position. E.g. no item specified. */
-		
-		
+	// Typedefs
 public:
-	typedef boost::weak_ptr<ITEM> ListItem;
+	/** ListItem type. */
+	typedef IteratorInvalidObjectException Exception;
+	typedef boost::weak_ptr<Item> ListItem;
 
+
+	// Position
+private:
+	enum Position { _end, _begin, _valid, _invalid };	/**< Actual position state. */
+	static const Position pend 		= _end; 	/**< The end. Not a valid item. */
+	static const Position pbegin	= _begin;	/**< The beggining. Not a valid item. */
+	static const Position pvalid	= _valid;	/**< Valid position in the list. */
+	static const Position pinvalid 	= _invalid;	/**< Invalid position. E.g. no item specified. */
+		
+
+	// Variables
 protected:
 	ListItem _cur;		/**< Current item. */
-	_Position _curpos;	/**< Current position state. */
+	Position _curpos;	/**< Current position state. */
 
 
 	//
-	// Constructor
+	// Ctor & Dtor
 	// 
 public:
 
 	/** Constructor. */
-	SharedDoubleLinkedListIterator (ListItem oper) : _cur (oper), _curpos (pvalid)
+	DoubleListIterator (ListItem oper) : _cur (oper), _curpos (pvalid)
 		{ if (_invalidItem (oper)) _curpos = pinvalid; }
-	
-	/** 
-	 * Constructor. 
-	 * Created iterator is not in valid state and can not be used to iterate.
-	 */
-	SharedDoubleLinkedListIterator () : _cur (ListItem()), _curpos (pinvalid) {}
+	/**  Created iterator is not in valid state and can not be used to iterate. */
+	DoubleListIterator () : _cur (ListItem()), _curpos (pinvalid) {}
 
-	//
-	// Destructor
-	//
-public:
-	virtual ~SharedDoubleLinkedListIterator () {}
+	/** Dtor. */
+	virtual ~DoubleListIterator () {}
 	
 	//
 	// Iterator interface
@@ -123,13 +118,10 @@ public:
 	 *
 	 * @return Iterator pointing at the next item.
 	 */
-	SharedDoubleLinkedListIterator<ITEM>& next ()
+	DoubleListIterator<Item>& next ()
 	{
-		assert (pinvalid != _curpos);
-		assert (pend != _curpos);
-
-		if (pinvalid == _curpos || pend == _curpos)
-				throw IteratorInvalidObjectException ();
+			if (pinvalid == _curpos || pend == _curpos)
+				throw Exception ();
 		
 		// Are we at the beginning
 		if (pbegin == _curpos)
@@ -164,13 +156,10 @@ public:
 
 	 * @return Iterator pointing at the previous item.
 	 */
-	SharedDoubleLinkedListIterator<ITEM>& prev ()
+	DoubleListIterator<Item>& prev ()
 	{
-		assert (pinvalid != _curpos);
-		assert (pbegin != _curpos);
-
-		if (pinvalid == _curpos || pbegin == _curpos)
-				throw IteratorInvalidObjectException ();
+			if (pinvalid == _curpos || pbegin == _curpos)
+				throw Exception ();
 		
 		// Are we at the end
 		if (pend == _curpos)
@@ -203,7 +192,7 @@ public:
 	//
 public:	
 	/** Equality operator. */
-	bool operator== (const SharedDoubleLinkedListIterator<ITEM>& it) const
+	bool operator== (const DoubleListIterator<Item>& it) const
 		{ return (it.getCurrent() == getCurrent());	}
 	
 	
@@ -215,7 +204,7 @@ public:
 	 * Get item pointed at. 
 	 * @return Smart pointer which points to the actual item.
 	 */
-	boost::shared_ptr<ITEM> getCurrent () const 
+	boost::shared_ptr<Item> getCurrent () const 
 		{ assert (pvalid == _curpos); return _cur.lock(); }
 
 	/** 
@@ -223,28 +212,32 @@ public:
 	 *
 	 * @return True if the position is valid, false otherwise.
 	 */
-	bool valid () const { return (pvalid == _curpos); }
+	bool valid () const 
+		{ return (pvalid == _curpos); }
 
 	/**
 	 * Are we before the first valid item.
 	 *
 	 * @return True if we are at the beginning. (We are at an invalid item) 
 	 */
-	bool isBegin () const { return (pbegin == _curpos); }
+	bool isBegin () const 
+		{ return (pbegin == _curpos); }
 	
 	/**
 	 * Are we after the last valid item.
 	 * 
 	 * @return True if we are at the end. (We are at an invalid item)
 	 */
-	bool isEnd () const { return (pend == _curpos); }
+	bool isEnd () const 
+		{ return (pend == _curpos); }
 
 	//
 	// Helper
 	//
 protected:
 	/** Is this item ivalid. */
-	bool _invalidItem (ListItem it) { return it.expired() ? true: false; }
+	bool _invalidItem (ListItem it) 
+		{ return it.expired() ? true: false; }
 	
 	//
 	// Template method interface
@@ -256,8 +249,11 @@ protected:
 	 *
 	 * @return True if the item is supported by this type of iterator, false otherwise.
 	 */
-	virtual bool validItem () const {return true;}
-};
+	virtual bool validItem () const 
+		{ return true; }
+
+}; // class DoubleListIterator
+
 
 //==========================================================
 } // namespace iterator

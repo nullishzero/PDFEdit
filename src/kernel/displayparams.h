@@ -51,7 +51,7 @@ typedef struct DisplayParams
 	/** Paramaters */
 	double 		hDpi;		/**< Horizontal DPI. */
 	double 		vDpi; 		/**< Vertical DPI. 	*/
-	libs::Rectangle 	pageRect;	/**< Page libs::Rectangle. */
+	libs::Rectangle pageRect;/**< Page rectangle. */
 	int 		rotate;		/**< Page rotation. 	*/
 	GBool		useMediaBox;/**< Use page media box. */
 	GBool		crop;		/**< Crop the page. 	*/

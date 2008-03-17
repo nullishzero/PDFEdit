@@ -223,7 +223,7 @@ CStream::setLength (size_t len)
 	//Lock
 	dictionary.lockChange ();
 
-	CInt _len (len);
+	CInt _len (static_cast<const int>(len));
 	dictionary.setProperty ("Length", _len);
 
 	// Unlock

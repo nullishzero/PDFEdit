@@ -43,10 +43,8 @@ namespace pdfobjects {
 //
 // Forward declaration
 //
-class IProperty;
 class CContentStream;	
 typedef observer::ObserverHandler<CContentStream> CContentStreamObserverSubject;
-typedef observer::IObserver<IProperty> IIPropertyObserver;
 
 //==========================================================
 // CContentStream
@@ -132,7 +130,7 @@ private:
 	 * has been modified in a way that this content stream no longer exists. It
 	 * depends on the position of this observer in cstream observer list.
 	 */
-	struct CStreamObserver : public IIPropertyObserver
+	struct CStreamObserver : public IPropertyObserver
 	{
 		//
 		// Constructor
@@ -159,7 +157,7 @@ private:
 	 *
 	 * If an operand is changed, save the stream notifying all observers.
 	 */
-	struct OperandObserver : public IIPropertyObserver
+	struct OperandObserver : public IPropertyObserver
 	{
 		//
 		// Constructor
@@ -527,8 +525,6 @@ public:
 		check_observerlist (this->observers);
 	}
 };
-
-
 
 
 //==========================================================

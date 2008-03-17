@@ -31,7 +31,7 @@
 //
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
-//#define _HAS_ITERATOR_DEBUGGING 0
+#define _HAS_ITERATOR_DEBUGGING 0
 
 
 #include <time.h>

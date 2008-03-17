@@ -117,7 +117,7 @@ namespace {
 		while (len > 0) 
 		{
 			n = font->getNextChar (	p, 
-									len, 
+									static_cast<int>(len), 
 									&code,
 									&u, 
 									sizeof(Unicode), 

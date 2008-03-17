@@ -29,44 +29,28 @@
 // all basic includes
 #include "kernel/static.h"
 
-// TextSearchParams 
-#include "kernel/textsearchparams.h"
-// DisplayParams
-#include "kernel/displayparams.h"
-
-// CDict
-#include "kernel/cobject.h"
-// CContentstream
-#include "kernel/ccontentstream.h"
-// CAnnotation
-#include "kernel/cannotation.h"
-// Text output
-#include "kernel/textoutput.h" 
-// Factories
-#include "kernel/factories.h"
-// State updater
-#include "kernel/stateupdater.h"
+#include "kernel/textsearchparams.h"// TextSearchParams 
+#include "kernel/displayparams.h"	// DisplayParams
+#include "kernel/cobject.h"			// CDict
+#include "kernel/cpagecontents.h"	// 
+#include "kernel/cpagechanges.h"	// 
+#include "kernel/cpageannots.h"		// 
+#include "kernel/cpagefonts.h"
+//#include "kernel/cpagedisplay.h"
 
 //=====================================================================================
 namespace pdfobjects {
 //=====================================================================================
 
 
-
 //=====================================================================================
 // CPage
 //=====================================================================================
 
-//
 // Forward declaration
-//
 class CPage;
+class CPageDisplay;
 
-
-//
-// Typedefs
-//
-typedef observer::ObserverHandler<CPage> CPageObserverSubject;
 
 /**
  * This object represents page object from pdf specification v1.5. Pdf page object is a dictionary
@@ -116,42 +100,49 @@ typedef observer::ObserverHandler<CPage> CPageObserverSubject;
  * from a parent in the page tree. Which means we can not simply change fonts
  * on a page to match another page, use images from another page etc.
  */
-class CPage : public noncopyable, public CPageObserverSubject
+class CPage : public noncopyable, public observer::ObserverHandler<CPage>
 {
+	// Typedefs
 public:
-	/** Container of content streams. */
-	typedef std::vector<boost::shared_ptr<CContentStream> > ContentStreams;
-	/** Type for annotation storage. */
-	typedef std::vector<boost::shared_ptr<CAnnotation> > AnnotStorage;
-	/** Position in content stream container. */
-	typedef size_t CcPosition;
-	
+	typedef CPageFonts::FontList FontList;
+	typedef CPageAnnots::Annotations Annotations;
 	/** Type of page observer context. */
 	typedef observer::BasicChangeContext<CPage> BasicObserverContext;
+	typedef std::vector<boost::shared_ptr<ICPageModule> > Modules;
 
+	// Friends
+public:
+	friend class CPageContents;
+	friend class CPageDisplay;
+	friend class CPageFonts;
+	friend class CPageChanges;
+	//friend class CPageAnnots;
+
+	// Variables
 private:
-
 	/** Pdf dictionary representing a page. */
-	boost::shared_ptr<CDict> dictionary;
-
-	/** Class representing content stream. */
-	ContentStreams contentstreams;
-
-	/** Actual display parameters. */
-	DisplayParams lastParams;
-
-	/** Is page valid. */
-	bool valid;
+	boost::shared_ptr<CDict> _dict;
 	
-	/** Keeps all annotations from this page.
-	 *
-	 * This structure is synchronized with page dictionary Annots field with
-	 * observer.
-	 */
-	AnnotStorage annotStorage;
+	/** Is page valid. */
+	bool _valid;
+
+	// Modules
+	Modules _modules;
+	// Specific modules
+	/** Object managing Contents entry. */
+	boost::shared_ptr<CPageContents> _contents;
+	/** Object managing Contents entry. */
+	boost::shared_ptr<CPageDisplay> _display;
+	/** Object managing Contents entry. */
+	boost::shared_ptr<CPageFonts> _fonts;
+	/** Object managing changes. */
+	boost::shared_ptr<CPageChanges> _changes;
+	/** Object managing annotations. */
+	boost::shared_ptr<CPageAnnots> _annots;
+
 
 	//
-	// Constructors
+	// Constructor
 	//
 public:
 		
@@ -162,250 +153,6 @@ public:
 	 */
 	CPage (boost::shared_ptr<CDict>& pageDict);
 
-	
-	//
-	// Annotation observer
-	//
-private:
-
-	/** 
-	 * Consolidates annotStorage field according given change.
-	 * Works in two steps. First handles oldValue and second newValue. At first
-	 * checkes oldValue type and if it is reference, dereference indirect
-	 * objects and if it is annotation dictionary, it will invalidate 
-	 * associated CAnnotation and removes it from annotStorage. 
-	 * <br>
-	 * In second step, checks newValue type and if it is reference to
-	 * dictionary, it will create new CAnnotation instance and adds it to
-	 * annotStorage. 
-	 * 
-	 * @param oldValue Removed reference from annotStorage.
-	 * @param newValue Added reference to the annotStorage.
-	 */
-	void consolidateAnnotsStorage(boost::shared_ptr<IProperty> & oldValue, boost::shared_ptr<IProperty> & newValue);
-	
-	/** Observer for Annots property.
-	 * This observer is registered on page dictionary and if Annots property is
-	 * a reference also to this property. Any change which leads to change of 
-	 * Annots array (either add, remove or change) is handled here.  Note that
-	 * it doesn't handle array content change.
-	 */
-	class AnnotsPropWatchDog: public IIPropertyObserver
-	{
-		/** Page owner of this observer.
-		 */
-		CPage* page;
-
-	public:
-		/** Initialization constructor.
-		 * Sets page field according parameter.
-		 *
-		 * @param _page CPage instance.
-		 */
-		AnnotsPropWatchDog(CPage * _page):page(_page)
-		{
-			// given parameter must be non NULL
-			// this is used only internaly by CPage, so assert is enough for
-			// checking
-			assert(_page);
-		}
-
-		/** Empty destructor.
-		 */
-		virtual ~AnnotsPropWatchDog() throw(){}
-		
-		/** Observer handler.
-		 * 
-		 * Checks given context type:
-		 * <ul>
-		 * <li>BasicChangeContext means that Annots property in page dictionary
-		 * is reference and its value has changed.
-		 * <li>ComplexChangeContext means that page dictionary has changed. So
-		 * checks property id and if it not Annots, immediatelly returns,
-		 * because this change doesn't affect annotations. Otherwise checks
-		 * original value type. If it is reference, unregisters this observer
-		 * from it. If newValue is reference, registers observer to it.
-		 * </ul>
-		 * In any case:
-		 * <ul>
-		 * <li>Tries to get array from oldValue and unregister observers from
-		 * it (uses page-&gt;unregisterAnnotsObservers).
-		 * <li>Invalidates and removes all annotations from 
-		 * page-&gt;annotStorage.
-		 * <li>collects all current annotations (uses collectAnnotations).
-		 * <li>Tries to get current Annots array and registers observers to it
-		 * (uses page-&gt;registerAnnotsObservers)
-		 * </ul>
-		 *
-		 * @param newValue New value of changed property.
-		 * @param context Context of the change.
-		 */
-		virtual void notify (boost::shared_ptr<IProperty> newValue, 
-							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
-
-		/** Returns observer priority.
-		 */
-		virtual priority_t getPriority()const throw()
-		{
-			// TODO some constant
-			return 0;
-		}
-	};
-	
-	/** 
-	 * Observer for Annots array synchronization.
-	 * This observer is registered on Annots array property and all its
-	 * reference typed elements. It handles change in Annots array content -
-	 * this means either element is added, removed or replaced, or any of its
-	 * reference elements changes its value.
-	 */
-	class AnnotsArrayWatchDog: public IIPropertyObserver
-	{
-		/** Page owner of this observer.
-		 */
-		CPage* page;
-
-	public:
-		typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
-		typedef CDict::CDictComplexObserverContext ComplextObserverContext;
-			
-		/** Initialization constructor.
-		 * Sets page field according parameter.
-		 *
-		 * @param _page CPage instance.
-		 */
-		AnnotsArrayWatchDog(CPage * _page):page(_page)
-		{
-			// given parameter must be non NULL
-			// this is used only internaly by CPage, so assert is enough for
-			// checking
-			assert(_page);
-		}
-
-		/** Empty destructor.
-		 */
-		virtual ~AnnotsArrayWatchDog() throw(){}
-		
-		/** Observer handler.
-		 * 
-		 * Checks given context type:
-		 * <ul>
-		 * <li>BasicObserverContext means that Annots array reference element 
-		 * has changed its value.
-		 * <li>ComplexChangeContext means that Annots array content has changed.
-		 * If original value is reference, then unregisters this obsever from
-		 * it. If newValue is reference registers this observer to it.
-		 * <li>Different context is not supported and so method immediatelly
-		 * returns.
-		 * </ul>
-		 * In both situations calls consolidateAnnotsStorage with original and
-		 * new value parameters.
-		 *
-		 * @param newValue New value of changed property.
-		 * @param context Context of the change.
-		 */
-		virtual void notify (boost::shared_ptr<IProperty> newValue, 
-							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
-
-		/** Returns observer priority.
-		 */
-		virtual priority_t getPriority()const throw()
-		{
-			// TODO some constant
-			return 0;
-		}
-	};
-
-	/** Watchdog for Annots property.
-	 * @see AnnotsPropWatchDog
-	 */
-	boost::shared_ptr<AnnotsPropWatchDog> annotsPropWatchDog;
-
-	/** Watchdog for Annotation array.
-	 * @see AnnotsArrayWatchDog
-	 */
-	boost::shared_ptr<AnnotsArrayWatchDog> annotsArrayWatchDog;
-
-	/** Registers observers for annotations synchronization.
-	 * Checks type of given property and if it is reference, registers
-	 * annotsPropWatchDog observer to it and dereferences indirect object. If 
-	 * annots or dereferenced object is array, registers annotsArrayWatchDog 
-	 * observer to it and all its reference type elements.
-	 *
-	 * @param annots Annots property.
-	 */
-	void registerAnnotsObservers(boost::shared_ptr<IProperty> & annots);
-
-	/** Unregisters obsevers from given Annots property.
-	 * This method works reversely to registerAnnotsObservers (observers are
-	 * unregistered but rest is same).
-	 * 
-	 * @param annots Annots property.
-	 */
-	void unregisterAnnotsObservers(boost::shared_ptr<IProperty> & annots);
-
-
-	//
-	// CStream observer
-	//
-private:
-	/** 
-	 * Observer implementation for content stream synchronization.
-	 */
-	class ContentsWatchDog: public IIPropertyObserver
-	{
-		/** 
-		 * Owner of this observer.
-		 */
-		CPage* page;
-
-	public:
-		/** Initialization constructor.
-		 * Sets page field according parameter.
-		 * 
-		 * @param _page CPage instance.
-		 */
-		ContentsWatchDog (CPage* _page) : page(_page)
-			{ assert(_page); }
-
-		/** Empty destructor.  */
-		virtual ~ContentsWatchDog() throw() {}
-		
-		/** 
-		 * Observer handler.
-		 * 
-		 * @param 
-		 * @param context Context of the change.
-		 */
-		virtual void notify (boost::shared_ptr<IProperty>, 
-							 boost::shared_ptr<const IProperty::ObserverContext>) const throw();
-
-		/** Returns observer priority. */
-		virtual priority_t getPriority() const throw()
-			{ return 0;	}
-	};
-	
-	/**
-	 * Contents observer.
-	 */
-	boost::shared_ptr<ContentsWatchDog> contentsWatchDog;
-
-protected:
-	/**
-	 * Register observer on all cstreams that content stream consists of.
-	 */
-	void registerContentsObserver () const;
-
-	/**
-	 * Unregister observer from all cstreams that this object consists of.
-	 *
-	 * This function is called when saving consten stream consisting of
-	 * more streams. If we do not unregister observers, we would be notified
-	 * that a stream has changed after the first save (when the content stream
-	 * is invalid) and our observer would want to reparse an invalid stream.
-	 */
-	void unregisterContentsObserver () const;
-
 	//
 	// Destructor
 	//
@@ -415,7 +162,6 @@ public:
 	~CPage ();
 	
 
-	
 	//
 	// Comparable interface
 	//
@@ -426,205 +172,64 @@ public:
 	 * @param page Another page object.
 	 */
 	bool operator== (const CPage& page)
-	{
-		return (this == &page) ? true : false;
-	}
+		{ return (this == &page) ? true : false; }
 
 	
+	//
+	// Module Getters & Setters
+	//	
+private:
+	
+	/** Returns the contents module.*/
+	boost::shared_ptr<CPageContents> contents () const 
+		{ return _contents; }
+	/** Returns the display module.*/
+	boost::shared_ptr<CPageDisplay> display () const 
+		{ return _display; }
+	/** Returns the fonts module.*/
+	boost::shared_ptr<CPageFonts> fonts () const 
+		{ return _fonts; }
+	/** Returns the changes module.*/
+	boost::shared_ptr<CPageChanges> changes () const 
+		{ return _changes; }
+	/** Returns the annotation module.*/
+	boost::shared_ptr<CPageAnnots> annotations () const 
+		{ return _annots; }
+	
+
 	//
 	// Invalidate page
 	//
 public:
+
 	/**
 	 * Inform all obsevers that this page is not valid.
 	 */
-	void invalidate ()
-	{ 
-		assert (valid);
-		// Unregister contents observer
-		unregisterContentsObserver ();
-		// Unregister annots
-		UNREGISTER_SHAREDPTR_OBSERVER(dictionary, annotsPropWatchDog);
-		// unregisters annotation observers - if annotation array present in
-		// page dictionary
-		if(dictionary->containsProperty("Annots"))
-		{
-			boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
-			unregisterAnnotsObservers(annotsDict);
-		}
-
-		_objectChanged (true); 
-		valid = false;
-	}
+	void invalidate ();
 	
+
 	//
-	// Get methods
+	// Setters & Getters
 	//	
 public:
 	
-	/**
-	 * Get the dictionary representing this object.
-	 *
-	 * @return Dictionary.
-	 */
-	boost::shared_ptr<CDict> getDictionary () const { return dictionary; }
-	
-	
-	/**
-	 * Get pdf operators at specified position.
-	 * This call will be delegated to content stream object.
-	 *
-	 * @param opContainer Operator container where operators in specified are
-	 * 						wil be stored.
-	 * @param rc 		Rectangle around which we will be looking.
-	 */
-	template<typename OpContainer>
-	void getObjectsAtPosition  (OpContainer& opContainer, const libs::Rectangle& rc)
-	{	
-		kernelPrintDbg (debug::DBG_DBG, " at libs::Rectangle (" << rc << ")");
-		// Get the objects with specific comparator
-		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc));
-	}
-	
-	
-	/**
-	 * Get pdf operators at specified position. 
-	 * This call will be delegated to content stream object.
-	 * 
-	 * @param opContainer Operator container where operators in specified are
-	 * 						wil be stored.
-	 * @param pt 		Point around which we will be looking.
-	 */
-	template<typename OpContainer>
-	void getObjectsAtPosition  (OpContainer& opContainer, const Point& pt)
-	{	
-		kernelPrintDbg (debug::DBG_DBG, " at point (" << pt << ")");
-		// Get the objects with specific comparator
-		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt));
-	}
+	/** Returns the dictionary representing this object.*/
+	boost::shared_ptr<CDict> getDictionary () const 
+		{ return _dict; }
 
-	
-	/**
-	 * Get pdf operators at specified position. 
-	 * This call will be delegated to content stream object.
-	 *
-	 * @param opContainer Operator container where operators in specified are wil be stored.
-	 * @param cmp 	Null if default kernel area comparator should be used otherwise points 
-	 * 				 to an object which will decide whether an operator is "near" a point.
-	 */
-	template<typename OpContainer, typename PositionComparator>
-	void getObjectsAtPosition (OpContainer& opContainer, PositionComparator cmp)
-	{	
-		kernelPrintDbg (debug::DBG_DBG, "");
-		
-		// Are we in valid pdf
-		assert (hasValidPdf (dictionary));
-		assert (hasValidRef (dictionary));
-		if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
-			throw CObjInvalidObject ();
-
-		// If not parsed
-		if (contentstreams.empty())
-			parseContentStream ();		
-	
-		// Get the objects with specific comparator
-		for (ContentStreams::iterator it = contentstreams.begin (); it != contentstreams.end(); ++it)
-			(*it)->getOperatorsAtPosition (opContainer, cmp);
-	}
-
-	/** 
-	 * Get contents streams.
-	 *
-	 * @param container Output container of all contentstreams.
-	 *
-	 * @return Content stream.
-	 */
-	template<typename Container>
-	void
-	getContentStreams (Container& container)
-	{
-		kernelPrintDbg (debug::DBG_DBG, "");
-		assert (valid);
-
-		// If not parsed
-		if (contentstreams.empty())
-			parseContentStream ();		
-
-		container.clear();
-		std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(container));
-	}
-
-	
-	/**  
-	 * Returns plain text extracted from a page using xpdf code.
-	 * 
-	 * This method uses xpdf TextOutputDevice that outputs a page to a text device.
-	 * Text in a pdf is stored neither word by word nor letter by letter. It is not
-	 * easy not decide whether two letters form a word. Xpdf uses insane
-	 * algorithm that works most of the time.
-	 *
-	 * @param text Output string  where the text will be saved.
-	 * @param encoding Encoding format.
-	 * @param rc Rectangle from which to extract the text.
-	 */
- 	void getText (std::string& text, const std::string* encoding = NULL, const libs::Rectangle* rc = NULL)  const;
-
-	/**
-	 * Get text source of a page.
-	 */
-	template<typename WordEngine, 
-			 typename LineEngine, 
-			 typename ColumnEngine 
-			 >
- 	void convert (textoutput::OutputBuilder& out)
-	{
-		typedef textoutput::PageTextSource<WordEngine, LineEngine, ColumnEngine> TextSource;
-		kernelPrintDbg (debug::DBG_INFO, ""); 
-
-		// If not parsed
-		if (contentstreams.empty())
-			parseContentStream ();		
-
-		// Create gfx resource and state
-		boost::shared_ptr<GfxResources> gfxres;
-		boost::shared_ptr<GfxState> gfxstate;
-		createXpdfDisplayParams (gfxres, gfxstate);
-		assert (gfxres && gfxstate);
-
-		// Create page text class with parametrized parts
-		TextSource text_source;
-
-		// Get text from all content streams
-		for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
-		{
-			// Get operators and build text representation if not empty
-			CContentStream::Operators ops;
-			(*it)->getPdfOperators (ops);
-			if (!ops.empty())
-			{
-				PdfOperator::Iterator itt = PdfOperator::getIterator (ops.front());
-				StateUpdater::updatePdfOperators<TextSource&> (itt, gfxres, *gfxstate, text_source);
-			}
-		}
-
-		// Create lines, columns...
-		text_source.format ();
-		// Build the output
-		if (hasValidPdf(dictionary))
-			text_source.output (out, getPagePosition());
-		else
-			text_source.output (out, 0);
-	}
+	/** Returns page position. */
+	size_t getPagePosition () const;
 
 
 	//
 	// Annotations
 	//
 public:
+
 	/** 
 	 * Fills given container with all page's annotations.
 	 * 
-	 * Copies annotStorage content to given container (which is cleared at
+	 * Copies _annotations content to given container (which is cleared at
 	 * first).
 	 * <br>
 	 * Given container must support clear and insert operations and store
@@ -633,12 +238,8 @@ public:
 	 * @param container Container which is filled in.
 	 */
 	template<typename T>
-	void getAllAnnotations(T  & container)const
-	{
-		assert (valid);
-		container.clear();	
-		container.insert(container.begin(), annotStorage.begin(), annotStorage.end());
-	}
+	void getAllAnnotations(T& container)const
+		{ _annots->getAll (container); }
 
 	/** 
 	 * Adds new annotation to this page.
@@ -651,7 +252,7 @@ public:
 	 * <br>
 	 * Given annotation may come from different CPdf or may belong to nowhere.
 	 * <br>
-	 * As a result annotStorage is updated. New indirect object representing
+	 * As a result _annotations is updated. New indirect object representing
 	 * annotation dictionary is added to same pdf (dictionary is same as given
 	 * one except P field is updated to contain correct reference to this page).
 	 * <br>
@@ -665,12 +266,15 @@ public:
 	 * @throw ElementBadTypeException if Annots field from page dictionary is
 	 * not an array (or reference with array indirect target).
 	 */ 
-	void addAnnotation(boost::shared_ptr<CAnnotation> annot);
+	void addAnnotation(boost::shared_ptr<CAnnotation> annot)
+		{ _annots->add (annot); }
 
-	/** Removes given annotation from page.
+
+	/** 
+	 * Removes given annotation from page.
 	 * @param annot Annotation to remove.
 	 *
-	 * Tries to find given annotation in annotStorage and if found, removes
+	 * Tries to find given annotation in _annotations and if found, removes
 	 * reference from Annots array.
 	 * <br>
 	 * As a result, removed annotation is invalidated and not accessible. User 
@@ -679,11 +283,66 @@ public:
 	 *
 	 * @return true if annotation was removed.
 	 */
-	bool delAnnotation(boost::shared_ptr<CAnnotation> annot);
+	bool delAnnotation(boost::shared_ptr<CAnnotation> annot)
+		{ _annots->del (annot); }
+		
+
+	//
+	// Contents module delegation
+	//	
+public:
+
+	/** Returns shared pointer to the specified content stream. */
+	boost::shared_ptr<CContentStream> getContentStream (CContentStream* cc) 
+		{ return _contents->getContentStream (cc); }
+
+	/** Fills container with contents streams. */
+	template<typename Container> 
+	void getContentStreams (Container& container)
+		{ _contents->getContentStreams (container); }
+
+
+	/** Get pdf operators at position specified by rectangle. @see getObjectsAtPosition() */
+	template<typename OpContainer>
+	void getObjectsAtPosition  (OpContainer& opContainer, const libs::Rectangle& rc)
+		{ getObjectsAtPosition (opContainer, PdfOpCmpRc(rc)); }
+
+	/** Get pdf operators at position specified by point. @see getObjectsAtPosition() */
+	template<typename OpContainer>
+	void getObjectsAtPosition  (OpContainer& opContainer, const Point& pt)
+		{ getObjectsAtPosition (opContainer, PdfOpCmpPt(pt)); }
+	
+	/**
+	 * Get pdf operators at specified position. 
+	 * This call will be delegated to content stream object.
+	 *
+	 * @param opContainer Operator container where operators in specified are wil be stored.
+	 * @param cmp 	Null if default kernel area comparator should be used otherwise points 
+	 * 				 to an object which will decide whether an operator is "near" a point.
+	 */
+	template<typename OpContainer, typename PositionComparator>
+	void getObjectsAtPosition (OpContainer& opContainer, PositionComparator cmp)
+	{	
+			_check_validity();
+		_contents->getObjectsAtPosition (opContainer, cmp);
+	}
+
+
+	//	
+	// Conversion methods
+	//
+public:
+	
+	/**
+	 * Get text source of a page.
+	 */
+	template<typename WordEngine,typename LineEngine,typename ColumnEngine>
+ 	void convert (textoutput::OutputBuilder& out)
+		{ _contents->convert<WordEngine, LineEngine, ColumnEngine> (out); }
 
 
 	//
-	// Font 
+	// Font module delegation
 	//
 public:
 	/**
@@ -698,27 +357,8 @@ public:
 	 * @param cont Output container of font id and basename pairs (FontList
 	 * container type should be prefered).
 	 */
-	template<typename Container>
-	void getFontIdsAndNames (Container& cont) const;
+	void getFontIdsAndNames (FontList& cont) const;
 	
-	/** Type for list of fonts. */
-	typedef std::vector<std::pair<std::string, std::string> > FontList;
-
-	/** Looks for a font with the given name.
-	 * @param container Container of fonts (filled with getFontIdsAndNames).
-	 * @param name Name of the font.
-	 * @return iterator to the container (container.end() if not found).
-	 */
-	FontList::const_iterator findFont(const FontList &containter,
-			const std::string & name)
-	{
-		for(FontList::const_iterator i=containter.begin();
-				i!=containter.end(); ++i)
-			if(i->first == name)
-				return i;
-		return containter.end();
-	}
-
 	/**
 	 * Add new simple type 1 font item to the page resource dictionary. 
 	 *
@@ -734,35 +374,49 @@ public:
 	 *
 	 * @return The font ID of the added font.
 	 */
-	std::string addSystemType1Font (const std::string& fontname, 
-			bool winansienc = true);
+	std::string addSystemType1Font (const std::string& fontname, bool winansienc = true);
 
 
 	//
-	// Helper methods
+	// Display module delegation
 	//
-public:	
-	/**
-	 * Get page position.
+public:
+
+	/** 
+	 * Returns rotation in degrees.
 	 */
-	size_t getPagePosition () const;
+	int getRotation () const;
+
+	/** 
+	 * Sets rotation in degrees. 
+	 */
+	void setRotation (int rot);
+
+	/**  
+	 * Return media box of this page. 
+	 *
+	 * It is a required item in page dictionary (spec p.119) but can be
+	 * inherited from a parent in the page tree.
+	 *
+	 * @return Rectangle specifying the box.
+	 */
+	libs::Rectangle getMediabox () const;
+	
+	/** Seta media box of this page. */
+	void setMediabox (const libs::Rectangle& rc);
+
+	/**
+	 * Set transform matrix of a page. This operator will be preceding first cm
+	 * operator (see pdf specification), if not found it will be the first operator.
+	 *
+	 * @param tm Six number representing transform matrix.
+	 */
+	void setTransformMatrix (double tm[6]);
 
 	/**
 	 * Set display params.
 	 */
-	void setDisplayParams (const DisplayParams& dp)
-	{ 
-		lastParams = dp; 
-		// set rotate to positive integer
-		lastParams.rotate -= ((int)(lastParams.rotate / 360) -1) * 360;
-		// set rotate to range [ 0, 360 )
-		lastParams.rotate -= ((int)lastParams.rotate / 360) * 360;
-		// Use mediabox
-		if (lastParams.useMediaBox)
-			lastParams.pageRect = getMediabox ();
-		// Change bbox etc...
-		reparseContentStream ();
-	}
+	void setDisplayParams (const DisplayParams& dp);
 
 	/**
 	 * Draw page on an output device.
@@ -788,21 +442,15 @@ public:
 	 * @param dict If not null, page is created from dict otherwise
 	 * this page dictionary is used. But still some information is gathered from this page dictionary.
 	 */
-	void displayPage (::OutputDev& out, boost::shared_ptr<CDict> dict = boost::shared_ptr<CDict> (), int x = -1, int y = -1, int w = -1, int h = -1) const;
+	void displayPage (::OutputDev& out, 
+					  boost::shared_ptr<CDict> dict = boost::shared_ptr<CDict> (), 
+					  int x = -1, int y = -1, int w = -1, int h = -1) const;
 
-	/**
-	 * Parse content stream. 
-	 * Content stream is an optional property. When found it is parsed,
-	 * nothing is done otherwise.
-	 *
-	 * @return True if content stream was found and was parsed, false otherwise.
-	 */
-	bool parseContentStream ();
 
-	/**
-	 * Reparse content stream using actual display parameters. 
-	 */
-	void reparseContentStream ();
+	//
+	// CPageContents module delegation
+	//
+public:
 
 	/**
 	 * Add new content stream to the front. This function adds new entry in the "Contents"
@@ -816,9 +464,10 @@ public:
 	 *
 	 * @param cont Container of operators to add.
 	 */
-	template<typename Container> void addContentStreamToFront (const Container& cont);
-	
-	
+	template<typename Container> 
+	void addContentStreamToFront (const Container& cont)
+		{ _contents->addToFront (cont); }
+		
 	/**
 	 * Add new content stream to the back. This function adds new entry in the "Contents"
 	 * property of a page. The container of provided operators must form a valid
@@ -831,7 +480,9 @@ public:
 	 *
 	 * @param cont Container of operators to add.
 	 */
-	template<typename Container> void addContentStreamToBack (const Container& cont);
+	template<typename Container> 
+	void addContentStreamToBack (const Container& cont)
+		{ _contents->addToBack (cont); }
 
 	/**
 	 * Remove content stream. 
@@ -839,65 +490,20 @@ public:
 	 *
 	 * @param csnum Number of content stream to remove.
 	 */
-	void removeContentStream (size_t csnum);
+	void removeContentStream (size_t csnum)
+		{ _contents->remove (csnum); }
 
-	//
-	// Page translation 
-	//
-public:
-	/**
-	 * Set transform matrix of a page. This operator will be preceding first cm
-	 * operator (see pdf specification), if not found it will be the first operator.
-	 *
-	 * @param tm Six number representing transform matrix.
-	 */
-	void setTransformMatrix (double tm[6]);
-	
-	
-	//
-	// Media box 
-	//
-public:
-	/**  
-	 * Return media box of this page. 
-	 *
-	 * It is a required item in page dictionary (spec p.119) but can be
-	 * inherited from a parent in the page tree.
-	 *
-	 * @return Rectangle specifying the box.
-	 */
-	 libs::Rectangle getMediabox () const;
 
-	 
 	/**  
-	 * Set media box of this page. 
+	 * Returns plain text extracted from a page using xpdf code.
 	 * 
-	 * @param rc Rectangle specifying the page metrics.
+	 * @param text Output string  where the text will be saved.
+	 * @param encoding Encoding format.
+	 * @param rc Rectangle from which to extract the text.
 	 */
-	 void setMediabox (const libs::Rectangle& rc);
-
-	 //
-	 // Rotation
-	 //
-public:
-	 /**
-	  * Get rotation.
-	  *
-	  * @return Rotation degree measurment.
-	  */
-	 int getRotation () const;
-	
-	 /**
-	  * Set rotation.
-	  *
-	  * @param rot Set rotation degree measurment.
-	  */
-	 void setRotation (int rot);
+	void getText (std::string& text, const std::string* encoding = NULL, const libs::Rectangle* rc = NULL) const
+		{ _contents->getText (text, encoding, rc); }
  
-	 //
-	 // Text search/find 
-	 //
-public:
 	 /**
 	  * Find all occurences of a text on this page.
 	  *
@@ -912,45 +518,24 @@ public:
 	 template<typename RectangleContainer>
 	 size_t findText (std::string text, 
 					  RectangleContainer& recs, 
-					  const TextSearchParams& params = TextSearchParams()) const;
+					  const TextSearchParams& params = TextSearchParams()) const
+		{ return _contents->findText (text, recs, params);	}
 
-	 //
-	 // Helper functions
-	 //
-public:
-	 /**
-	  * Return shared pointer to the content stream.
-	  * @param cc Raw ccontentstream pointer.
-	  */
-	  boost::shared_ptr<CContentStream> 
-	  getContentStream (CContentStream* cc) 
-	  {
-		  for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
-			  if ((*it).get() == cc)
-				  return *it;
-		  
-		  assert (!"Contentstream not found");
-		  throw CObjInvalidOperation ();
-	  }
-	 
-private:
-	 /**
-	  * Create xpdf's state and resource parameters.
-	  *
-	  * @param res Gfx resource parameter.
-	  * @param state Gfx state parameter.
-	  */
-	 void createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state);
-
-	
-private:
 	/**
-	 * Save changes and indicate that the object has changed by calling all
-	 * observers.
-	 *
-	 * @param invalid If true indicate that this page has been invalidated.
+	 * Move contentstream up one level. Which means it will be repainted by less objects.
 	 */
-	void _objectChanged (bool invalid = false);
+	void moveAbove (boost::shared_ptr<const CContentStream> ct)
+		{ _contents->moveAbove (ct); }
+	void moveAbove (size_t pos)
+		{ _contents->moveAbove (pos); }
+
+	/**
+	 * Move contentstream below one level. Which means it will be repainted by more objects.
+	 */
+	void moveBelow (boost::shared_ptr<const CContentStream> ct)
+		{ _contents->moveBelow (ct); }
+	void moveBelow (size_t pos)
+		{ _contents->moveBelow (pos); }
 
 
 	//
@@ -961,20 +546,23 @@ public:
 	 * Get n-th change.
 	 * Higher change means older change.
 	 */
-	boost::shared_ptr<CContentStream> getChange (size_t nthchange = 0) const;
+	boost::shared_ptr<CContentStream> getChange (size_t nthchange = 0) const
+		{ return _changes->getChange (nthchange); }
 
 	/**
 	 * Get our changes sorted.
 	 * The first change is the last change. If there are no changes
 	 * container is empty.
 	 */
-	template<typename Container>
-	void getChanges (Container& cont) const;
+	template<typename Container> 
+	void getChanges (Container& cont) const
+		{ _changes->getChanges (cont); }
 
 	/**
 	 * Get count of our changes.
 	 */
-	size_t getChangeCount () const;
+	size_t getChangeCount () const
+		{ return _changes->getChangeCount (); }
 
 	/**
 	 * Draw nth change on an output device with last used display parameters.
@@ -983,44 +571,36 @@ public:
 	 * @param cont Container of content streams to display
 	 */
 	template<typename Container>
-	void displayChange (::OutputDev& out, const Container& cont) const;
-
+	void displayChange (::OutputDev& out, const Container& cont) const
+		{ _changes->displayChange (out, cont); }
 	void displayChange (::OutputDev& out, const std::vector<size_t> cs) const
+		{ _changes->displayChange (out, cs); }
+
+
+	 //
+	 // Helper functions
+	 //
+private:
+
+	// Save changes and indicate that the object has changed by calling all observers.
+	// If invalid is true indicate that this page has been invalidated.
+	void _objectChanged (bool invalid = false);
+
+	// check for valid object
+	inline bool _check_validity (const char* err = NULL) const
 	{
-		ContentStreams css;
-		for (std::vector<size_t>::const_iterator it = cs.begin(); it != cs.end(); ++it)
-		{
-			if (static_cast<size_t>(*it) >= contentstreams.size())
-				throw CObjInvalidOperation ();
-			css.push_back (contentstreams[*it]);
+		if (!_valid || !hasValidPdf(_dict) || !hasValidRef(_dict))
+		{	
+			if (err)
+				kernelPrintDbg (debug::DBG_ERR, err);
+			throw CObjInvalidObject ();
 		}
-		displayChange (out, css);
+		return true;
 	}
 
-	/**
-	 * Move contentstream up one level. Which means it will be repainted by less objects.
-	 */
-	void moveAbove (boost::shared_ptr<const CContentStream> ct);
-	void moveAbove (CcPosition pos)
-	{ 
-		if (pos >= contentstreams.size())
-			throw OutOfRange();
-		moveAbove (contentstreams[pos]); 
-	}
+}; // class CPage
 
-	/**
-	 * Move contentstream below one level. Which means it will be repainted by more objects.
-	 */
-	void moveBelow (boost::shared_ptr<const CContentStream> ct);
-	void moveBelow (CcPosition pos)
-	{ 
-		if (pos >= contentstreams.size())
-			throw OutOfRange();
-		moveBelow (contentstreams[pos]); 
-	}
 
-	
-};
 
 
 //=====================================================================================
@@ -1034,17 +614,6 @@ public:
  * @param ip IProperty.
  */
 bool isPage (boost::shared_ptr<IProperty> ip);
-
-
-/** Sets unitialized inheritable page attributes.
- * @param pageDict Page dictionary reference where to set values.
- *
- * Gets InheritedPageAttr structure for given pageDict (uses
- * fillInheritedPageAttr helper function) and sets all fields which are not
- * present in given dictionary to found values.
- */
-void setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict);
-
 
 
 //=====================================================================================

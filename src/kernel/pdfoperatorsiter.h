@@ -32,6 +32,7 @@
 // iterator
 #include "utils/iterator.h"
 #include "kernel/pdfoperators.h"
+#include "kernel/contentschangetag.h"
 
 
 //==========================================================
@@ -272,7 +273,7 @@ struct ChangePdfOperatorIterator: public PdfOperator::Iterator
 		std::string name;
 		_cur.lock()->getOperatorName (name);
 
-		if (name == getChangeTagName())
+		if (name == ContentsChangeTag::CHANGE_TAG_NAME)
 			return true;
 		
 		return false;

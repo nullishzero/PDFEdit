@@ -115,9 +115,6 @@ frontinsert (ostream& oss, const char* fileName)
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 		
-		// parse the content stream
-		page->parseContentStream ();
-	
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
 		assert (!ccs.empty());
@@ -156,9 +153,6 @@ position (ostream& oss, const char* fileName, const libs::Rectangle rc)
 	{
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
-		
-		// parse the content stream
-		page->parseContentStream ();
 		
 		std::vector<shared_ptr<PdfOperator> > ops;
 		page->getObjectsAtPosition (ops, rc);

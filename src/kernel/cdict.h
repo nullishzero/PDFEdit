@@ -519,7 +519,7 @@ void getStringFromXpdfStream (std::string& str, ::Object& obj);
  */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
-getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)DEPRECATED;
+getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id) DONOTUSE;
 
 /** \copydoc getSimpleValueFromDict */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
@@ -558,7 +558,7 @@ getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, CDict::PropertyId 
 /** \copydoc getSimpleValueFromDict */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
-getSimpleValueFromDict (const CDict& dict, const std::string& id)DEPRECATED;
+getSimpleValueFromDict (const CDict& dict, const std::string& id) DONOTUSE;
 
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
@@ -589,7 +589,7 @@ getSimpleValueFromDict (const CDict& dict, const std::string& id)
 /** \copydoc getSimpleValueFromDict */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
-getSimpleValueFromDict (const boost::shared_ptr<IProperty>& dict, const std::string& id)DEPRECATED;
+getSimpleValueFromDict (const boost::shared_ptr<IProperty>& dict, const std::string& id) DONOTUSE;
 	
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
@@ -676,7 +676,7 @@ getNameFromDict (const IP& ip, const std::string& id)
  */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& val)DEPRECATED;
+setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& val) DONOTUSE;
 
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
@@ -721,7 +721,7 @@ setSimpleValueInDict (const CDict& dict, CDict::PropertyId name, const typename 
 /** \copydoc setSimpleValueInDict */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInDict (const IProperty& dict, const std::string& name, const Value& val)DEPRECATED;
+setSimpleValueInDict (const IProperty& dict, const std::string& name, const Value& val) DONOTUSE;
 	
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
@@ -788,7 +788,7 @@ setDoubleInDict (const IP& ip, const std::string& name, double val)
  */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
-getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)DEPRECATED;
+getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key) DONOTUSE;
 
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
@@ -856,7 +856,7 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, CDict::PropertyId k
 /** \copydoc getTypeFromDictionary */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
-getTypeFromDictionary (const boost::shared_ptr<IProperty>& dict, const std::string& key)DEPRECATED;
+getTypeFromDictionary (const boost::shared_ptr<IProperty>& dict, const std::string& key) DONOTUSE;
 
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>

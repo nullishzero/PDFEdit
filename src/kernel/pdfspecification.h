@@ -93,10 +93,21 @@ namespace pdfobjects {
 		static const std::string INDIRECT_FOOTER;  // "\nendobj";
 
 		//
-		// CPage
+		// Dictionary
 		//
-		struct CPage 
+		struct Dict
 		{
+			/** Dict type entry. */
+			static const std::string TYPE;
+		};
+
+		//
+		// Page
+		//
+		struct Page 
+		{
+			/** Page Type entry in dictionary. */
+			static const std::string TYPE;
 			/** Page Resource entry. */
 			static const std::string PARENT;
 			/** Page Contents entry. */
@@ -111,6 +122,25 @@ namespace pdfobjects {
 			static const std::string ROTATE;
 			/** Page Annotation entry. */
 			static const std::string ANNOTS;
+		};
+
+		//
+		// Font
+		//
+		struct Font
+		{
+			/** Font Type entry. */
+			static const std::string TYPE;
+			/** Font Type1 entry. */
+			static const std::string TYPE1;
+			/** . */
+			static const std::string SUBTYPE;
+			/** . */
+			static const std::string BASEFONT;
+			/** . */
+			static const std::string ENCODING;
+			/** . */
+			static const std::string WINANSIENCODING;
 		};
 
 	}; // struct Specification

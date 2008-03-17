@@ -31,6 +31,7 @@
 #include "kernel/cpage.h"
 #include "kernel/factories.h"
 #include "utils/debug.h"
+#include "kernel/cpageattributes.h"
 
 using namespace boost;
 using namespace std;
@@ -3007,7 +3008,7 @@ using namespace utils;
 		pageDict->lockChange();
 		pageDict->setPdf(pageDictPdf);
 		pageDict->setIndiRef(pageDictIndiRef);
-		setInheritablePageAttr(pageDict);
+		CPageAttributes::setInheritable(pageDict);
 	}
 	
 	// adds pageDict as new indirect property (also with properties referenced 

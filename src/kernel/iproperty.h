@@ -43,6 +43,7 @@ namespace pdfobjects {
 class CPdf;
 class IProperty;
 typedef observer::ObserverHandler<IProperty> IPropertyObserverSubject;
+typedef observer::IObserver<IProperty> IPropertyObserver;
 
 
 /** Enum describing property type. */
@@ -93,6 +94,8 @@ enum PropertyType
  */
 class IProperty : public IPropertyObserverSubject
 {
+
+	// Variables
 private:
 	IndiRef 		ref;		/**< Objects pdf identification and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
@@ -104,7 +107,7 @@ private:
 	//
 private:
 	/** Copy constructor. */
-	//IProperty (const IProperty&) : IPropertyObserverSubject() {}
+	// IProperty (const IProperty&); -- gcc errors in previous versions
 
 protected:	
 

@@ -65,15 +65,32 @@ namespace pdfobjects {
 
 
 	// 
-	// CPage
+	// Dict
 	//
-	const std::string Specification::CPage::PARENT   ("Parent");
-	const std::string Specification::CPage::CONTENTS ("Contents");
-	const std::string Specification::CPage::RESOURCES("Resources");
-	const std::string Specification::CPage::MEDIABOX ("MediaBox");
-	const std::string Specification::CPage::CROPBOX  ("CropBox");
-	const std::string Specification::CPage::ROTATE   ("Rotate");
-	const std::string Specification::CPage::ANNOTS   ("Annots");
+	const std::string Specification::Dict::TYPE ("Type");
+
+	// 
+	// Page
+	//
+	const std::string Specification::Page::TYPE		("Page");
+	const std::string Specification::Page::PARENT   ("Parent");
+	const std::string Specification::Page::CONTENTS ("Contents");
+	const std::string Specification::Page::RESOURCES("Resources");
+	const std::string Specification::Page::MEDIABOX ("MediaBox");
+	const std::string Specification::Page::CROPBOX  ("CropBox");
+	const std::string Specification::Page::ROTATE   ("Rotate");
+	const std::string Specification::Page::ANNOTS   ("Annots");
+
+	//
+	// Font
+	//
+	const std::string Specification::Font::TYPE				("Font");
+	const std::string Specification::Font::TYPE1			("Type1");
+	const std::string Specification::Font::SUBTYPE			("Subtype");
+	const std::string Specification::Font::BASEFONT			("BaseFont");
+	const std::string Specification::Font::ENCODING			("Encoding");
+	const std::string Specification::Font::WINANSIENCODING	("WinAnsiEncoding");
+
 
 // =====================================================================================
 } // namespace pdfobjects

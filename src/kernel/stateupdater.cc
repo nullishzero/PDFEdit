@@ -737,7 +737,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 	//Dict *resDict = NULL;
 	char *p;
 	int len = 0, n = 0, uLen = 0,/* nChars = 0, nSpaces = 0,*/ i = 0;
-	GString s (txt.c_str(),txt.size());
+	GString s (txt.c_str(),(Guint)txt.size());
 
 	font = state->getFont();
 	wMode = font->getWMode();

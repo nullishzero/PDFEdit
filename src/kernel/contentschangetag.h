@@ -23,56 +23,52 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#ifndef _COMPILER_H_
-#define _COMPILER_H_
+#ifndef _CONTENTSCHANGETAG_H_
+#define _CONTENTSCHANGETAG_H_
 
-// default definitions for compiler specific attributes 
-#define UNUSED_PARAM
-#define WARN_UNUSED_RESULT
-#define DEPRECATED
-#define DONOTUSE
+// static includes
+#include "kernel/static.h"
 
-//
-// GCC specific stuff
-//
-#ifdef __GNUC__
+//==========================================================
+namespace pdfobjects {
+//==========================================================
 
-// Note that gcc >= 4.3 reports error when macro is redefined, so 
-// we need to undefine already existing macros
+// Forward declarations
+class PdfOperator;
 
-#undef UNUSED_PARAM
-#define UNUSED_PARAM __attribute__((unused))
+/**
+ * Content stream change tag
+ */
+class ContentsChangeTag
+{
+	// Constants
+public:
+	static const char* CHANGE_TAG_NAME;
+	static const char* CHANGE_TAG_ID;
 
-#undef WARN_UNUSED_RESULT 
-#define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 
-#undef DEPRECATED
-#define DEPRECATED __attribute__((deprecated))
+	// Static methods
+public:
+	/**
+	 * Create our own tag indicating time when the change occured. This enables us
+	 * to sort our changes according to time.
+	 *
+	 * @return Operator that identifies our changes
+	 */
+	static boost::shared_ptr<PdfOperator> create ();
 
-#define USE_GCC_PRAGMAS
+	/**
+	 * Get change tag time.
+	 */
+	static time_t getTime (boost::shared_ptr<PdfOperator> op);
 
-/* There is a bug in the version of gcc which ships with MacOS X 10.2 */
-#if defined(__APPLE__) && defined(__MACH__)
-#  include <AvailabilityMacros.h>
-#endif
-#ifdef MAC_OS_X_VERSION_MAX_ALLOWED
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_2
-#    undef USE_GCC_PRAGMAS
-#  endif
-#endif
+};
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
 
-#endif // GCC specific stuff
+//==========================================================
+} // namespace pdfobjects
+//==========================================================
 
-#if defined(_MSC_VER)
-#	if _MSC_VER >= 1400
-#		undef DEPRECATED
-#		define DEPRECATED __declspec(deprecated) 
-#	endif
-#endif
 
-#endif
+#endif // _CONTENTSCHANGETAG_H_
 

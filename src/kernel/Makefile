@@ -9,13 +9,14 @@ include $(REL_ADDR)/Makefile.rules
 CFLAGS   += $(EXTRA_KERNEL_CFLAGS)
 CXXFLAGS += $(EXTRA_KERNEL_CXXFLAGS)
 
-HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/iterator.h $(UTILSROOT)/observer.h\
+HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/listitem.h $(UTILSROOT)/iterator.h $(UTILSROOT)/observer.h\
 	  exceptions.h modecontroller.h filters.h xpdf.h utils.h cxref.h xrefwriter.h \
 	  factories.h pdfwriter.h indiref.h iproperty.h cobject.h cobjectsimple.h \
 	  cobjectsimpleI.h carray.h cdict.h cstream.h cstreamsxpdfreader.h \
-	  cobjecthelpers.h ccontentstream.h pdfoperators.h pdfoperatorsiter.h \
+	  cobjecthelpers.h ccontentstream.h pdfoperatorsbase.h pdfoperators.h pdfoperatorsiter.h \
 	  displayparams.h textsearchparams.h  \
-	  cpage.h cpdf.h streamwriter.h cinlineimage.h coutline.h \
+	  cpage.h cpageattributes.h cpagechanges.h cpagefonts.h cpagedisplay.h cpagecontents.h contentschangetag.h cpageannots.h cpagemodule.h \
+	  cpdf.h streamwriter.h cinlineimage.h coutline.h \
 	  stateupdater.h cannotation.h textoutput.h textoutputbuilder.h \
 	  textoutputentities.h textoutputengines.h	\
 	  delinearizator.h pdfspecification.h
@@ -23,9 +24,10 @@ HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/iterator.h $(UTILSROOT)/obs
 SOURCES = static.cc xpdf.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
 	  cxref.cc xrefwriter.cc streamwriter.cc iproperty.cc carray.cc \
 	  cdict.cc cstream.cc cobject.cc cobject2xpdf.cc cobject2string.cc cobjecthelpers.cc \
-	  ccontentstream.cc pdfoperators.cc pdfoperatorsiter.cc \
+	  ccontentstream.cc pdfoperatorsbase.cc  pdfoperators.cc pdfoperatorsiter.cc \
 	  stateupdater.cc pdfwriter.cc cinlineimage.cc coutline.cc \
-	  cpage.cc cpdf.cc textoutputengines.cc textoutputentities.cc \
+	  cpage.cc cpageattributes.cc cpagechanges.cc cpagefonts.cc cpagedisplay.cc cpagecontents.cc contentschangetag.cc cpageannots.cc \
+	  cpdf.cc textoutputengines.cc textoutputentities.cc \
 	  textoutputbuilder.cc pdfspecification.cc \
 	  delinearizator.cc
 
@@ -38,6 +40,7 @@ TARGET   = libkernel.a
 all: $(TARGET) 
 
 staticlib: $(TARGET)
+
 
 deps: $(HEADERS)
 	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps

@@ -427,7 +427,7 @@ getTestStreamContent (boost::shared_ptr<CPage> page)
 {
 	boost::shared_ptr<CDict> dict = page->getDictionary();
 	assert (dict);
-	boost::shared_ptr<IProperty> ccs = utils::getReferencedObject (dict->getProperty(Specification::CPage::CONTENTS));
+	boost::shared_ptr<IProperty> ccs = utils::getReferencedObject (dict->getProperty(Specification::Page::CONTENTS));
 	if (isStream(ccs))
 		return IProperty::getSmartCObjectPtr<CStream> (ccs);
 	else if (isArray(ccs))

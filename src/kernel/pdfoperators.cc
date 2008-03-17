@@ -43,22 +43,6 @@ using namespace debug;
 
 
 //==========================================================
-// PdfOperator
-//==========================================================
-
-//
-//
-//
-shared_ptr<CContentStream>
-PdfOperator::getContentStream () const
-{
-	assert (contentstream);
-	assert (contentstream == contentstream->getSmartPointer().get());
-	return contentstream->getSmartPointer();
-}
-	
-
-//==========================================================
 // Concrete implementations of PdfOperator
 //==========================================================
 
@@ -95,112 +79,6 @@ SimpleGenericOperator::clone ()
 
 	// Create clone
 	return shared_ptr<PdfOperator> (new SimpleGenericOperator (opText,ops));
-}
-
-
-//==========================================================
-// CompositePdfOperator
-//==========================================================
-
-//
-//
-//
-void 
-CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> prev)
-{
-	assert (oper);
-	kernelPrintDbg (debug::DBG_DBG, "");
-
-	// If children are empty, we have to provide a prev because there is no
-	// other way we can obtain shared_ptr to *this
-	if (children.empty() && prev)
-	{
-		children.push_back (oper); 
-		PdfOperator::putBehind (prev, oper);
-		return;
-	
-	}else if (children.empty())
-	{
-		assert (!"Children are empty but prev was not specified.");
-		throw CObjInvalidOperation ();
-	}
-	
-	//
-	// Change iterator
-	//
-	if (NULL == prev.get())
-	{
-		assert (!children.empty());
-		assert (!isCompositeOp(children.back()));
-		if (isCompositeOp(children.back()))
-			throw CObjInvalidOperation ();
-		//
-		prev = children.back ();
-	}
-	assert (prev);
-
-	// Insert into iterator list
-	PdfOperator::putBehind (prev, oper);
-	
-	// Add to children
-	children.push_back (oper); 
-}
-
-//
-//
-//
-void
-CompositePdfOperator::remove (boost::shared_ptr<PdfOperator> op)
-{ 
-	PdfOperators::iterator it =  find (children.begin(), children.end(), op);
-	assert (it != children.end());
-	if (it == children.end())
-		throw CObjInvalidOperation ();
-	
-	// Erase it
-	children.erase (it); 
-}
-
-//
-//
-//
-void 
-CompositePdfOperator::getChildren (PdfOperators& container) const
-{
-	container.clear ();
-	copy (children.begin(), children.end (), back_inserter (container));
-}
-
-//
-//
-//
-void 
-CompositePdfOperator::insert_after (const boost::shared_ptr<PdfOperator> oper, 
-									boost::shared_ptr<PdfOperator> newOper)
-{
-	PdfOperators::iterator it = std::find (children.begin(), children.end(), oper);
-	children.insert (++it, newOper);
-}
-
-
-//
-//
-//
-void
-CompositePdfOperator::getStringRepresentation (std::string& str) const
-{
-	//
-	// Get string representation of every child and append it
-	//
-	// Indicate that we are a composite
-	string tmp;
-	PdfOperators::const_iterator it = children.begin ();
-	for (; it != children.end(); ++it)
-	{
-		tmp.clear ();
-		(*it)->getStringRepresentation (tmp);
-		str += tmp + " ";
-	}
 }
 
 
@@ -243,7 +121,7 @@ UnknownCompositePdfOperator::clone ()
 {
 	shared_ptr<UnknownCompositePdfOperator> clone (new UnknownCompositePdfOperator(opBegin,opEnd));
 
-	for (PdfOperators::iterator it = children.begin(); it != children.end(); ++it)
+	for (PdfOperators::iterator it = _children.begin(); it != _children.end(); ++it)
 		clone->push_back ((*it)->clone(),getLastOperator(clone));
 	
 	// Create clone
@@ -358,109 +236,6 @@ findCompositeOfPdfOperator (PdfOperator::Iterator it, boost::shared_ptr<PdfOpera
 	throw CObjInvalidOperation ();
 }
 
-//
-//
-//
-boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> oper)
-{
-	if (!isCompositeOp (oper) || 0 == oper->getChildrenCount())
-		return oper;
-
-	PdfOperator::PdfOperators opers;
-	oper->getChildren (opers);
-	assert (!opers.empty());
-	boost::shared_ptr<PdfOperator> tmpop = opers.back();
-	while (isCompositeOp (tmpop))
-	{
-		opers.back()->getChildren (opers);
-		if (opers.empty())
-			break;
-		tmpop = opers.back();
-	}
-
-	return tmpop;
-}
-
-
-//
-// Our changes
-//
-namespace {
-	/** Change tag. */
-	static const char* CHANGE_TAG_NAME = "DP";
-	static const char* CHANGE_TAG_ID = "PdfEdit";
-}
-
-//
-//
-//
-boost::shared_ptr<PdfOperator> createChangeTag ()
-{
-	PdfOperator::Operands opers;
-	
-	// Name or our application
-	shared_ptr<CName> name (new CName (CHANGE_TAG_ID));
-	opers.push_back (name);
-	
-	// Dict with our informatio
-	shared_ptr<CDict> dict (new CDict ());
-	time_t t = time (NULL);
-	ostringstream oss;
-	oss << t;
-	CString tm (oss.str());
-	dict->addProperty ("Time", tm);
-	opers.push_back (dict);
-	
-	// Operator
-	return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator (CHANGE_TAG_NAME, opers));
-}
-
-//
-//
-//
-string
-getChangeTagName ()
-	{ return CHANGE_TAG_NAME; }
-string
-getChangeTagId ()
-	{ return CHANGE_TAG_ID; }
-
-
-//
-//
-//
-time_t
-getChangeTagTime (shared_ptr<PdfOperator> op)
-{
-	assert (op);
-
-	// Check operator name
-	assert (isPdfOp (op, CHANGE_TAG_NAME));
-	if (!isPdfOp (op,CHANGE_TAG_NAME))
-		throw CObjInvalidObject ();
-
-	time_t time = 0;
-	if (0 < op->getParametersCount())
-	{
-		PdfOperator::Operands ops;
-		op->getParameters (ops);
-		assert (!ops.empty());
-		
-		try {
-			if (isDict (ops.front())) {
-				double tmp;
-				utils::simpleValueFromString (utils::getStringFromDict (ops.front(),"Time"),tmp);
-				if (numeric_limits<time_t>::max() > tmp)
-					time = static_cast<time_t> (tmp);
-			}
-			
-		}catch (CObjectException&) { 
-			utilsPrintDbg (debug::DBG_WARN, "Change tag is CORRUPTED!");
-		}
-	}
-	
-	return time;
-}
 
 	
 //==========================================================

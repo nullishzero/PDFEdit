@@ -34,6 +34,7 @@
 #include "kernel/cobject.h"
 #include "kernel/factories.h"
 #include "kernel/cinlineimage.h"
+#include "kernel/contentschangetag.h"
 
 //fabs
 #include <math.h>
@@ -70,7 +71,7 @@ namespace {
 					CPdf& pdf, 
 					IndiRef rf, 
 					CContentStream& cs, 
-					boost::shared_ptr<IIPropertyObserver> observer)
+					boost::shared_ptr<IPropertyObserver> observer)
 	{
 		utilsPrintDbg (DBG_DBG, "");
 		CContentStream::OperatorIterator it = PdfOperator::getIterator (first);
@@ -363,7 +364,7 @@ namespace {
 			string endtag = StateUpdater::getEndTag (opname);
 			bool foundEndTag = false;
 			
-			// The same as in (re)parseContentStream
+			// The same as in (re)parse
 			shared_ptr<PdfOperator> newop, previousLast = result;
 
 			//
@@ -413,10 +414,10 @@ namespace {
 	 * @param parsedstreams Streams that have been really parsed.
 	 */
 	void
-	parseContentStream (CContentStream::Operators& operators, 
+	parse (CContentStream::Operators& operators, 
 						CContentStream::CStreams& streams, 
 						CContentStream& cs,
-						boost::shared_ptr<IIPropertyObserver> observer,
+						boost::shared_ptr<IPropertyObserver> observer,
 						CContentStream::CStreams* parsedstreams = NULL)
 	{
 		// Clear operators
@@ -453,14 +454,14 @@ namespace {
 				//
 				// Is it our change
 				//
-				if (isPdfOp (*newop,getChangeTagName()))
+				if (isPdfOp (*newop,ContentsChangeTag::CHANGE_TAG_NAME))
 				{	
 					PdfOperator::Operands ops;
 					newop->getParameters (ops);
 					if (!ops.empty())
 					{
 						try {
-							if (getChangeTagId() == getNameFromIProperty(ops.front()))
+							if (ContentsChangeTag::CHANGE_TAG_ID == getNameFromIProperty(ops.front()))
 								our_change = true;
 						}catch (ElementBadTypeException&)
 							{}
@@ -487,7 +488,7 @@ namespace {
 							break;
 						xpdf::XpdfObject o;
 						streamreader.lookXpdfObject (*o);
-						if (o->isName (getChangeTagId().c_str()))
+						if (o->isName (ContentsChangeTag::CHANGE_TAG_ID))
 							break;
 					}
 				}
@@ -675,7 +676,7 @@ CContentStream::CContentStream (CStreams& strs,
 	operandobserver = boost::shared_ptr<OperandObserver> (new OperandObserver (this));
 	
 	// Parse it, move parsed straems from strs to cstreams
-	parseContentStream (operators, strs, *this, operandobserver, &cstreams);
+	parse (operators, strs, *this, operandobserver, &cstreams);
 	
 	// Save bounding boxes
 	if (!operators.empty()) 
@@ -710,7 +711,7 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 	{
 		// Clear operators	
 		operators.clear ();
-		parseContentStream (operators, cstreams, *this, operandobserver);
+		parse (operators, cstreams, *this, operandobserver);
 	}
 	
 	// Save bounding boxes
@@ -1153,6 +1154,8 @@ CContentStream::unregisterCStreamObservers () const
 		throw CObjInvalidOperation ();
 	}
 }
+
+
 
 
 //==========================================================
