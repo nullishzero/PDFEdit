@@ -764,13 +764,17 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" test matrix");
-			CPPUNIT_ASSERT (settm (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" test matrix");
+				CPPUNIT_ASSERT (settm (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 
-			TEST(" add content stream");
-			CPPUNIT_ASSERT (addcc (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" add content stream");
+				CPPUNIT_ASSERT (addcc (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//
@@ -786,13 +790,15 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" insert at front");
-			CPPUNIT_ASSERT (frontinsert (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" insert at front");
+				CPPUNIT_ASSERT (frontinsert (OUTPUT, (*it).c_str()));
+				OK_TEST;
 
-			TEST(" add content stream");
-			CPPUNIT_ASSERT (addcc (OUTPUT, (*it).c_str()));
-			OK_TEST;
+				TEST(" add content stream");
+				CPPUNIT_ASSERT (addcc (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 
@@ -880,9 +886,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" setCS");
-			CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" setCS");
+				CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 

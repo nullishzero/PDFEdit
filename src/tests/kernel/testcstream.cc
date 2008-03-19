@@ -322,13 +322,17 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" buffer");
-			CPPUNIT_ASSERT (buffer (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" buffer");
+				CPPUNIT_ASSERT (buffer (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 			
-			TEST(" set buffer");
-			CPPUNIT_ASSERT (setbuffer (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" set buffer");
+				CPPUNIT_ASSERT (setbuffer (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//

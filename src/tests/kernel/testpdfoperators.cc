@@ -554,9 +554,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" set cs ");
-			CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" set cs ");
+				CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//
@@ -572,9 +574,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" del oper");
-			CPPUNIT_ASSERT (delOper (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" del oper");
+				CPPUNIT_ASSERT (delOper (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//
@@ -590,9 +594,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" del all oper");
-			CPPUNIT_ASSERT (delAllOper (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" del all oper");
+				CPPUNIT_ASSERT (delAllOper (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 
@@ -609,9 +615,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" insert oper");
-			CPPUNIT_ASSERT (insertOper (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" insert oper");
+				CPPUNIT_ASSERT (insertOper (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//
@@ -652,9 +660,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" change color");
-			CPPUNIT_ASSERT (changeColor (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" change color");
+				CPPUNIT_ASSERT (changeColor (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//

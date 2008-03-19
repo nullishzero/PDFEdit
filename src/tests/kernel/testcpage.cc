@@ -529,9 +529,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
-			TEST(" mediabox");
-			CPPUNIT_ASSERT (mediabox (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" mediabox");
+				CPPUNIT_ASSERT (mediabox (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	
@@ -548,9 +550,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
-			TEST(" set");
-			CPPUNIT_ASSERT (setattr (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" set");
+				CPPUNIT_ASSERT (setattr (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 
@@ -651,9 +655,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" get font names");
-			CPPUNIT_ASSERT (getSetFonts (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" get font names");
+				CPPUNIT_ASSERT (getSetFonts (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//
@@ -801,9 +807,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
-			TEST(" changes");
-			CPPUNIT_ASSERT (change (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" changes");
+				CPPUNIT_ASSERT (change (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 	//
@@ -819,9 +827,11 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
-			TEST(" move up/down");
-			CPPUNIT_ASSERT (move (OUTPUT, (*it).c_str()));
-			OK_TEST;
+			BEGIN_CHECK_READONLY;
+				TEST(" move up/down");
+				CPPUNIT_ASSERT (move (OUTPUT, (*it).c_str()));
+				OK_TEST;
+			END_CHECK_READONLY;
 		}
 	}
 

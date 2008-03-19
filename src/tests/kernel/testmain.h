@@ -80,7 +80,10 @@ static const size_t TEST_MAX_PAGE_COUNT = 10000;
 #define START_TEST			OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST			OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
 #define OK_TEST				OUTPUT << "\t...TEST PASSED...\n" << flush;
-//==========================
+
+//========= NASTY AGAIN ================
+#define BEGIN_CHECK_READONLY	try {
+#define END_CHECK_READONLY		} catch(ReadOnlyDocumentException& e) { std::cerr<< "Document is read only." << std::flush; }
 
 
 //=====================================================================================
