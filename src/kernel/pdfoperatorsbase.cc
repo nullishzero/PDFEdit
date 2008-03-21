@@ -188,6 +188,13 @@ CompositePdfOperator::getStringRepresentation (std::string& str) const
 	}
 }
 
+void 
+CompositePdfOperator::init_operands (shared_ptr<observer::IObserver<IProperty> > observer, CPdf* pdf, IndiRef* rf)
+{ 
+	for (PdfOperators::iterator it = _children.begin (); it != _children.end(); ++it)
+		(*it)->init_operands (observer, pdf, rf);
+}
+
 
 //==========================================================
 // Helper functions

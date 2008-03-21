@@ -431,10 +431,10 @@ namespace {
 				throw CObjInvalidObject ();
 		}
 		CPdf* pdf = streams.front()->getPdf ();
-		assert (pdf);
+			assert (pdf);
 		IndiRef rf = streams.front()->getIndiRef ();
 
-		assert (!streams.empty());
+			assert (!streams.empty());
 		CStreamsXpdfReader<CContentStream::CStreams> streamreader (streams);
 		streamreader.open ();
 	
@@ -531,8 +531,8 @@ namespace {
 			}
 		}
 
-		assert (operands.empty());
-		assert (observer);
+			assert (operands.empty());
+			assert (observer);
 		// Set pdf ref and cs
 		if (!operators.empty())
 			opsSetPdfRefCs (operators.front(), *pdf, rf, cs, observer);
@@ -667,8 +667,8 @@ CContentStream::CContentStream (CStreams& strs,
 	}
 	
 	// Parse it into small objects
-	assert (gfxres);
-	assert (gfxstate);
+		assert (gfxres);
+		assert (gfxstate);
 	
 	// Create cstream observer and register it on all operands
 	cstreamobserver = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));

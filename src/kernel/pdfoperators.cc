@@ -94,9 +94,9 @@ SimpleGenericOperator::clone ()
 //
 //
 UnknownCompositePdfOperator::UnknownCompositePdfOperator 
-	(const char* opBegin_, const char* opEnd_) : CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_)
+	(const char* opBegin, const char* opEnd) : CompositePdfOperator (), _opBegin (opBegin), _opEnd (opEnd)
 {
-	utilsPrintDbg (DBG_DBG, "Unknown composite operator: " << opBegin_ << " " << opEnd_);
+	utilsPrintDbg (DBG_DBG, "Unknown composite operator: " << _opBegin << " " << _opEnd);
 
 }
 
@@ -107,7 +107,7 @@ void
 UnknownCompositePdfOperator::getStringRepresentation (string& str) const
 {
 	// Header
-	str += opBegin; str += " ";
+	str += _opBegin; str += " ";
 	
 	// Delegate
 	CompositePdfOperator::getStringRepresentation (str);	
@@ -119,7 +119,7 @@ UnknownCompositePdfOperator::getStringRepresentation (string& str) const
 shared_ptr<PdfOperator> 
 UnknownCompositePdfOperator::clone ()
 {
-	shared_ptr<UnknownCompositePdfOperator> clone (new UnknownCompositePdfOperator(opBegin,opEnd));
+	shared_ptr<UnknownCompositePdfOperator> clone (new UnknownCompositePdfOperator(_opBegin,_opEnd));
 
 	for (PdfOperators::iterator it = _children.begin(); it != _children.end(); ++it)
 		clone->push_back ((*it)->clone(),getLastOperator(clone));
@@ -136,10 +136,10 @@ UnknownCompositePdfOperator::clone ()
 //
 //
 InlineImageCompositePdfOperator::InlineImageCompositePdfOperator 
-	(const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_) 
-		: CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_), inlineimage (im_)
+	(const char* opBegin, const char* opEnd, boost::shared_ptr<CInlineImage> im) 
+		: CompositePdfOperator (), _opBegin (opBegin), _opEnd (opEnd), _inlineimage (im)
 {
-	utilsPrintDbg (DBG_DBG, opBegin_ << " " << opEnd_);
+	utilsPrintDbg (DBG_DBG, _opBegin << " " << _opEnd);
 }
 
 //
@@ -149,12 +149,12 @@ void
 InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 {
 	// Header
-	str += opBegin; str += "\n";
+	str += _opBegin; str += "\n";
 	// 
-	if (inlineimage)
+	if (_inlineimage)
 	{
 		std::string tmp;
-		inlineimage->getStringRepresentation (tmp);	
+		_inlineimage->getStringRepresentation (tmp);	
 		str += tmp;
 	}else
 	{
@@ -162,7 +162,7 @@ InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 		throw CObjInvalidObject ();
 	}
 	// Footer
-	str += opEnd; str += "\n";
+	str += _opEnd; str += "\n";
 
 }
 
@@ -172,7 +172,7 @@ InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 void
 InlineImageCompositePdfOperator::getParameters (Operands& opers) const
 {
-	boost::shared_ptr<IProperty> ip = inlineimage;
+	boost::shared_ptr<IProperty> ip = _inlineimage;
 	opers.push_back (ip);
 }
 
@@ -183,9 +183,9 @@ shared_ptr<PdfOperator>
 InlineImageCompositePdfOperator::clone ()
 {
 	// Clone operands
-	shared_ptr<CInlineImage> imgclone = IProperty::getSmartCObjectPtr<CInlineImage> (inlineimage->clone());
+	shared_ptr<CInlineImage> imgclone = IProperty::getSmartCObjectPtr<CInlineImage> (_inlineimage->clone());
 	// Create clone
-	return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (opBegin, opEnd, imgclone));
+	return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (_opBegin, _opEnd, imgclone));
 }
 
 

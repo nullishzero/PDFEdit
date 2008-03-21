@@ -205,9 +205,9 @@ class UnknownCompositePdfOperator : public CompositePdfOperator
 private:
 		
 	/** Text representing the beginning operator. */
-	const char* opBegin;
+	const char* _opBegin;
 	/** Text representing the ending operator. */
-	const char* opEnd;
+	const char* _opEnd;
 
 public:
 	
@@ -218,12 +218,12 @@ public:
 	 * @param opBegin_ Start operator name text representation.
 	 * @param opEnd_ End operator name text representation.
 	 */
-	UnknownCompositePdfOperator (const char* opBegin_, const char* opEnd_);
+	UnknownCompositePdfOperator (const char* opBegin, const char* opEnd);
 
 public:
 	// End operator is added to composite as normal operator so just prepand start operator
 	virtual void getStringRepresentation (std::string& str) const;
-	virtual void getOperatorName (std::string& first) const {first = opBegin;}
+	virtual void getOperatorName (std::string& first) const {first = _opBegin;}
 
 	//
 	// Clone interface
@@ -254,11 +254,11 @@ class InlineImageCompositePdfOperator : public CompositePdfOperator
 private:
 		
 	/** Text representing the beginning operator. */
-	const char* opBegin;
+	const char* _opBegin;
 	/** Text representing the ending operator. */
-	const char* opEnd;
+	const char* _opEnd;
 	/** Stream representing inline image. */
-	boost::shared_ptr<CInlineImage> inlineimage;
+	boost::shared_ptr<CInlineImage> _inlineimage;
 
 public:
 	
@@ -270,7 +270,7 @@ public:
 	 * @param opEnd_ End operator name text representation.
 	 * @param im_ Stream representing inline image.
 	 */
-	InlineImageCompositePdfOperator (const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_);
+	InlineImageCompositePdfOperator (const char* opBegin, const char* opEnd, boost::shared_ptr<CInlineImage> im);
 
 	
 	//
@@ -280,7 +280,7 @@ public:
 	virtual size_t getParametersCount () const {return 1;}
 	virtual void getParameters (Operands& opers) const;
 	virtual void getStringRepresentation (std::string& str) const;
-	virtual void getOperatorName (std::string& first) const {first = opBegin;}
+	virtual void getOperatorName (std::string& first) const {first = _opBegin;}
 
 	//
 	// Clone interface
