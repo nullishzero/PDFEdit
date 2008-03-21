@@ -853,8 +853,6 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 			} // if (charProc->isStream())
 
 			// Free resources
-				assert (2 == charProc->getStream()->incRef());
-				assert (1 == charProc->getStream()->decRef());
 			charProc.reset ();
 
 			//
