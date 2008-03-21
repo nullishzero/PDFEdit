@@ -52,10 +52,11 @@ class SimpleGenericOperator : public PdfOperator
 {
 private:
 	/** Operands. */
-	Operands operands;
-
+	Operands _operands;
 	/** Text representing the operator. */
-	const std::string opText;
+	const std::string _opText;
+	/** Operand observers registered on its operands. */
+	boost::shared_ptr<observer::IObserver<IProperty> > _operandobserver;
 	
 public:
 
@@ -68,45 +69,8 @@ public:
 	 * @param opers This is a stack of operands from which we take number specified
 	 * 				by numOper or while any operand left.
 	 */
-	SimpleGenericOperator (const char* opTxt, const size_t numOper, Operands& opers) : opText (opTxt)
-	{
-			//utilsPrintDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
-			assert (numOper >= opers.size());
-			if (numOper < opers.size())
-				throw MalformedFormatExeption ("Operator operand size mismatch.");
-
-		//
-		// Store the operands and remove it from the stack
-		// REMARK: the op count can vary ("scn" operator takes arbitrary number of
-		// parameters)
-		//
-		for (size_t i = 0; (i < numOper) && !opers.empty(); ++i)
-		{
-			Operands::value_type val = opers.back ();
-			// Store the last element of input parameter
-			operands.push_front (val);
-			// Remove the element from input parameter
-			opers.pop_back ();
-		}
-	}
-
-	/** 
-	 * Constructor. 
-	 */
-	SimpleGenericOperator (const std::string& opTxt, Operands& opers): opText (opTxt)
-	{
-			utilsPrintDbg (debug::DBG_DBG, opTxt);
-		//
-		// Store the operands and remove it from opers
-		//
-		while (!opers.empty())
-		{
-			// Store the last element of input parameter
-			operands.push_front ( opers.back() );
-			// Remove the element from input parameter
-			opers.pop_back ();
-		}
-	}
+	SimpleGenericOperator (const char* opTxt, const size_t numOper, Operands& opers);
+	SimpleGenericOperator (const std::string& opTxt, Operands& opers);
 
 	
 	//
@@ -115,13 +79,13 @@ public:
 public:
 
 	virtual size_t getParametersCount () const
-		{ return operands.size (); }
+		{ return _operands.size (); }
 
 	virtual void getParameters (Operands& container) const
-		{ copy (operands.begin(), operands.end(), back_inserter(container)); }
+		{ copy (_operands.begin(), _operands.end(), back_inserter(container)); }
 
 	virtual void getOperatorName (std::string& first) const
-		{ first = opText;}
+		{ first = _opText;}
 	
 	virtual void getStringRepresentation (std::string& str) const;
 
@@ -135,35 +99,8 @@ protected:
 	//
 	// Observer interface
 	//
-private:
-	boost::shared_ptr<observer::IObserver<IProperty> > _operandobserver;
 public:
-	void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer,
-						CPdf* pdf,
-						IndiRef* rf)
-	{ 
-		// store observer
-		_operandobserver = observer; 
-		//
-		for (Operands::iterator oper = operands.begin (); oper != operands.end (); ++oper)
-		{
-			if (hasValidPdf(*oper))
-			{ // We do not support adding operators from another stream
-				if ( ((*oper)->getPdf() != pdf) || !((*oper)->getIndiRef() == *rf) )
-				{
-					kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << *rf <<  " op has" <<(*oper)->getIndiRef());
-					throw CObjInvalidObject ();
-				}
-				
-			}else
-			{
-				(*oper)->setPdf (pdf);
-				(*oper)->setIndiRef (*rf);
-				REGISTER_SHAREDPTR_OBSERVER((*oper), observer);
-				(*oper)->lockChange ();
-			}
-		} // for
-	}
+	void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer, CPdf* pdf, IndiRef* rf);
 
 	//
 	// Destructor
@@ -173,15 +110,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~SimpleGenericOperator() 
-	{
-			// can happen when used as a temporary object
-			if (0 < operands.size() && !(_operandobserver)) 
-				return;
-		for (Operands::iterator it = operands.begin(); it != operands.end(); ++it) {
-			UNREGISTER_SHAREDPTR_OBSERVER ((*it), _operandobserver);
-		}
-	}
+	virtual ~SimpleGenericOperator();
 
 }; // class SimpleGenericOperator
 

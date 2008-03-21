@@ -49,11 +49,71 @@ using namespace debug;
 //
 //
 //
+SimpleGenericOperator::SimpleGenericOperator (const char* opTxt, 
+											  const size_t numOper, 
+											  Operands& opers) : _opText (opTxt)
+{
+		//utilsPrintDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
+		assert (numOper >= opers.size());
+		if (numOper < opers.size())
+			throw MalformedFormatExeption ("Operator operand size mismatch.");
+
+	//
+	// Store the operands and remove it from the stack
+	// REMARK: the op count can vary ("scn" operator takes arbitrary number of
+	// parameters)
+	//
+	for (size_t i = 0; (i < numOper) && !opers.empty(); ++i)
+	{
+		Operands::value_type val = opers.back ();
+		// Store the last element of input parameter
+		_operands.push_front (val);
+		// Remove the element from input parameter
+		opers.pop_back ();
+	}
+}
+
+//
+//
+//
+SimpleGenericOperator::SimpleGenericOperator (const std::string& opTxt, 
+											  Operands& opers): _opText (opTxt)
+{
+		utilsPrintDbg (debug::DBG_DBG, opTxt);
+	//
+	// Store the operands and remove it from opers
+	//
+	while (!opers.empty())
+	{
+		// Store the last element of input parameter
+		_operands.push_front ( opers.back() );
+		// Remove the element from input parameter
+		opers.pop_back ();
+	}
+}
+
+//
+//
+//
+SimpleGenericOperator::~SimpleGenericOperator() 
+{
+		// can happen when used as a temporary object
+		if (0 < _operands.size() && !(_operandobserver)) 
+			return;
+	for (Operands::iterator it = _operands.begin(); it != _operands.end(); ++it) {
+		UNREGISTER_SHAREDPTR_OBSERVER ((*it), _operandobserver);
+	}
+}
+
+
+//
+//
+//
 void 
 SimpleGenericOperator::getStringRepresentation (std::string& str) const
 {
 	std::string tmp;
-	for (Operands::const_iterator it = operands.begin(); it != operands.end (); ++it)
+	for (Operands::const_iterator it = _operands.begin(); it != _operands.end (); ++it)
 	{
 		tmp.clear ();
 		(*it)->getStringRepresentation (tmp);
@@ -61,7 +121,7 @@ SimpleGenericOperator::getStringRepresentation (std::string& str) const
 	}
 
 	// Add operator string
-	str += opText;
+	str += _opText;
 }
 	
 
@@ -73,12 +133,41 @@ SimpleGenericOperator::clone ()
 {
 	// Clone operands
 	Operands ops;
-	for (Operands::iterator it = operands.begin (); it != operands.end(); ++it)
+	for (Operands::iterator it = _operands.begin (); it != _operands.end(); ++it)
 		ops.push_back ((*it)->clone());
-	assert (ops.size () == operands.size());
+	assert (ops.size () == _operands.size());
 
 	// Create clone
-	return shared_ptr<PdfOperator> (new SimpleGenericOperator (opText,ops));
+	return shared_ptr<PdfOperator> (new SimpleGenericOperator (_opText,ops));
+}
+
+
+void 
+SimpleGenericOperator::init_operands (shared_ptr<observer::IObserver<IProperty> > observer, 
+									  CPdf* pdf, 
+									  IndiRef* rf)
+{ 
+	// store observer
+	_operandobserver = observer; 
+	//
+	for (Operands::iterator oper = _operands.begin (); oper != _operands.end (); ++oper)
+	{
+		if (hasValidPdf(*oper))
+		{ // We do not support adding operators from another stream
+			if ( ((*oper)->getPdf() != pdf) || !((*oper)->getIndiRef() == *rf) )
+			{
+				kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << *rf <<  " op has" <<(*oper)->getIndiRef());
+				throw CObjInvalidObject ();
+			}
+			
+		}else
+		{
+			(*oper)->setPdf (pdf);
+			(*oper)->setIndiRef (*rf);
+			REGISTER_SHAREDPTR_OBSERVER((*oper), observer);
+			(*oper)->lockChange ();
+		}
+	} // for
 }
 
 

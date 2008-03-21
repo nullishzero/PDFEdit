@@ -272,19 +272,18 @@ public:
 
 	/** 
 	 * Removes given annotation from page.
-	 * @param annot Annotation to remove.
 	 *
-	 * Tries to find given annotation in _annotations and if found, removes
-	 * reference from Annots array.
-	 * <br>
-	 * As a result, removed annotation is invalidated and not accessible. User 
-	 * has to call getAllAnnotations method to get current state (same way as 
+	 * Tries to find given annotation and if found, removes it.<br />
+	 *
+	 * As a result, the removed annotation is invalidated and not accessible. User 
+	 * has to call getAllAnnotations method to get current state (the same way as 
 	 * in addAnnotation case).
 	 *
+	 * @param annot Annotation to remove.
 	 * @return true if annotation was removed.
 	 */
 	bool delAnnotation(boost::shared_ptr<CAnnotation> annot)
-		{ _annots->del (annot); }
+		{ return _annots->del (annot); }
 		
 
 	//
