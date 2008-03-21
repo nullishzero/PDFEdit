@@ -149,7 +149,7 @@ bool QSPdf::isValid() {
  Insert page in document at specified position
  \see CPdf::insertPage
  @param page page to insert
- @param position Positin in which to insert
+ @param position Position in which to insert
  */
 QSPage* QSPdf::insertPage(QSPage* page, int position) {
  if (nullPtr(obj,"insertPage")) return NULL;
