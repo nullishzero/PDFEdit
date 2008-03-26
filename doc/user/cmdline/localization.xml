@@ -10,7 +10,9 @@
    <informaltable frame="none">
     <tgroup cols="2"><tbody>
      <row><entry>cs</entry><entry> - Czech</entry></row>
-     <row><entry>sk</entry><entry> - Slovak</entry></row>
+     <row><entry>de</entry><entry> - German</entry></row>
+     <row><entry>es</entry><entry> - Spanish</entry></row>
+     <row><entry>ru</entry><entry> - Russian</entry></row>
     </tbody></tgroup>
    </informaltable>
   </para>
