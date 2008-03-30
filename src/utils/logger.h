@@ -43,13 +43,13 @@ struct SimpleFormatter
 					 const std::string& prefix,
 					 const std::string& file,
 					 const std::string& function,
-					 int line) const
+					 int line)
 	{
 		out << header <<":"<<prefix<<":" << file << ":" << function <<":"<< line << ": ";
 	}
 
 	template<typename T, typename U>
-	inline void msg (T& out, const U& msg) const
+	inline void msg (T& out, const U& msg) 
 	{
 		out << msg;
 	}
@@ -75,43 +75,6 @@ struct SimpleFormatter
  * </code>
  *
  * Advanced usage:
- * <code>
- * struct ApiFormatter
- * {
- * 	std::string msg;
- *
- * 	template<typename T>
- * 	inline void init (T& out,
- * 					 const std::string& header, 
- * 					 const std::string& prefix,
- * 					 const std::string& file,
- * 					 const std::string& function,
- * 					 int line) const
- * 	{
- * 		msg.clear ();
- * 		msg = out << function << "(";
- * 	}
- * 	
- * 	template<typename T, typename U>
- * 	inline void msg (T& out, const U& msg) const
- * 	{
- * 		std::ostringstream oss;
- * 		oss << msg << ",";
- * 		msg += oss.str();
- * 	}
- * 	
- * 	inline std::string get () const
- * 		{ return ");"; }
- * };
- *
- *
- *	typedef _JM_NAMESPACE::Logger<ApiFormatter> ApiLogger;
- *	KernelLogger kernelog ("API");
- *	#define LOG(logger,msg)	\
- * 		logger.start_log ("level", __FILE__, __FUNCTION__, __LINE__);	\
- * 		logger << msg;	\
- * 		logger.end_log();
- * </code>
  */
 template<typename Formatter = SimpleFormatter>
 class Logger
@@ -135,7 +98,7 @@ public:
 	start_log (	const std::string& prefix,
 				const std::string& file,
 				const std::string& function,
-				int line) const
+				int line) 
 	{
 		_ft.init (_out, _header, prefix, file, function, line);
 	}
