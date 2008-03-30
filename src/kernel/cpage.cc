@@ -113,6 +113,9 @@ CPage::~CPage ()
 		kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); 
 	invalidate ();
 
+	// indicate we are ending
+	_dict->setPdf (NULL);
+
 	// inform modules
 	for (Modules::iterator it = _modules.begin(); it != _modules.end(); ++it)
 		it->reset ();
