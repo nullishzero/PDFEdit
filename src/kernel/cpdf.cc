@@ -1848,6 +1848,7 @@ CPdf::~CPdf()
 		kernelPrintDbg(DBG_DBG, "Invalidating page at pos="<<i->first);
 		i->second->invalidate();
 	}
+	pageList.clear();
 
 	// unregisters all observers registered on page tree nodes (root,
 	// intermediate and leaf nodes)
