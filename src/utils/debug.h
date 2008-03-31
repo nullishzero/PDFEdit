@@ -28,7 +28,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-
+#include "utils/logger.h"
 
 // =============================================================================
 namespace debug {
@@ -80,6 +80,10 @@ const unsigned int  DBG_ERR	= 2;
  * Messages which contains comments to some non casual behaviour.
  */
 const unsigned int  DBG_WARN 	= 3;
+
+/** API massage priority.
+ */
+const unsigned int  DBG_API 	= 3;
 
 /** Information message priority.
  * It is designed for messages which informs about some important parts of
@@ -195,6 +199,72 @@ unsigned int changeDebugLevel(unsigned int level);
 			<< std::endl;						\
 	}									\
 }
+
+
+//==================================================================
+// Api Logger
+//==================================================================
+
+/** Api logger formatter. */
+ struct ApiFormatter
+ {
+ 	std::string _msg;
+
+ 	template<typename T>
+ 	inline void init (T& out,
+ 					 const std::string& header, 
+ 					 const std::string& prefix,
+ 					 const std::string& file,
+ 					 const std::string& function,
+ 					 int line) 
+ 	{
+ 		_msg.clear ();
+ 		_msg = header + std::string(":") + function + std::string("(");
+ 	}
+	
+ 	template<typename T, typename U>
+ 	inline void msg (T& out, const U& msg)
+	{
+		std::ostringstream oss;
+ 		oss << msg;
+		_msg += oss.str();
+ 	}
+
+	inline std::string get () const
+ 		{ return _msg+std::string(");\n"); }
+};
+
+
+/**
+ * Api Logger.
+ */
+struct ApiLogger
+{
+	typedef _JM_NAMESPACE::Logger<ApiFormatter> Logger;
+	static Logger logger;
+};
+
+/**
+ * Print API debug information.
+ * Can be used to create testcases.
+ *
+ * Every API function exported to GUI should begin with call to this function.
+ */
+#define _APIDbg(msg)						 \
+{											 \
+	if ( debug::debugLevel >= debug::DBG_API)\
+	{										 \
+		debug::ApiLogger::logger.start_log ("", __FILE__, __FUNCTION__, __LINE__); \
+		debug::ApiLogger::logger << msg; 	\
+		debug::ApiLogger::logger.end_log(); \
+	}										\
+}
+
+#define APIDbg1(p1)			_APIDbg((p1));
+#define APIDbg2(p1,p2)		_APIDbg((p1) << ", " << (p2));
+#define APIDbg3(p1,p2,p3)	_APIDbg((p1) << ", " << (p2) << ", " << (p3));
+
+
 
 // =============================================================================
 } // namespace debug
