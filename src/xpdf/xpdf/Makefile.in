@@ -187,7 +187,7 @@ clean:
 #------------------------------------------------------------------------
 
 deps: $(HEADERS)
-	$(CXX) $(MANDATORY_INCPATH) -M $(CXX_SRC) > deps
+	$(CXX) $(MANDATORY_INCPATH) -M -MF deps $(CXX_SRC)
 
 # this requires gnu make (or compatible) because deps file doesn't
 # exist in time when invoked for the first time and thus has to

@@ -49,7 +49,7 @@ distclean: clean
 	-$(DEL_FILE) $(TARGET)
 
 deps: $(HEADERS)
-	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
+	$(CXX) $(MANDATORY_INCPATH) -M -MF deps $(SOURCES)
 
 # This requires GNU make (or compatible) because deps file doesn't
 # exist in time when invoked for the first time and thus has to

@@ -82,6 +82,14 @@ clean:
 	$(DEL_FILE) $(GUIROOT)/Makefile.qt 
 	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile.qt
 
+dev-rebuild: dev-clean utils kernel tests pdfedit
+
+dev-clean:
+	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
+	cd $(KERNELROOT) && $(MAKE) clean || true
+	cd $(TESTSROOT) && $(MAKE) clean || true
+	cd $(UTILSROOT) && $(MAKE) clean
+
 
 # Dist Cleanup
 distclean: 

@@ -1,7 +1,0 @@
-moc_*.cpp
-ui_*.h
-qsconfig.h
-qsa.prf
-qrc_ide.cpp
-*.moc
-Makefile.qsa

@@ -160,14 +160,6 @@ AC_ARG_ENABLE(gui,
 			      ,
 			      [enable_gui=yes])
 
-dnl TODO remove - testing for qt envoronment
-AC_ARG_ENABLE(qt3,
-	      [AS_HELP_STRING([--enable-qt3],
-			      [Uses Qt3 infrastructure (use 
-			       --disable-qt3 to use QT4 instead)])],
-			      ,
-			      [enable_qt3=yes])
-
 AC_MSG_CHECKING(whether we want to build PDFedit gui)
 dnl Check QT environment if we want GUI
 dnl QSA_DIR is set to qt3 by default. Note that this is important because
@@ -192,26 +184,20 @@ if test "x$enable_gui" = "xyes"; then
 			    - default will be used.])
 
 	AC_MSG_CHECKING(for QT qmake)
-	if test "x$enable_qt3" = "xyes"
-	then
-		CHK_EXECUTABLE([qmake],[qmake qmake-qt3],[${QTDIR}/bin /usr/lib/qt3/bin],[
-			dnl check the qmake we found is for correct QT version (3.x.x)
-			isqmake3=`$testbin --version 2>&1 | grep '3\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*'`
-			if test -z "$isqmake3"
-			then
-				testbin=""
-			fi
-		],[(only for platforms where qmake is not installed under QTDIR tree).])
-		if test -z "${qmake_bin}"
+	CHK_EXECUTABLE([qmake],[qmake qmake-qt3],[${QTDIR}/bin /usr/lib/qt3/bin],[
+		dnl check the qmake we found is for correct QT version (3.x.x)
+		isqmake3=`$testbin --version 2>&1 | grep '3\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*'`
+		if test -z "$isqmake3"
 		then
-			AC_MSG_ERROR(unable to find qmake for QT3)
+			testbin=""
 		fi
-		QMAKE="$QMAKE ${qmake_bin}"
-		AC_MSG_RESULT(Using QT3 with qmake=${qmake_bin})
-	else
-		AC_MSG_ERROR(Using QT4 - not supported at the moment)
-		QSA_DIR="$QSA_DIR qsa-qt4"
-	fi	
+	],[(only for platforms where qmake is not installed under QTDIR tree).])
+	if test -z "${qmake_bin}"
+	then
+		AC_MSG_ERROR(unable to find qmake for QT3)
+	fi
+	QMAKE="$QMAKE ${qmake_bin}"
+	AC_MSG_RESULT(Using QT3 with qmake=${qmake_bin})
 	AC_SUBST(QMAKE)
 else
 	AC_MSG_RESULT(no)

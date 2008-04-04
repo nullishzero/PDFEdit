@@ -178,7 +178,9 @@ You can also control search paths for required libraries and binaries:
 	./configure  --with-cppunit-prefix=PATH_TO_YOUR_CPPUNIT
 
 	- Boost
-	./configure --with-boost=YOUR_BOOST_INSTALLATION
+	./configure --with-boost=YOUR_BOOST_INSTALLATION_PATH \
+		--with-boost-libdir=YOUR_BOOST_LIB_PATH \
+		--with-boost-iostreams=IOSTREAM_LIBRARY
 
 	- qmake is searched in $QTDIR/bin, /usr/lib/qt3/bin and
 	  current PATH directories. If you have qmake installed
@@ -207,6 +209,7 @@ You can also control search paths for required libraries and binaries:
 	  separate line and can use wildchars). If you report missing 
 	  directory for your platform, we can add it in the next release.
 
+See ./configure --help for more information about this parameters.
 
 Installation directories
 ------------------------
@@ -382,3 +385,9 @@ layman -f -a sunrise
 
 pdfedit is then installed by:
 ACCEPT_KEYWORDS=~x86 emerge -av pdfedit
+
+Altlinux 64b
+============
+Altlinux has boost libraries stored in /usr/lib64 directory. This
+directory is not searched by default. Therefore you have to set 
+library path by hand with --with-boost-libdir=/usr/lib64.

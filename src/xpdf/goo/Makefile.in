@@ -43,7 +43,7 @@ GOO_CXX_OBJS = GHash.o GList.o GString.o gmem.o gmempp.o gfile.o FixedPoint.o
 GOO_C_OBJS = parseargs.o
 GOO_OBJS = $(GOO_CXX_OBJS) $(GOO_C_OBJS)
 
-$(LIBPREFIX)Goo.a: deps $(GOO_OBJS)
+$(LIBPREFIX)Goo.a: deps_cxx deps_c $(GOO_OBJS)
 	$(DEL_FILE) $(LIBPREFIX)Goo.a
 	$(AR) $(LIBPREFIX)Goo.a $(GOO_OBJS)
 	$(RANLIB) $(LIBPREFIX)Goo.a
@@ -51,15 +51,18 @@ $(LIBPREFIX)Goo.a: deps $(GOO_OBJS)
 #------------------------------------------------------------------------
 
 clean:
-	$(DEL_FILE) $(GOO_OBJS) $(LIBPREFIX)Goo.a deps
+	$(DEL_FILE) $(GOO_OBJS) $(LIBPREFIX)Goo.a deps_cxx deps_c
 
 #------------------------------------------------------------------------
 
-deps: $(HEADERS)
-	$(CXX) $(MANDATORY_INCPATH) -M $(CXX_SRC) > deps
-	$(CC) $(MANDATORY_INCPATH) -M $(C_SRC) >> deps
+deps_cxx: $(HEADERS)
+	$(CXX) $(MANDATORY_INCPATH) -M -MF deps_cxx $(CXX_SRC)
+
+deps_c: $(HEADERS)
+	$(CC) $(MANDATORY_INCPATH) -M -MF deps_c $(C_SRC)
 
 # This requires GNU make (or compatible) because deps file doesn't
 # exist in time when invoked for the first time and thus has to
 # be generated
-include deps
+include deps_cxx
+include deps_c

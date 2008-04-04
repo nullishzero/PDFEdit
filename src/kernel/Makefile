@@ -43,7 +43,7 @@ staticlib: $(TARGET)
 
 
 deps: $(HEADERS)
-	$(CXX) $(MANDATORY_INCPATH) -M $(SOURCES) > deps
+	$(CXX) $(MANDATORY_INCPATH) -M -MF deps $(SOURCES)
 
 $(TARGET): deps $(OBJECTS)
 	-$(DEL_FILE) $(TARGET)
