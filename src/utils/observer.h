@@ -630,10 +630,12 @@ template<typename T>
 inline static void 
 check_observerlist (const T& list) 
 {
+#ifdef OBSERVER_DEBUG
 	if (list.size()) 
 	{
 		kernelPrintDbg (debug::DBG_CRIT, "unregistered observer(s): " << list.size());
 	}
+#endif
 }
 
 
