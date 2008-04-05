@@ -364,17 +364,12 @@ public:
 		CPPUNIT_ASSERT(pageCount-1==pdf->getPageCount());
 
 		// insert page implies pageCount incrementation
-		// and newPage must be different instance than original one
 		shared_ptr<CPage> newPage=pdf->insertPage(page, 1);
 		CPPUNIT_ASSERT(pageCount==pdf->getPageCount());
 
-		printf("TC02:\tinsertPage returns different instance than parameter\n");
-		CPPUNIT_ASSERT(page!=newPage);
-		CPPUNIT_ASSERT(page->getDictionary()!=newPage->getDictionary());
-
 		// page count is same as in original file now
 
-		printf("TC03:\tremovePage out of range test\n");
+		printf("TC02:\tremovePage out of range test\n");
 		// remove from 0 page should fail
 		try
 		{
@@ -394,19 +389,21 @@ public:
 			// everything ok
 		}
 
-		printf("TC04:\tinsert page never causes ambiguous page tree\n");
-		// inserts first page again and tries to to call getNodePosition
-		shared_ptr<CPage> addedPage=pdf->insertPage(pdf->getFirstPage(), 1);
-		size_t pos=getNodePosition(*pdf, addedPage->getDictionary(), NULL);
-		CPPUNIT_ASSERT(pos==1);
-		// removes added page
-		pdf->removePage(pos);
+		printf("TC03:\tinsert of already present page should fail\n");
+		try
+		{
+			shared_ptr<CPage> addedPage=pdf->insertPage(pdf->getFirstPage(), 1);
+			CPPUNIT_FAIL("Insert of already present page should have failed");
+		}catch(AmbiguousPageTreeException &)
+		{
+			// everything ok
+		}
 
-		printf("TC05:\tremoved page is no longer available test\n");
+		printf("TC04:\tremoved page is no longer available test\n");
 		// try to remove last page
 		shared_ptr<CPage> removedPage=pdf->getLastPage();
 		IndiRef removedPageRef=removedPage->getDictionary()->getIndiRef();
-		pos=pdf->getPagePosition(removedPage);
+		size_t pos=pdf->getPagePosition(removedPage);
 		CPPUNIT_ASSERT(pos==pdf->getPageCount());
 		pdf->removePage(pdf->getPageCount());
 		// FIXME uncoment when ready
@@ -422,7 +419,7 @@ public:
 		// restore to previous state
 		pdf->insertPage(removedPage, pos);
 		
-		printf("TC06:\tremoving page's dictionary invalidates page\n");
+		printf("TC05:\tremoving page's dictionary invalidates page\n");
 		pos=pdf->getPageCount()/2;
 		// if we have just one page, use it
 		if(!pos)
@@ -521,7 +518,7 @@ public:
 
 			// all descendants are collected, we can remove interNode reference
 			// from rootKids
-			printf("TC07:\tremovig inter node removes all pages under\n");
+			printf("TC06:\tremovig inter node removes all pages under\n");
 			rootKids->delProperty(interPos);
 
 			// page count has to be decreased by descendants.size()
@@ -543,7 +540,7 @@ public:
 			// inserts back interNode to 1st position in root kids array
 			// currently first page should be at 1+getKidsCount (if there is any
 			// page);
-			printf("TC08:\tinserting intermediate node test.\n");
+			printf("TC07:\tinserting intermediate node test.\n");
 			shared_ptr<CPage> firstPage, lastPage;
 			size_t currPageCount=pdf->getPageCount();
 			if(currPageCount)
@@ -561,7 +558,7 @@ public:
 				CPPUNIT_ASSERT(pdf->getPagePosition(lastPage) == interNodeLeafCount + currPageCount);
 
 			
-			printf("TC09:\treplacing intermediate node by another intermediate node\n");
+			printf("TC08:\treplacing intermediate node by another intermediate node\n");
 			// gets CRef of firts root's kid (one we have inserted)
 			shared_ptr<CRef> replaceElement=IProperty::getSmartCObjectPtr<CRef>(rootKids->getProperty(0));
 			// change value in replaceElement to contain reference to newly
@@ -578,7 +575,7 @@ public:
 
 			// TODO Kids array as reference to array/mess, 
 
-			printf("TC13:\tambiguous page tree test - ambiguous intermediate node\n");
+			printf("TC09:\tambiguous page tree test - ambiguous intermediate node\n");
 			// inserts reference to interNode to rootKids - this produces
 			// ambiguous page tree for this intermediate node - despite that all
 			// pages should be accessible
@@ -608,7 +605,7 @@ public:
 			rootKids->delProperty(rootKids->getPropertyCount()-1);
 			CPPUNIT_ASSERT(pdf->getPageCount()==currPageCount);
 			
-			printf("TC14:\tambiguous page tree test - ambiguous leaf node\n");
+			printf("TC10:\tambiguous page tree test - ambiguous leaf node\n");
 			// gets parent of first page
 			firstPage=pdf->getFirstPage();
 			shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(
@@ -657,13 +654,13 @@ public:
 
 		// checks PageTreeRootObserver for all possible situations: Pages
 		// property (add, delete or change and Pages reference change)
-		printf("TC10:\tremoving page tree root test\n");
+		printf("TC11:\tremoving page tree root test\n");
 		shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*pdf);
 		size_t currPageCount=pdf->getPageCount();
 		pdf->getDictionary()->delProperty("Pages");
 		CPPUNIT_ASSERT(pdf->getPageCount()==0);
 
-		printf("TC11:\tadding wrong page tree root element\n");
+		printf("TC12:\tadding wrong page tree root element\n");
 		shared_ptr<IProperty> fakeInterCRef(CRefFactory::getInstance(fakeInterRef));
 		pdf->getDictionary()->addProperty("Pages", *fakeInterCRef);
 		CPPUNIT_ASSERT(pdf->getPageCount()==0);
@@ -684,7 +681,7 @@ public:
 			/* ok */
 		}
 
-		printf("TC12:\treplacing page tree root test\n");
+		printf("TC13:\treplacing page tree root test\n");
 		// creates new reference which points to some nonsense and changes Pages
 		// reference value
 		shared_ptr<CRef> pagesProp=IProperty::getSmartCObjectPtr<CRef>(pdf->getDictionary()->getProperty("Pages"));

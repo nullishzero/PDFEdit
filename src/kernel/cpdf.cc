@@ -3011,13 +3011,28 @@ using namespace utils;
 		pageDict->setIndiRef(pageDictIndiRef);
 		CPageAttributes::setInheritable(pageDict);
 	}
-	
-	// adds pageDict as new indirect property (also with properties referenced 
-	// by this dictionary.
-	// All page dictionaries must be indirect objects and addIndirectProperty
-	// method also solves problems with deep copy and page from different file
-	// transition
-	IndiRef pageRef=addIndirectProperty(pageDict, true);
+
+	// Adds pageDict as new indirect property (also with properties referenced 
+	// by this dictionary) if it comes from different pdf. Otherwise simply
+	// add reference.
+	IndiRef pageRef;
+	if(pageDict->getPdf() == this)
+	{	
+		try
+		{
+			size_t pos = getPagePosition(page);
+			kernelPrintDbg(debug::DBG_ERR, "Page " 
+					<< pageDict->getIndiRef() 
+					<< " is already in the pdf at "<<
+					pos << " position");
+			throw AmbiguousPageTreeException();
+		}catch (PageNotFoundException &)
+		{
+			pageRef=pageDict->getIndiRef();
+		}
+	}
+	else
+		pageRef=addIndirectProperty(pageDict, true);
 
 	// adds newly created page dictionary to the kids array at kidsIndex
 	// position. This triggers pageTreeWatchDog for consolidation and observer

@@ -1305,23 +1305,18 @@ public:
 		return trailer;
 	}
 		
-	/** Inserts exisitng page.
+	/** Inserts given page to the document.
 	 * @param page Page used for new page creation.
 	 * @param pos Position where to insert new page.
 	 *
-	 * Inserts deep copy of given page at given position. If position is
-	 * greater than page count, it is added after last page. Storing to 0
-	 * position is same as if pos parameter was 1. All pages behind pos
-	 * are renumbered.
+	 * If position is greater than page count, it is added after last page. 
+	 * Storing to 0 position is same as if pos parameter was 1. All pages 
+	 * behind pos are renumbered.
 	 * <br>
-	 * Method may fail if page at position is ambiguous. This means that 
-	 * it is not possible to get position of page reference in its parent Kids
-	 * array due to multiple occurance in Kids array. @see getNodePosition
-	 * 
-	 * <br>
-	 * Insertion never causes ambigues page tree, because deep copy of given
-	 * page is added as new indirect property and so it has different indirect
-	 * reference as original one.
+	 * Method may fail if page at position is ambiguous or given page is 
+	 * already stored in document. This means that it is not (or won't be) 
+	 * possible to get position of page reference in its parent Kids
+	 * array due to multiple occurance in Kids array. @see getNodePosition 
 	 * <br>
 	 * If given page comes from different valid (non NULL) pdf, some more tasks
 	 * are done comparing to normal property adding to page tree. At first
@@ -1332,12 +1327,13 @@ public:
 	 * all its Kids and also its own Parent and so on recursively). In further
 	 * step all inheritable page attributes are set (because original page may
 	 * not have contained them directly). Finally dictionary is added with
-	 * followRefs set to true (in addIndirectProperty method).
+	 * followRefs set to true (in addIndirectProperty method) so that all 
+	 * referenced objecs are deep-copied too.
 	 *
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
 	 * older revision (where no changes are allowed).
 	 * @throw AmbiguesPageTreeException if page can't be inserted to given
-	 * position because of ambiguous page tree.
+	 * position because of ambiguous page tree or page is already in the tree.
 	 * @throw NoPageRootException if no page tree root can be found.
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
