@@ -31,8 +31,9 @@
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <algorithm>
+#include "os/compiler.h"
 
-#include "debug.h"
+#include "utils/debug.h"
 
 //=============================================================================
 namespace observer
@@ -628,7 +629,7 @@ public:
  */
 template<typename T>
 inline static void 
-check_observerlist (const T& list) 
+check_observerlist (UNUSED_PARAM const T& list) 
 {
 #ifdef OBSERVER_DEBUG
 	if (list.size()) 
