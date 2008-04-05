@@ -413,16 +413,16 @@ QString getUntil(char separator,QString &line,bool escape/*=false*/) {
 void setDebugLevel(const QString &param){
  QString cns=param.upper();
  if (cns.length()) { //Check for symbolic constants
-  if (QString("PANIC").startsWith(cns))		{ debug::debugLevel=debug::DBG_PANIC;	return; }
-  if (QString("CRITICAL").startsWith(cns))	{ debug::debugLevel=debug::DBG_CRIT;	return; }
-  if (QString("ERROR").startsWith(cns))		{ debug::debugLevel=debug::DBG_ERR;	return; }
-  if (QString("WARNING").startsWith(cns))	{ debug::debugLevel=debug::DBG_WARN;	return; }
-  if (QString("INFO").startsWith(cns))		{ debug::debugLevel=debug::DBG_INFO;	return; }
-  if (QString("DEBUG").startsWith(cns))		{ debug::debugLevel=debug::DBG_DBG;	return; }
-  if (QString("DBG").startsWith(cns))		{ debug::debugLevel=debug::DBG_DBG;	return; }
+  if (QString("PANIC").startsWith(cns))		{ debug::changeDebugLevel(debug::DBG_PANIC); return; }
+  if (QString("CRITICAL").startsWith(cns))	{ debug::changeDebugLevel(debug::DBG_CRIT); return; }
+  if (QString("ERROR").startsWith(cns))		{ debug::changeDebugLevel(debug::DBG_ERR); return; }
+  if (QString("WARNING").startsWith(cns))	{ debug::changeDebugLevel(debug::DBG_WARN); return; }
+  if (QString("INFO").startsWith(cns))		{ debug::changeDebugLevel(debug::DBG_INFO); return; }
+  if (QString("DEBUG").startsWith(cns))		{ debug::changeDebugLevel(debug::DBG_DBG); return; }
+  if (QString("DBG").startsWith(cns))		{ debug::changeDebugLevel(debug::DBG_DBG); return; }
  }
  //If debuglevel is set outside of limits - no problem, nearest "in limits" value is defacto used
- debug::debugLevel=atoi(param);
+ debug::changeDebugLevel(atoi(param));
  //If non-number is given, default 0 is silently used ... :)
 }
 
