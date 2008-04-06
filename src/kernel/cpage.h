@@ -123,7 +123,10 @@ private:
 	/** Pdf dictionary representing a page. */
 	boost::shared_ptr<CDict> _dict;
 	
-	/** Is page valid. */
+	/** Is page valid.
+	 * Modifications of page object are not allowed and no observers
+	 * can be registered on this object if the flag is false.
+	 */
 	bool _valid;
 
 	// Modules
@@ -595,6 +598,15 @@ private:
 			throw CObjInvalidObject ();
 		}
 		return true;
+	}
+public:
+	/** Returns page object valid flag value.
+	 * @return true if page object is valid for modifications, false 
+	 * otherwise.
+	 */
+	bool isValid()const
+	{
+		return _valid;
 	}
 
 }; // class CPage

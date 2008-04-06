@@ -406,8 +406,7 @@ public:
 		size_t pos=pdf->getPagePosition(removedPage);
 		CPPUNIT_ASSERT(pos==pdf->getPageCount());
 		pdf->removePage(pdf->getPageCount());
-		// FIXME uncoment when ready
-		//CPPUNIT_ASSERT(! removePage->isValid());
+		CPPUNIT_ASSERT(! removedPage->isValid());
 		try
 		{
 			pos=pdf->getPagePosition(removedPage);
@@ -440,8 +439,7 @@ public:
 		CPPUNIT_ASSERT(positions.size()>0);
 		// we know that position is not ambiguous so use 1st in positions array
 		kidsArray->delProperty(positions[0]);
-		// FIXME uncoment when ready
-		//CPPUNIT_ASSERT(! page->isValid());
+		CPPUNIT_ASSERT(! page->isValid());
 		try
 		{
 			pdf->getPagePosition(page);
