@@ -34,6 +34,7 @@
 #include <qobject.h>
 #include <kernel/cobject.h>
 #include <kernel/cpdf.h>
+#include <kernel/factories.h>
 #include "util.h"
 #include <utils/debug.h>
 
@@ -260,8 +261,10 @@ boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
  if (!obj.get()) return obj;  //Empty pointer
  if (obj->getType()!=pRef) return obj;  //Not a reference
  CPdf* pdf=obj->getPdf();
- // TODO Is this really ok? Shouldn't we create rather CNull here?
- if (!pdf) return boost::shared_ptr<IProperty>(); //Property does not belong to document -> cannot dereference
+ // If we are not in valid PDF then CNull is the safe return value
+ // we don't have to check for non NULL and it has reasonable semantics (every
+ // non existing reference points to null object.
+ if (!pdf) return boost::shared_ptr<CNull>(CNullFactory::getInstance());
  IndiRef ref;
  IProperty::getSmartCObjectPtr<CRef>(obj)->getValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
