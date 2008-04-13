@@ -1446,42 +1446,20 @@ public:
 	 *
 	 * @return true if getNextPage() method returns page and doesn't throw
 	 * PageNotFoundException, false otherwise. 
+	 * @throw PageNotFoundException if given page doesn't come from this CPdf
+	 * instance.
 	 */
-	bool hasNextPage(boost::shared_ptr<CPage> page)const
-	{
-		try
-		{
-			getNextPage(page);
-			// next page was successful
-			return true;
-		}catch(PageNotFoundException & e)
-		{
-			// nextPage failed
-			return false;
-		}
-		return true;
-	}
+	bool hasNextPage(boost::shared_ptr<CPage> page)const;
 	
 	/** Checks for previous page.
 	 * @param page Page to check.
 	 *
-	 * @return true if getPrevPage() method returnspage and doesn't throw
+	 * @return true if getPrevPage() method returns page and doesn't throw
 	 * PageNotFoundException. 
+	 * @throw PageNotFoundException if given page doesn't come from this CPdf
+	 * instance.
 	 */
-	bool hasPrevPage(boost::shared_ptr<CPage> page)const
-	{
-		try
-		{
-			getPrevPage(page);
-			// prev page was successful
-			return true;
-		}catch(PageNotFoundException & e)
-		{
-			// getPrevPage failed
-			return false;
-		}
-		return true;
-	}
+	bool hasPrevPage(boost::shared_ptr<CPage> page)const;
 
 	/** Returns last page.
 	 * 

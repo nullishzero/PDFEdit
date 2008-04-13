@@ -2380,15 +2380,19 @@ int CPdf::close(bool saveFlag)
 	return 0;
 }
 
+// helper macor for position in range testing
+// pos must be without sideeffects
+#define POSITION_IN_RANGE(pos) (((pos) >= 1) && (pos)<=getPageCount())
+
 boost::shared_ptr<CPage> CPdf::getPage(size_t pos)const
 {
 using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "");
 
-	if(pos < 1 || pos>getPageCount())
+	if(!POSITION_IN_RANGE(pos))
 	{
-		kernelPrintDbg(DBG_ERR, "Page out of range pos="<<pos);
+		kernelPrintDbg(DBG_WARN, "Page out of range pos="<<pos);
 		throw PageNotFoundException(pos);
 	}
 
@@ -2437,6 +2441,16 @@ using namespace utils;
 	return pageCount=getKidsCount(rootDict, &nodeCountCache);
 }
 
+bool CPdf::hasNextPage(boost::shared_ptr<CPage> page) const
+{
+	kernelPrintDbg(DBG_DBG, "");
+
+	size_t pos=getPagePosition(page);
+	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
+	++pos;
+	return POSITION_IN_RANGE(pos);
+}
+
 boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
@@ -2445,16 +2459,19 @@ boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
 	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
 	++pos;
 	
-	// checks if we are in boundary after incrementation
-	if(pos==0 || pos>getPageCount())
-	{
-		kernelPrintDbg(DBG_ERR, "Page is out of range pos="<<pos);
-		throw PageNotFoundException(pos);
-	}
-
 	// page in range, uses getPage
 	return getPage(pos);
 
+}
+
+bool CPdf::hasPrevPage(boost::shared_ptr<CPage> page)const
+{
+	kernelPrintDbg(DBG_DBG, "");
+
+	size_t pos=getPagePosition(page);
+	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
+	--pos;
+	return POSITION_IN_RANGE(pos);
 }
 
 boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)const
@@ -2465,13 +2482,6 @@ boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)const
 	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
 	pos--;
 	
-	// checks if we are in boundary after incrementation
-	if(pos==0 || pos>getPageCount())
-	{
-		kernelPrintDbg(DBG_ERR, "Page is out of range pos="<<pos);
-		throw PageNotFoundException(pos);
-	}
-
 	// page in range, uses getPage
 	return getPage(pos);
 }
@@ -3063,7 +3073,7 @@ using namespace utils;
 	}
 
 	// checks position
-	if(1>pos || pos>getPageCount())
+	if(!POSITION_IN_RANGE(pos))
 		throw PageNotFoundException(pos);
 
 	// Searches for page dictionary at given pos and gets its reference.
