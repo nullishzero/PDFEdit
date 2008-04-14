@@ -326,6 +326,11 @@ kernel/pdfoperatorsbase.h
 os/compiler.h
 os/posix.h
 os/win.h
+tests/bench/cpdf_bench.cc
+tests/bench/file_info.cc
+tests/bench/utils.cc
+tests/bench/utils.h
+tests/bench/xrefwriter_bench.cc
 tests/kernel/main.cc
 tests/kernel/testccontentstream.cc
 tests/kernel/testcobjectcomplex.cc
