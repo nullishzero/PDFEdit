@@ -372,9 +372,8 @@ CPageContents::getText (std::string& text, const string* encoding, const libs::R
     	globalParams->setTextEncoding(const_cast<char*>(encoding->c_str()));
 
 	// Get the text
-	if (NULL == rc)
-		rc = &_page->display()->getPageRect();
-	scoped_ptr<GString> gtxt (textDev->getText(rc->xleft, rc->yleft, rc->xright, rc->yright));
+	libs::Rectangle rec = (rc)? *rc : _page->display()->getPageRect();
+	scoped_ptr<GString> gtxt (textDev->getText(rec.xleft, rec.yleft, rec.xright, rec.yright));
 	text = gtxt->getCString();
 }
 
