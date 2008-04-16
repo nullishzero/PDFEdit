@@ -26,7 +26,8 @@ file_info: file_info.o
 	$(LINK) $(LDFLAGS) -o file_info file_info.o $(UTILS_OBJS) $(MANDATORY_LIBS)
 
 clean: 
-	-rm $(UTILS_OBJS) *.o $(TARGET)
+	-rm $(UTILS_OBJS) || true
+	rm *.o $(TARGET)
 
 deps:
 	$(CXX) $(MANDATORY_INCPATH) -M -MF deps $(SOURCES)
