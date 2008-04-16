@@ -325,6 +325,8 @@ int main(int argc, char **argv)
 	DEFINE_RESULTS(removePage_all_front, "removePage_all_front");
 	bench_removePage(pdf, copy_pdf, 
 			&removePage_all_front, PagePosition(PagePosition::FRONT), 100);
+	copy_pdf.reset();
+	pdf.reset();
 
 	// TODO changeRevision
 
@@ -347,6 +349,9 @@ int main(int argc, char **argv)
 		&removePage_all_front,
 		NULL
 	};
-	print_results(all_results);
+	print_results(stdout, all_results);
+
+	fprintf(stdout, "\n---\n");
+	gMemReport(stdout);
 	return 0;
 }
