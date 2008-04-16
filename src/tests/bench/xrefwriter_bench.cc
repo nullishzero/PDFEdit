@@ -114,6 +114,7 @@ void bench_changeObject(XRefWriter * xref, struct result *result, int per)
 		Object orig_obj;
 		xref->fetch(ref.num, ref.gen, &orig_obj);
 		Object * changed_obj = orig_obj.clone();
+		orig_obj.free();
 		if(!changed_obj)
 			continue;
 
@@ -234,6 +235,14 @@ int main(int argc, char ** argv)
 		NULL
 	};
 
-	print_results(all_results);
+	print_results(stdout, all_results);
+
+	// finally prints xpdf memory debug information if available (DEBUG_MEM
+	// macro is defined during compilation)
+	// last pdf must be reseted because we need to drop the last reference
+	// to deallocate CPdf
+	pdf.reset();
+	fprintf(stdout, "\n---\n");
+	gMemReport(stdout);
 	return 0;
 }
