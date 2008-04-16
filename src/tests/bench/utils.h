@@ -56,7 +56,7 @@ struct result
 #define DEFINE_RESULTS(var, name) struct result var = {0,LONG_MAX,0,0,name,false}
 
 void update_result(double time, struct result & result);
-void print_results(struct result ** results);
+void print_results(FILE * out, struct result ** results);
 
 
 // TODO remove when CPdf::getInstance is reworked to return shared_ptr

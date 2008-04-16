@@ -63,21 +63,20 @@ void update_result(double time, struct result & result)
 	result.valid = true;
 }
 
-void print_results(struct result ** results)
+void print_results(FILE * out, struct result ** results)
 {
 using namespace std;
 	for(struct result **iter=results; *iter; ++iter)
 	{
 		struct result * curr = *iter;
-		cout << curr->name;
+		fprintf(out, "%s", curr->name);
 		if(!curr->valid)
 		{
-			cout << ":NO_RESULTS" << endl;
+			fprintf(out, ":NO_RESULTS\n");
 			continue;
 		}
 		double avg = (double)curr->sum_time/(double)curr->count;
-		cout << ":max="<<curr->max_time<<":min="
-			<<curr->min_time<<":avg="<<avg<<":count="<<curr->count
-			<<endl;
+		fprintf(out, ":max=%g:min=%g:avg=%g:count=%u\n", 
+				curr->max_time, curr->min_time, avg, curr->count);
 	}
 }
