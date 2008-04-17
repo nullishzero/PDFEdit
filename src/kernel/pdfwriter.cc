@@ -398,7 +398,7 @@ using namespace boost;
 	{
 		Object newPrev;
 		newPrev.initInt(prevSection.xrefPos);
-		char * key=strdup("Prev");
+		char * key=copyString("Prev");
 		Object * originalPrev=trailer.getDict()->update(key, &newPrev);
 		if(originalPrev)
 		{
@@ -414,14 +414,14 @@ using namespace boost;
 	// sets Size entry with object maximum object number written to the file
 	Object newSize;
 	newSize.initInt(std::max(prevSection.objNum, (size_t)(maxObjNum + 1)));
-	char * key=strdup("Size");
+	char * key=copyString("Size");
 	Object * originalSize=trailer.getDict()->update(key, &newSize);
 	if(originalSize)
 	{
 		// value has been set to something different, we have to deallocate it
 		// and to free key, because it is not stored in update
 		utilsPrintDbg(DBG_DBG, "Removing old Trailer::Size="<<originalSize->getInt());
-		free(key);
+		gfree(key);
 		xpdf::freeXpdfObject(originalSize);
 	}
 	utilsPrintDbg(DBG_DBG, "Setting Trailer::Size="<<newSize.getInt());

@@ -653,7 +653,7 @@ Stream * FileStream::clone()
    if(totalRead!=l)
    {
       // unable to get all data
-      free(buffer);
+      gfree(buffer);
       fseek(f, currPos, SEEK_SET);
       return NULL;
    }

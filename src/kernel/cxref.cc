@@ -183,13 +183,13 @@ using namespace debug;
 		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
-	char * key=strdup(name);
+	char * key=copyString(name);
 	::Object * prev = trailer->update(key, clonedObject);
 
 	// update doesn't store key if key, value has been already in the 
 	// dictionary
 	if(prev)
-		free(key);
+		gfree(key);
 
 	return prev;
 }

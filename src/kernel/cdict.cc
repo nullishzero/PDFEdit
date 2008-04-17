@@ -376,7 +376,7 @@ CDict::_makeXpdfObject () const
 	{
 		shared_ptr<IProperty> prop = it->second;
 		Object * propObj = prop->_makeXpdfObject();
-		dict->add(strdup((it->first).c_str()), propObj);
+		dict->add(copyString((it->first).c_str()), propObj);
 		gfree(propObj);
 	}
 	assert(static_cast<unsigned int>(dict->getLength()) == getPropertyCount());

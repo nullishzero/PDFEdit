@@ -90,7 +90,7 @@ Object * Object::clone()const
            goto cloneerror;
          break;
       case objName:
-         result->name=strdup(name);
+         result->name=copyString(name);
          if(!result->name)
            goto cloneerror;
          break;
@@ -113,7 +113,7 @@ Object * Object::clone()const
          result->ref=ref;
          break;
       case objCmd:
-         result->cmd=strdup(cmd);
+         result->cmd=copyString(cmd);
          if(!result->cmd)
            goto cloneerror;
          break;
