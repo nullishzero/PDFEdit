@@ -38,17 +38,14 @@ using namespace std;
 // change to all available revisions
 void bench_changeRevision(XRefWriter * xref, struct result * result)
 {
-	if(xref->getRevisionCount()>1)
+	time_stamp_t start, end;
+	for (size_t i=1;i< xref->getRevisionCount(); ++i)
 	{
-		time_stamp_t start, end;
-		for (size_t i=1;i< xref->getRevisionCount(); ++i)
-		{
-			get_time_stamp(&start);
-			xref->changeRevision(i);
-			get_time_stamp(&end);
-			if(result)
-				update_result(time_diff(start, end), *result);
-		}
+		get_time_stamp(&start);
+		xref->changeRevision(i);
+		get_time_stamp(&end);
+		if(result)
+			update_result(time_diff(start, end), *result);
 	}
 }
 
@@ -186,7 +183,7 @@ int main(int argc, char ** argv)
 	int ret;
 	if((ret = parse_cmd_line(argc, argv)))
 		return ret;
-	timeval start, end;
+	time_stamp_t start, end;
 	shared_ptr<CPdf> pdf;
 	XRefWriter * xref;
 
