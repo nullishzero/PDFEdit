@@ -120,6 +120,7 @@ main (int argc, char* argv[])
 	END_TEST;
 
 	std::cout << "Tests completed." << std::endl;
+	delete globalParams;
 	// Return error code 1 if the one of test failed.
 	return wasSucessful ? 0 : 1;
 
