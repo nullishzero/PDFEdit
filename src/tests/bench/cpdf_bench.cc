@@ -42,12 +42,10 @@ void bench_getIndirectProperty(shared_ptr<CPdf> pdf,
 	{
 		ref.num = objNum;
 		RefState state = helperXref->knowsRef(ref);
-		Object obj;
 		get_time_stamp(&start);
 		shared_ptr<IProperty> prop = pdf->getIndirectProperty(ref);
 		get_time_stamp(&end);
 
-		obj.free();
 		if(state == UNUSED_REF)
 		{
 			if(result_unknown)
@@ -71,11 +69,9 @@ void bench_getIndirectProperty(shared_ptr<CPdf> pdf,
 	{
 		ref.num = objNum;
 		RefState state = helperXref->knowsRef(ref);
-		Object obj;
 		get_time_stamp(&start);
 		shared_ptr<IProperty> prop = pdf->getIndirectProperty(ref);
 		get_time_stamp(&end);
-		obj.free();
 		assert(state == UNUSED_REF);
 		if(result_unknown)
 			update_result(time_diff(start, end), *result_unknown);
@@ -246,7 +242,6 @@ int main(int argc, char **argv)
 	// are not present
 	DEFINE_RESULTS(getIndirectProperty_known_no_changes1,"getIndirectProperty_known_no_changed_first");
 	DEFINE_RESULTS(getIndirectProperty_unknown_no_changes1,"getIndirectProperty_unknown_no_changed_first");
-	shared_ptr<CPdf> helperPdf = open_file(file_name);
 	bench_getIndirectProperty(pdf,
 			&getIndirectProperty_known_no_changes1, 
 			&getIndirectProperty_unknown_no_changes1);
