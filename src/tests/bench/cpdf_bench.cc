@@ -22,6 +22,7 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
 #include <kernel/cpdf.h>
+#include <kernel/cpage.h>
 #include "utils.h"
 
 using namespace boost;
@@ -179,7 +180,7 @@ void bench_removePage(shared_ptr<CPdf> pdf, shared_ptr<CPdf> copy_pdf,
 // from getFirstPage)
 void bench_fwd_iter(shared_ptr<CPdf> pdf, struct result * result)
 {
-	timeval start, end;
+	time_stamp_t start, end;
 	shared_ptr<CPage> page;
 	get_time_stamp(&start);
 	page = pdf->getFirstPage();
@@ -203,7 +204,7 @@ void bench_fwd_iter(shared_ptr<CPdf> pdf, struct result * result)
 // from getLastPage)
 void bench_bwd_iter(shared_ptr<CPdf> pdf, struct result * result)
 {
-	timeval start, end;
+	time_stamp_t start, end;
 	shared_ptr<CPage> page;
 	get_time_stamp(&start);
 	page = pdf->getLastPage();
@@ -224,12 +225,57 @@ void bench_bwd_iter(shared_ptr<CPdf> pdf, struct result * result)
 	// we don't use last unseccessfull hasPrevPage
 }
 
+// add all page dictionaries from helper_pdf to the pdf 
+// (if follow_refs is true, removes Parent entry from each one before 
+// addIndirectProperty is called)
+void bench_addIndirectProperty(shared_ptr<CPdf> pdf, shared_ptr<CPdf> helper_pdf, 
+		struct result * result, bool follow_refs)
+{
+	time_stamp_t start, end;
+	vector<shared_ptr<CDict> > dicts;
+	for (size_t p=1; p<=helper_pdf->getPageCount(); ++p)
+	{
+		shared_ptr<CPage> page = helper_pdf->getPage(p);
+		shared_ptr<CDict> page_dict = page->getDictionary();
+		// we have to remove Parent entry if follow_refs is set, because 
+		// otherwise we would transitively copy whole page tree when doing 
+		// addIndirectProperty
+		if (follow_refs)
+			page_dict->delProperty("Parent");
+		dicts.push_back(page_dict);
+	}
+
+	vector<shared_ptr<CDict> >::iterator i;
+	for (i=dicts.begin(); i!=dicts.end(); ++i)
+	{
+		shared_ptr<CDict> d = (*i);
+		get_time_stamp(&start);
+		pdf->addIndirectProperty(d, follow_refs);
+		get_time_stamp(&end);
+		if (result)
+			update_result(time_diff(start, end), *result);
+	}
+}
+
+void bench_changeRevision(shared_ptr<CPdf> pdf, struct result * result)
+{
+	time_stamp_t start, end;
+	for (size_t i=1;i< pdf->getRevisionsCount(); ++i)
+	{
+		get_time_stamp(&start);
+		pdf->changeRevision(i);
+		get_time_stamp(&end);
+		if(result)
+			update_result(time_diff(start, end), *result);
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int ret;
 	if((ret = parse_cmd_line(argc, argv)))
 		return ret;
-	timeval start, end;
+	time_stamp_t start, end;
 	shared_ptr<CPdf> pdf;
 
 	DEFINE_RESULTS(getInstance, "getInstance");
@@ -275,8 +321,17 @@ int main(int argc, char **argv)
 	DEFINE_RESULTS(changeIndirectProperty_all2,"changeIndirectProperty_all_again");
 	bench_changeIndirectObject(pdf, &changeIndirectProperty_all2, 100);
 	
-	// TODO addIndirectProperty - something reasonable big with many indirect
-	// entries - e.g. page tree root
+	// addIndirectProperty to all page dictionaries from different pdf
+	// instance - follows also referencies
+	shared_ptr<CPdf> helper_pdf = open_file(file_name);
+	pdf = open_file(file_name);
+	DEFINE_RESULTS(addIndirectProperty_different_pdf_follow, "addIndirectProperty_different_pdf_followref");
+	bench_addIndirectProperty(pdf, helper_pdf, &addIndirectProperty_different_pdf_follow, true);
+	// no follow refs case
+	pdf = open_file(file_name);
+	DEFINE_RESULTS(addIndirectProperty_different_pdf_nofollow, "addIndirectProperty_different_pdf_nofollowref");
+	bench_addIndirectProperty(pdf, helper_pdf, &addIndirectProperty_different_pdf_nofollow, false);
+	helper_pdf.reset();
 	
 	// getPageCount
 	DEFINE_RESULTS(getPageCount, "getPageCount");
@@ -321,9 +376,11 @@ int main(int argc, char **argv)
 	bench_removePage(pdf, copy_pdf, 
 			&removePage_all_front, PagePosition(PagePosition::FRONT), 100);
 	copy_pdf.reset();
-	pdf.reset();
 
-	// TODO changeRevision
+	pdf = open_file(file_name);
+	DEFINE_RESULTS(change_revision, "change_revision");
+	bench_changeRevision(pdf, &change_revision);
+	pdf.reset();
 
 	struct result *all_results [] = {
 		&getInstance,
@@ -335,6 +392,8 @@ int main(int argc, char **argv)
 		&getIndirectProperty_known_all_changes,
 		&getIndirectProperty_unknown_all_changes,
 		&changeIndirectProperty_all2,
+		&addIndirectProperty_different_pdf_follow,
+		&addIndirectProperty_different_pdf_nofollow,
 		&getPageCount,
 		&page_fwd_iteration,
 		&page_bwd_iteration,
@@ -342,6 +401,7 @@ int main(int argc, char **argv)
 		&insertPage_all_front,
 		&removePage_all_end,
 		&removePage_all_front,
+		&change_revision,
 		NULL
 	};
 	print_results(stdout, all_results);
