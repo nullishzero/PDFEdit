@@ -379,19 +379,19 @@ public:
 	 * This value is used in ScopedChangeContext's task field in writeContent
 	 * method. User of the instance can change this value directly.
 	 */
-	std::string CONTENT;
+	static const std::string CONTENT;
 
 	/** String for context task in writeTrailer.
 	 * This value is used in ScopedChangeContext's task field in writeTrailer
 	 * method. User of the instance can change this value directly.
 	 */
-	std::string TRAILER;
+	static const std::string TRAILER;
 		
 	/** Initialize constructor.
 	 *
 	 * Initializes CONTENT and TRAILER fields to default values.
 	 */
-	OldStylePdfWriter():maxObjNum(0), CONTENT("Content phase"), TRAILER("XREF/TRAILER phase"){}
+	OldStylePdfWriter():maxObjNum(0){}
 
 	/** Writes given objects.
 	 * @param objectList List of objects to write.

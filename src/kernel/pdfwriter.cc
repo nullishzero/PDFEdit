@@ -181,7 +181,10 @@ using namespace std;
 		stream.putLine(buf, bufSize);
 	}
 }
-	
+
+const std::string OldStylePdfWriter::CONTENT = "Content phase"; 
+const std::string OldStylePdfWriter::TRAILER = "XREF/TRAILER phase";
+
 void OldStylePdfWriter::writeContent(ObjectList & objectList, StreamWriter & stream, size_t off)
 {
 using namespace debug;
