@@ -1117,6 +1117,7 @@ public:
 		if(!delinearizator)
 		{
 			printf("\t%s is not suitable because it is not linearized.\n", fileName.c_str());
+			delete writer;
 			return;
 		}
 		string outputFile=fileName+"-delinearizator.pdf";
