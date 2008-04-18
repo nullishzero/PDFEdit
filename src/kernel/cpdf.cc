@@ -2283,11 +2283,11 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 
 	// gets xpdf Object instance and calls xref->change
 	// changeObject may throw if we are in read only mode or if xrefwriter is
-	// in paranoid mode and type check fails
-	Object * propObject=prop->_makeXpdfObject();
+	// in paranoid mode and type check fails - to make it easier for such a case
+	// we are using shared_ptr which handles propObject cleanup correctly
+	shared_ptr<Object> propObject(prop->_makeXpdfObject(), xpdf::object_deleter());
 	kernelPrintDbg(DBG_DBG, "Registering change to the XRefWriter");
-	xref->changeObject(indiRef.num, indiRef.gen, propObject);
-	xpdf::freeXpdfObject(propObject);
+	xref->changeObject(indiRef.num, indiRef.gen, propObject.get());
 
 	// checks whether prop is same instance as one in mapping. If so, keeps
 	// indirect mapping, because it has just changed some of its direct fields. 
