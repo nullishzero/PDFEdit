@@ -59,18 +59,11 @@ void update_result(double time, struct result & result);
 void print_results(FILE * out, struct result ** results);
 
 
-// TODO remove when CPdf::getInstance is reworked to return shared_ptr
-struct pdf_deleter
-{
-	void operator() (pdfobjects::CPdf* p)
-	{assert (p); p->close();}
-};
-
 static inline boost::shared_ptr<pdfobjects::CPdf> open_file(
 		const char * name, 
 		pdfobjects::CPdf::OpenMode mode = pdfobjects::CPdf::Advanced)
 {
-	return boost::shared_ptr<pdfobjects::CPdf>(pdfobjects::CPdf::getInstance(name, mode), pdf_deleter());
+	return pdfobjects::CPdf::getInstance(name, mode);
 }
 
 #endif
