@@ -4,6 +4,10 @@
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
+// Changes:
+// Michal Hocko	- go() method has int instead of void return value and 
+// 		  returns -1 if parsing error occurs.
+//
 //========================================================================
 
 #ifndef GFX_H
@@ -166,7 +170,12 @@ private:
 
   static Operator opTab[];	// table of operators
 
-  void go(GBool topLevel);
+  // returns -1 on error, 0 otherwise
+  // force gcc to warn if return value is not checked FIXME remove after
+  // tested
+WARN_UNUSED_RESULT
+  int go(GBool topLevel); 
+
   void execOp(Object *cmd, Object args[], int numArgs);
   Operator *findOp(char *name);
   GBool checkArg(Object *arg, TchkType type);

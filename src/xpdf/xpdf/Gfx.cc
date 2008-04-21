@@ -550,12 +550,13 @@ void Gfx::display(Object *obj, GBool topLevel) {
     return;
   }
   parser = new Parser(xref, new Lexer(xref, obj), gFalse);
-  go(topLevel);
+  if(go(topLevel)==-1)
+    error(-1, "Data corrupted");
   delete parser;
   parser = NULL;
 }
 
-void Gfx::go(GBool topLevel) {
+int Gfx::go(GBool topLevel) {
   Object obj;
   Object args[maxArgs];
   int numArgs, i;
@@ -564,7 +565,8 @@ void Gfx::go(GBool topLevel) {
   // scan a sequence of objects
   updateLevel = lastAbortCheck = 0;
   numArgs = 0;
-  parser->getObj(&obj);
+  if(!parser->getObj(&obj))
+    goto malformedErr;
   while (!obj.isEOF()) {
 
     // got a command - execute it
@@ -617,7 +619,8 @@ void Gfx::go(GBool topLevel) {
     }
 
     // grab the next object
-    parser->getObj(&obj);
+    if (!parser->getObj(&obj))
+      goto malformedErr;
   }
   obj.free();
 
@@ -641,6 +644,11 @@ void Gfx::go(GBool topLevel) {
   if (topLevel && updateLevel > 0) {
     out->dump();
   }
+  return 0;
+
+malformedErr:
+  error(-1, "Cannot parse object. Malformed stream");
+  return -1;
 }
 
 void Gfx::execOp(Object *cmd, Object args[], int numArgs) {
@@ -3895,22 +3903,28 @@ Stream *Gfx::buildImageStream() {
 
   // build dictionary
   dict.initDict(xref);
-  parser->getObj(&obj);
+  if (!parser->getObj(&obj)) 
+    goto malformedErr;
   while (!obj.isCmd("ID") && !obj.isEOF()) {
     if (!obj.isName()) {
       error(getPos(), "Inline image dictionary key must be a name object");
       obj.free();
+      goto malformedErr;
     } else {
       key = copyString(obj.getName());
       obj.free();
-      parser->getObj(&obj);
+      if (!parser->getObj(&obj)) {
+        gfree(key);
+	goto malformedErr;
+      }
       if (obj.isEOF() || obj.isError()) {
 	gfree(key);
 	break;
       }
       dict.dictAdd(key, &obj);
     }
-    parser->getObj(&obj);
+    if (!parser->getObj(&obj))
+      goto malformedErr;
   }
   if (obj.isEOF()) {
     error(getPos(), "End of file in inline image");
@@ -3922,9 +3936,14 @@ Stream *Gfx::buildImageStream() {
 
   // make stream
   str = new EmbedStream(parser->getStream(), &dict, gFalse, 0);
-  str = str->addFilters(&dict);
+  if (str)
+    str = str->addFilters(&dict);
 
   return str;
+
+malformedErr:
+  error(-1, "Malformed content. Unable to parse inline image");
+  return NULL;
 }
 
 void Gfx::opImageData(Object args[], int numArgs) {
