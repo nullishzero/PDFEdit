@@ -1010,6 +1010,11 @@ private:
 	 */
 	configuration::ModeController* modeController;
 
+	/** Weak reference to this instance for proper reference counting
+	 * with combination to published shared_ptr.
+	 */
+	boost::weak_ptr<CPdf> _this;
+
 	/** Empty constructor.
 	 *
 	 * This constructor is disabled, because we want to prevent uninitialized
@@ -1632,7 +1637,7 @@ enum PageTreeNodeType { ErrorNode, UnknownNode, LeafNode, InterNode, RootNode };
  *
  * @return Dictionary wrapped by shared_ptr (NULL dictionary if not found).
  */
-boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
+boost::shared_ptr<CDict> getPageTreeRoot(const boost::shared_ptr<CPdf> &pdf);
 	
 /** Helper method to find page at certain position.
  * @param pdf Pdf instance where to search.
@@ -1706,7 +1711,7 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * position.
  */
 boost::shared_ptr<CDict> findPageDict(
-		const CPdf & pdf, 
+		const boost::shared_ptr<CPdf> &pdf, 
 		boost::shared_ptr<IProperty> pagesDict, 
 		size_t startPos, 
 		size_t pos, 
@@ -1735,7 +1740,9 @@ boost::shared_ptr<CDict> findPageDict(
  * of page tree ambiguity (see searchTreeNode for more information).
  * @return Node position.
  */
-size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node, PageTreeNodeCountCache * cache);
+size_t getNodePosition(const boost::shared_ptr<CPdf> &pdf, 
+		boost::shared_ptr<IProperty> node, 
+		PageTreeNodeCountCache * cache);
 
 /** Calculates number of direct pages under given node property.
  * @param interNodeProp Page tree node property (must be dictionary or reference
@@ -1800,7 +1807,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
  *
  * @return true If given child belongs to parent subtree, false otherwise.
  */
-bool isDescendant(CPdf & pdf, IndiRef parent, boost::shared_ptr<CDict> child);
+bool isDescendant(boost::shared_ptr<CPdf> pdf, IndiRef parent, boost::shared_ptr<CDict> child);
 
 /** Collects all kids elements from internode dictionary.
  * @param interNodeDict Intermediate node dictionary.
@@ -1830,71 +1837,7 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
  * 
  * @return true if file content is encrypted, false otherwise.
  */
-bool isEncrypted(CPdf & pdf, std::string * filterName);
-
-/** Returns cobjects from given reference property.
- * @param refProp Reference property (must be pRef typed).
- *
- * Gets reference value from property and dereferences indirect object from it.
- * Uses refProp's pdf for dereference (so it has to be valid).
- * Checks target object for given template pType and if it matches casts it to
- * given CType and returns.
- *
- * @throw ElementBadTypeException if refProp is not CRef instance or indirect
- * object is not CType instance.
- * @return CType instance wrapped by shared_ptr smart pointer.
- */
-template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)DEPRECATED;
-
-// gcc doesn't like __attribute__ in function definition
-template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
-{
-	// REMARK
-	// This helper has to be here because of gcc template manipulation
-	// (cobjecthelpers.h can't include from this header file)
-	
-	if(!isRef(refProp))
-		throw ElementBadTypeException("");
-	
-	// gets reference value and dereferences indirect object
-	assert(refProp->getPdf());
-	assert(hasValidRef(refProp));
-	IndiRef ref;
-	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
-	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
-	if(indirect_ptr->getType() != pType)
-		throw ElementBadTypeException("");
-	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
-}
-
-/** Returns cobjects from given reference and pdf.
- * @param ref Indirect reference.
- * @param pdf CPdf instance where to fetch.
- *
- * Calls getIndirectProperty on given pdf and cast returned indirect object to
- * given CType.
- *
- * @throw ElementBadTypeException if indirect object is not CType instance.
- * @return CType instance wrapped by shared_ptr smart pointer.
- */
-template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)DEPRECATED;
-
-// gcc doesn't like __attribute__ in function definition
-template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)
-{
-	// REMARK
-	// This helper has to be here because of gcc template manipulation
-	// (cobjecthelpers.h can't include from this header file)
-	
-	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
-	if(indirect_ptr->getType() != pType)
-		throw ElementBadTypeException("");
-	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
-}
+bool isEncrypted(boost::shared_ptr<CPdf> &pdf, std::string * filterName);
 
 /** Returns cobjects from given reference property.
  * @param refProp Reference property (must be pRef typed).
@@ -1919,11 +1862,12 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 		throw ElementBadTypeException("");
 	
 	// gets reference value and dereferences indirect object
-	assert(refProp->getPdf());
+	boost::shared_ptr<CPdf> pdf = refProp->getPdf().lock();
+	assert(pdf);
 	assert(hasValidRef(refProp));
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
-	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	boost::shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != CType::type)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
@@ -1940,18 +1884,17 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
  * @return CType instance wrapped by shared_ptr smart pointer.
  */
 template<typename CType>
-boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)
+boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, boost::shared_ptr<CPdf> pdf)
 {
 	// REMARK
 	// This helper has to be here because of gcc template manipulation
-	// (cobjecthelpers.h can't include from this header file)
-	
-	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
+	// (cobjecthelpers.h can't include from this header file)	
+	assert(pdf);
+	boost::shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != CType::type)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
 }
-
 
 } // namespace utils
 

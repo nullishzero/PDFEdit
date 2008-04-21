@@ -252,7 +252,7 @@ QSCObject* TreeItemPage::getQSObject(BaseCore *_base) {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPage::remove() {
- CPdf * pdf=obj->getDictionary()->getPdf();
+ boost::shared_ptr<CPdf> pdf=obj->getDictionary()->getPdf().lock();
  if (!pdf) {
   //The page is obviously not in any pdf, so it can't be removed
   return;

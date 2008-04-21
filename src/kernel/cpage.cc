@@ -114,7 +114,8 @@ CPage::~CPage ()
 	invalidate ();
 
 	// indicate we are ending
-	_dict->setPdf (NULL);
+	// FIXME remove - added as workaround for 233
+	//_dict->setPdf (boost::shared_ptr<CPdf>());
 
 	// inform modules
 	for (Modules::iterator it = _modules.begin(); it != _modules.end(); ++it)
@@ -251,7 +252,7 @@ size_t
 CPage::getPagePosition () const
 {
 	if (hasValidPdf (_dict))
-		return _dict->getPdf()->getPagePosition (shared_ptr<CPage>(const_cast<CPage*>(this),EmptyDeallocator<CPage> ()));
+		return _dict->getPdf().lock()->getPagePosition (shared_ptr<CPage>(const_cast<CPage*>(this),EmptyDeallocator<CPage> ()));
 
 	throw CObjInvalidOperation ();
 }

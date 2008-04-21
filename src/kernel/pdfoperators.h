@@ -100,7 +100,7 @@ protected:
 	// Observer interface
 	//
 public:
-	void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer, CPdf* pdf, IndiRef* rf);
+	void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer, boost::weak_ptr<CPdf> pdf, IndiRef* rf);
 
 	//
 	// Destructor

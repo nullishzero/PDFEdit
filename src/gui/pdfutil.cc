@@ -220,7 +220,8 @@ IndiRef getRef(boost::shared_ptr<IProperty> ref) {
  @param ref Indirect reference to check
  @return true if given reference target exists in given pdf, false otherwise
 */
-bool isRefValid(CPdf *pdf,IndiRef ref) {
+bool isRefValid(boost::shared_ptr<CPdf> pdf,IndiRef ref) {
+ assert(pdf);
  CXref *cxref=pdf->getCXref();
  Ref _val;//TODO: why there is no knowsRef(IndiRef) ?
  _val.num=ref.num;
@@ -260,7 +261,7 @@ bool isSimple(IProperty* prop) {
 boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
  if (!obj.get()) return obj;  //Empty pointer
  if (obj->getType()!=pRef) return obj;  //Not a reference
- CPdf* pdf=obj->getPdf();
+ boost::shared_ptr<CPdf> pdf=obj->getPdf().lock();
  // If we are not in valid PDF then CNull is the safe return value
  // we don't have to check for non NULL and it has reasonable semantics (every
  // non existing reference points to null object.

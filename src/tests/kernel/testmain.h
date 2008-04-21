@@ -104,7 +104,7 @@ static const size_t TEST_MAX_PAGE_COUNT = 10000;
 //
 template<PropertyType T>
 IProperty*
-createSimpleObjFromXpdf (CPdf& pdf, Object& obj, IndiRef ref)
+createSimpleObjFromXpdf (boost::shared_ptr<CPdf> pdf, Object& obj, IndiRef ref)
 {
 		return new CObjectSimple<T> (pdf, obj, ref);
 }

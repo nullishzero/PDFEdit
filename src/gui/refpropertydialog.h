@@ -45,7 +45,7 @@ using namespace pdfobjects;
 class RefPropertyDialog : public QDialog {
 Q_OBJECT
 public:
- RefPropertyDialog(CPdf* _pdf,IndiRef src, QWidget *parent=0);
+ RefPropertyDialog(boost::weak_ptr<CPdf> _pdf,IndiRef src, QWidget *parent=0);
  ~RefPropertyDialog();
  QString getResult();
 private slots:
@@ -60,7 +60,7 @@ private:
  /** Current value */
  IndiRef value;
  /** Pdf document with reference */
- CPdf* pdf;
+ boost::weak_ptr<CPdf> pdf;
  /** Label to show errors/messages*/
  QLabel* infoText;
 };

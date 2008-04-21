@@ -96,7 +96,7 @@ public:
 	 * @param o		Xpdf object. 
 	 * @param rf	Indirect id and gen id.
 	 */
-	CDict (CPdf& p, Object& o, const IndiRef& rf);
+	CDict (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
 
 	/**
 	 * Constructor.
@@ -225,7 +225,7 @@ public:
 	 * Set pdf to this object and its children.
 	 * @param pdf New pdf.
 	 */
-	virtual void setPdf (CPdf* pdf);
+	virtual void setPdf (boost::weak_ptr<CPdf> pdf);
 
 	/**
 	 * Set ref to this object and its children.

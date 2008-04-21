@@ -144,7 +144,7 @@ SimpleGenericOperator::clone ()
 
 void 
 SimpleGenericOperator::init_operands (shared_ptr<observer::IObserver<IProperty> > observer, 
-									  CPdf* pdf, 
+									  boost::weak_ptr<CPdf> pdf, 
 									  IndiRef* rf)
 { 
 	// store observer
@@ -154,7 +154,7 @@ SimpleGenericOperator::init_operands (shared_ptr<observer::IObserver<IProperty> 
 	{
 		if (hasValidPdf(*oper))
 		{ // We do not support adding operators from another stream
-			if ( ((*oper)->getPdf() != pdf) || !((*oper)->getIndiRef() == *rf) )
+			if ( ((*oper)->getPdf().lock() != pdf.lock()) || !((*oper)->getIndiRef() == *rf) )
 			{
 				kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << *rf <<  " op has" <<(*oper)->getIndiRef());
 				throw CObjInvalidObject ();

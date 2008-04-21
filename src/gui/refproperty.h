@@ -56,7 +56,7 @@ public:
  virtual void applyReadOnly(bool _readonly);
  virtual bool isValid();
  IndiRef getValue();
- void setPdf(CPdf *_pdf);
+ void setPdf(boost::weak_ptr<CPdf> _pdf);
 protected slots:
  void selectRef();
  void emitChange();
@@ -67,7 +67,7 @@ private:
  /** Push button for GUI selection */
  QPushButton *pb;
  /** PDF stored for validating references */
- CPdf *pdf;
+ boost::weak_ptr<CPdf> pdf;
 };
 
 } // namespace gui

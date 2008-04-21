@@ -54,7 +54,7 @@ getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum)
 	ref.gen = cat.getPageRef(pageNum)->gen;
 	xref->fetch (ref.num, ref.gen, &obj);
 	
-	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, ref));
+	boost::shared_ptr<CDict> dict (new CDict (pdf, obj, ref));
 	obj.free ();
 	
 	return boost::shared_ptr<CPage> (new CPage(dict));

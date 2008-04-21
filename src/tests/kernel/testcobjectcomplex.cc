@@ -136,8 +136,7 @@ bool
 mdctrl (const char* filename)
 {
 	boost::shared_ptr<CPdf> _pdf = getTestCPdf (filename);
-	CPdf& pdf = *_pdf;
-	pdf.getModeController ();
+	_pdf->getModeController ();
 
 	return true;
 }
@@ -511,8 +510,7 @@ c_xpdfctor (const char* filename)
 		obj.arrayAdd (&item3);
 		obj.arrayAdd (&item4);
 		
-		boost::shared_ptr<CPdf> _pdf = getTestCPdf (filename);
-		CPdf& pdf = *_pdf;
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (filename);
 		IndiRef ref (12,11);
 		CArray ar (pdf,obj,ref);
 
@@ -541,8 +539,7 @@ c_xpdfctor (const char* filename)
 		obj.dictAdd (it3, &item3);
 		obj.dictAdd (it4, &item4);
 
-		boost::shared_ptr<CPdf> _pdf = getTestCPdf (filename);
-		CPdf& pdf = *_pdf;
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (filename);
 
 		IndiRef ref (12,11);
 		// CArray ar (pdf,obj,ref); // GOOOOOD -- assertation failed

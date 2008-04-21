@@ -108,7 +108,7 @@ void TreeItemPdf::observePageDict() {
  //Add observer to pagecount
  try {
   assert(obj);
-  pageDictionary=pdfobjects::utils::getPageTreeRoot(*obj);
+  pageDictionary=pdfobjects::utils::getPageTreeRoot(obj);
   assert(pageDictionary.get());
   if (pageDictionary.get()) {
    //Register observer on page dictionary (because of page count)

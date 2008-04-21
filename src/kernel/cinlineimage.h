@@ -75,7 +75,7 @@ public:
 	 * @param buffer Raw stream data.
 	 * @param rf Indirect reference numbers.
 	 */
-	CInlineImage (CPdf& p, ::Object& objDict, const CStream::Buffer& buffer, const IndiRef& rf);
+	CInlineImage (boost::weak_ptr<CPdf> p, ::Object& objDict, const CStream::Buffer& buffer, const IndiRef& rf);
 
 	/** Constructor. It will not be associated with a pdf. */
 	CInlineImage () : CStream(false) {}

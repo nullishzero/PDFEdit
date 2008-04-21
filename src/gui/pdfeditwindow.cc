@@ -778,7 +778,7 @@ void PdfEditWindow::setTitle(int revision/*=0*/) {
  if (revision) revisionInfo=QString(" - ")+tr("viewing revision")+" "+QString::number(revision);
  QStringList docFlags;
  if (document->isLinearized()) docFlags+=tr("Linearized PDF");
- if (pdfobjects::utils::isEncrypted(*document,NULL)) docFlags+=tr("Encrypted");
+ if (pdfobjects::utils::isEncrypted(document,NULL)) docFlags+=tr("Encrypted");
  QString docInfo="";
  if (docFlags.count()) {
   docInfo=" ( "+docFlags.join(", ")+" )";

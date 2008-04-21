@@ -80,7 +80,7 @@ bool QSPdf::referenceValid(int valueNum,int valueGen) {
  ref.num=valueNum;
  ref.gen=valueGen;
  //Check reference validity
- return util::isRefValid(obj.get(),ref);
+ return util::isRefValid(obj,ref);
 }
 
 /**
@@ -413,7 +413,7 @@ void QSPdf::set(boost::shared_ptr<CPdf> pdf) {
 QString QSPdf::encryption() {
  if (nullPtr(obj,"encryption")) return 0;
  std::string filter;
- if (!pdfobjects::utils::isEncrypted(*obj,&filter)) return QString::null;
+ if (!pdfobjects::utils::isEncrypted(obj,&filter)) return QString::null;
  return util::convertToUnicode(filter,util::PDF);
 }
 

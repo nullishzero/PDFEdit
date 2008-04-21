@@ -156,7 +156,7 @@ namespace {
 	 */
 	template<typename Container>
 	boost::shared_ptr<CStream> 
-	createStreamFromObjects (const Container& cont, CPdf& pdf)
+	createStreamFromObjects (const Container& cont, boost::weak_ptr<CPdf> pdf)
 	{
 		// Create stream with one default property Length
 		shared_ptr<CStream> newstr (new CStream());
@@ -185,8 +185,10 @@ namespace {
 		newstr->setBuffer (str);
 
 		// Set ref and indiref reserve free indiref for the new object
-		IndiRef newref = pdf.addIndirectProperty (newstr);
-		newstr = IProperty::getSmartCObjectPtr<CStream> (pdf.getIndirectProperty (newref));
+		boost::shared_ptr<CPdf> p = pdf.lock();
+		assert(p);
+		IndiRef newref = p->addIndirectProperty (newstr);
+		newstr = IProperty::getSmartCObjectPtr<CStream> (p->getIndirectProperty (newref));
 			assert (newstr);
 
 		return newstr;
@@ -258,12 +260,10 @@ void
 CPageContents::addToFront (const Container& cont)
 { 
 	// Create cstream from container of pdf operators
-	CPdf* pdf = _dict->getPdf();
-		assert (pdf);
-	shared_ptr<CStream> stream = createStreamFromObjects (cont, *pdf);
-		assert (hasValidRef (stream)); assert (hasValidPdf (stream));
-		if (!hasValidPdf(stream) || !hasValidPdf(stream))
-			throw CObjInvalidObject ();
+	shared_ptr<CStream> stream = createStreamFromObjects (cont, _dict->getPdf());
+	assert (hasValidRef (stream)); assert (hasValidPdf (stream));
+	if (!hasValidPdf(stream) || !hasValidPdf(stream))
+		throw CObjInvalidObject ();
 
 	// Change the contents entry
 	CRef rf (stream->getIndiRef());
@@ -299,13 +299,12 @@ void
 CPageContents::addToBack (const Container& cont)
 {
 	// Create cstream from container of pdf operators
-	CPdf* pdf = _dict->getPdf();
-		if (!pdf)
-			throw CObjInvalidObject ();
-	shared_ptr<CStream> stream = createStreamFromObjects (cont, *pdf);
-		assert (hasValidRef (stream)); assert (hasValidPdf (stream));
-		if (!hasValidPdf(stream) || !hasValidPdf(stream))
-			throw CObjInvalidObject ();
+	if (!hasValidPdf(_dict))
+		throw CObjInvalidObject ();
+	shared_ptr<CStream> stream = createStreamFromObjects (cont, _dict->getPdf());
+	assert (hasValidRef (stream)); assert (hasValidPdf (stream));
+	if (!hasValidPdf(stream) || !hasValidPdf(stream))
+		throw CObjInvalidObject ();
 
 	// Change the contents entry
 	CRef rf (stream->getIndiRef());
@@ -337,10 +336,10 @@ template void CPageContents::addToBack<deque<shared_ptr<PdfOperator> > > (const 
 void 
 CPageContents::remove (size_t csnum)
 {
-		if (!_dict->getPdf())
-			throw CObjInvalidObject ();
-		if (csnum >= _ccs.size())
-			throw OutOfRange ();
+	if (!hasValidPdf(_dict))
+		throw CObjInvalidObject ();
+	if (csnum >= _ccs.size())
+		throw OutOfRange ();
 
 	// Change the contents entry
 	remove (_ccs[csnum]);

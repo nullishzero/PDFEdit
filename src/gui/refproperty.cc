@@ -54,7 +54,7 @@ using namespace util;
  */
 RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
- pdf=NULL;
+ pdf=boost::shared_ptr<CPdf>();
  ed=new QLineEdit(this,"RefProperty_edit");
  setFocusProxy(ed);
  pb=new QPushButton("..",this,"refproperty_pickbutton");
@@ -101,7 +101,7 @@ QSize RefProperty::sizeHint() const {
  This is usable if the property is new and does not have the pdf document from the edited CRef
  @param _pdf CPdf to set
 */
-void RefProperty::setPdf(CPdf *_pdf) {
+void RefProperty::setPdf(boost::weak_ptr<CPdf> _pdf) {
  pdf=_pdf;
 }
 
@@ -146,14 +146,15 @@ void RefProperty::setValue(IProperty *pdfObject) {
  IndiRef val=getValue();
  if (val.num==0 && val.gen==0) return;//Invalid reference
  //Check reference validity
- CPdf* objPdf=obj->getPdf();
+ boost::shared_ptr<CPdf> objPdf=obj->getPdf().lock();
  if (objPdf) {
   //Get PDF from property if it have one. If not, keep the old PDF
   pdf=objPdf;
  }
- if (pdf) {
+ boost::shared_ptr<CPdf> p = pdf.lock();
+ if (p) {
   //We can check for validity
-  if (!isRefValid(pdf,val)) {
+  if (!isRefValid(p, val)) {
    emit warnText("Reference is not valid!");
    ed->setFocus();
    return; //not valid
@@ -167,7 +168,7 @@ void RefProperty::setValue(IProperty *pdfObject) {
 void RefProperty::readValue(IProperty *pdfObject) {
  CRef* obj=dynamic_cast<CRef*>(pdfObject);
  IndiRef val;
- CPdf* objPdf=obj->getPdf();
+ boost::shared_ptr<CPdf> objPdf=obj->getPdf().lock();
  if (objPdf) {
   //Get PDF from property if it have one. If not, keep the old PDF
   pdf=objPdf;

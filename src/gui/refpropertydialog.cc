@@ -47,7 +47,7 @@ using namespace util;
  @param src original value of indirect refrence
  @param parent Parent widget that called dialog
  */
-RefPropertyDialog::RefPropertyDialog(CPdf* _pdf,IndiRef src, QWidget *parent/*=0*/) : QDialog (parent,"refproperty_dialog",true) {
+RefPropertyDialog::RefPropertyDialog(boost::weak_ptr<CPdf> _pdf,IndiRef src, QWidget *parent/*=0*/) : QDialog (parent,"refproperty_dialog",true) {
  pdf=_pdf;
  value=src;
  setCaption(tr("Reference target"));
@@ -126,15 +126,16 @@ void RefPropertyDialog::error(const QString &message) {
  @param sayIfOk If set to false, no message will be output if the property is valid
 */
 bool RefPropertyDialog::check(bool sayIfOk/*=true*/) {
- assert(pdf);
- if (!isRefValid(pdf,value)) {
+ boost::shared_ptr<CPdf> p = pdf.lock();
+ assert(p);
+ if (!isRefValid(p,value)) {
   //Not valid
   error(tr("Reference target is not valid"));
   return false;
  }
  //Is valid
  if (!sayIfOk) return true;
- boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(value);
+ boost::shared_ptr<IProperty> rp=p->getIndirectProperty(value);
  QString description=propertyPreview(rp);
  if (description.length()) {
   description=" : "+description;

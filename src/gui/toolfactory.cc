@@ -63,7 +63,7 @@ QWidget *ToolFactory::specialItem(ToolBar *tb,const QString &item,QMainWindow *m
  if (itemName=="_revision_tool") {
   //Add RevisionTool to toolbar and return
   RevisionTool *tool =new RevisionTool(tb,"revision");
-  QObject::connect(main,SIGNAL(documentChanged(pdfobjects::CPdf*)),tool,SLOT(setDocument(pdfobjects::CPdf*)));
+  QObject::connect(main,SIGNAL(documentChanged(boost::shared_ptr<pdfobjects::CPdf>)),tool,SLOT(setDocument(boost::shared_ptr<pdfobjects::CPdf>)));
   QObject::connect(main,SIGNAL(revisionChanged(int)),tool,SLOT(updateRevision(int)));
   QObject::connect(tool,SIGNAL(revisionChanged(int)),main,SLOT(changeRevision(int)));
   tool->show();

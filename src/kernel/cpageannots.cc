@@ -352,12 +352,12 @@ CPageAnnots::consolidate(boost::shared_ptr<IProperty>& oldValue, boost::shared_p
 void
 CPageAnnots::add(boost::shared_ptr<CAnnotation> annot)
 {
-		kernelPrintDbg(debug::DBG_DBG, "");
+	kernelPrintDbg(debug::DBG_DBG, "");
 	
 	// gets pdf of this annotation - it is valid
-	CPdf* pdf=_page->getDictionary()->getPdf();
-		if (!pdf)
-			throw CObjInvalidObject ();
+	boost::shared_ptr<CPdf> pdf=_page->getDictionary()->getPdf().lock();
+	if (!pdf)
+		throw CObjInvalidObject ();
 		
 	// gets Annots array from page dictionary. If no found, creates it. If bad
 	// typed, throws an exception

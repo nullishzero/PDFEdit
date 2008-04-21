@@ -37,7 +37,7 @@ namespace pdfobjects {
 //
 // Constructor
 //
-IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf), wantDispatch (true)
+IProperty::IProperty (boost::weak_ptr<CPdf> _pdf) : mode(mdUnknown), pdf(_pdf), wantDispatch (true)
 {
 	ref.num = ref.gen = 0; 
 }
@@ -45,7 +45,7 @@ IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf), wantDispatch (tr
 //
 // Constructor
 //
-IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) 
+IProperty::IProperty (boost::weak_ptr<CPdf> _pdf, const IndiRef& rf) 
 	: ref(rf), mode(mdUnknown), pdf(_pdf), wantDispatch (true) {}
 
 	
@@ -72,15 +72,16 @@ IProperty::clone () const
 // Set/Get pdf
 //
 void 
-IProperty::setPdf (CPdf* p)
+IProperty::setPdf (boost::weak_ptr<CPdf> p)
 	{ pdf = p; }
 
 
 void
 IProperty::canChange () const
 {
-	if (pdf && wantDispatch)
-		pdf->canChange ();
+	boost::shared_ptr<CPdf> p = pdf.lock();
+	if (p && wantDispatch)
+		p->canChange ();
 }
 	
 //
@@ -113,7 +114,7 @@ IProperty::dispatchChange () const
 	}else
 	{
 		// Indicate to pdf that it should change this object
-		CPdf* pdf = IProperty::getPdf ();
+		boost::shared_ptr<CPdf> pdf = IProperty::getPdf ().lock ();
 		assert (pdf);
 		pdf->changeIndirectProperty (indiObj);
 	}

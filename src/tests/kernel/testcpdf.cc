@@ -264,7 +264,7 @@ public:
 		XRef * fakeXref=pdf->getCXref();
 		fakeXpdfDict.initDict(fakeXref);
 		IndiRef fakeIndiRef(10, 0);
-		shared_ptr<CDict> fakeDict2(CDictFactory::getInstance(*pdf, fakeIndiRef, fakeXpdfDict));
+		shared_ptr<CDict> fakeDict2(CDictFactory::getInstance(pdf, fakeIndiRef, fakeXpdfDict));
 		shared_ptr<CPage> fake2(new CPage(fakeDict2));
 		fakeXpdfDict.free();
 
@@ -453,7 +453,7 @@ public:
 		// uses 1st internode kid from page tree root dictionary
 		shared_ptr<CDict> interNode;
 		shared_ptr<CRef> interNodeCRef;
-		shared_ptr<CDict> rootDict=getPageTreeRoot(*pdf);
+		shared_ptr<CDict> rootDict=getPageTreeRoot(pdf);
 		shared_ptr<IProperty> rootKidsProp=rootDict->getProperty("Kids");
 		shared_ptr<CArray> rootKids;
 		if(isRef(rootKidsProp))
@@ -509,7 +509,7 @@ public:
 			for(size_t i=1; i<=pageCount; i++)
 			{
 				shared_ptr<CPage> page=pdf->getPage(i);	
-				if(isDescendant(*pdf, interNode->getIndiRef(), page->getDictionary()))
+				if(isDescendant(pdf, interNode->getIndiRef(), page->getDictionary()))
 					descendants.push_back(page);
 			}
 
@@ -582,7 +582,7 @@ public:
 			CPPUNIT_ASSERT(pdf->getPageCount()==currPageCount+getKidsCount(interNode,NULL));
 			try
 			{
-				getNodePosition(*pdf, interNode, NULL);
+				getNodePosition(pdf, interNode, NULL);
 				CPPUNIT_FAIL("getNodePosition should have failed");
 			}catch(AmbiguousPageTreeException & e)
 			{
@@ -626,7 +626,7 @@ public:
 			}
 			try
 			{
-				getNodePosition(*pdf, firstPage->getDictionary(), NULL);
+				getNodePosition(pdf, firstPage->getDictionary(), NULL);
 				CPPUNIT_FAIL("getNodePosition should have failed for ambiguous page dictionary.");
 			}catch(AmbiguousPageTreeException & e)
 			{
@@ -646,13 +646,13 @@ public:
 			// gets back to unambiguous state
 			parentKids->delProperty(parentKids->getPropertyCount()-1);
 			CPPUNIT_ASSERT(pdf->getPageCount()==currPageCount);
-			getNodePosition(*pdf, firstPage->getDictionary(), NULL);
+			getNodePosition(pdf, firstPage->getDictionary(), NULL);
 		}
 
 		// checks PageTreeRootObserver for all possible situations: Pages
 		// property (add, delete or change and Pages reference change)
 		printf("TC11:\tremoving page tree root test\n");
-		shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*pdf);
+		shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(pdf);
 		size_t currPageCount=pdf->getPageCount();
 		pdf->getDictionary()->delProperty("Pages");
 		CPPUNIT_ASSERT(pdf->getPageCount()==0);
@@ -898,7 +898,7 @@ public:
 		// value must be same (we know that prop is CInt)
 		PropertyEquals pe;
 		CPPUNIT_ASSERT(pe(added, prop));
-		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
+		CPPUNIT_ASSERT(added->getPdf().lock().get()==pdf.get());
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
 		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
@@ -935,14 +935,14 @@ public:
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(isDict(*added));
 		shared_ptr<CDict> addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
-		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
+		CPPUNIT_ASSERT(added->getPdf().lock().get()==pdf.get());
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
 		CPPUNIT_ASSERT(addedDict->getPropertyCount()==3);
 		CPPUNIT_ASSERT(isReal(*(addedDict->getProperty("Elem1"))));
 		CPPUNIT_ASSERT(isRef(*(addedDict->getProperty("Elem2"))));
 		// target of Elem2 has to be CNull
 		ref = getValueFromSimple<CRef>(addedDict->getProperty("Elem2"));
-		CPPUNIT_ASSERT(isNull(* pdf->getIndirectProperty(ref)));
+		CPPUNIT_ASSERT(isNull(*pdf->getIndirectProperty(ref)));
 		CPPUNIT_ASSERT(isArray(*(addedDict->getProperty("Elem3"))));
 
 		// adds the same dictionary, with followRef now!
@@ -959,7 +959,7 @@ public:
 		// target of Elem2 has to be CNull - it makes no sense to 
 		// dereference without document
 		ref = getValueFromSimple<CRef>(followAddedDict->getProperty("Elem2"));
-		CPPUNIT_ASSERT(isNull(* pdf->getIndirectProperty(ref)));
+		CPPUNIT_ASSERT(isNull(*pdf->getIndirectProperty(ref)));
 		CPPUNIT_ASSERT(isArray(*(followAddedDict->getProperty("Elem3"))));
 
 		printf("TC04:\taddIndirectProperty with CRef from same pdf\n");
@@ -989,7 +989,7 @@ public:
 		addedRef=pdf->addIndirectProperty(differentPageDict, false);
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
-		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
+		CPPUNIT_ASSERT(added->getPdf().lock().get()==pdf.get());
 		CPPUNIT_ASSERT(isDict(*added));
 		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
@@ -1023,7 +1023,7 @@ public:
 		CPPUNIT_ASSERT(addedRef==ref);
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
-		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
+		CPPUNIT_ASSERT(added->getPdf().lock().get()==pdf.get());
 		CPPUNIT_ASSERT(isDict(*added));
 		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
@@ -1044,7 +1044,7 @@ public:
 		// creates fake and try to use changeIndirectProperty with unknownRef
 		Object obj;
 		obj.initInt(1);
-		shared_ptr<CInt> fakeInt(CIntFactory::getInstance(*pdf, unknownRef, obj));
+		shared_ptr<CInt> fakeInt(CIntFactory::getInstance(pdf, unknownRef, obj));
 		try
 		{
 			pdf->changeIndirectProperty(fakeInt);
@@ -1057,7 +1057,7 @@ public:
 		printf("TC09:\tchangeIndirectProperty with bad typed parameter should fail\n");
 		// creates integer and tries to change value of Pages field which is
 		// reference
-		fakeInt=shared_ptr<CInt>(CIntFactory::getInstance(*pdf, pdf->getDictionary()->getProperty("Pages")->getIndiRef(), obj));
+		fakeInt=shared_ptr<CInt>(CIntFactory::getInstance(pdf, pdf->getDictionary()->getProperty("Pages")->getIndiRef(), obj));
 		try
 		{
 			pdf->changeIndirectProperty(fakeInt);
@@ -1087,7 +1087,7 @@ public:
 		changedIntProp.reset();
 		Object intXpdfObj;
 		intXpdfObj.initInt(0);
-		changedIntProp=shared_ptr<CInt>(CIntFactory::getInstance(*pdf, intPropRef, intXpdfObj));
+		changedIntProp=shared_ptr<CInt>(CIntFactory::getInstance(pdf, intPropRef, intXpdfObj));
 		pdf->changeIndirectProperty(changedIntProp);
 		// resets value and gets it again
 		changedIntProp.reset();
@@ -1143,7 +1143,7 @@ public:
 			printf("\nTests for file:%s\n", fileName.c_str());
 			boost::shared_ptr<CPdf> pdf=getTestCPdf(fileName.c_str());
 			string filterName;
-			if(pdfobjects::utils::isEncrypted(*pdf, &filterName))
+			if(pdfobjects::utils::isEncrypted(pdf, &filterName))
 			{
 				printf("Test file is encrypted and so not supported.\n");
 				printf("File is encrypted by %s method\n", filterName.c_str());

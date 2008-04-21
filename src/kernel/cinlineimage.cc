@@ -100,7 +100,7 @@ CInlineImage::CInlineImage (::Object& oDict, const CStream::Buffer& buf) : CStre
 //
 //
 //
-CInlineImage::CInlineImage (CPdf& p, ::Object& oDict, const CStream::Buffer& buf, const IndiRef& rf) : CStream ()
+CInlineImage::CInlineImage (boost::weak_ptr<CPdf> p, ::Object& oDict, const CStream::Buffer& buf, const IndiRef& rf) : CStream ()
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (objDict == oDict.getType());
@@ -110,7 +110,7 @@ CInlineImage::CInlineImage (CPdf& p, ::Object& oDict, const CStream::Buffer& buf
 	assert (0 < this->dictionary.getPropertyCount ());
 	
 	// Set pdf and ref
-	setPdf (&p);
+	setPdf (p);
 	setIndiRef (rf);
 	
 	// Set buffer, do not use setRawBuffer because CStream would be ... copied

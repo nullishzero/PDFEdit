@@ -132,7 +132,7 @@ void AddItemDialog::buttonSelected(int id) {
 */
 void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  item=it;
- pdf=it->getPdf();
+ pdf=it->getPdf().lock();
 
  //We must set PDF to property
  RefProperty* refProp=dynamic_cast<RefProperty*>(props[5]);

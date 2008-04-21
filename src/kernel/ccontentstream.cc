@@ -68,7 +68,7 @@ namespace {
 	 */
 	void
 	opsSetPdfRefCs (shared_ptr<PdfOperator> first, 
-					CPdf& pdf, 
+					boost::weak_ptr<CPdf> pdf, 
 					IndiRef rf, 
 					CContentStream& cs, 
 					boost::shared_ptr<IPropertyObserver> observer)
@@ -85,7 +85,7 @@ namespace {
 			// 	-- cstream won't get notified by its children, not needed
 			// 
 			if (0 < it.getCurrent()->getParametersCount())
-				it.getCurrent()->init_operands (observer, &pdf, &rf);
+				it.getCurrent()->init_operands (observer, pdf, &rf);
 			
 			it = it.next ();
 		}
@@ -430,11 +430,11 @@ namespace {
 			if (!hasValidPdf (*it) || !hasValidRef (*it))
 				throw CObjInvalidObject ();
 		}
-		CPdf* pdf = streams.front()->getPdf ();
-			assert (pdf);
+		weak_ptr<CPdf> pdf = streams.front()->getPdf ();
+		assert (pdf.lock());
 		IndiRef rf = streams.front()->getIndiRef ();
 
-			assert (!streams.empty());
+		assert (!streams.empty());
 		CStreamsXpdfReader<CContentStream::CStreams> streamreader (streams);
 		streamreader.open ();
 	
@@ -535,7 +535,7 @@ namespace {
 			assert (observer);
 		// Set pdf ref and cs
 		if (!operators.empty())
-			opsSetPdfRefCs (operators.front(), *pdf, rf, cs, observer);
+			opsSetPdfRefCs (operators.front(), pdf, rf, cs, observer);
 	}
 
 
@@ -898,10 +898,10 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 	// Set correct IndiRef, CPdf and cs to inserted operator
 	assert (hasValidRef (cstreams.front()));
 	assert (hasValidPdf (cstreams.front()));
-	CPdf* pdf = cstreams.front()->getPdf();
-	assert (pdf);
+	weak_ptr<CPdf> pdf = cstreams.front()->getPdf();
+	assert (pdf.lock());
 	IndiRef rf = cstreams.front()->getIndiRef ();
-	opsSetPdfRefCs (newOper, *pdf, rf, *this, operandobserver);
+	opsSetPdfRefCs (newOper, pdf, rf, *this, operandobserver);
 
 	//
 	// Insert into operators or composite
@@ -979,17 +979,17 @@ CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper,
 	// Check whether we can make the change
 	cstreams.front()->canChange();
 	IndiRef rf = cstreams.front()->getIndiRef ();
-	CPdf* pdf = cstreams.front()->getPdf();
-		assert (pdf);
+	weak_ptr<CPdf> pdf = cstreams.front()->getPdf();
+	assert (pdf.lock());
 	// set accordingly	
-	opsSetPdfRefCs (newoper, *pdf, rf, *this, operandobserver);
+	opsSetPdfRefCs (newoper, pdf, rf, *this, operandobserver);
 
 	if (operators.empty ())
 	{ // Insert into empty contentstream
 		operators.push_back (newoper);
 	}else
 	{ // Insert into
-		opsSetPdfRefCs (newoper, *pdf, rf, *this, operandobserver);
+		opsSetPdfRefCs (newoper, pdf, rf, *this, operandobserver);
 
 		shared_ptr<PdfOperator> secondoper = operators.front();
 		operators.push_front (newoper);
@@ -1034,10 +1034,10 @@ CContentStream::replaceOperator (OperatorIterator it,
 	// Set correct IndiRef, CPdf and cs to inserted operator
 	assert (hasValidRef (cstreams.front()));
 	assert (hasValidPdf (cstreams.front()));
-	CPdf* pdf = cstreams.front()->getPdf();
-	assert (pdf);
+	weak_ptr<CPdf> pdf = cstreams.front()->getPdf();
+	assert (pdf.lock());
 	IndiRef rf = cstreams.front()->getIndiRef ();
-	opsSetPdfRefCs (newOper, *pdf, rf, *this, operandobserver);
+	opsSetPdfRefCs (newOper, pdf, rf, *this, operandobserver);
 
 	//
 	// Replace in operators or composite

@@ -47,7 +47,7 @@ using namespace utils;
 //
 //
 //
-CStream::CStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf), parser (NULL), tmpObj (NULL)
+CStream::CStream (boost::weak_ptr<CPdf> p, ::Object& o, const IndiRef& rf) : IProperty (p,rf), parser (NULL), tmpObj (NULL)
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 	// Make sure it is a stream
@@ -64,7 +64,7 @@ CStream::CStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf), 
 	objDict.free ();
 
 	// Set pdf and ref
-	dictionary.setPdf (&p);
+	dictionary.setPdf (p);
 	dictionary.setIndiRef (rf);
 	
 	// Save the contents of the container
@@ -162,7 +162,7 @@ CStream::doClone () const
 //
 //
 void 
-CStream::setPdf (CPdf* pdf)
+CStream::setPdf (boost::weak_ptr<CPdf> pdf)
 {
 	// Set pdf to this object and dictionary it contains
 	IProperty::setPdf (pdf);
@@ -409,7 +409,10 @@ CStream::open ()
 		throw CObjInvalidOperation ();
 	}
 	
-	::XRef* xref = (NULL != this->getPdf ()) ? this->getPdf ()->getCXref() : NULL;
+	::XRef* xref = NULL;
+	boost::shared_ptr<CPdf> p = this->getPdf ().lock ();
+	if (p)
+		xref = p->getCXref();
 	// Create xpdf object from current stream and parse it
 	tmpObj = _makeXpdfObject ();
 	parser = new ::Parser (xref, new ::Lexer(xref, tmpObj), gFalse);

@@ -46,7 +46,7 @@ using namespace boost;
 //
 // Protected constructor
 //
-CDict::CDict (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
+CDict::CDict (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProperty (p,rf) 
 {
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pDict,Value&> (*this, o, value);
@@ -128,7 +128,7 @@ CDict::getProperty (PropertyId id) const
 //
 //
 void 
-CDict::setPdf (CPdf* pdf)
+CDict::setPdf (boost::weak_ptr<CPdf> pdf)
 {
 	// Set pdf to this object
 	IProperty::setPdf (pdf);
@@ -202,7 +202,7 @@ CDict::delProperty (PropertyId id)
 		}
 
 		// Be sure
-		oldip->setPdf (NULL);
+		oldip->setPdf (boost::shared_ptr<CPdf>());
 		oldip->setIndiRef (IndiRef());
 
 	}else
@@ -332,7 +332,7 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 		}
 
 		// Be sure
-		oldIp->setPdf (NULL);
+		oldIp->setPdf (boost::shared_ptr<CPdf>());
 		oldIp->setIndiRef (IndiRef());
 	
 	}else
@@ -365,7 +365,7 @@ CDict::_makeXpdfObject () const
 	// any bound PDF instance. Nevertheless NULL xref is ok for
 	// Object hierarchy (see Object::fetch method)
 	XRef *xref = NULL;
-	CPdf *pdf = getPdf();
+	boost::shared_ptr<CPdf> pdf = getPdf().lock();
 	if(pdf)
 		xref = pdf->getCXref();
 	dictObj->initDict(xref);
@@ -419,7 +419,8 @@ void
 CDict::_setMode (shared_ptr<IProperty> ip, PropertyId id) const
 {
 	configuration::ModeController* modecontroller = NULL;
-	if (hasValidPdf (this) && (NULL != (modecontroller=this->getPdf()->getModeController())))
+	shared_ptr<CPdf> p = this->getPdf().lock();
+	if ( p && (NULL != (modecontroller=p->getModeController())))
 	{
 		assert (modecontroller);		
 		PropertyMode mode;

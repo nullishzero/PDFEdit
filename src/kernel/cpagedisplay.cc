@@ -87,10 +87,11 @@ CPageDisplay::displayPage (::OutputDev& out,
 						   int x, int y, int w, int h)
 {
 	// Get xref
-	XRef* xref = pagedict->getPdf()->getCXref ();
-		assert (NULL != xref);
-		if (!(pagedict))
-			throw XpdfInvalidObject ();
+	shared_ptr<CPdf> pdf = pagedict->getPdf().lock();
+	XRef* xref = (pdf)?pdf->getCXref ():NULL;
+	assert (NULL != xref);
+	if (!(pagedict))
+		throw XpdfInvalidObject ();
 
 	//
 	// Create xpdf object representing CPage
@@ -150,11 +151,12 @@ CPageDisplay::createXpdfDisplayParams (shared_ptr<GfxResources>& res, shared_ptr
 	CPageAttributes::fillInherited (_page->getDictionary(),atr);
 	
 	// Start the resource stack
-	XRef* xref = _page->getDictionary()->getPdf()->getCXref();
-		assert (xref);
+	shared_ptr<CPdf> pdf = _page->getDictionary()->getPdf().lock();
+	XRef* xref = (pdf)?pdf->getCXref():NULL;
+	assert (xref);
 	Object* obj = atr._resources->_makeXpdfObject ();
-		assert (obj); 
-		assert (objDict == obj->getType());
+	assert (obj); 
+	assert (objDict == obj->getType());
 	res = shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
 	xpdf::freeXpdfObject (obj);
 	

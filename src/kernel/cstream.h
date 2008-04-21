@@ -114,7 +114,7 @@ public:
 	 * @param o		Xpdf object. 
 	 * @param rf	Indirect id and gen id.
 	 */
-	CStream (CPdf& p, Object& o, const IndiRef& rf);
+	CStream (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
 
 	/**
 	 * Constructor. Stream will not be associated with a pdf.
@@ -284,7 +284,7 @@ public:
 	 * Set pdf to itself and also to all children.
 	 * @param pdf New pdf.
 	 */
-	virtual void setPdf (CPdf* pdf);
+	virtual void setPdf (boost::weak_ptr<CPdf> pdf);
 
 	/**
 	 * Set ref to itself and also to all children.

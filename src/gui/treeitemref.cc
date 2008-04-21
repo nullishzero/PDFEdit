@@ -172,7 +172,7 @@ void TreeItemRef::reloadSelf() {
 TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  assert(name=="Target");
  QString s;
- CPdf* pdf=obj->getPdf();
+ boost::shared_ptr<CPdf> pdf=obj->getPdf().lock();
  if (!pdf) return NULL; //No document opened -> cannot parse references
                    //Should happen only while testing
  CRef* cref=dynamic_cast<CRef*>(obj.get());
@@ -185,7 +185,7 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((un
 
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemRef::validChild(__attribute__((unused)) const QString &name,Q_ListViewItem *oldChild) {
- CPdf* pdf=obj->getPdf();
+ boost::shared_ptr<CPdf> pdf=obj->getPdf().lock();
  if (!pdf) return false; //No document opened -> cannot parse references
  IndiRef ref;
  IProperty::getSmartCObjectPtr<CRef>(obj)->getValue(ref);
@@ -197,7 +197,7 @@ bool TreeItemRef::validChild(__attribute__((unused)) const QString &name,Q_ListV
 
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemRef::deepReload(__attribute__((unused)) const QString &childName,Q_ListViewItem *oldItem) {
- CPdf* pdf=obj->getPdf();
+ boost::shared_ptr<CPdf> pdf=obj->getPdf().lock();
  if (!pdf) return false; //No document opened -> cannot parse references
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;

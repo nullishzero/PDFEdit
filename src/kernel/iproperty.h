@@ -88,9 +88,9 @@ enum PropertyType
  * This object implements Observer interface which means we can observe changes
  * made to all cobjects.
  *
- * REMARK: The association with CPdf is stored in pdf variable as CPdf* and not a smart pointer. This has a good reason
- * namely cyclic references of smart pointers.
-
+ * REMARK: The association with CPdf is stored in pdf variable as weak_ptr&lt;CPdf&gt;. 
+ * Each access to this variable has to be checked with weak_ptr::lock method which
+ * transforms it to proper shared_ptr if the underlaying pointer is still valid.
  */
 class IProperty : public IPropertyObserverSubject
 {
@@ -99,7 +99,7 @@ class IProperty : public IPropertyObserverSubject
 private:
 	IndiRef 		ref;		/**< Objects pdf identification and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
-	CPdf* 			pdf;		/**< This object belongs to this pdf. */	
+	boost::weak_ptr<CPdf> 	pdf;		/**< This object belongs to this pdf. */	
 	bool			wantDispatch;/**< If true changes are dispatched. */
 
 	//
@@ -112,10 +112,10 @@ private:
 protected:	
 
 	/** Basic constructor. */
-	IProperty (CPdf* _pdf = NULL);
+	IProperty (boost::weak_ptr<CPdf> _pdf = boost::shared_ptr<CPdf>());
 
 	/** Constructor. */
-	IProperty (CPdf* _pdf, const IndiRef& rf);
+	IProperty (boost::weak_ptr<CPdf> _pdf, const IndiRef& rf);
 
 
 	//
@@ -153,13 +153,13 @@ public:
 	 * Set association with pdf.
 	 * @param p pdf that this object belongs to
 	 */
-	virtual void setPdf (CPdf* p);
+	virtual void setPdf (boost::weak_ptr<CPdf> p);
 
 	/**
 	 * Returns pdf in which this object resides.
 	 * @return Pdf that this object is associated with.
 	 */
-	CPdf* getPdf () const {return pdf;}
+	boost::weak_ptr<CPdf> getPdf () const {return pdf;}
 
 	/**
 	 * Checks if a property can be changed.
@@ -305,8 +305,11 @@ public:
  * @param pdf Pdf isntance to check.
  * @return true if pdf is not NULL, false otherwise.
  */
-inline bool isPdfValid(CPdf* pdf)
-	{ return (NULL !=pdf); }
+inline bool isPdfValid(boost::weak_ptr<CPdf> pdf)
+{ 
+	boost::shared_ptr<CPdf> cpdf = pdf.lock();
+	return (NULL != cpdf.get()); 
+}
 
 /** 
  * Checks whether iproprety belongs to a valid pdf.
@@ -315,7 +318,9 @@ inline bool isPdfValid(CPdf* pdf)
  * @return isPdfValid(ip-&getPdf()).
  */
 inline bool hasValidPdf(const IProperty& ip)
-	{ return isPdfValid(ip.getPdf()); }
+{ 
+	return isPdfValid(ip.getPdf()); 
+}
 
 /** \copydoc hasValidPdf */
 template<typename T> inline bool hasValidPdf(T ip)

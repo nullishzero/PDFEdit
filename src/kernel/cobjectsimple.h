@@ -130,7 +130,7 @@ public:
 	 * @param o Xpdf object. 
 	 * @param rf Indirect id and gen id.
 	 */
-	CObjectSimple (CPdf& p, Object& o, const IndiRef& rf);
+	CObjectSimple (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
 	
 	/**
 	 * Constructor.
@@ -420,7 +420,7 @@ makeStringPdfValid (GString * str)
  *
  * @return Pointer to newly created object.
  */
-IProperty* createObjFromXpdfObj (CPdf& pdf, ::Object& obj,const IndiRef& ref);
+IProperty* createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, ::Object& obj,const IndiRef& ref);
 
 /**
  * Creates CObject* from xpdf object.

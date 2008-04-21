@@ -338,7 +338,7 @@ opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 			if (isStream (tmp) && obj.isStream())
 			{
 				
-				streams.push_back ( shared_ptr<CStream> (new CStream (*pdf, obj, tmp->getIndiRef())));
+				streams.push_back ( shared_ptr<CStream> (new CStream (pdf, obj, tmp->getIndiRef())));
 
 			}else if (isArray (tmp) && obj.isArray())
 			{
@@ -346,7 +346,7 @@ opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 				for (int i = 0; i < obj.arrayGetLength(); ++i)
 				{
 					shared_ptr<IProperty> ent = utils::getReferencedObject(IProperty::getSmartCObjectPtr<CArray> (tmp)->getProperty (i));
-					streams.push_back ( shared_ptr<CStream> (new CStream (*pdf,  *(obj.arrayGet (i, &o)), ent->getIndiRef())));
+					streams.push_back ( shared_ptr<CStream> (new CStream (pdf,  *(obj.arrayGet (i, &o)), ent->getIndiRef())));
 				}
 			}else
 			{
@@ -629,7 +629,7 @@ cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 			if (isStream (tmp) && obj.isStream())
 			{
 				
-				streams.push_back ( shared_ptr<CStream> (new CStream (*pdf, obj, tmp->getIndiRef())));
+				streams.push_back ( shared_ptr<CStream> (new CStream (pdf, obj, tmp->getIndiRef())));
 
 			}else if (isArray (tmp) && obj.isArray())
 			{
@@ -637,7 +637,7 @@ cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 				for (int i = 0; i < obj.arrayGetLength(); ++i)
 				{
 					shared_ptr<IProperty> ent = utils::getReferencedObject (IProperty::getSmartCObjectPtr<CArray> (tmp)->getProperty (i));
-					streams.push_back ( shared_ptr<CStream> (new CStream (*pdf,  *(obj.arrayGet (i, &o)), ent->getIndiRef())));
+					streams.push_back ( shared_ptr<CStream> (new CStream (pdf,  *(obj.arrayGet (i, &o)), ent->getIndiRef())));
 				}
 			}else
 			{

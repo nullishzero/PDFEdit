@@ -100,7 +100,7 @@ private:
  /** Settings used to save dialog position (dict/array) - this is useful, as these can have different sizes */
  QString settingName;
  /** Pdf document (for validating reference) */
- CPdf* pdf;
+ boost::shared_ptr<CPdf> pdf;
  /** Radiobutton for inserting at arbitrary position in array */
  QRadioButton *posNum;
  /** Radiobutton for appending at end of array */

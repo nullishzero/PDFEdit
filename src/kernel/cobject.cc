@@ -59,7 +59,7 @@ objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 	if (!hasValidPdf (ip))
 		throw CObjInvalidOperation ();
 
-	CPdf* pdf = ip.getPdf ();
+	shared_ptr<CPdf> pdf = ip.getPdf ().lock ();
 	IndiRef ref = ip.getIndiRef();
 	if ( &ip == (indiObj=pdf->getIndirectProperty(ref)).get() )
 		return false;

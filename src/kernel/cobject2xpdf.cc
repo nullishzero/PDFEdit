@@ -446,7 +446,7 @@ namespace {
 			assert (0 <= array.arrayGetLength ());
 			utilsPrintDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 			
-			CPdf* pdf = ip.getPdf ();
+			boost::shared_ptr<CPdf> pdf = ip.getPdf ().lock ();
 			XpdfObject obj;
 
 			int len = array.arrayGetLength ();
@@ -460,7 +460,7 @@ namespace {
 				if (isPdfValid(pdf))
 				{
 					hasValidRef (ip);
-					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
+					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (pdf, *obj, ip.getIndiRef()));
 
 				}else
 				{
@@ -495,7 +495,7 @@ namespace {
 			assert (0 <= dict.dictGetLength ());
 			utilsPrintDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 			
-			CPdf* pdf = ip.getPdf ();
+			boost::shared_ptr<CPdf> pdf = ip.getPdf ().lock ();
 			xpdf::XpdfObject obj;
 
 			int len = dict.dictGetLength ();
@@ -509,7 +509,7 @@ namespace {
 				shared_ptr<IProperty> cobj;
 				// Create CObject from it
 				if (isPdfValid (pdf))
-					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
+					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (pdf, *obj, ip.getIndiRef()));
 				else
 					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
 
@@ -604,7 +604,7 @@ getStringFromXpdfStream (std::string& str, ::Object& obj)
 // Creates CObject from xpdf object.
 // 
 IProperty*
-createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
+createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, Object& obj,const IndiRef& ref)
 {
 	switch (obj.getType ())
 	{

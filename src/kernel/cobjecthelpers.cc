@@ -125,7 +125,9 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
 	// gets reference value and dereferences indirect object
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
-	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	shared_ptr<CPdf> pdf = refProp->getPdf().lock();
+	assert(pdf);
+	boost::shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pDict)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
@@ -235,7 +237,9 @@ getReferencedObject (boost::shared_ptr<IProperty> ip)
 
 			IndiRef ref;
 			IProperty::getSmartCObjectPtr<CRef>(ip)->getValue(ref);
-			return ip->getPdf()->getIndirectProperty (ref);
+			shared_ptr<CPdf> pdf = ip->getPdf().lock();
+			assert(pdf);
+			return pdf->getIndirectProperty (ref);
 
 		}else
 			return ip;
@@ -320,7 +324,12 @@ using namespace boost;
 //
 ::XRef*
 getXRef (shared_ptr<IProperty> ip)
- { return (ip->getPdf() == NULL) ? NULL : ip->getPdf()->getCXref(); }
+{
+	shared_ptr<CPdf> pdf = ip->getPdf().lock();
+	if(!pdf)
+		return NULL;
+	return pdf->getCXref(); 
+}
 
 
  

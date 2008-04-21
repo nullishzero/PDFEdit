@@ -47,7 +47,7 @@ using namespace boost;
 //
 // Protected constructor
 //
-CArray::CArray (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
+CArray::CArray (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProperty (p,rf) 
 {
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pArray,Value&> (*this, o, value);
@@ -104,7 +104,7 @@ CArray::getProperty (PropertyId id) const
 //
 //
 void 
-CArray::setPdf (CPdf* pdf)
+CArray::setPdf (boost::weak_ptr<CPdf> pdf)
 {
 	// Set pdf to this object
 	IProperty::setPdf (pdf);
@@ -170,7 +170,7 @@ CArray::delProperty (PropertyId id)
 
 		
 		// Be sure
-		oldip->setPdf (NULL);
+		oldip->setPdf (boost::shared_ptr<CPdf>());
 		oldip->setIndiRef (IndiRef());
 
 	}else
@@ -302,7 +302,7 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 		}
 
 		// Be sure
-		oldip->setPdf (NULL);
+		oldip->setPdf (boost::shared_ptr<CPdf>());
 		oldip->setIndiRef (IndiRef());
 
 	}else
@@ -333,7 +333,7 @@ CArray::_makeXpdfObject () const
 	// any bound PDF instance. Nevertheless NULL xref is ok for
 	// Object hierarchy (see Object::fetch method)
 	XRef *xref = NULL;
-	CPdf *pdf = getPdf();
+	boost::shared_ptr<CPdf> pdf = getPdf().lock();
 	if(pdf)
 		xref = pdf->getCXref();
 	arrayObj->initArray(xref);

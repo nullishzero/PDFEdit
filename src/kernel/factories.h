@@ -87,7 +87,7 @@ public:
 	 * @return Type instance.
 	 */
 	static Type* 
-	getInstance(CPdf & pdf, const IndiRef & indirefParent, Object & obj)
+	getInstance(boost::shared_ptr<CPdf> pdf, const IndiRef & indirefParent, Object & obj)
 	{
 		return new Type(pdf, obj, indirefParent);
 	}
@@ -215,7 +215,7 @@ public:
 	 * method.
 	 * @return CDict instance.
 	 */
-	static CDict * getInstance(CPdf & pdf, const IndiRef & indirefParent, Object & obj)
+	static CDict * getInstance(boost::shared_ptr<CPdf>  pdf, const IndiRef & indirefParent, Object & obj)
 	{
 		return new CDict(pdf, obj, indirefParent);
 	}
@@ -268,7 +268,7 @@ public:
 	 * method.
 	 * @return CArray instance.
 	 */
-	static CArray * getInstance(CPdf & pdf, const IndiRef & indirefParent, Object & obj)
+	static CArray * getInstance(boost::shared_ptr<CPdf>  pdf, const IndiRef & indirefParent, Object & obj)
 	{
 		return new CArray(pdf, obj, indirefParent);
 	}

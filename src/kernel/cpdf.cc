@@ -80,13 +80,13 @@ ostream & operator<<(ostream & stream, PageTreeNodeType nodeType)
 	return stream;
 }
 
-shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf)
+shared_ptr<CDict> getPageTreeRoot(const boost::shared_ptr<CPdf> &pdf)
 {
 	shared_ptr<CDict> result;
 	
 	try
 	{
-		shared_ptr<IProperty> pagesProp=pdf.getDictionary()->getProperty("Pages");
+		shared_ptr<IProperty> pagesProp=pdf->getDictionary()->getProperty("Pages");
 		if(!isRef(pagesProp))
 			// returns null dictionary
 			return result;
@@ -100,7 +100,7 @@ shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf)
 	return result;
 }
 
-PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw()
+PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> &nodeProp)throw()
 {
 	PageTreeNodeType nodeType=UnknownNode;
 
@@ -125,9 +125,9 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
 			return ErrorNode;
 	
 	// checks root node at first
-	CPdf * pdf=nodeProp->getPdf();
+	shared_ptr<CPdf> pdf=nodeProp->getPdf().lock();
 	assert(pdf);
-	shared_ptr<CDict> rootDict=getPageTreeRoot(*pdf);
+	shared_ptr<CDict> rootDict=getPageTreeRoot(pdf);
 	if(rootDict==nodeDict)
 		// root dictionary found and it is same as internode
 		return RootNode;
@@ -329,7 +329,7 @@ void clearCache(CacheType & cache)
  */
 void discardKidsCountCache(
 		IndiRef & ref, 
-		CPdf & pdf, 
+		boost::shared_ptr<CPdf> pdf, 
 		PageTreeNodeCountCache & cache, 
 		bool withSubTree=false)
 {
@@ -340,7 +340,7 @@ using namespace debug;
 	if(!withSubTree)
 		return;
 
-	shared_ptr<IProperty> nodeProp=pdf.getIndirectProperty(ref);	
+	shared_ptr<IProperty> nodeProp=pdf->getIndirectProperty(ref);	
 	if(getNodeType(nodeProp)>=InterNode)
 	{
 		ChildrenStorage childs;
@@ -424,7 +424,7 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 }
 
 boost::shared_ptr<CDict> findPageDict(
-		const CPdf & pdf, 
+		const boost::shared_ptr<CPdf> &pdf, 
 		boost::shared_ptr<IProperty> pagesDict, 
 		size_t startPos, size_t pos, 
 		PageTreeNodeCountCache * cache)
@@ -631,7 +631,7 @@ boost::shared_ptr<CDict> findPageDict(
  * superNode.
  */
 size_t searchTreeNode(
-		const CPdf & pdf, 
+		shared_ptr<const CPdf> pdf, 
 		shared_ptr<CDict> superNode, 
 		shared_ptr<CDict> node, 
 		size_t startValue, 
@@ -734,11 +734,11 @@ size_t searchTreeNode(
 	return position;
 }
 
-size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node, PageTreeNodeCountCache * cache)
+size_t getNodePosition(const shared_ptr<CPdf> &pdf, shared_ptr<IProperty> node, PageTreeNodeCountCache * cache)
 {
 	utilsPrintDbg(DBG_DBG, "");
 	// node must be from given pdf
-	if(node->getPdf()!=&pdf)
+	if(node->getPdf().lock()!=pdf)
 	{
 		utilsPrintDbg(DBG_ERR, "Node is not from given pdf isntance.");
 		throw PageNotFoundException(0);
@@ -775,7 +775,7 @@ size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node, PageTreeNod
 	throw PageNotFoundException(0);
 }
 
-bool isDescendant(CPdf & pdf, IndiRef parent, shared_ptr<CDict> child)
+bool isDescendant(boost::shared_ptr<CPdf> pdf, IndiRef parent, shared_ptr<CDict> child)
 {
 using namespace utils;
 
@@ -812,12 +812,12 @@ using namespace utils;
 	}
 }
 
-bool isEncrypted(CPdf & pdf, string * filterName)
+bool isEncrypted(boost::shared_ptr<CPdf> &pdf, string * filterName)
 {
 	utilsPrintDbg(DBG_DBG, "");
 
 	// gets trailer dictionary and checks Encrypt entry
-	shared_ptr<const CDict> trailer=pdf.getTrailer();
+	shared_ptr<const CDict> trailer=pdf->getTrailer();
 	if(! trailer->containsProperty("Encrypt"))
 	{
 		utilsPrintDbg(DBG_DBG, "Document content is not encrypted.");
@@ -988,7 +988,7 @@ using namespace pdfobjects::utils;
 		bool unregister=true;
 		try
 		{
-			unregister=!getNodePosition(*this, dict_ptr, &nodeCountCache);
+			unregister=!getNodePosition(_this.lock(), dict_ptr, &nodeCountCache);
 		}catch(AmbiguousPageTreeException &)
 		{
 			// node is still in the tree and even more it is still ambiguous
@@ -1084,6 +1084,7 @@ using namespace debug;
 using namespace observer;
 using namespace utils;
 
+	assert(isActive());
 	shared_ptr<IProperty> oldValue;
 	if(!context)
 	{
@@ -1218,6 +1219,7 @@ using namespace debug;
 using namespace boost;
 using namespace observer;
 
+	assert(isActive());
 	if(!context)
 	{
 		kernelPrintDbg(DBG_WARN, "No context available. Ignoring calling.");
@@ -1402,6 +1404,7 @@ using namespace boost;
 using namespace debug;
 using namespace utils;
 
+	assert(isActive());
 	if(!context)
 	{
 		kernelPrintDbg(DBG_WARN, "No context available. Ignoring calling.");
@@ -1559,7 +1562,7 @@ using namespace utils;
 	{
 		IndiRef oldRef=getValueFromSimple<CRef>(oldValue);
 		kernelPrintDbg(DBG_DBG, "discarding leaf count cache for "<<oldRef<<" subtree");
-		discardKidsCountCache(oldRef, *pdf, pdf->nodeCountCache, true);
+		discardKidsCountCache(oldRef, pdf->_this.lock(), pdf->nodeCountCache, true);
 	}
 
 	// if newValue is reference, registers observers to newValue dereferenced 
@@ -1601,7 +1604,7 @@ using namespace observer;
 		if(isRef(pagesProp))
 		{
 			UNREGISTER_SHAREDPTR_OBSERVER(pagesProp, pageTreeRootObserver);
-			shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(*this);
+			shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(_this.lock());
 			if(pageTreeRoot.get())
 			{
 				try
@@ -1722,7 +1725,7 @@ using namespace observer;
 	
 	// registers pageTreeNodeObserver and pageTreeKidsObserver to page tree root
 	// dictionary which registers these observers to whole page tree structure
-	shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(*this);
+	shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(_this.lock());
 	if(pageTreeRoot.get())
 		registerPageTreeObservers(pageTreeRoot);
 }
@@ -1736,11 +1739,10 @@ CPdf::CPdf(StreamWriter * stream, OpenMode openMode)
 	 modeController(NULL)
 {
 	// gets xref writer - if error occures, exception is thrown 
+	// Note that we can't do anything that could use cobjects here
+	// because of weak_ptr & shared_ptr are not initialized yet
 	xref=new XRefWriter(stream, this);
 	mode=openMode;
-
-	// initializes revision specific data for the newest revision
-	initRevisionSpecific();
 
 	// sets mode accoring openMode
 	// ReadOnly and ReadWrite implies xref paranoid mode (default one) 
@@ -1850,9 +1852,19 @@ CPdf::~CPdf()
 	}
 	pageList.clear();
 
-	// unregisters all observers registered on page tree nodes (root,
-	// intermediate and leaf nodes)
-	unregisterPageObservers();
+	// idealy we should unregister page tree observers but as the _this
+	// is no longer valid in this context (last reference to 
+	// shared_ptr<CPdf> was dropped) we can't call unregisterPageObservers 
+	// which relies on it (like everything which uses weak_ptr to this 
+	// instance) - we will rather mark all types of observers are invalid
+	// so they do nothing if they are triggered - which should not happen
+	// anyway
+	pageTreeRootObserver->setActive(false);
+	pageTreeNodeObserver->setActive(false);
+	pageTreeKidsObserver->setActive(false);
+
+	// clears all referenced indirect properties
+	indMap.clear();
 
 	// clean up resolved reference mapping for different pdf objects
 	for(ResolvedRefMapping::iterator i=resolvedRefMapping.begin(); 
@@ -1908,7 +1920,7 @@ using namespace debug;
 	// the mapping
 	if(obj.getType()!=objNull)
 	{
-		IProperty * prop=utils::createObjFromXpdfObj(*this, obj, ref);
+		IProperty * prop=utils::createObjFromXpdfObj(_this.lock(), obj, ref);
 		prop_ptr=shared_ptr<IProperty>(prop);
 		indMap.insert(IndirectMapping::value_type(ref, prop_ptr));
 		kernelPrintDbg(DBG_INFO, "Mapping created for "<<ref);
@@ -1940,8 +1952,8 @@ using namespace utils;
 	// so no type check fails). We have to set this pdf temporarily, because
 	// _makeXpdfObject function sets xref to created Object from ip->getPdf().
 	// Finally restores original pdf value
-	CPdf * original=ip->getPdf();
-	ip->setPdf(this);
+	shared_ptr<CPdf> original=ip->getPdf().lock();
+	ip->setPdf(_this);
 	::Object * obj=ip->_makeXpdfObject();
 	ip->setPdf(original);
 	kernelPrintDbg(DBG_DBG, "Initializating object with type="<<obj->getType()<<" to reserved reference "<<ref);
@@ -2042,7 +2054,7 @@ using namespace utils;
 	IndiRef invalidRef;
 	
 	// this method makes sense only for properties from different pdf	
-	assert(this!=ip->getPdf());
+	assert(_this.lock()!=ip->getPdf().lock());
 	
 	kernelPrintDbg(debug::DBG_DBG,"property type="
 			<<ip->getType()<<" ResolvedRefStorage size="
@@ -2086,7 +2098,9 @@ using namespace utils;
 				kernelPrintDbg(DBG_DBG, "Following reference "<<ipRef<<" mapped to "
 						<<refEntry->first);	
 				// ip is from read pdf and so dereferences target value 					
-				shared_ptr<IProperty> followedIp=ip->getPdf()->getIndirectProperty(ipRef);
+				// FIXME check for valid pdf
+				shared_ptr<CPdf> pdf = ip->getPdf().lock();
+				shared_ptr<IProperty> followedIp=pdf->getIndirectProperty(ipRef);
 
 				// adds dereferenced value using addProperty with collected
 				// container. Current mapping is set to resolving state to 
@@ -2169,7 +2183,8 @@ using namespace boost;
 	}
 	
 	// checks whether given ip is from same pdf
-	if(ip->getPdf()==this)
+	shared_ptr<CPdf> ipPdf = ip->getPdf().lock();
+	if(ipPdf.get()==this)
 	{
 		// ip is from same pdf and so all possible referencies are already in 
 		// pdf too. We can clearly register with given indiRef
@@ -2183,7 +2198,7 @@ using namespace boost;
 	// pdf==null - prop from no pdf - then uses NO_PDF_ID constant). 
 	// It contains mappings from such pdf indirect reference to coresponding 
 	// newly created reference for this pdf.
-	cpdf_id_t id=(ip->getPdf())?ip->getPdf()->getId():CPdf::NO_PDF_ID;
+	cpdf_id_t id=(ipPdf)?ipPdf->getId():CPdf::NO_PDF_ID;
 	ResolvedRefMapping::iterator i=resolvedRefMapping.find(id);
 	ResolvedRefStorage * resolvedStorage;
 	if(i==resolvedRefMapping.end())
@@ -2267,7 +2282,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	
 	// checks property at first
 	// it must be from same pdf
-	if(prop->getPdf() != this)
+	if(prop->getPdf().lock() != _this.lock())
 	{
 		kernelPrintDbg(DBG_ERR, "Given property is not from same pdf.");
 		throw CObjInvalidObject();
@@ -2356,6 +2371,12 @@ using namespace std;
 	try
 	{
 		shared_ptr<CPdf> instance(new CPdf(stream, mode), PdfDeleter());
+		instance->_this = instance;
+
+		// initializes revision specific data for the newest revision
+		// We can't do it in constructor because we are using cobjects
+		// there and thus shared_ptr and _this have to be initialized
+		instance->initRevisionSpecific();
 
 		// We don't want to enable editing linearized documents because
 		// it leads to almost 100% damage of content - we are not able
@@ -2424,10 +2445,10 @@ using namespace utils;
 	// page is not available in pageList, searching has to be done
 	// find throws an exception if any problem found, otherwise pageDict_ptr
 	// contians Page dictionary at specified position.
-	shared_ptr<CDict> rootPages_ptr=getPageTreeRoot(*this);
+	shared_ptr<CDict> rootPages_ptr=getPageTreeRoot(_this.lock());
 	if(!rootPages_ptr.get())
 		throw PageNotFoundException(pos);
-	shared_ptr<CDict> pageDict_ptr=findPageDict(*this, rootPages_ptr, 1, pos, &nodeCountCache);
+	shared_ptr<CDict> pageDict_ptr=findPageDict(_this.lock(), rootPages_ptr, 1, pos, &nodeCountCache);
 
 	// creates CPage instance from page dictionary and stores it to the pageList
 	CPage * page=CPageFactory::getInstance(pageDict_ptr);
@@ -2452,7 +2473,7 @@ using namespace utils;
 		return pageCount;
 	}
 	
-	shared_ptr<CDict> rootDict=getPageTreeRoot(*this);
+	shared_ptr<CDict> rootDict=getPageTreeRoot(_this.lock());
 	if(!rootDict.get())
 		return 0;
 	return pageCount=getKidsCount(rootDict, &nodeCountCache);
@@ -2592,7 +2613,7 @@ using namespace utils;
 					shared_ptr<CPage> page=i->second;
 					// checks page's dictionary whether it is in oldDict_ptr sub
 					// tree and if so removes it from pageList
-					if(isDescendant(*this, ref, page->getDictionary()))
+					if(isDescendant(_this.lock(), ref, page->getDictionary()))
 					{
 						// sets flag, that at least one descendants is found
 						found=true;
@@ -2659,7 +2680,7 @@ using namespace utils;
 		// no information
 		try
 		{
-			minPos = getNodePosition(*this, newValue, &nodeCountCache);
+			minPos = getNodePosition(_this.lock(), newValue, &nodeCountCache);
 		}catch(exception &e)
 		{
 			// position can't be determined
@@ -2711,7 +2732,7 @@ using namespace utils;
 			// means that it can't be determined. Such page is invalidated.
 			try
 			{
-				size_t pos=getNodePosition(*this, i->second->getDictionary(), &nodeCountCache);
+				size_t pos=getNodePosition(_this.lock(), i->second->getDictionary(), &nodeCountCache);
 				kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<pos);
 				pageList.insert(PageList::value_type(pos, i->second));	
 			}catch(AmbiguousPageTreeException & e)
@@ -2748,7 +2769,7 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "");
 
 	// gets pdf of the node - must be non null
-	assert(interNode->getPdf());
+	assert(interNode->getPdf().lock());
 	
 	// only internode make sense to consolidate
 	PageTreeNodeType nodeType=getNodeType(interNode);
@@ -2819,7 +2840,7 @@ using namespace utils;
 	// in subtree (they contain correct values because change was just in this
 	// intermediate node)
 	if(countChanged)
-		discardKidsCountCache(interNodeRef, *this, nodeCountCache, false);
+		discardKidsCountCache(interNodeRef, _this.lock(), nodeCountCache, false);
 	
 	kernelPrintDbg(DBG_DBG, "consolidating Kids array members");
 
@@ -2966,7 +2987,7 @@ using namespace utils;
 	shared_ptr<CDict> interNode_ptr;
 	shared_ptr<CRef> currRef;
 	// by default it is root of page tree
-	interNode_ptr=getPageTreeRoot(*this);
+	interNode_ptr=getPageTreeRoot(_this.lock());
 	if(!interNode_ptr.get())
 	{
 		// Root of page dictionary doesn't exist
@@ -2979,7 +3000,7 @@ using namespace utils;
 		// searches for page at storePosition and gets its reference
 		// page dictionary has to be an indirect object, so getIndiRef returns
 		// dictionary reference
-		shared_ptr<CDict> currentPage_ptr=findPageDict(*this, interNode_ptr, 1, storePostion, &nodeCountCache);
+		shared_ptr<CDict> currentPage_ptr=findPageDict(_this.lock(), interNode_ptr, 1, storePostion, &nodeCountCache);
 		currRef=shared_ptr<CRef>(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 		
 		// gets parent of found dictionary which maintains 
@@ -3018,12 +3039,12 @@ using namespace utils;
 	// Now it is safe to add indirect object, because there is nothing that can
 	// fail
 	shared_ptr<CDict> pageDict=page->getDictionary();
-	if(pageDict->getPdf() && pageDict->getPdf()!=this)
+	shared_ptr<CPdf> pageDictPdf = pageDict->getPdf().lock();
+	if(pageDictPdf && pageDictPdf !=_this.lock())
 	{
 		// page comes from different valid pdf - we have to create clone and
 		// remove Parent field from it. Also inheritable properties have to be
 		// handled
-		CPdf * pageDictPdf=pageDict->getPdf();
 		IndiRef pageDictIndiRef=pageDict->getIndiRef();
 		pageDict=IProperty::getSmartCObjectPtr<CDict>(pageDict->clone());
 		pageDict->delProperty("Parent");
@@ -3043,7 +3064,7 @@ using namespace utils;
 	// by this dictionary) if it comes from different pdf. Otherwise simply
 	// add reference.
 	IndiRef pageRef;
-	if(pageDict->getPdf() == this)
+	if(pageDict->getPdf().lock() == _this.lock())
 	{	
 		try
 		{
@@ -3096,8 +3117,8 @@ using namespace utils;
 	// Searches for page dictionary at given pos and gets its reference.
 	// getPageTreeRoot doesn't fail, because we are in page range and so it has
 	// to exist
-	shared_ptr<CDict> rootDict=getPageTreeRoot(*this);
-	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, rootDict, 1, pos, &nodeCountCache);
+	shared_ptr<CDict> rootDict=getPageTreeRoot(_this.lock());
+	shared_ptr<CDict> currentPage_ptr=findPageDict(_this.lock(), rootDict, 1, pos, &nodeCountCache);
 	shared_ptr<CRef> currRef(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 	
 	// Gets parent field from found page dictionary and gets its Kids array

@@ -104,7 +104,7 @@ public:
 		fclose(f1);
 	}
 
-	void contentStreamTC(CPdf & pdf)
+	void contentStreamTC(boost::shared_ptr<CPdf> pdf)
 	{
 	using namespace boost;
 	using namespace std;
@@ -113,12 +113,12 @@ public:
 
 		printf("%s\n", __FUNCTION__);
 
-		printf("%u pages found\n", pdf.getPageCount());
-		for(size_t i=1; i<=pdf.getPageCount(); i++)
+		printf("%u pages found\n", pdf->getPageCount());
+		for(size_t i=1; i<=pdf->getPageCount(); i++)
 		{
 			// gets page dictionary at position and gets Contents 
 			// property from it
-			shared_ptr<CDict> pageDict=pdf.getPage(i)->getDictionary();
+			shared_ptr<CDict> pageDict=pdf->getPage(i)->getDictionary();
 			printf("Page #%d\n", i);
 			try
 			{
@@ -154,7 +154,7 @@ public:
 				{
 					printf("\tStream number %d\n", index);
 					IndiRef contentRef=*i;
-					shared_ptr<CStream> contentStr=IProperty::getSmartCObjectPtr<CStream>(pdf.getIndirectProperty(contentRef));
+					shared_ptr<CStream> contentStr=IProperty::getSmartCObjectPtr<CStream>(pdf->getIndirectProperty(contentRef));
 
 					int ch1;
 					size_t bytes=0;
@@ -197,7 +197,7 @@ public:
 						
 					// directly fetched stream must be same as created
 					Object fetchedContentStr;
-					pdf.getCXref()->fetch(contentRef.num, contentRef.gen, &fetchedContentStr);
+					pdf->getCXref()->fetch(contentRef.num, contentRef.gen, &fetchedContentStr);
 					printf("TC05:\tfetched content stream stream is same as original\n");
 					CPPUNIT_ASSERT(compareStreams(fetchedContentStr.getStream(), xpdfContentStr->getStream()));
 					BaseStream * baseStreamFetched=fetchedContentStr.getStream()->getBaseStream();
@@ -236,7 +236,7 @@ public:
 		{
 			fileStreamTC(*i);
 			boost::shared_ptr<CPdf> pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);
-			contentStreamTC(*pdf);
+			contentStreamTC(pdf);
 		}
 	}
 };

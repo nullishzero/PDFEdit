@@ -331,7 +331,7 @@ public:
 	/**
 	 * Init operands and store observer for later unregistering.
 	 */
-	virtual void init_operands (boost::shared_ptr<observer::IObserver<IProperty> >, CPdf*, IndiRef*) = 0;
+	virtual void init_operands (boost::shared_ptr<observer::IObserver<IProperty> >, boost::weak_ptr<CPdf>, IndiRef*) = 0;
 
 };	// class PdfOperator
 
@@ -386,7 +386,7 @@ public:
 	virtual void getParameters (Operands&) const {}
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const = 0;
-	virtual void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer, CPdf* pdf, IndiRef* rf);
+	virtual void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer, boost::weak_ptr<CPdf> pdf, IndiRef* rf);
 
 	//
 	// Clone interface
