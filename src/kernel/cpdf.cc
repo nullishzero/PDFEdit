@@ -2322,21 +2322,31 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	change=true;
 }
 
-namespace {
-
-/** Deleter for CPdf instance.
- * Used by shared_ptr as destructor. Calls CPdf::close method.
+/** Deleter for file based CPdf instance.
+ * Used by shared_ptr as destructor. It is initialized from file handle used 
+ * for CPdf and it is responsible for proper CPdf deallocation and file handle
+ * closing.
  */
-class PdfDeleter
+class PdfFileDeleter
 {
+	FILE * file;
 public:
+	PdfFileDeleter(FILE * f): file(f) {};
+
 	void operator ()(CPdf * pdf)
 	{
 		assert(pdf);
-		pdf->close();
+		delete pdf;
+		if(fclose(file))
+		{
+			int err = errno;
+			kernelPrintDbg(debug::DBG_ERR, "Unable to close file handle (cause=\""
+					<<strerror(err) << "\"");
+		}
+
+		kernelPrintDbg(debug::DBG_INFO, "Instance deleted.")
 	}
 };
-}
 
 boost::shared_ptr<CPdf> CPdf::getInstance(const char * filename, OpenMode mode)
 {
@@ -2370,7 +2380,7 @@ using namespace std;
 	// stream is ready, creates CPdf instance
 	try
 	{
-		shared_ptr<CPdf> instance(new CPdf(stream, mode), PdfDeleter());
+		shared_ptr<CPdf> instance(new CPdf(stream, mode), PdfFileDeleter(file));
 		instance->_this = instance;
 
 		// initializes revision specific data for the newest revision
@@ -2384,7 +2394,6 @@ using namespace std;
 		// prevent from changes at all.
 		if(instance->isLinearized())
 			instance->mode = ReadOnly;
-		instance->file = file;
 		kernelPrintDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
 		return instance;
 	}catch(exception &e)
@@ -2394,28 +2403,6 @@ using namespace std;
 		string what=string("CPdf open failed. reason=")+e.what();
 		throw PdfOpenException(what);
 	}
-}
-
-int CPdf::close(bool saveFlag)
-{
-	kernelPrintDbg(debug::DBG_DBG, "");
-	// saves if necessary
-	if(saveFlag)
-		save();
-	
-	// deletes this instance
-	// all clean-up is made in destructor
-	FILE * f = file;
-	delete this;
-	if(fclose(f))
-	{
-		int err = errno;
-		kernelPrintDbg(debug::DBG_ERR, "Unable to close file handle (cause=\""
-				<<strerror(err) << "\"");
-	}
-
-	kernelPrintDbg(debug::DBG_INFO, "Instance deleted.")
-	return 0;
 }
 
 // helper macor for position in range testing

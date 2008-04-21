@@ -464,11 +464,4 @@ void _working (T& oss)
 
 //=====================================================================================
 
-struct pdf_deleter
-{
-	void operator() (CPdf* p)
-	{assert (p); p->close();}
-};
-
-
 #endif // _TESTMAIN_H_

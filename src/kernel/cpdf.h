@@ -151,8 +151,10 @@ typedef std::map<cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
  * <b>Instancing</b><br>
  * Public constructor is not available and instances can be created on by 
  * static factory getInstance method. Also no public destructor is available 
- * and instance can be destroyed only by close method. This implies that
- * instance can be used only as pointer or reference.
+ * because instance returned by getInstance methods is wrapped by shared_ptr
+ * smart pointer which keeps instance alive until reference to the pointer
+ * exists (this is based on reference counting scheme - see smart_ptr 
+ * documentation for more information).
  * 
  * <p>
  * <b>Open mode</b><br>
@@ -746,7 +748,7 @@ protected:
 	 * <br>
 	 * This method should be called with clenaup flag set to false when 
 	 * node is removed from the tree and set to true when clean up for CPdf
-	 * is done (e.g. when document closed).
+	 * is done (e.g. when document about to be destroyed).
 	 * <br>
 	 * NOTE: If position of given node is ambiguous, unregistration is skipped,
 	 * because node is still in the tree.
@@ -828,14 +830,6 @@ protected:
 	 */
 	IndiRef subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs);
 private:
-
-	/** File handle for document.
-	 * Initialized in getInstance and may be used *ONLY* in close method (to 
-	 * close). All other operations must be done on top of stream object 
-	 * which wrapps file handle.
-	 */
-	FILE * file;
-
 	/** Identificator for this pdf instance.
 	 */
 	cpdf_id_t id;
@@ -1044,6 +1038,8 @@ private:
 	 * using this destructor).
 	 */
 	~CPdf();
+
+ 	friend class PdfFileDeleter;
 public:
 	/** Factory method for CPdf instances.
 	 * @param filename File name with pdf content (if null, new document 
@@ -1067,15 +1063,6 @@ public:
 		return id;
 	}
 	
-	/** Closes pdf file.
-	 * @param saveFlag Flag which determine whether to save before close
-	 *	(parameter may be omited and false is used by default).
-	 *
-	 * Destroyes CPdf instance in safe way. Instance MAY NOT be used
-	 * after this method is called.
-	 */
-	int close(bool saveFlag=false);
-
 	/** Returns pointer to cross reference table.
 	 *
 	 * This is pointer to CXref subtype of XRefWriter type field. It
