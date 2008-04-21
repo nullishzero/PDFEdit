@@ -42,7 +42,7 @@ using namespace boost;
 bool
 getout (UNUSED_PARAM ostream& UNUSED_PARAM oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	typedef vector<shared_ptr<IProperty> > Outs;
 	Outs outs;

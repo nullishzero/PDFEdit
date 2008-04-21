@@ -235,9 +235,8 @@ public:
 					++i)
 		{
 			fileStreamTC(*i);
-			CPdf * pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);
+			boost::shared_ptr<CPdf> pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);
 			contentStreamTC(*pdf);
-			pdf->close();
 		}
 	}
 };

@@ -264,7 +264,7 @@ QProgressBar * PdfEditWindow::getProgressBar() {
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel) {
  //Set the initial title
  setFileName(QString::null);
- document=NULL;
+ document=boost::shared_ptr<CPdf>();
  selectedTreeItem=NULL;
  selectedPageNumber=0;
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
@@ -797,11 +797,11 @@ void PdfEditWindow::destroyFile() {
  selectedOperator.reset();//no operator selected
  selectedPage.reset();//no page selected
  selectedPageNumber=0;//no page selected
- document->close(false);
+ document.reset();
  base->destroyDocument();
 // Doing GC on closing file may have side effects, so it's better not to do it
 // base->cleanup();//Garbage collection on scripting objects
- document=NULL;
+ document=boost::shared_ptr<CPdf>();
  setFileName(QString::null);
 }
 
@@ -858,7 +858,8 @@ bool PdfEditWindow::openFile(const QString &name) {
 /** Opens new empty file in editor. */
 void PdfEditWindow::emptyFile() {
  destroyFile();
- document=NULL;
+// document=boost::shared_ptr<CPdf>();
+ document.reset();
  base->importDocument(document);
  tree->uninit();
  emit documentChanged(document);

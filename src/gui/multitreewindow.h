@@ -79,7 +79,7 @@ class MultiTreeWindow : public QWidget {
  Q_OBJECT
 public:
  void uninit();
- void init(CPdf *pdfDoc,const QString &fileName);
+ void init(boost::shared_ptr<CPdf> pdfDoc,const QString &fileName);
  void init(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip);
  void activateMain();
  void activate(const OperatorVector &vec,const QString &pName,const QString &pToolTip);

@@ -43,14 +43,14 @@ using namespace pdfobjects;
  Note to page manipulation - page numbers start from number 1 (not from zero as some programmers may expect),
  number of last page is equal to count of pages.
  */
-/** \brief QObject wrapper around CPdf */
+/** \brief QObject wrapper around shared_ptr&lt;CPdf&gt; */
 class QSPdf : public QSCObject {
  Q_OBJECT
 public:
- QSPdf(CPdf *_pdf,BaseCore *_base,bool _destructive=false);
+QSPdf(boost::shared_ptr<CPdf>_pdf,BaseCore *_base,bool _destructive=false);
  virtual ~QSPdf();
- CPdf* get() const;
- void set(CPdf* pdf);
+ boost::shared_ptr<CPdf> get() const;
+ void set(boost::shared_ptr<CPdf> pdf);
 public slots:
  /*- Return name of filter used to encrypt the document, or NULL if document is not encrypted */
  QString encryption();
@@ -123,7 +123,7 @@ public slots:
  bool referenceValid(int valueNum,int valueGen);
 private:
  /** Pointer to object held in class*/
- CPdf *obj;
+ boost::shared_ptr<CPdf> obj;
  /** Destructive flag - if the PDF file may be closed with the unloadPdf() function */
  bool destructive;
 };

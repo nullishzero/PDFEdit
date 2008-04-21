@@ -25,6 +25,7 @@
 #define __BASECORE_H__
 
 #include <qobject.h>
+#include <boost/shared_ptr.hpp>
 #include "qtcompat.h"
 #include QPTRDICT
 class QSProject;
@@ -69,7 +70,7 @@ public:
  void conPrintLine(const QString &line);
  void runScript(const QString &script);
  void call(const QString &name,const QString &arguments="");
- void importDocument(pdfobjects::CPdf *pdf);
+ void importDocument(boost::shared_ptr<pdfobjects::CPdf> pdf);
  void destroyDocument();
  QSPdf* getQSPdf() const;
  void stopScript();

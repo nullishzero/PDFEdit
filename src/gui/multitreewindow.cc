@@ -358,7 +358,7 @@ void MultiTreeWindow::clearSecondary() {
  @param pdfDoc Document used to initialize treeview
  @param fileName Name of PDF document (will be shown in treeview as name of root element)
  */
-void MultiTreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
+void MultiTreeWindow::init(boost::shared_ptr<CPdf> pdfDoc,const QString &fileName) {
  mainTree->init(pdfDoc,fileName);
  tab->setTabToolTip(mainTree,tr("Document tree")+" - "+fileName);
  //Emit "selection have changed", as the old tree structure is gone

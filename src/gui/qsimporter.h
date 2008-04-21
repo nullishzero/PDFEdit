@@ -66,7 +66,7 @@ public:
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
  QSCObject* createQSObject(TreeItemAbstract *item);
- QSPdf* createQSObject(CPdf* pdf);
+ QSPdf* createQSObject(boost::shared_ptr<CPdf> pdf);
  QSImporter(QSProject *_qp,QObject *_context,BaseCore *_base);
 public slots:
  QObject* getQSObj();

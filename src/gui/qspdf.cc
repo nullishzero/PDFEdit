@@ -46,7 +46,7 @@ namespace gui {
  @param _base Scripting base
  @param _destructive If true, document will be closed (without saving) when this object is deleted
 */
-QSPdf::QSPdf(CPdf *_pdf,BaseCore *_base,bool _destructive/*=false*/) : QSCObject ("Pdf",_base) {
+QSPdf::QSPdf(boost::shared_ptr<CPdf>_pdf,BaseCore *_base,bool _destructive/*=false*/) : QSCObject ("Pdf",_base) {
  destructive=_destructive;
  obj=_pdf;
 }
@@ -64,8 +64,7 @@ QSPdf::~QSPdf() {
 */
 void QSPdf::unloadPdf() {
  if (obj && destructive) {
-  obj->close();
-  obj=NULL;
+  obj.reset();
  }
 }
 
@@ -81,7 +80,7 @@ bool QSPdf::referenceValid(int valueNum,int valueGen) {
  ref.num=valueNum;
  ref.gen=valueGen;
  //Check reference validity
- return util::isRefValid(obj,ref);
+ return util::isRefValid(obj.get(),ref);
 }
 
 /**
@@ -395,7 +394,7 @@ QSPage* QSPdf::getLastPage() {
  Get CPdf held inside this class. Not exposed to scripting
  @return CPdf object
 */
-CPdf* QSPdf::get() const {
+boost::shared_ptr<CPdf> QSPdf::get() const {
  return obj;
 }
 
@@ -403,7 +402,7 @@ CPdf* QSPdf::get() const {
  Set CPdf held inside this class. Not exposed to scripting
  @param pdf CPdf object
 */
-void QSPdf::set(CPdf* pdf) {
+void QSPdf::set(boost::shared_ptr<CPdf> pdf) {
  obj=pdf;
 }
 

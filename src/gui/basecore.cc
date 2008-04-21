@@ -69,7 +69,7 @@ BaseCore::BaseCore() {
  qp->addObject(globalSettings);
  //Create and add importer to QSProject and related QSInterpreter
  import=new QSImporter(qp,this,this);
- qpdf=new QSPdf(NULL,this);
+ qpdf=new QSPdf(boost::shared_ptr<CPdf>(),this);
 }
 
 /**
@@ -87,7 +87,7 @@ void BaseCore::setConWriter(ConsoleWriter *_con) {
   QSPDF wrapper will be created around the pdf document
  @param pdf PDF to import under name "document" into scripting
 */
-void BaseCore::importDocument(pdfobjects::CPdf *pdf) {
+void BaseCore::importDocument(boost::shared_ptr<pdfobjects::CPdf> pdf) {
  qpdf->set(pdf);
  //TODO: When QSA wrapper factory will be implemented, this need to change
  import->addQSObj(qpdf,"document");
@@ -95,7 +95,7 @@ void BaseCore::importDocument(pdfobjects::CPdf *pdf) {
 
 /** destroy document - destroy it also in scripting */
 void BaseCore::destroyDocument() {
- qpdf->set(NULL);
+ qpdf->set(boost::shared_ptr<CPdf>());
  deleteVariable("document");
 }
 

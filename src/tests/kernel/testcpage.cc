@@ -71,7 +71,7 @@ using namespace boost;
 bool
 mediabox (UNUSED_PARAM ostream& UNUSED_PARAM oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -112,7 +112,7 @@ bool
 display (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
@@ -149,7 +149,7 @@ bool
 _export (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
@@ -170,7 +170,7 @@ bool
 findtext (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
@@ -209,7 +209,7 @@ getSetFonts (UNUSED_PARAM ostream& oss, const char* fileName)
 {
 	{
 		// Open pdf and get the first page	
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 		for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 		{
@@ -235,7 +235,7 @@ getSetFonts (UNUSED_PARAM ostream& oss, const char* fileName)
 
 	{
 		// Open pdf and get the first page	
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 		for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 		{
@@ -298,7 +298,7 @@ getSetFonts (UNUSED_PARAM ostream& oss, const char* fileName)
 //=====================================================================================
 bool setattr(UNUSED_PARAM ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -319,7 +319,7 @@ bool setattr(UNUSED_PARAM ostream& oss, const char* fileName)
 //=====================================================================================
 bool change(UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -382,7 +382,7 @@ bool change(UNUSED_PARAM	ostream& oss, const char* fileName)
 //=====================================================================================
 bool move(UNUSED_PARAM ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -419,7 +419,7 @@ bool move(UNUSED_PARAM ostream& oss, const char* fileName)
 //=====================================================================================
 bool getcc (UNUSED_PARAM ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -474,7 +474,7 @@ bool creation (UNUSED_PARAM ostream& oss)
 
 bool annotsTests(ostream &, const char * fname)
 {
-	CPdf * pdf=getTestCPdf(fname);
+	boost::shared_ptr<CPdf> pdf=getTestCPdf(fname);
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -486,7 +486,6 @@ bool annotsTests(ostream &, const char * fname)
 			continue;
 
 	}
-	pdf->close();
 	return true;
 }
 
@@ -678,7 +677,7 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
-			CPdf * pdf=getTestCPdf((*it).c_str());
+			boost::shared_ptr<CPdf> pdf=getTestCPdf((*it).c_str());
 			if(pdf->getPageCount()==0)
 				break;
 			CPage::Annotations annotsList;

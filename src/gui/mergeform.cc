@@ -358,7 +358,7 @@ void MergeDialog::destroyOpenFile()
  @return true in case of success, false in case of failure (missing ,broken or unreadable pdf file)
 */
 bool MergeDialog::initFileList( QString & fileName ) {
- CPdf *document;
+ boost::shared_ptr<CPdf> document;
  CPdf::OpenMode mode=CPdf::ReadOnly;
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
@@ -372,7 +372,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
   return false;
  }
  size_t count = document->getPageCount();
- document->close();
+ document.reset();
  char itemLabel[128];
  QFileInfo fi(fileName);
  QString baseName=fi.baseName(false);

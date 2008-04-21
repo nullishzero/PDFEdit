@@ -2307,7 +2307,23 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	change=true;
 }
 
-CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
+namespace {
+
+/** Deleter for CPdf instance.
+ * Used by shared_ptr as destructor. Calls CPdf::close method.
+ */
+class PdfDeleter
+{
+public:
+	void operator ()(CPdf * pdf)
+	{
+		assert(pdf);
+		pdf->close();
+	}
+};
+}
+
+boost::shared_ptr<CPdf> CPdf::getInstance(const char * filename, OpenMode mode)
 {
 using namespace std;
 
@@ -2339,7 +2355,8 @@ using namespace std;
 	// stream is ready, creates CPdf instance
 	try
 	{
-		CPdf * instance=new CPdf(stream, mode);
+		shared_ptr<CPdf> instance(new CPdf(stream, mode), PdfDeleter());
+
 		// We don't want to enable editing linearized documents because
 		// it leads to almost 100% damage of content - we are not able
 		// to store changes to such a document. So it is simpler to

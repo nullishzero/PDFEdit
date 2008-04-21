@@ -337,7 +337,7 @@ void SelectPagesDialog::init (size_t count) {
 //
 //
 bool SelectPagesDialog::init (const QString& fileName) {
-	CPdf* document;
+	boost::shared_ptr<CPdf> document;
 	CPdf::OpenMode mode = CPdf::ReadOnly;
 
 	try {
@@ -357,7 +357,7 @@ bool SelectPagesDialog::init (const QString& fileName) {
 
 	// Init pages
 	init (document->getPageCount());
-	document->close();
+	document.reset();
 	
 	return true;
 }

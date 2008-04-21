@@ -134,7 +134,7 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip,BaseCore *
  @param pdf CPdf to wrap into to QSPdf
  @return QSPdf(pdf)
  */
-QSPdf* QSImporter::createQSObject(CPdf* pdf) {
+QSPdf* QSImporter::createQSObject(boost::shared_ptr<CPdf> pdf) {
  if (!pdf) return NULL;
  return new QSPdf(pdf,base);
 }

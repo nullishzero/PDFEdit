@@ -29,6 +29,6 @@
 #include "tests/kernel/testmain.h"
 
 
-pdfobjects::CPdf * getTestCPdf(const char* filename);
+boost::shared_ptr<pdfobjects::CPdf> getTestCPdf(const char* filename);
 
 #endif // _TESTCPDF_H_

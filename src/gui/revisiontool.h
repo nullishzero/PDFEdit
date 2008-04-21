@@ -25,6 +25,7 @@
 #define __REVISIONTOOL_H__
 
 #include <qwidget.h>
+#include <boost/smart_ptr.hpp>
 
 class QComboBox;
 class QResizeEvent;
@@ -49,7 +50,7 @@ public:
 public slots:
  void updateRevision(int revision);
  void selectRevision(int revision);
- void setDocument(pdfobjects::CPdf *newDocument);
+ void setDocument(boost::shared_ptr<pdfobjects::CPdf> newDocument);
 signals:
  /**
   Signal emitted when user changes the revision in this control
@@ -62,7 +63,7 @@ protected:
  /** Revision selection list */
  QComboBox *revList;
  /** Reference to current PDF document */
- pdfobjects::CPdf *document;
+ boost::shared_ptr<pdfobjects::CPdf> document;
 };
 
 } // namespace gui

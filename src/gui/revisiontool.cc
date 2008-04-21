@@ -46,7 +46,7 @@ using namespace pdfobjects;
 RevisionTool::RevisionTool(QWidget *parent/*=0*/,const char *name/*=NULL*/) : QWidget (parent,name) {
  revList=new QComboBox(this,"revision_select");
  QObject::connect(revList,SIGNAL(activated(int)),this,SLOT(selectRevision(int)));
- setDocument(NULL);
+ setDocument(boost::shared_ptr<CPdf>());
 }
 
 /** default destructor */
@@ -103,7 +103,7 @@ void RevisionTool::updateRevision(int revision) {
  Called on loading of new document
  @param newDocument Reference to new PDF document
 */
-void RevisionTool::setDocument(pdfobjects::CPdf *newDocument) {
+void RevisionTool::setDocument(boost::shared_ptr<pdfobjects::CPdf> newDocument) {
  document=newDocument;
  revList->clear();
  if (document) {

@@ -42,13 +42,13 @@ using namespace boost;
 bool
 setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecnt = ppdf->getPageCount ();
 	ppdf.reset();
 	
 	for (size_t i = 0; i < pagecnt && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
@@ -106,13 +106,13 @@ setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 frontinsert (ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecnt = ppdf->getPageCount ();
 	ppdf.reset();
 	
 	for (size_t i = 0; i < pagecnt && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 		
 		vector<boost::shared_ptr<CContentStream> > ccs;
@@ -145,13 +145,13 @@ frontinsert (ostream& oss, const char* fileName)
 bool
 position (ostream& oss, const char* fileName, const libs::Rectangle rc)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecnt = ppdf->getPageCount ();
 	ppdf.reset();
 	
 	for (size_t i = 0; i < pagecnt && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 		
 		std::vector<shared_ptr<PdfOperator> > ops;
@@ -303,13 +303,13 @@ namespace  {
 bool
 opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	/// Intermezzo
 	boost::scoped_ptr<PDFDoc> doc  (new PDFDoc (new GString(fileName), NULL, NULL));
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 
 		int pagesNum = i + 1;
@@ -403,7 +403,7 @@ opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 printContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
@@ -433,7 +433,7 @@ printContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 addcc (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
@@ -483,11 +483,11 @@ addcc (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 settm (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t num = ppdf->getPageCount ();
 	for (size_t i = 0; i < num && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 
 		// Print content stream
@@ -522,7 +522,7 @@ bool
 primitiveprintContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
 	{// what if file is corrupted etc..
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	}
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	int pagesNum = 1;
@@ -587,12 +587,12 @@ primitiveprintContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	if (1 > pdf->getPageCount())
 		return true;
 
 	
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t num = ppdf->getPageCount ();
 	for (size_t i = 0; i < num && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
@@ -600,7 +600,7 @@ cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 		// - init our reader then xpdf reader
 		// - read one object and compare it
 		//
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 
 		/// Intermezzo cstreamsreader

@@ -43,7 +43,7 @@ using namespace std;
 bool setbuffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileName)
 {
 	typedef CStream::Buffer Buffer;
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	if (1 > pdf->getPageCount())
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getPage (1);
@@ -118,7 +118,7 @@ bool setbuffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileNam
 //=====================================================================================
 bool buffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -143,7 +143,7 @@ bool buffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileName)
 //=====================================================================================
 bool createStream (std::ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -165,7 +165,7 @@ bool createStream (std::ostream& oss, const char* fileName)
 
 bool getString (std::ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -193,7 +193,7 @@ bool getString (std::ostream& oss, const char* fileName)
 
 bool getPdfString (UNUSED_PARAM std::ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -214,7 +214,7 @@ bool getPdfString (UNUSED_PARAM std::ostream& oss, const char* fileName)
 
 bool getFilter (std::ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -237,7 +237,7 @@ bool getFilter (std::ostream& oss, const char* fileName)
 //=========================================================================
 bool testdict (UNUSED_PARAM std::ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
@@ -253,7 +253,7 @@ bool testdict (UNUSED_PARAM std::ostream& oss, const char* fileName)
 //=========================================================================
 bool testmakexpdf (UNUSED_PARAM std::ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{

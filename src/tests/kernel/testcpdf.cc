@@ -89,7 +89,7 @@ public:
 	{
 	}
 
-	void cloneTC(CPdf * pdf, string & originalFile)
+	void cloneTC(boost::shared_ptr<CPdf> pdf, string & originalFile)
 	{
 		printf("%s\n", __FUNCTION__);
 
@@ -140,7 +140,7 @@ public:
 		CPPUNIT_ASSERT(!pdf->isChanged());
 	}
 	
-	void pageIterationTC(CPdf * pdf)
+	void pageIterationTC(boost::shared_ptr<CPdf> pdf)
 	{
 	using namespace boost;
 	using namespace utils;
@@ -331,7 +331,7 @@ public:
 		CPPUNIT_ASSERT(!pdf->isChanged());
 	}
 
-	void pageManipulationTC(CPdf * pdf)
+	void pageManipulationTC(boost::shared_ptr<CPdf> pdf)
 	{
 	using namespace boost;
 	using namespace utils;
@@ -349,10 +349,9 @@ public:
 			printf("TC01:\tinsertPage to an empty document results in 1 total pages\n");
 			if (0 < TestParams::instance().files.size())
 			{
-				CPdf * test_doc = getTestCPdf(TestParams::instance().files.front().c_str());
+				boost::shared_ptr<CPdf> test_doc = getTestCPdf(TestParams::instance().files.front().c_str());
 				pdf->insertPage(test_doc->getFirstPage(), 1);
 				CPPUNIT_ASSERT(pdf->getPageCount()==1);
-				test_doc->close();
 			}
 			return;
 		}
@@ -696,7 +695,7 @@ public:
 		CPPUNIT_ASSERT(pdf->isChanged());
 	}
 
-	void linearizedTC(CPdf * pdf)
+	void linearizedTC(boost::shared_ptr<CPdf> pdf)
 	{
 		printf("%s\n", __FUNCTION__);
 		if(!pdf->isLinearized())
@@ -779,7 +778,7 @@ public:
 
 		// opens special test file
 		printf("Using file \"%s\"\n", TestParams::add_path(MV_F).c_str());
-		CPdf *pdf=getTestCPdf(TestParams::add_path(MV_F).c_str());
+		boost::shared_ptr<CPdf> pdf=getTestCPdf(TestParams::add_path(MV_F).c_str());
 		CPdf::OpenMode mode=pdf->getMode();
 
 		// number of revision must match
@@ -862,8 +861,6 @@ public:
 		// isModified returns always false
 		printf("TC08:\tisChanged is allways false on unchanged document\n");
 		CPPUNIT_ASSERT(!pdf->isChanged());
-		
-		pdf->close();
 	}
 #undef TRY_READONLY_OP
 	
@@ -877,7 +874,7 @@ public:
 	}
 
 
-	void indirectPropertyTC(CPdf * pdf)
+	void indirectPropertyTC(boost::shared_ptr<CPdf> pdf)
 	{
 	using namespace boost;
 	using namespace utils;
@@ -901,7 +898,7 @@ public:
 		// value must be same (we know that prop is CInt)
 		PropertyEquals pe;
 		CPPUNIT_ASSERT(pe(added, prop));
-		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
 		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
@@ -938,7 +935,7 @@ public:
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(isDict(*added));
 		shared_ptr<CDict> addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
-		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
 		CPPUNIT_ASSERT(addedDict->getPropertyCount()==3);
 		CPPUNIT_ASSERT(isReal(*(addedDict->getProperty("Elem1"))));
@@ -985,14 +982,14 @@ public:
 		// opens TEST_FILE
 		if (0 == TestParams::instance().files.size())
 			return;
-		CPdf * differentPdf=getTestCPdf(TestParams::instance().files.front().c_str());
+		boost::shared_ptr<CPdf> differentPdf=getTestCPdf(TestParams::instance().files.front().c_str());
 		// gets page dictionary which contains at least one reference (to its
 		// parent). addIndirectProperty with followRefs==false
 		shared_ptr<CDict> differentPageDict=differentPdf->getFirstPage()->getDictionary();
 		addedRef=pdf->addIndirectProperty(differentPageDict, false);
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
-		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
 		CPPUNIT_ASSERT(isDict(*added));
 		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
@@ -1026,13 +1023,13 @@ public:
 		CPPUNIT_ASSERT(addedRef==ref);
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
-		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(added->getPdf()==pdf.get());
 		CPPUNIT_ASSERT(isDict(*added));
 		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
 		addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
 		CPPUNIT_ASSERT(addedDict->getPropertyCount()==differentPageDict->getPropertyCount());
-		differentPdf->close();
+		differentPdf.reset();
 
 		printf("TC07:\tgetIndirectProperty with uknown reference returns CNull\n");
 		// creates unknown reference from existing by adding 1 to generation
@@ -1144,7 +1141,7 @@ public:
 		{
 			string fileName=*i;
 			printf("\nTests for file:%s\n", fileName.c_str());
-			CPdf * pdf=getTestCPdf(fileName.c_str());
+			boost::shared_ptr<CPdf> pdf=getTestCPdf(fileName.c_str());
 			string filterName;
 			if(pdfobjects::utils::isEncrypted(*pdf, &filterName))
 			{
@@ -1160,7 +1157,6 @@ public:
 			indirectPropertyTC(pdf);
 			pageManipulationTC(pdf);
 			linearizedTC(pdf);
-			pdf->close();
 
 			delinearizatorTC(fileName);
 		}
@@ -1172,7 +1168,7 @@ public:
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
 CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPdf, "TEST_CPDF");
 
-pdfobjects::CPdf * getTestCPdf(const char* filename)
+boost::shared_ptr<pdfobjects::CPdf> getTestCPdf(const char* filename)
 {
 	return CPdf::getInstance(filename, CPdf::ReadWrite);
 }

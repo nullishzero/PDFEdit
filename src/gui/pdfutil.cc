@@ -286,7 +286,7 @@ bool isSimple(boost::shared_ptr<IProperty> prop) {
  @param error String that will receive error message if saving failed. If null, no message will b e received
  @return true if success, false if failure
 */
-bool saveCopy(CPdf *obj, const QString &name, QString *error) {
+bool saveCopy(boost::shared_ptr<CPdf> obj, const QString &name, QString *error) {
  FILE *f=fopen(name,"wb");
  if (!f) {
   char *err=strerror(errno);

@@ -46,7 +46,7 @@ using namespace boost;
 bool
 textIter (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
@@ -84,12 +84,12 @@ textIter (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
 	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
 		vector<boost::shared_ptr<CContentStream> > ccs;
@@ -137,12 +137,12 @@ setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 delOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
 	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
@@ -236,12 +236,12 @@ delOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
 	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
 		vector<boost::shared_ptr<CContentStream> > ccs;
@@ -363,12 +363,12 @@ delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 insertOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
 	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
@@ -418,12 +418,12 @@ insertOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 cloneoper (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
 	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
 		vector<boost::shared_ptr<CContentStream> > ccs;
@@ -462,12 +462,12 @@ cloneoper (UNUSED_PARAM	ostream& oss, const char* fileName)
 bool
 changeColor (UNUSED_PARAM	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf = getTestCPdf (fileName);
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
 	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
 		vector<boost::shared_ptr<CContentStream> > ccs;

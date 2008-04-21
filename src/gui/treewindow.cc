@@ -305,7 +305,7 @@ void TreeWindow::clear() {
  @param pdfDoc Document used to initialize treeview
  @param fileName Name of PDF document (will be shown in treeview as name of root element)
  */
-void TreeWindow::init(pdfobjects::CPdf *pdfDoc,const QString &fileName) {
+void TreeWindow::init(boost::shared_ptr<pdfobjects::CPdf> pdfDoc,const QString &fileName) {
  assert(pdfDoc);
  clear();
  rootName=fileName;

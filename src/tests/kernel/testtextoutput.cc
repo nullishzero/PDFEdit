@@ -45,7 +45,7 @@ bool text_cpageout (UNUSED_PARAM std::ostream& oss,
 			   UNUSED_PARAM const char* file_name)
 {
 
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (file_name), pdf_deleter());
+	boost::shared_ptr<CPdf> pdf = getTestCPdf (file_name);
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < 1/*TEST_MAX_PAGE_COUNT*/; ++i)
 	{

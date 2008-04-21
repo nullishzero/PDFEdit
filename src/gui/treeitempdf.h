@@ -56,11 +56,11 @@ using namespace pdfobjects;
 */
 class TreeItemPdf : public TreeItemAbstract {
 public:
- TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListView *parent,const QString &name=QString::null,Q_ListViewItem *after=NULL);
- TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListViewItem *parent,const QString &name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,boost::shared_ptr<CPdf>_pdf,Q_ListView *parent,const QString &name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,boost::shared_ptr<CPdf>_pdf,Q_ListViewItem *parent,const QString &name=QString::null,Q_ListViewItem *after=NULL);
  TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,Q_ListViewItem *after=NULL);
  virtual ~TreeItemPdf();
- CPdf* getObject();
+ boost::shared_ptr<CPdf> getObject();
  //From TreeItemAbstract interface
  virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
@@ -74,10 +74,10 @@ public:
 private:
  void observePageDict();
  void removeObserver();
- void init(CPdf *pdf,const QString &name);
- void initSpec(CPdf *pdf,const QString &name);
+ void init(boost::shared_ptr<CPdf>pdf,const QString &name);
+ void initSpec(boost::shared_ptr<CPdf>pdf,const QString &name);
  /** CPdf stored in this TreeItem */
- CPdf *obj;
+ boost::shared_ptr<CPdf> obj;
  /** Node type (Null, Pages,Outlines) */
  QString nType;
  /** Observer registered for this item */

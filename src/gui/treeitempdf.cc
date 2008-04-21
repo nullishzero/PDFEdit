@@ -58,7 +58,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListView *parent,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,boost::shared_ptr<CPdf> _pdf,Q_ListView *parent,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  assert(_pdf);
  init(_pdf,name);
  reloadSelf();
@@ -72,7 +72,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListView *parent,const QSt
  @param name Name of file - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListViewItem *parent,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,boost::shared_ptr<CPdf> _pdf,Q_ListViewItem *parent,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  init(_pdf,name);
  reloadSelf();
 }
@@ -92,7 +92,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name
  @param pdf CPdf used to initialize this item
  @param name Name of this item - will be shown in treeview (usually name of PDF file)
  */
-void TreeItemPdf::init(CPdf *pdf,const QString &name) {
+void TreeItemPdf::init(boost::shared_ptr<CPdf> pdf,const QString &name) {
  obj=pdf;
  // object name
  if (name.isNull()) {
@@ -138,7 +138,7 @@ void TreeItemPdf::removeObserver() {
  @param pdf CPdf used to initialize this item
  @param name Name of this item - will be shown in treeview
  */
-void TreeItemPdf::initSpec(CPdf *pdf,const QString &name) {
+void TreeItemPdf::initSpec(boost::shared_ptr<CPdf> pdf,const QString &name) {
  obj=pdf;
  // object name
  if (name.isNull()) {
@@ -157,7 +157,7 @@ void TreeItemPdf::initSpec(CPdf *pdf,const QString &name) {
 
 /** return CPdf stored inside this item
  @return stored object (CPdf) */
-CPdf* TreeItemPdf::getObject() {
+boost::shared_ptr<CPdf> TreeItemPdf::getObject() {
  return obj;
 }
 

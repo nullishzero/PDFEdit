@@ -58,7 +58,7 @@ class TreeWindow : public QWidget {
 public:
  void uninit();
  void init(const AnnotationVector &vec,boost::shared_ptr<pdfobjects::CPage> page,const QString &pName=QString::null);
- void init(pdfobjects::CPdf *pdfDoc,const QString &fileName);
+ void init(boost::shared_ptr<pdfobjects::CPdf> pdfDoc,const QString &fileName);
  void init(const OperatorVector &vec,const QString &pName=QString::null);
  void init(boost::shared_ptr<pdfobjects::IProperty> doc,const QString &pName=QString::null);
  void init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QString &pName=QString::null);

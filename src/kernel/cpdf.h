@@ -835,7 +835,7 @@ private:
 	 * which wrapps file handle.
 	 */
 	FILE * file;
-	
+
 	/** Identificator for this pdf instance.
 	 */
 	cpdf_id_t id;
@@ -1051,7 +1051,7 @@ public:
 	 * @throw PdfOpenException if file open fails.
 	 * @return Initialized (and ready to be used) CPdf instance.
 	 */
-	static CPdf * getInstance(const char * filename, OpenMode mode);
+	static boost::shared_ptr<CPdf> getInstance(const char * filename, OpenMode mode);
 
 	/** Returns unique identificator for this pdf.
 	 *

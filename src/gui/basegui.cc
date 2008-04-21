@@ -486,7 +486,7 @@ void BaseGUI::message(const QString &msg) {
 */
 QVariant BaseGUI::mergeDialog() {
  QVariant retValue;
- CPdf *doc=qpdf->get();
+ boost::shared_ptr<CPdf> doc=qpdf->get();
  if (!doc) {
   //No document opened at all
   errorException("","mergeDialog",tr("No document opened"));

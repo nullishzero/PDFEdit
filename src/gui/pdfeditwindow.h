@@ -115,7 +115,7 @@ signals:
   If document is closed without opening a new file, NULL is sent instead.
   @param newDocument Pointer to new document
  */
- void documentChanged(pdfobjects::CPdf *newDocument);
+ void documentChanged(boost::shared_ptr<pdfobjects::CPdf> newDocument);
  /**
   Signal emitted when user changes the current revision in any way (script, revision tool ...)
   @param revision number of selected revision
@@ -155,7 +155,7 @@ private:
  /** Property editor */
  PropertyEditor *prop;
  /** Edited PDF document */
- CPdf *document;
+ boost::shared_ptr<CPdf> document;
  /** Currently selected page (for scripting) */
  boost::shared_ptr<CPage> selectedPage;
  /** Currently selected page number */

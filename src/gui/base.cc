@@ -502,7 +502,7 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 		nums.push_back ((*it).toUInt());
 	
 	// Create cpdf
-	CPdf* pdf;
+	boost::shared_ptr<CPdf> pdf;
 	CPdf::OpenMode mode = CPdf::ReadOnly;
 
 	try {
@@ -534,12 +534,12 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 	}catch (CObjectException& e)
 	{
 		setError (tr(e.what()));
-		pdf->close();
+		pdf.reset();
 		return QString ();
 	}
 
 	// Cleanup
-	pdf->close ();
+	pdf.reset();
 
 	// Save it
 	ofstream of;
@@ -594,7 +594,7 @@ QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/) {
  if (name.isNull()) return NULL;
  CPdf::OpenMode mode=advancedMode?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
-  CPdf *opened=CPdf::getInstance(util::convertFromUnicode(name,util::NAME).c_str(),mode);
+  boost::shared_ptr<CPdf> opened=CPdf::getInstance(util::convertFromUnicode(name,util::NAME).c_str(),mode);
   //Return pdf wrapper with 'destructive close' behavior
   return new QSPdf(opened,this,true);
  } catch (...) {
