@@ -237,7 +237,7 @@ public:
  * This should be used in following way:
  * <ul>
  * <li>value keeper which wants to enable observers has to implement
- * IObserverHandler interface which enables to register and unregister 
+ * ObserverHandler interface which enables to register and unregister 
  * observers. It guaranties it calls notify on each registered observer after
  * change was registered.
  * <li>implementator of class is responsible for notify method implementation
@@ -256,21 +256,32 @@ public:
  * Each observer implementation has its priority which is used be value keeper
  * to determine order in which to notify obsevers, if there is more then one.
  * <br>
+ * Observer can be in active/inactive state depending on the active flag value.
+ * See setActive, isActive methods.
+ * <br>
  * Exception NOTE:
  * No method throws an exception.
  */
 template<typename T> class IObserver
 {
+	/** Active flag.
+	 * Observer is ignored by observer handler if it is false.
+	 */
+	bool active;
 public:
 	/** Type for priority.
 	 */
 	typedef int priority_t;
+
+	/** Default constructor.
+	 */
+	IObserver():active(true) {}
 	
 	/** Notify method.
 	 * @param newValue New value of changed value or its part.
 	 * @param context Value change context.
 	 * 
-	 * Each time value keeper, which implements IObserverHandler, changes 
+	 * Each time value keeper, which implements ObserverHandler, changes 
 	 * value (or its part), all registered observers are notified about that
 	 * by this method calling.
 	 * <br>
@@ -298,6 +309,25 @@ public:
 	 * @return Observer priority value.
 	 */
 	virtual priority_t getPriority()const throw() =0;
+
+	/** Sets active flag value.
+	 * @param active Flag value to be set.
+	 * @return previous value of the flag.
+	 */
+	bool setActive(bool active)
+	{
+		bool oldValue = this->active;
+		this->active = active;
+		return oldValue;
+	}
+
+	/** Returns current value of the active flag.
+	 * @return true if observer can be notified, false otherwise.
+	 */
+	bool isActive()const
+	{
+		return active;
+	}
 
 	/**
 	 * Virtual destructor.
@@ -434,7 +464,7 @@ public:
 #endif
 
 /** Wrapper for observer registration.
- * @param obj Observer handler (IObserverHandler wrapped by shared_ptr).
+ * @param obj Observer handler (ObserverHandler wrapped by shared_ptr).
  * @param observer Observer to be registered (IObserver wrapped by shared_ptr).
  *
  * Note that this way of observer registration is preffered because
@@ -450,7 +480,7 @@ public:
 	}while(0)
 
 /** Wrapper for observer unregistration.
- * @param obj Observer handler (IObserverHandler wrapped by shared_ptr).
+ * @param obj Observer handler (ObserverHandler wrapped by shared_ptr).
  * @param observer Observer to be registered (IObserver wrapped by shared_ptr).
  *
  * Note that this way of observer unregistration is preffered because
@@ -466,7 +496,7 @@ public:
 	}while(0)
 
 /** Wrapper for observer registration.
- * @param obj Observer handler (simple pointer to IObserverHandler).
+ * @param obj Observer handler (simple pointer to ObserverHandler).
  * @param observer Observer to be registered (simple pointer to IObserver).
  *
  * Note that this way of observer registration is preffered because
@@ -482,7 +512,7 @@ public:
 	}while(0)
 
 /** Wrapper for observer unregistration.
- * @param obj Observer handler (simple pointer to IObserverHandler).
+ * @param obj Observer handler (simple pointer to ObserverHandler).
  * @param observer Observer to be unregistered (simple pointer to IObserver).
  *
  * Note that this way of observer unregistration is preffered because
@@ -604,11 +634,12 @@ public:
 	}
 
 	/**
-	 * Notify all observers about a change.
+	 * Notify all active observers about a change.
 	 *
 	 * Observers are notified in according their priorities. Higher priority
 	 * (smaller priority value) sooner it is called. Observers with same
-	 * priorities are called in unspecified order. 
+	 * priorities are called in unspecified order. All inactive observers
+	 * are ignored.
 	 *
 	 * @param newValue Object with new value.
 	 * @param context Context in which the change has been made.
@@ -618,7 +649,11 @@ public:
 		// obsrvers list is ordered by priorities, so iteration works correctly
 		typename ObserverList::const_iterator it = observers.begin ();
 		for (; it != observers.end(); ++it)
-			(*it)->notify (newValue, context);
+		{
+			Observer o = (*it);
+			if(o->isActive())
+				o->notify (newValue, context);
+		}
 	}
 	
 };

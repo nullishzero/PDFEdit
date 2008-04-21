@@ -318,7 +318,19 @@ public:
 		{
 			// ok
 		}
+		OUTPUT << "TC5:\tdeactivating observer5 will skipp it" << endl;
+		observer5->setActive(false);
+		Observer<int>::counter=0;
+		observerHandler.notifyObservers(newValue, context);
+		CPPUNIT_ASSERT(Observer<int>::counter==34678);
+		OUTPUT << "TC6:\tactivating observer5 will trigger it" << endl;
+		observer5->setActive(true);
+		Observer<int>::counter=0;
+		observerHandler.notifyObservers(newValue, context);
+		CPPUNIT_ASSERT(Observer<int>::counter==345678);
 
+		OUTPUT << "TC7:\tobserver is always created as activated" << endl;
+		CPPUNIT_ASSERT(shared_ptr<Observer<int> >(new Observer<int>(8))->isActive());
 		return true;
 	}
 
