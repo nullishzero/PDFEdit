@@ -162,13 +162,13 @@ print (UNUSED_PARAM ostream& os, Object* o, XRef* xref)
 				gTrue  // TODO is gtrue ok here?
 				)
 			);
-	parser->getObj(&obj);
+	parser->getObj(&obj); // FIXME handle return value
 	while (!obj.isEOF()) 
 	{
 		//os << &obj;
 		obj.free ();
 		// grab the next object
-		parser->getObj(&obj);
+		parser->getObj(&obj); // FIXME handle return value
 	}
 }
 

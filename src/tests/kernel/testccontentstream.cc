@@ -187,7 +187,7 @@ namespace  {
 		  dict.initDict (xref);
 		  o.free ();
 		  
-		  parser->getObj(&o);
+		  parser->getObj(&o); // FIXME handle return value
 		  while (!o.isCmd("ID") && !o.isEOF()) 
 		  {
 			if (!o.isName()) 
@@ -199,7 +199,7 @@ namespace  {
 			{
 			  char* key = copyString(o.getName());
 			  o.free();
-			  parser->getObj(&o);
+			  parser->getObj(&o); // FIXME handle return value
 			  if (o.isEOF() || o.isError()) 
 			  {
 				gfree (key);
@@ -208,7 +208,7 @@ namespace  {
 			  dict.dictAdd(key, &o);
 			}
 			
-			parser->getObj(&o);
+			parser->getObj(&o); // FIXME handle return value
 		  }
 		 
 		  
@@ -547,7 +547,7 @@ primitiveprintContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 			);
 	
 	Object o;
-	parser->getObj (&o);
+	parser->getObj (&o); // FIXME handle return value
 	int i = 0;
 	
 	while (!o.isEOF()) 
@@ -557,7 +557,7 @@ primitiveprintContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 		{
 			if (!img (parser.get(),o,xref))
 				return false;
-	    	parser->getObj(&o);
+	    	parser->getObj(&o); // FIXME handle return value
 		}
 		
 		if (o.isCmd ())
@@ -574,7 +574,7 @@ primitiveprintContentStream (UNUSED_PARAM	ostream& oss, const char* fileName)
 
 		// grab the next object
 		o.free ();
-		parser->getObj(&o);
+		parser->getObj(&o); // FIXME handle return value
 	}
 
 	obj.free ();
@@ -658,7 +658,7 @@ cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 					)
 				);
 		Object o1;
-		parser->getObj (&o1);
+		parser->getObj (&o1); // FIXME handle return value
 		///
 		obj.free ();
 
@@ -680,7 +680,7 @@ cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 			reader.getXpdfObject (o);
 		
 			o1.free();
-			parser->getObj (&o1);
+			parser->getObj (&o1); // FIXME handle return value
 
 		}
 		reader.close ();
