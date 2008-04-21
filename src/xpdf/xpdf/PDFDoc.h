@@ -142,7 +142,7 @@ public:
     { return xref->okToAddNotes(ignoreOwnerPW); }
 
   // Is this document linearized?
-  GBool isLinearized();
+  //GBool isLinearized();
 
   // Return the document's Info dictionary (if any).
   Object *getDocInfo(Object *obj) { return xref->getDocInfo(obj); }

@@ -353,6 +353,7 @@ void PDFDoc::processLinks(OutputDev *out, int page) {
   catalog->getPage(page)->processLinks(out, catalog);
 }
 
+/* Method is disabled because it is not used anywhere
 GBool PDFDoc::isLinearized() {
   Parser *parser;
   Object obj1, obj2, obj3, obj4, obj5;
@@ -383,6 +384,7 @@ GBool PDFDoc::isLinearized() {
   delete parser;
   return lin;
 }
+*/
 
 GBool PDFDoc::saveAs(GString *name) {
   FILE *f;
