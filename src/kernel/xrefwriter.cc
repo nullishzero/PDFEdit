@@ -52,24 +52,48 @@ bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
 	Object obj;
 	Stream * subStr = stream.makeSubStream(stream.getPos(), false, 0, &obj);
 	Parser parser=Parser(xref, new Lexer(NULL, subStr), gTrue);
+	
+	//  result is false by default - it MUST BE linearized dictionary
+	bool result = false;
 
 	while(subStr->getPos() < FIRST_LINEARIZED_BLOCK)
 	{
 		Object obj1, obj2, obj3;
-		parser.getObj(&obj1);
-		parser.getObj(&obj2);
-		parser.getObj(&obj3);
+		if(!parser.getObj(&obj1))
+			goto malformedErr;
+		if(obj1.isEOF())
+			break;
+		if(!parser.getObj(&obj2))
+		{
+			obj1.free();
+			goto malformedErr;
+		}
+		if(obj2.isEOF())
+		{
+			obj1.free();
+			break;
+		}
+		if(!parser.getObj(&obj3))
+		{
+			obj1.free();
+			obj2.free();
+			goto malformedErr;
+		}
+		if(obj3.isEOF())
+		{
+			obj1.free();
+			obj2.free();
+			break;
+		}
 
 		// indirect object must start with 
 		// num gen obj line
 		if(obj1.isInt() && obj2.isInt() && obj3.isCmd())
 		{
 			Object obj;
-			parser.getObj(&obj);
-
-			//  result is false by default - it MUST BE linearized dictionary
-			bool result=false;
-			
+			if(!parser.getObj(&obj))
+				goto malformedErr;
+ 	
 			if(obj.isDict())
 			{
 				// indirect object is dictionary, so it can be Linearized
@@ -88,22 +112,25 @@ bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
 					}
 					result=true;
 				}
-			}
+			}else 
+				if(obj.isEOF())
+					break;
 			obj.free();
-
-			obj1.free();
-			obj2.free();
-			obj3.free();
-			return result;
 		}
 
 		obj1.free();
 		obj2.free();
 		obj3.free();
+		if(result)
+			break;
 	}
 
 	// no indirect object in the document
-	return false;
+	return result;
+
+malformedErr:
+	utilsPrintDbg(DBG_ERR, "Unable to parse stream - bad content.");
+	throw MalformedFormatExeption("bad data stream");
 }
 
 } // end of utils namespace
@@ -456,10 +483,16 @@ int XRefWriter::getOldStyleTrailer(Object * trailer, size_t off)
 
 			// deallocates previous one before it is filled by new one
 			trailer->free();
-			parser.getObj(trailer);
+			if(!parser.getObj(trailer))
+			{
+				kernelPrintDbg(DBG_ERR, "Unable to parse trailer");
+				return -1;
+			}
 			if(!trailer->isDict())
 			{
-				kernelPrintDbg(DBG_ERR, "Trailer is not dictionary.");
+				kernelPrintDbg(DBG_ERR, "Trailer is not dictionary. (type="
+						<<trailer->getType() << ")");
+				trailer->free();
 				return -1;
 			}
 
@@ -478,20 +511,23 @@ int XRefWriter::getStreamTrailer(Object * trailer, size_t off, ::Parser & parser
 {
 	// gen number should follow
 	::Object obj;
-	parser.getObj(&obj);
+	if(!parser.getObj(&obj))
+		goto malformedErr;
 	if(!obj.isInt())
 		goto bad_header;
 	// We don't need to free obj here, because int is not
 	// allocated internally
 	// end of indirect object header is obj key word
-	parser.getObj(&obj);
+	if(!parser.getObj(&obj))
+		goto malformedErr;
 	if(!obj.isCmd("obj"))
 		goto bad_header;
 
 	// header of indirect object is ok, so parse trailer object
 	obj.free();
 	trailer->free();
-	parser.getObj(trailer);
+	if(!parser.getObj(trailer))
+		goto malformedErr;
 	if(!trailer->isStream())
 	{
 		kernelPrintDbg(DBG_ERR, "Trailer is supposed to be stream, but "
@@ -503,7 +539,9 @@ int XRefWriter::getStreamTrailer(Object * trailer, size_t off, ::Parser & parser
 	// stream object and uses just dictionary part
 	kernelPrintDbg(DBG_INFO, "New xref stream section. off="<<off);
 	return 0;
-
+malformedErr:
+	kernelPrintDbg(DBG_ERR, "Unable to parse trailer");
+	return -1;
 bad_header:
 	kernelPrintDbg(DBG_ERR, "Trailer header corrupted.");
 	obj.free();
@@ -576,7 +614,11 @@ void XRefWriter::collectRevisions()
 			new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj)),
 			gTrue
 			);
-		parser.getObj(&obj);
+		if(!parser.getObj(&obj))
+		{
+			kernelPrintDbg(DBG_ERR, "Unable to parse stream");
+			throw MalformedFormatExeption("parse data stream");
+		}
 		if(obj.isCmd(XREF_KEYWORD))
 		{
 			obj.free();

@@ -826,7 +826,11 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	// Get xpdf obj from the stream
 	//
 	::Object* obj = XPdfObjectFactory::getInstance();
-	parser->getObj (obj);
+	if(!parser->getObj (obj)) {
+		utilsPrintDbg(debug::DBG_ERR, "Unable to parse string \""<< 
+				str <<"\"");
+		throw MalformedFormatExeption("bad data string");
+	}
 
 	//
 	// If xpdf returned objNull and we did not give him null, an error occured

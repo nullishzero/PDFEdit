@@ -712,6 +712,13 @@ namespace {
 	//==========================================================
 	// End of actual state (position) updaters
 	//==========================================================
+	
+	static void throwMalformedFormat(const char *msg)
+	{
+		kernelPrintDbg(debug::DBG_ERR, "Unable to parse object ("
+				<<msg<<")");
+		throw MalformedFormatExeption(msg);
+	}
 
 //==========================================================
 } // namespace
@@ -806,7 +813,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 			  while (!parser->eofOfActualStream() && !obj->isCmd("BI"))
 			  {
 				obj.reset ();
-				parser->getObj (obj.get());
+				if(!parser->getObj (obj.get())) 
+					throwMalformedFormat("bad data stream");
 			  }
 
 			  if (!parser->eofOfActualStream())
@@ -814,7 +822,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 				  //
 				  // Find height information in image stream dictionary
 				  //
-				  parser->getObj (obj.get());
+				  if(!parser->getObj (obj.get())) 
+					  throwMalformedFormat("bad data stream");
 				  while (!obj->isCmd("ID") && !obj->isEOF()) 
 				  { 
 					if (obj->isName()) 
@@ -823,7 +832,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 					  string key (copyString (obj->getName()));
 					  obj.reset();
 					  // Get key
-					  parser->getObj(obj.get());
+					  if(!parser->getObj(obj.get())) 
+						  throwMalformedFormat("bad data stream");
 					  if (obj->isEOF() || obj->isError()) 
 						break;
 					  //
@@ -846,7 +856,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 						kernelPrintDbg (DBG_DBG, "Bad inline image dictionary.");
 						break;
 					}
-					parser->getObj(obj.get());
+					if(!parser->getObj(obj.get())) 
+						throwMalformedFormat("bad data stream");
 				  }
 
 			   } //  if (parser->eofOfActualStream())

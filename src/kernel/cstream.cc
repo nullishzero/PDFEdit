@@ -26,6 +26,7 @@
 #include "kernel/static.h"
 #include "kernel/cstream.h"
 #include "kernel/cpdf.h"
+#include "kernel/exceptions.h"
 
 //=====================================================================================
 namespace pdfobjects {
@@ -468,7 +469,10 @@ CStream::getXpdfObject (::Object& obj)
 	{
 		curObj.free ();
 		
-		parser->getObj (&curObj);
+		if(!parser->getObj (&curObj)) {	
+			kernelPrintDbg(debug::DBG_ERR, "Unable to parse content stream");
+			throw MalformedFormatExeption("bad data stream");
+		}
 		assert (!curObj.isNone ());
 		assert (!curObj.isNull ());
 		assert (!curObj.isError ());

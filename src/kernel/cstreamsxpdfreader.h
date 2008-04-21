@@ -148,11 +148,17 @@ public:
 		close();
 	}
 
-	/** Get xpdf object. */
+	/** Get xpdf object.
+	 * @throw MalformedFormatExeption if not able to parse object.
+	 */
 	void getXpdfObject (::Object& obj)
 	{
 		curobj.reset ();
-		parser->getObj (curobj.get());
+		if(!parser->getObj (curobj.get()))
+		{
+			kernelPrintDbg(debug::DBG_ERR, "Unabel to parse object");
+			throw MalformedFormatExeption("content stream parse");
+		}
 		curobj->copy (&obj);
 	}
 
