@@ -61,11 +61,18 @@ Object *Parser::getObj(Object *obj, Guchar *fileKey,
   if (buf1.isCmd("[")) {
     shift();
     obj->initArray(xref);
-    while (!buf1.isCmd("]") && !buf1.isEOF())
-      obj->arrayAdd(getObj(&obj2, fileKey, encAlgorithm, keyLength,
-			   objNum, objGen));
-    if (buf1.isEOF())
+    while (!buf1.isCmd("]") && !buf1.isEOF()) {
+      Object * child = getObj(&obj2, fileKey, encAlgorithm, keyLength,
+			   objNum, objGen);
+      if(!child) {
+	goto err;
+      }
+      obj->arrayAdd(child);
+    }
+    if (buf1.isEOF()) {
       error(getPos(), "End of file inside array");
+      goto err;
+    }
     shift();
 
   // dictionary or stream
@@ -75,20 +82,28 @@ Object *Parser::getObj(Object *obj, Guchar *fileKey,
     while (!buf1.isCmd(">>") && !buf1.isEOF()) {
       if (!buf1.isName()) {
 	error(getPos(), "Dictionary key must be a name object");
-	shift();
-      } else {
-	key = copyString(buf1.getName());
-	shift();
-	if (buf1.isEOF() || buf1.isError()) {
-	  gfree(key);
-	  break;
-	}
-	obj->dictAdd(key, getObj(&obj2, fileKey, encAlgorithm, keyLength,
-				 objNum, objGen));
+	buf1.free();
+	goto err;
       }
+
+      key = copyString(buf1.getName());
+      shift();
+      if (buf1.isEOF() || buf1.isError()) {
+        gfree(key);
+        break;
+      }
+      Object * child = getObj(&obj2, fileKey, encAlgorithm, keyLength,
+      			 objNum, objGen);
+      if(!child) {
+        goto err;
+      }
+      obj->dictAdd(key, child);
     }
-    if (buf1.isEOF())
+    if (buf1.isEOF()) {
       error(getPos(), "End of file inside dictionary");
+      buf1.free();
+      goto err;
+    }
     // stream objects are not allowed inside content streams or
     // object streams
     if (allowStreams && buf2.isCmd("stream")) {
@@ -97,7 +112,7 @@ Object *Parser::getObj(Object *obj, Guchar *fileKey,
 	obj->initStream(str);
       } else {
 	obj->free();
-	obj->initError();
+	goto err;
       }
     } else {
       shift();
@@ -139,6 +154,11 @@ Object *Parser::getObj(Object *obj, Guchar *fileKey,
   }
 
   return obj;
+err:
+  if (obj)
+    obj->free();
+  obj->initError();
+  return NULL;
 }
 
 Stream *Parser::makeStream(Object *dict, Guchar *fileKey,
@@ -166,7 +186,10 @@ Stream *Parser::makeStream(Object *dict, Guchar *fileKey,
 
   // check for length in damaged file
   if (xref && xref->getStreamEnd(pos, &endPos)) {
-    length = endPos - pos;
+    if (length != (endPos - pos)) {
+      error(endPos, "Stream doesn't have correct length");
+      return NULL;
+    }
   }
 
   // in badly damaged PDF files, we can run off the end of the input
@@ -186,9 +209,7 @@ Stream *Parser::makeStream(Object *dict, Guchar *fileKey,
     shift();
   } else {
     error(getPos(), "Missing 'endstream'");
-    // kludge for broken PDF files: just add 5k to the length, and
-    // hope its enough
-    length += 5000;
+    return NULL;
   }
 
   // make base stream
@@ -226,7 +247,7 @@ void Parser::shift() {
   else
   {
 	size_t pos = lexer->strIndex ();
-    lexer->getObj(&buf2);
+	lexer->getObj(&buf2);
 	if (pos != lexer->strIndex())
 		endOfActStream = 2;
 	else if (0 < endOfActStream)

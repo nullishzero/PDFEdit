@@ -31,6 +31,9 @@ public:
   ~Parser();
 
   // Get the next object from the input stream.
+  // Returns pointer to the given obj or NULL if not able to parse
+  // (given obj is initialized to objError in such a case)
+WARN_UNUSED_RESULT 
   Object *getObj(Object *obj, Guchar *fileKey = NULL,
 		 CryptAlgorithm encAlgorithm = cryptRC4, int keyLength = 0,
 		 int objNum = 0, int objGen = 0);
