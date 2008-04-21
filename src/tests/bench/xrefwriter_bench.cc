@@ -57,7 +57,11 @@ void bench_knowsRef(XRefWriter * xref, struct result * result_known, struct resu
 	int objNum = 1;
 	time_stamp_t start, end;
 	IndiRef ref;
-	for(;total>0;++objNum)
+	// normally we should check only total>0, but this can lead to 
+	// endless loop (until total overflows), because we are using
+	// hardcoded gen=0 and there may be documents which use gen
+	// number > 0
+	for(;total>0 && (obj_count-not_present)>0;++objNum)
 	{
 		ref.num = objNum;
 		get_time_stamp(&start);
@@ -97,16 +101,25 @@ void bench_knowsRef(XRefWriter * xref, struct result * result_known, struct resu
 // changes per% number of objects
 void bench_changeObject(XRefWriter * xref, struct result *result, int per)
 {
-	int number = xref->getNumObjects() * per / 100;
+	int obj_count = xref->getNumObjects();
+	int number = obj_count * per / 100;
+	int not_present = 0;
 	IndiRef ref;
 	int objNum = 1;
 	time_stamp_t start, end;
-	for (;number>0; ++objNum)
+	// normally we should check only number>0, but this can lead to 
+	// endless loop (until number overflows), because we are using
+	// hardcoded gen=0 and there may be documents which use gen
+	// number > 0
+	for(;number>0 && (obj_count-not_present)>0;++objNum)
 	{
 		ref.num = objNum;
 		RefState refState = xref->knowsRef(ref);
-		if(refState != INITIALIZED_REF)
+		if(refState != INITIALIZED_REF) 
+		{
+			++not_present;
 			continue;
+		}
 		--number;
 		Object orig_obj;
 		xref->fetch(ref.num, ref.gen, &orig_obj);
@@ -133,7 +146,11 @@ void bench_fetch(XRefWriter *xref, struct result * result_known, struct result *
 	int objNum = 1;
 	time_stamp_t start, end;
 	IndiRef ref;
-	for(;total>0;++objNum)
+	// normally we should check only total>0, but this can lead to 
+	// endless loop (until total overflows), because we are using
+	// hardcoded gen=0 and there may be documents which use gen
+	// number > 0
+	for(;total>0 && (obj_count-not_present)>0;++objNum)
 	{
 		ref.num = objNum;
 		RefState state = xref->knowsRef(ref);
@@ -204,8 +221,11 @@ int main(int argc, char ** argv)
 	DEFINE_RESULTS(knowsRef_unknown2, "knowsRef_unknown_all_changed");
 	DEFINE_RESULTS(changeObject_all, "changeObject_all");
 	// change all objects bench
-	bench_changeObject(xref, &changeObject_all, 100);
-	bench_knowsRef(xref, &knowsRef_known2, &knowsRef_unknown2);
+	if(pdf->getMode() != CPdf::ReadOnly)
+	{
+		bench_changeObject(xref, &changeObject_all, 100);
+		bench_knowsRef(xref, &knowsRef_known2, &knowsRef_unknown2);
+	}
 	
 	// fetch without changed objects
 	open_and_get_xrefwriter(pdf, xref, file_name);
@@ -217,8 +237,11 @@ int main(int argc, char ** argv)
 	open_and_get_xrefwriter(pdf, xref, file_name);
 	DEFINE_RESULTS(fetch_known2, "fetch_known_all_changed");
 	DEFINE_RESULTS(fetch_unknown2, "fetch_unknown_all_changed");
-	bench_changeObject(xref, NULL, 100);
-	bench_fetch(xref, &fetch_known2, &fetch_unknown2);
+	if(pdf->getMode() != CPdf::ReadOnly)
+	{
+		bench_changeObject(xref, NULL, 100);
+		bench_fetch(xref, &fetch_known2, &fetch_unknown2);
+	}
 
 	// clone (???)
 	// reserveRef (RESERVED_NUMBER)

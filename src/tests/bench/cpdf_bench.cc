@@ -39,7 +39,11 @@ void bench_getIndirectProperty(shared_ptr<CPdf> pdf,
 	int objNum = 1;
 	time_stamp_t start, end;
 	IndiRef ref;
-	for(;total>0;++objNum)
+	// normally we should check only total>0, but this can lead to 
+	// endless loop (until total overflows), because we are using
+	// hardcoded gen=0 and there may be documents which use gen
+	// number > 0
+	for(;total>0 && (obj_count-not_present)>0;++objNum)
 	{
 		ref.num = objNum;
 		RefState state = helperXref->knowsRef(ref);
@@ -82,16 +86,30 @@ void bench_getIndirectProperty(shared_ptr<CPdf> pdf,
 void bench_changeIndirectObject(shared_ptr<CPdf> pdf, struct result *result, int per)
 {
 	XRefWriter * xref = dynamic_cast<XRefWriter*>(pdf->getCXref());
-	int number = xref->getNumObjects() * per / 100;
+	int obj_count = xref->getNumObjects();
+	int number = obj_count * per / 100;
+	int not_present = 0;
 	IndiRef ref;
 	int objNum = 1;
 	time_stamp_t start, end;
-	for (;number>0; ++objNum)
+
+	// skip for read only documents
+	if(pdf->getMode() == CPdf::ReadOnly)
+		return;
+
+	// normally we should check only number>0, but this can lead to 
+	// endless loop (until number overflows), because we are using
+	// hardcoded gen=0 and there may be documents which use gen
+	// number > 0
+	for(;number>0 && (obj_count-not_present)>0;++objNum)
 	{
 		ref.num = objNum;
 		RefState refState = xref->knowsRef(ref);
-		if(refState != INITIALIZED_REF)
+		if(refState != INITIALIZED_REF) 
+		{
+			++not_present;
 			continue;
+		}
 		--number;
 		shared_ptr<IProperty> orig_obj = pdf->getIndirectProperty(ref);
 		shared_ptr<IProperty> changed_obj = orig_obj->clone();
@@ -137,6 +155,9 @@ void bench_insertPage(shared_ptr<CPdf> pdf, shared_ptr<CPdf> original_pdf,
 	int number = original_pdf->getPageCount() * per / 100;
 	int page_num = 1;
 	time_stamp_t start, end;
+	// skip for read only documents
+	if(pdf->getMode() == CPdf::ReadOnly)
+		return;
 	for (;number>0; ++page_num, --number)
 	{
 		shared_ptr<CPage> page = original_pdf->getPage(page_num);
@@ -161,6 +182,9 @@ void bench_removePage(shared_ptr<CPdf> pdf, shared_ptr<CPdf> copy_pdf,
 	int number = copy_pdf->getPageCount() * per / 100;
 	int page_num = 1;
 	time_stamp_t start, end;
+	// skip for read only documents
+	if(pdf->getMode() == CPdf::ReadOnly)
+		return;
 	for (;number>0; ++page_num, --number)
 	{
 		shared_ptr<CPage> page = copy_pdf->getPage(page_num);
@@ -197,7 +221,7 @@ void bench_fwd_iter(shared_ptr<CPdf> pdf, struct result * result)
 			update_result(time_diff(start, end), *result);
 		get_time_stamp(&start);
 	}
-	// we don't use last unseccessfull hasNextPage
+	// we don't use last unsuccessfull hasNextPage
 }
 
 // measures page forward iteration (hasPrevPage && gePrevPage starting
@@ -233,6 +257,9 @@ void bench_addIndirectProperty(shared_ptr<CPdf> pdf, shared_ptr<CPdf> helper_pdf
 {
 	time_stamp_t start, end;
 	vector<shared_ptr<CDict> > dicts;
+	// skip for read only documents
+	if(pdf->getMode() == CPdf::ReadOnly)
+		return;
 	for (size_t p=1; p<=helper_pdf->getPageCount(); ++p)
 	{
 		shared_ptr<CPage> page = helper_pdf->getPage(p);
