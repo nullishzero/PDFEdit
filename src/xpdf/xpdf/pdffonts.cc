@@ -258,6 +258,7 @@ static void scanFont(GfxFont *font, PDFDoc *doc) {
 
   // look for a ToUnicode map
   hasToUnicode = gFalse;
+  // TODO how to handle malformed? Do we use this function?
   if (doc->getXRef()->fetch(fontRef.num, fontRef.gen, &fontObj)->isDict()) {
     hasToUnicode = fontObj.dictLookup("ToUnicode", &toUnicodeObj)->isStream();
     toUnicodeObj.free();

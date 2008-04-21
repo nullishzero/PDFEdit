@@ -171,8 +171,7 @@ using namespace debug;
 			continue;
 
 		// gets object and generation number
-		int num=i, 
-			gen=entry.gen;
+		int num=i, gen=entry.gen;
 		
 		// if entry is compressed (from object stream, gen is allways 0 but xpdf
 		// uses this number for object order in stream)
@@ -185,8 +184,17 @@ using namespace debug;
 			continue;
 
 		::Object * obj=XPdfObjectFactory::getInstance();
-		XRef::fetch(num, gen, obj);
 		::Ref ref={num, gen};
+		XRef::fetch(num, gen, obj);
+		if(!isOk())
+		{
+			// TODO how to handle cleanly - with outpustream cleanup
+			kernelPrintDbg(DBG_ERR, ref<<" object fetching failed with code="
+					<<errCode);
+			xpdf::freeXpdfObject(obj);
+			delete outputStream;
+			throw MalformedFormatExeption("bad data stream");
+		}
 		objectList.push_back(IPdfWriter::ObjectElement(ref, obj));
 	}
 

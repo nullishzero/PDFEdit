@@ -81,6 +81,8 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objs = NULL;
   objNums = NULL;
 
+  // we don't have to check for isOk here because fetch failure
+  // is reported via returned objNull
   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
     goto err1;
   }
@@ -115,8 +117,12 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   str = new EmbedStream(objStr.getStream(), &obj1, gTrue, first);
   parser = new Parser(xref, new Lexer(xref, str), gFalse);
   for (i = 0; i < nObjects; ++i) {
-    parser->getObj(&obj1);
-    parser->getObj(&obj2);
+    if(!parser->getObj(&obj1))
+      goto malformedErr;
+    if(!parser->getObj(&obj2)) {
+      obj1.free();
+      goto malformedErr;
+    }
     if (!obj1.isInt() || !obj2.isInt()) {
       obj1.free();
       obj2.free();
@@ -155,7 +161,9 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
 			    offsets[i+1] - offsets[i]);
     }
     parser = new Parser(xref, new Lexer(xref, str), gFalse);
-    parser->getObj(&objs[i]);
+    if(!parser->getObj(&objs[i])) 
+      goto malformedErr;
+    
     while (str->getChar() != EOF) ;
     delete parser;
   }
@@ -165,6 +173,10 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
  err1:
   objStr.free();
   return;
+ malformedErr:
+  if(parser)
+    delete parser;
+  // TODO getObj how to hande ObjectStream constructor
 }
 
 ObjectStream::~ObjectStream() {
@@ -194,9 +206,16 @@ XRef::XRef(BaseStream *strA) {
   // inits stream and initializes internals
   str = strA;
   // gets position of last xref section
+  setErrCode(errNone);
   Guint pos = getStartXref();
-  if(errCode == errNone)
+  if(isOk())
     initInternals(pos);
+}
+
+void XRef::setErrCode(int err)
+{
+  errCode = err;
+  ok = (errCode == errNone)?gTrue:gFalse;
 }
 
 /** Initializes all XRef internal structures.
@@ -209,7 +228,7 @@ void XRef::initInternals(Guint pos)
   Object obj;
 
   ok = gTrue;
-  errCode = errNone;
+  setErrCode(errNone);
   size = 0;
   entries = NULL;
   streamEnds = NULL;
@@ -227,7 +246,7 @@ void XRef::initInternals(Guint pos)
   // reconstruct the xref table
   if (pos == 0) {
     if (!(ok = constructXRef())) {
-      errCode = errDamaged;
+      setErrCode(errDamaged);
       return;
     }
 
@@ -239,7 +258,7 @@ void XRef::initInternals(Guint pos)
     // try to reconstruct it
     if (!ok) {
       if (!(ok = constructXRef())) {
-	errCode = errDamaged;
+	setErrCode(errDamaged);
 	return;
       }
     }
@@ -254,7 +273,7 @@ void XRef::initInternals(Guint pos)
   } else {
     obj.free();
     if (!(ok = constructXRef())) {
-      errCode = errDamaged;
+      setErrCode(errDamaged);
       return;
     }
   }
@@ -288,7 +307,7 @@ Guint XRef::getStartXref() {
   char buf[xrefSearchSize+1];
   int c, n, i;
 
-  errCode = errNone;
+  setErrCode(errNone);
 
   // read last xrefSearchSize bytes
   str->setPos(xrefSearchSize, -1);
@@ -307,7 +326,7 @@ Guint XRef::getStartXref() {
     }
   }
   if (i < 0) {
-    errCode = errDamaged;
+    setErrCode(errDamaged);
     return 0;
   }
 
@@ -334,7 +353,7 @@ Guint XRef::getStartXref() {
 // Read one xref table section.  Also reads the associated trailer
 // dictionary, and returns the prev pointer (if any).
 GBool XRef::readXRef(Guint *pos) {
-  Parser *parser;
+  Parser *parser = NULL;
   Object obj;
   GBool more;
 
@@ -344,7 +363,8 @@ GBool XRef::readXRef(Guint *pos) {
 	     new Lexer(NULL,
 	       str->makeSubStream(start + *pos, gFalse, 0, &obj)),
 	     gTrue);
-  parser->getObj(&obj);
+  if (!parser->getObj(&obj))
+    goto malformedErr;
 
   // parse an old-style xref table
   if (obj.isCmd("xref")) {
@@ -354,17 +374,21 @@ GBool XRef::readXRef(Guint *pos) {
   // parse an xref stream
   } else if (obj.isInt()) {
     obj.free();
-    if (!parser->getObj(&obj)->isInt()) {
+    Object * fetch;
+    if (!(fetch = parser->getObj(&obj)))
+      goto malformedErr;
+    if (!fetch->isInt()) 
       goto err1;
-    }
     obj.free();
-    if (!parser->getObj(&obj)->isCmd("obj")) {
+    if (!(fetch = parser->getObj(&obj)))
+      goto malformedErr;
+    if (!fetch->isCmd("obj")) 
       goto err1;
-    }
     obj.free();
-    if (!parser->getObj(&obj)->isStream()) {
+    if (!(fetch = parser->getObj(&obj)))
+      goto malformedErr;
+    if (!fetch->isStream()) 
       goto err1;
-    }
     more = readXRefStream(obj.getStream(), pos);
     obj.free();
 
@@ -375,9 +399,11 @@ GBool XRef::readXRef(Guint *pos) {
   delete parser;
   return more;
 
- err1:
+err1:
   obj.free();
-  delete parser;
+malformedErr:
+  if(parser)
+    delete parser;
   ok = gFalse;
   return gFalse;
 }
@@ -387,10 +413,12 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
   GBool more;
   Object obj, obj2;
   Guint pos2;
+  Object * fetch;
   int first, n, newSize, i;
 
   while (1) {
-    parser->getObj(&obj);
+    if (!parser->getObj(&obj))
+      goto malformedErr;
     if (obj.isCmd("trailer")) {
       obj.free();
       break;
@@ -400,7 +428,9 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
     }
     first = obj.getInt();
     obj.free();
-    if (!parser->getObj(&obj)->isInt()) {
+    if (!(fetch = parser->getObj(&obj)))
+      goto malformedErr;
+    if (!fetch->isInt()) {
       goto err1;
     }
     n = obj.getInt();
@@ -423,17 +453,22 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
       size = newSize;
     }
     for (i = first; i < first + n; ++i) {
-      if (!parser->getObj(&obj)->isInt()) {
+      if (!(fetch = parser->getObj(&obj)))
+        goto malformedErr;
+      if (!fetch->isInt()) {
 	goto err1;
       }
       entry.offset = (Guint)obj.getInt();
       obj.free();
-      if (!parser->getObj(&obj)->isInt()) {
+      if (!(fetch = parser->getObj(&obj)))
+        goto malformedErr;
+      if (!fetch->isInt()) {
 	goto err1;
       }
       entry.gen = obj.getInt();
       obj.free();
-      parser->getObj(&obj);
+      if (!parser->getObj(&obj))
+        goto malformedErr;
       if (obj.isCmd("n")) {
 	entry.type = xrefEntryUncompressed;
       } else if (obj.isCmd("f")) {
@@ -459,7 +494,9 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
   }
 
   // read the trailer dictionary
-  if (!parser->getObj(&obj)->isDict()) {
+  if (!(fetch = parser->getObj(&obj)))
+    goto malformedErr;
+  if (!fetch->isDict()) {
     goto err1;
   }
 
@@ -497,8 +534,9 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
   obj.free();
   return more;
 
- err1:
+err1:
   obj.free();
+malformedErr:
   ok = gFalse;
   return gFalse;
 }
@@ -669,7 +707,7 @@ GBool XRef::readXRefStreamSection(Stream *xrefStr, int *w, int first, int n) {
 
 // Attempt to construct an xref table for a damaged file.
 GBool XRef::constructXRef() {
-  Parser *parser;
+  Parser *parser = NULL;
   Object newTrailerDict, obj;
   char buf[256];
   Guint pos;
@@ -706,7 +744,8 @@ GBool XRef::constructXRef() {
 		 new Lexer(NULL,
 		   str->makeSubStream(pos + 7, gFalse, 0, &obj)),
 		 gFalse);
-      parser->getObj(&newTrailerDict);
+      if (!parser->getObj(&newTrailerDict))
+        goto malformedErr;
       if (newTrailerDict.isDict()) {
 	newTrailerDict.dictLookupNF("Root", &obj);
 	if (obj.isRef()) {
@@ -785,6 +824,11 @@ GBool XRef::constructXRef() {
 
   error(-1, "Couldn't find trailer dictionary");
   return gFalse;
+malformedErr:
+  error(-1, "malformed content. Not able to parse.");
+  if (parser)
+    delete parser;
+  return gFalse;
 }
 
 void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
@@ -827,27 +871,36 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
   XRefEntry *e;
   Parser *parser;
   Object obj1, obj2, obj3;
+  GBool failed = gFalse;
 
   // check for bogus ref - this can happen in corrupted PDF files
   if (num < 0 || num >= size) {
-    goto err;
+    goto err_no_obj;
   }
 
+  setErrCode(errNone);
   e = &entries[num];
   switch (e->type) {
 
   case xrefEntryUncompressed:
     if (e->gen != gen) {
-      goto err;
+      goto err_no_obj;
     }
     obj1.initNull();
     parser = new Parser(this,
 	       new Lexer(this,
 		 str->makeSubStream(start + e->offset, gFalse, 0, &obj1)),
 	       gTrue);
-    parser->getObj(&obj1);
-    parser->getObj(&obj2);
-    parser->getObj(&obj3);
+    if (!parser->getObj(&obj1))
+      goto err_damaged;
+    if (!parser->getObj(&obj2)) {
+      obj1.free();
+      goto err_damaged;
+    }
+    if (!parser->getObj(&obj3)) {
+      obj2.free();
+      goto err_damaged;
+    } 
     if (!obj1.isInt() || obj1.getInt() != num ||
 	!obj2.isInt() || obj2.getInt() != gen ||
 	!obj3.isCmd("obj")) {
@@ -855,19 +908,23 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
       obj2.free();
       obj3.free();
       delete parser;
-      goto err;
+      goto err_damaged;
     }
-    parser->getObj(obj, encrypted ? fileKey : (Guchar *)NULL,
-		   encAlgorithm, keyLength, num, gen);
+    if (!parser->getObj(obj, encrypted ? fileKey : (Guchar *)NULL,
+		   encAlgorithm, keyLength, num, gen)) 
+      failed = gTrue;
+
     obj1.free();
     obj2.free();
     obj3.free();
     delete parser;
+    if (failed)
+      goto err_damaged;
     break;
 
   case xrefEntryCompressed:
     if (gen != 0) {
-      goto err;
+      goto err_no_obj;
     }
     if (!objStr || objStr->getObjStrNum() != (int)e->offset) {
       if (objStr) {
@@ -879,12 +936,16 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
     break;
 
   default:
-    goto err;
+    // TODO is this correct?
+    goto err_no_obj;
   }
 
   return obj;
 
- err:
+ err_damaged:
+  setErrCode(errDamaged);
+  ok = false;
+ err_no_obj:
   return obj->initNull();
 }
 

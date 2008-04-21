@@ -16,6 +16,7 @@
 //              - getNumObjects rewriten to return just number of real objects
 //                not size of entries array
 //              - new knowsRef method
+//              - setErrCode method added
 //
 //========================================================================
 
@@ -78,6 +79,10 @@ public:
 
   // Is xref table valid?
   virtual GBool isOk() { return ok; }
+
+  // sets error code and ok accordingly
+  // if err == errNone then ok is set to true
+  virtual void setErrCode(int err);
 
   // Get the error code (if isOk() returns false).
   virtual int getErrorCode() { return errCode; }

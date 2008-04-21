@@ -393,6 +393,8 @@ public:
 	 * XRef (xpdf class) interface.
 	 *
 	 * @throw NotImplementedException if object cloning fails.
+	 * @throw MalformedFormatExeption if not able to fetch object from the
+	 * stream.
 	 * @return Pointer with initialized object given as parameter, if not
 	 * found obj is set to objNull.
 	 */
