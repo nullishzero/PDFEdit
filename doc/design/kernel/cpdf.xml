@@ -28,10 +28,11 @@
     <title>Instance life cycle</title>
     <para>
 		Instance of CPdf can be create only by <classname>getInstance</classname>
-		factory method (see <xref linkend="factory_method"/>) and destroyed 
-		only by <classname>close</classname> method described. CPdf instance is 
-		one purpose object which maintains exactly one document during its 
-		lifetime (between creation and close).
+		factory method (see <xref linkend="factory_method"/>) which returns
+		instanstance wraped by shared_ptr which controls the life cycle.
+		Instance is deallocated when the last reference to it is droped.
+		CPdf instance is one purpose object which maintains exactly one 
+		document during its lifetime (between creation and close).
     </para>
   </sect2>
   <sect2 id="cpdf_modes">
@@ -59,6 +60,16 @@
         represented by same instance of IProperty to enable their reasonable 
         usage.
     </para>
+	<para>
+		To enable proper smart pointer implementation, CPdf holds weak_ptr
+		to itself (called _this) initialized from shared_ptr returned by 
+		getInstance factory method. This is in turn used for initialization
+		of all properties. The trick is that weak_ptr are valid only until
+		original shared_ptr is valid. In the moment when the last reference
+		is droped, all weak_ptr are no more valid and code which tries to use
+		them can detect that without any problems (weak_ptr::lock method will
+		simply fail and code can handle that).
+	</para>
     <para>
         To enable also inter document data exchange (in form of properties),
         it provides functionality for adding of indirect properties. When
