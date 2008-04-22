@@ -1,5 +1,5 @@
 ????-??-?? PDF Editor 0.4.2
-	* Bugs 131, 158, 199, 220, 222, 217, 228, 233 fixed
+	* Bugs 131, 158, 199, 220, 222, 217, 226, 228, 233 fixed
 	* Print summary information with used options after running configure script
 	* 64b distributions with boost libraries in lib64 directory can use
 	  --with-boost-libdir configure parameter
