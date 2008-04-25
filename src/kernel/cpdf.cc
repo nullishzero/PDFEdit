@@ -1904,7 +1904,7 @@ using namespace debug;
 		return i->second;
 	}
 
-	kernelPrintDbg(DBG_DBG, "No mapping for "<<ref)
+	kernelPrintDbg(DBG_DBG, "No mapping for "<<ref);
 
 	// mapping doesn't exist yet, so tries to create one
 	// fetches object according reference
@@ -2344,7 +2344,7 @@ public:
 					<<strerror(err) << "\"");
 		}
 
-		kernelPrintDbg(debug::DBG_INFO, "Instance deleted.")
+		kernelPrintDbg(debug::DBG_INFO, "Instance deleted.");
 	}
 };
 
@@ -2441,7 +2441,7 @@ using namespace utils;
 	CPage * page=CPageFactory::getInstance(pageDict_ptr);
 	shared_ptr<CPage> page_ptr(page);
 	pageList.insert(PageList::value_type(pos, page_ptr));
-	kernelPrintDbg(DBG_DBG, "New page added to the pageList size="<<pageList.size())
+	kernelPrintDbg(DBG_DBG, "New page added to the pageList size="<<pageList.size());
 
 	return page_ptr;
 }
@@ -2587,7 +2587,7 @@ using namespace utils;
 			{
 				// all CPages from this sub tree are removed and invalidated
 				// difference is set to -getKidsCount value (total page lost)
-				kernelPrintDbg(DBG_DBG, "oldValue was intermediate node dictionary.")
+				kernelPrintDbg(DBG_DBG, "oldValue was intermediate node dictionary.");
 				difference = -getKidsCount(oldValue, &nodeCountCache);
 
 				// gets reference of oldValue - which is the root of removed
@@ -2745,7 +2745,7 @@ using namespace utils;
 		kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<i->first+difference);
 		pageList.insert(PageList::value_type(i->first+difference, i->second));	
 	}
-	kernelPrintDbg(DBG_INFO, "pageList consolidation done.")
+	kernelPrintDbg(DBG_INFO, "pageList consolidation done.");
 }
 
 
@@ -3081,7 +3081,7 @@ using namespace utils;
 	shared_ptr<CDict> newPageDict_ptr=IProperty::getSmartCObjectPtr<CDict>(getIndirectProperty(pageRef));
 	shared_ptr<CPage> newPage_ptr(CPageFactory::getInstance(newPageDict_ptr));
 	pageList.insert(PageList::value_type(storePostion+append, newPage_ptr));
-	kernelPrintDbg(DBG_DBG, "New page added to the pageList size="<<pageList.size())
+	kernelPrintDbg(DBG_DBG, "New page added to the pageList size="<<pageList.size());
 	return newPage_ptr;
 }
 

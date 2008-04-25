@@ -150,7 +150,7 @@ unsigned int changeDebugLevel(unsigned int level);
  * REMARK: This is a macro, because we want to output line number and file name.
  * We can't force GCC to do inlining, we can just give a hint.
  */
-#define printDbg(prefix, dbgLevel,msg)	_printDbg((prefix),(dbgLevel),std::cerr,msg);
+#define printDbg(prefix, dbgLevel,msg)	_printDbg((prefix),(dbgLevel),std::cerr,msg)
 
 /** Alias to printDbg for kernel messages.
  * @param dbgLevel Priority of message.
@@ -189,16 +189,15 @@ unsigned int changeDebugLevel(unsigned int level);
  * @endcode
  */
 #define _printDbg(prefix, level, stream, msg)					\
-{										\
-	if ( debug::debugLevel >= level) 					\
-	{									\
+	do {									\
+	if (debug::debugLevel >= level) { 					\
 		(stream) << level <<":"<<prefix<<":"				\
 		    << __FILE__ << ":" << __FUNCTION__ <<":"<< __LINE__ 	\
 			<< ": "							\
 			<<  msg 						\
 			<< std::endl;						\
 	}									\
-}
+	}while(0)
 
 
 //==================================================================

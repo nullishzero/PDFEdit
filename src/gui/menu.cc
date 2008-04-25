@@ -434,7 +434,7 @@ int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,c
   if (s.isNull()) s="";
   if (s.find(accelChar)>=0) {
    //Already used
-   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << Q_OUT(caption) << " is already used elsewhere!")
+   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << Q_OUT(caption) << " is already used elsewhere!");
   } else {
    //Not yet used
    s=s+accelChar;

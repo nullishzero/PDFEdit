@@ -314,7 +314,7 @@ CPageAnnots::consolidate(boost::shared_ptr<IProperty>& oldValue, boost::shared_p
 				}
 			}
 			if(!erased)
-				kernelPrintDbg(debug::DBG_WARN, "Removed value is not in _annotations.")
+				kernelPrintDbg(debug::DBG_WARN, "Removed value is not in _annotations.");
 		}catch(ElementBadTypeException & )
 		{
 			kernelPrintDbg(debug::DBG_WARN, "oldValue dereferenced value is not dictionary.");
