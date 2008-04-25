@@ -43,11 +43,14 @@ unsigned int changeDebugLevel(unsigned int level)
 {
 	// gets an old value and sets new
 	unsigned int oldLevel=debugLevel;
-	debugLevel=level;
 	
 	// logs change of level with DEBUG prefix to default output stream
+	// temporarily sets debugLevel so that message is guaranteed to 
+	// be printed
+	debugLevel=DBG_INFO;
 	printDbg(DEBUG_PREFIX, DBG_INFO, "debugLevel has changed from "<<oldLevel<<" to "<<level);
 	
+	debugLevel=level;
 	return oldLevel;
 }
 
