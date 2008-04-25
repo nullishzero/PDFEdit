@@ -25,33 +25,36 @@
 #include "kernel/static.h" // WIN32 port - precompiled headers - REMOVE IN FUTURE!
 #include "debug.h"
 
-// if default debug level doesn't come from gcc command line, we use
-// ERR
-#ifndef DEFAULT_DEBUG_LEVEL
-#define DEFAULT_DEBUG_LEVEL debug::DBG_ERR
-#endif
-
 /** Prefix for debug messages. */
 #define DEBUG_PREFIX "DEBUG"
 
 namespace debug
 {
 
-unsigned int debugLevel = DEFAULT_DEBUG_LEVEL;
-
-unsigned int changeDebugLevel(unsigned int level)
+DebugTarget kernelDebugTarget;
+DebugTarget guiDebugTarget;
+DebugTarget utilsDebugTarget;
+  
+unsigned int changeDebugLevel(DebugTarget & debugTarget, unsigned int level)
 {
 	// gets an old value and sets new
-	unsigned int oldLevel=debugLevel;
+	unsigned int oldLevel=debugTarget.debugLevel;
 	
 	// logs change of level with DEBUG prefix to default output stream
 	// temporarily sets debugLevel so that message is guaranteed to 
 	// be printed
-	debugLevel=DBG_INFO;
-	printDbg(DEBUG_PREFIX, DBG_INFO, "debugLevel has changed from "<<oldLevel<<" to "<<level);
+	debugTarget.debugLevel=DBG_INFO;
+	printDbg(DEBUG_PREFIX, DBG_INFO, debugTarget, "debugLevel has changed from "<<oldLevel<<" to "<<level);
 	
-	debugLevel=level;
+	debugTarget.debugLevel=level;
 	return oldLevel;
+}
+
+void changeDebugLevel(unsigned int level)
+{
+	changeDebugLevel(kernelDebugTarget, level);
+	changeDebugLevel(guiDebugTarget, level);
+	changeDebugLevel(utilsDebugTarget, level);
 }
 
 // API logger initialization

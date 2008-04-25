@@ -58,6 +58,11 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {} };
 	}
 
 
+// if default debug level doesn't come from gcc command line, we use
+// ERR
+#ifndef DEFAULT_DEBUG_LEVEL
+#define DEFAULT_DEBUG_LEVEL debug::DBG_ERR
+#endif
 
 /** Panic situation priority.
  * After this kind of message, program usually ends without any resonable
@@ -96,18 +101,47 @@ const unsigned int  DBG_INFO 	= 4;
  */
 const unsigned int  DBG_DBG 	= 5;
 
-/** Filter for message logging.
- *
- * Only messages with priority higher (lower number) than this filter are
- * printed when printDbg (TODO link) macro is used.
- * <br>
- * DEBUG_<PRIORITY> macro should be used for value. Value can be changed also
- * in runtime by changeDebugLevel function (or directly changing variable value
- * - first way is prefered one).
+/** Target for debugging.
+ * This simple structure contains filter debug level and stream for data.
  */
-extern unsigned int debugLevel;
+struct DebugTarget 
+{
+	/** Filter for message logging.
+	 *
+	 * Only messages with priority higher (lower number) than this filter are
+	 * printed when printDbg (TODO link) macro is used.
+	 * <br>
+	 * DEBUG_<PRIORITY> macro should be used for value. Value can be changed also
+	 * in runtime by changeDebugLevel function (or directly changing variable value
+	 * - first way is prefered one).
+	 */
+	unsigned int debugLevel;
 
-/** Changes value of debugLevel.
+	/** Stream for data. */
+	std::ostream &stream;
+
+	/** Defaul constructor.
+	 * Initializes debugLevel to DEFAULT_DEBUG_LEVEL and stream to 
+	 * the standard error.
+	 */
+	DebugTarget():debugLevel(DEFAULT_DEBUG_LEVEL), stream(std::cerr) {}
+
+	/** Constructor for full initialization.
+	 * @param level Debug level to be used.
+	 * @param s Stream to be used.
+	 */
+	DebugTarget(unsigned int level, std::ostream & s): debugLevel(level), stream(s) {}
+};
+
+/** Debug target for kernel. */
+extern DebugTarget kernelDebugTarget;
+/** Debug target for gui. */
+extern DebugTarget guiDebugTarget;
+/** Debug target for utils. */
+extern DebugTarget utilsDebugTarget;
+
+/** Changes value of debugLevel for given debug target.
+ * @param debugTarget Debug target to update.
  * @param level New value for debugLevel.
  *
  * Use DBG_* constants for parameter value.
@@ -116,7 +150,12 @@ extern unsigned int debugLevel;
  *
  * @return Old value of debugLevel.
  */
-unsigned int changeDebugLevel(unsigned int level);
+unsigned int changeDebugLevel(DebugTarget & debugTarget, unsigned int level);
+
+/** Changes value of debugLevel for all standard debug targets.
+ * @param level New value for debugLevel.
+ */
+void changeDebugLevel(unsigned int level);
 
 /** Prints message with given priority.
  * @param prefix Prefix for message.
@@ -150,7 +189,7 @@ unsigned int changeDebugLevel(unsigned int level);
  * REMARK: This is a macro, because we want to output line number and file name.
  * We can't force GCC to do inlining, we can just give a hint.
  */
-#define printDbg(prefix, dbgLevel,msg)	_printDbg((prefix),(dbgLevel),std::cerr,msg)
+#define printDbg(prefix, dbgLevel,target, msg)	_printDbg((prefix), (dbgLevel), (target), msg)
 
 /** Alias to printDbg for kernel messages.
  * @param dbgLevel Priority of message.
@@ -158,7 +197,7 @@ unsigned int changeDebugLevel(unsigned int level);
  *
  * Use this macro for all message important for kernel.
  */
-#define kernelPrintDbg(dbgLevel, msg) printDbg("KERNEL", (dbgLevel), msg)
+#define kernelPrintDbg(dbgLevel, msg) printDbg("KERNEL", (dbgLevel), debug::kernelDebugTarget, msg)
 
 /** Alias to printDbg for gui messages.
  * @param dbgLevel Priority of message.
@@ -166,7 +205,7 @@ unsigned int changeDebugLevel(unsigned int level);
  *
  * Use this macro for all message important for gui.
  */
-#define guiPrintDbg(dbgLevel, msg) printDbg("GUI", (dbgLevel), msg)
+#define guiPrintDbg(dbgLevel, msg) printDbg("GUI", (dbgLevel), debug::guiDebugTarget, msg)
 
 /** Alias to printDbg for util messages.
  * @param dbgLevel Priority of message.
@@ -174,24 +213,24 @@ unsigned int changeDebugLevel(unsigned int level);
  *
  * Use this macro for all message important for utils.
  */
-#define utilsPrintDbg(dbgLevel, msg) printDbg("UTILS", (dbgLevel), msg)
+#define utilsPrintDbg(dbgLevel, msg) printDbg("UTILS", (dbgLevel), debug::utilsDebugTarget, msg)
 
 /** Low level macro for debugging.
  * @param prefix Prefix string for message.
  * @param level Priority of message.
- * @param stream Stream where to dump message.
+ * @param target Target for debug messages (reference).
  * @param msg Message to dump.
  *
- * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
- * massage is printed out to the standard error output with following format:
+ * If given priority is enough (number is smaller than target::debugLevel),
+ * massage is printed out to the target stream with following format:
  * @code
  * priority:prefix:fileName:functionName:line: message
  * @endcode
  */
-#define _printDbg(prefix, level, stream, msg)					\
+#define _printDbg(prefix, level, target, msg)					\
 	do {									\
-	if (debug::debugLevel >= level) { 					\
-		(stream) << level <<":"<<prefix<<":"				\
+	if (target.debugLevel >= level) { 					\
+		target.stream << level <<":"<<prefix<<":"			\
 		    << __FILE__ << ":" << __FUNCTION__ <<":"<< __LINE__ 	\
 			<< ": "							\
 			<<  msg 						\
@@ -264,6 +303,7 @@ struct ApiLogger
 #define APIDbg3(p1,p2,p3)	_APIDbg((p1) << ", " << (p2) << ", " << (p3));
 
 
+#undef DEFAULT_DEBUG_LEVEL
 
 // =============================================================================
 } // namespace debug
