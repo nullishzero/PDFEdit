@@ -277,11 +277,9 @@ public:
 		 */
 		size_t xrefPos;
 
-		/** Number of objects in previous section.
-		 *
-		 * If no previous section is available value should be 0.
+		/** Number of entries in previous section.
 		 */
-		size_t objNum;
+		size_t entriesNum;
 	};
 
 	virtual ~IPdfWriter()

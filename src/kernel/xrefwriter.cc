@@ -375,7 +375,7 @@ using namespace utils;
 	// Stores position of the cross reference section to xrefPos
 	pdfWriter->writeContent(changed, *streamWriter, storePos);
 	size_t xrefPos=streamWriter->getPos();
-	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::getNumObjects()};
+	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::maxObj+1};
 	size_t newEofPos=pdfWriter->writeTrailer(trailerDict, secInfo, *streamWriter);
 
 	// if new revision should be created, moves storePos behind stored content

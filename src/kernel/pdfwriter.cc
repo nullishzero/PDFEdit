@@ -414,9 +414,10 @@ using namespace boost;
 		utilsPrintDbg(DBG_DBG, "Linking to previous xref section. Trailer::Prev="<<newPrev.getInt());
 	}
 
-	// sets Size entry with object maximum object number written to the file
+	// sets Size entry with the maximum from the original entries count and 
+	// the highest changed object reference number
 	Object newSize;
-	newSize.initInt(std::max(prevSection.objNum, (size_t)(maxObjNum + 1)));
+	newSize.initInt(std::max(prevSection.entriesNum, (size_t)(maxObjNum + 1)));
 	char * key=copyString("Size");
 	Object * originalSize=trailer.getDict()->update(key, &newSize);
 	if(originalSize)
