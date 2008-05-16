@@ -17,6 +17,8 @@
 //                not size of entries array
 //              - new knowsRef method
 //              - setErrCode method added
+//              - maxObj field added which contains the maximum present 
+//                indirect object number
 //
 //========================================================================
 
@@ -185,6 +187,8 @@ protected:
   Guint lastXRefPos;		// offset of last xref table
   Guint eofPos;                 // %%EOF marker position or safe position to 
                                 //   store new data 
+  Guint maxObj;                 // Maximum present indirect object number (for
+                                //   all previous revisions)
   Guint *streamEnds;		// 'endstream' positions - only used in
 				//   damaged files
   int streamEndsLen;		// number of valid entries in streamEnds

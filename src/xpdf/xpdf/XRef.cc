@@ -234,6 +234,7 @@ void XRef::initInternals(Guint pos)
   streamEnds = NULL;
   streamEndsLen = 0;
   objStr = NULL;
+  maxObj = 0;
 
   encrypted = gFalse;
   permFlags = defPermFlags;
@@ -489,6 +490,10 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
 	  entries[0] = entries[1];
 	  entries[1].offset = 0xffffffff;
 	}
+
+	// store maximum present indirect object number
+	if (entries[i].type != xrefEntryFree && i > maxObj)
+	  maxObj = i;
       }
     }
   }
@@ -700,6 +705,10 @@ GBool XRef::readXRefStreamSection(Stream *xrefStr, int *w, int first, int n) {
 	return gFalse;
       }
     }
+
+    // store maximum present indirect object number
+    if (entries[i].type != xrefEntryFree && i > maxObj)
+      maxObj = i;
   }
 
   return gTrue;
