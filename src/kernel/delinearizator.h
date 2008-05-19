@@ -131,6 +131,8 @@ public:
 	{
 		if(pdfWriter)
 			delete pdfWriter;
+		// XRef doesn't deallocate stream, so we have to do it here
+		delete str;
 		// FILE stream has to be closed - FileStream::close method doesn't do that!
 		fclose(file);
 	}
