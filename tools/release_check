@@ -9,9 +9,11 @@ error=0
 #Check completeness of translations
 
 check_trans() {
+ all=`grep '<message>' <$1 |wc -l`
  un=`grep 'type="unfinished"' <$1 |wc -l`
  obs=`grep 'type="obsolete"' <$1 |wc -l`
- echo "$1 $un unfinished, $obs obsolete"
+ pct=$((100-100*un/(all-obs)))
+ echo "$1 $all messages, $un unfinished, $obs obsolete, $pct% complete"
  if test ! $un -eq 0
  then
   error=1
