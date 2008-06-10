@@ -42,6 +42,9 @@ cd ..
 # generates online help
 pdfedit-$VERSION/tools/generate_online_help.sh pdfedit-$VERSION/doc pdfedit-$VERSION/src/gui
 
+# generates man page
+pdfedit-$VERSION/doc/tools/docbook2man.pl pdfedit-$VERSION/doc/user/pdfedit.xml > pdfedit-$VERSION/doc/user/pdfedit.1
+
 # creates distribution tarball
 tar -czhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
 echo pdfedit-$VERSION.tar.gz created
