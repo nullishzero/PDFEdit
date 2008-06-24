@@ -1382,7 +1382,7 @@ public:
 	// =======================
 
 	/** Returns page at given position.
-	 * @param pos Position (starting from 0).
+	 * @param pos Position (starting from 1).
 	 *
 	 * At first tries to find page with given position in pageList. If found,
 	 * returns instance from list. Otherwise, searches page tree by findPageDict
