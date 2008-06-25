@@ -35,8 +35,10 @@ pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
 # We need to generate online help (unless it is generated yet) before
 # QT makefile is created (because of file expansion used in project
 # file)
+# For the same reason we have to generate localization files too
 $(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfedit.pro
 	$(SHELL) $(ROOT)/tools/generate_online_help.sh "$(DOCROOT)" "$(GUIROOT)"
+	$(SHELL) $(ROOT)/tools/generate_lang.sh "$(GUIROOT)" "$(LRELEASE)"
 	cd $(GUIROOT) && $(QMAKE) pdfedit.pro -o Makefile.qt
 
 # Target for devel package - no gui, just header files and core (xpdf and 

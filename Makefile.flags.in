@@ -1,5 +1,6 @@
 E_RELEASE= @enable_release@
 QMAKE 	 = @QMAKE@
+LRELEASE = @LRELEASE@
 
 # We need to add one level of indirect definition because of qmake which
 # uses QMAKE_{CC,CXX,LINK} to define compiler specific stuff, however 

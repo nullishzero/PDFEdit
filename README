@@ -187,6 +187,12 @@ You can also control search paths for required libraries and binaries:
 	  in other directory, use:
 	./configure --with-qmake=QMAKE_BINARY_WITH_PATH
 
+	- qmake comes with lrelease binary which is used for 
+	  localization data files translation. This binary is
+	  searched in QTDIR/bin, /usr/bin, /usr/local/bin paths.
+	  If it is not found on your system, please use
+	./configure --with-lrelease-bin=LRELEASE_BINARY_WITH_PATH
+
 	- doxygen is searched in /usr/bin , /usr/local/bin and 
 	  current PATH directories. If you have doxygen installed
 	  in other directory, use:

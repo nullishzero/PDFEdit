@@ -29,9 +29,6 @@ then
 	fi
 fi
 
-# Make documentation before making tarball
-#Translate all .ts files to .qm
-(cd src/gui/lang && lrelease *.ts)
 #Get version number
 VERSION=`./getversion`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)

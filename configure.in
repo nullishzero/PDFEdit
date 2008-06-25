@@ -199,6 +199,18 @@ if test "x$enable_gui" = "xyes"; then
 	QMAKE="$QMAKE ${qmake_bin}"
 	AC_MSG_RESULT(Using QT3 with qmake=${qmake_bin})
 	AC_SUBST(QMAKE)
+
+	dnl check for lrelease
+	AC_MSG_CHECKING(for QT lrelease)
+	CHK_EXECUTABLE([lrelease],[lrelease],[${QTDIR}/bin /usr/bin /usr/local/bin],[],
+		       [(Only for platforms where lrelease is not installed under QTDIR/bin or /usr/bin or /usr/local/bin).])
+	if test -z "${lrelease_bin}"
+	then
+		AC_MSG_ERROR(unable to find lrelease localization binary for QT3)
+	fi
+	LRELEASE="$LRELEASE ${lrelease_bin}"
+	AC_MSG_RESULT(Using lrelease=${lrelease_bin})
+	AC_SUBST(LRELEASE)
 else
 	AC_MSG_RESULT(no)
 fi
