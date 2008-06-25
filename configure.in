@@ -184,14 +184,14 @@ if test "x$enable_gui" = "xyes"; then
 			    - default will be used.])
 
 	AC_MSG_CHECKING(for QT qmake)
-	CHK_EXECUTABLE([qmake],[qmake qmake-qt3],[${QTDIR}/bin /usr/lib/qt3/bin],[
+	CHK_EXECUTABLE([qmake],[qmake qmake-qt3],[${QTDIR}/bin /usr/bin /usr/local/bin /usr/lib/qt3/bin],[
 		dnl check the qmake we found is for correct QT version (3.x.x)
 		isqmake3=`$testbin --version 2>&1 | grep '3\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*'`
 		if test -z "$isqmake3"
 		then
 			testbin=""
 		fi
-	],[(only for platforms where qmake is not installed under QTDIR tree).])
+	],[(only for platforms where qmake is not installed under QTDIR/bin, /usr/bin, /usr/local/bin, /usr/lib/qt3/bin or in PATH).])
 	if test -z "${qmake_bin}"
 	then
 		AC_MSG_ERROR(unable to find qmake for QT3)
@@ -202,8 +202,8 @@ if test "x$enable_gui" = "xyes"; then
 
 	dnl check for lrelease
 	AC_MSG_CHECKING(for QT lrelease)
-	CHK_EXECUTABLE([lrelease],[lrelease],[${QTDIR}/bin /usr/bin /usr/local/bin],[],
-		       [(Only for platforms where lrelease is not installed under QTDIR/bin or /usr/bin or /usr/local/bin).])
+	CHK_EXECUTABLE([lrelease],[lrelease],[${QTDIR}/bin /usr/bin /usr/local/bin /usr/lib/qt3/bin],[],
+		       [(Only for platforms where lrelease is not installed under QTDIR/bin, /usr/bin, /usr/local/bin, /usr/lib/qt3/bin or in PATH).])
 	if test -z "${lrelease_bin}"
 	then
 		AC_MSG_ERROR(unable to find lrelease localization binary for QT3)

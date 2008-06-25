@@ -182,14 +182,15 @@ You can also control search paths for required libraries and binaries:
 		--with-boost-libdir=YOUR_BOOST_LIB_PATH \
 		--with-boost-iostreams=IOSTREAM_LIBRARY
 
-	- qmake is searched in $QTDIR/bin, /usr/lib/qt3/bin and
-	  current PATH directories. If you have qmake installed
-	  in other directory, use:
+	- qmake is searched in $QTDIR/bin, /usr/bin, /usr/local/bin,
+	  /usr/lib/qt3/bin and in directories in $PATH. If you have
+	  qmake installed in other directory, use:
 	./configure --with-qmake=QMAKE_BINARY_WITH_PATH
 
-	- qmake comes with lrelease binary which is used for 
+	- QT comes with lrelease binary which is used for 
 	  localization data files translation. This binary is
-	  searched in QTDIR/bin, /usr/bin, /usr/local/bin paths.
+	  searched in $QTDIR/bin, /usr/bin, /usr/local/bin,
+	  /usr/lib/qt3/bin and in directories in $PATH.
 	  If it is not found on your system, please use
 	./configure --with-lrelease-bin=LRELEASE_BINARY_WITH_PATH
 
