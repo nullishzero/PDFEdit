@@ -29,7 +29,7 @@ function delinearize_fail(err) {
  message(tr("Delinearization failed!")+err);
 }
 
-/** Function to invoke the pluigin functionality */
+/** Function to invoke the plugin functionality */
 function delinearize_gui() {
  inFile=fileOpenDialog();
  if (!inFile) return;
