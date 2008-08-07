@@ -431,7 +431,10 @@ AC_OUTPUT(src/xpdf/Makefile src/xpdf/goo/Makefile src/xpdf/fofi/Makefile src/xpd
 echo ""
 echo "Configuration complete"
 echo " Building in release mode      : $enable_release"
-echo " Include debugging information : $enable_debug_info"
+if test  "$enable_release" = "yes"
+then
+	echo " Include debugging information : $enable_debug_info"
+fi
 echo " Enable observer debugging     : $enable_observer_debug"
 echo " Build user manual             : $enable_user_manual"
 echo " Build doxygen documentation   : $enable_doxygen_doc"
