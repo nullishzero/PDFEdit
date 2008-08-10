@@ -1,4 +1,5 @@
 ????-??-?? PDF Editor 0.4.2
+	* Chinese (Traditional) localization added - thanks to Yi-Shun Wang
 	* French localization added - thanks to Sylvain
 	* Bugs 131, 157, 158, 199, 215, 217, 220, 222, 217, 226, 228, 233 fixed
 	* Print summary information with used options after running configure script
