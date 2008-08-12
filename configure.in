@@ -232,6 +232,63 @@ AC_ARG_WITH([root-dir],
 	    )
 AC_SUBST(root_dir)
 
+AC_ARG_WITH([parallel-make],
+	    AS_HELP_STRING([--with-parallel-make=auto|off|number],
+		     [Sets MAKEFLAGS so that make will use parallel building when possible. This option
+		     is useful when you have more CPUs/cores because each core can compile independently
+		     and the compilation will take shorter time. You can use auto (default) which will
+		     find out the number of CPU available and use this value, off for no parallelism
+		     or number to specify the value explicitly.]
+	     ),
+	     [
+	      	parallel_make="$withval"
+	     ],
+	     [parallel_make="auto"]
+	      )
+
+if test "i$parallel_make" = "iauto"
+then
+{
+	AC_MSG_CHECKING(for /proc/cpuinfo )
+	if test -f /proc/cpuinfo
+	then
+	{
+		CPU_NUM=`grep processor /proc/cpuinfo | wc -l`
+		if test $CPU_NUM -gt 1
+		then
+			AC_MSG_RESULT($CPU_NUM CPUs/Cores available - using $CPU_NUM parallel jobs)
+			parallel_make="-j$CPU_NUM"
+		else
+			AC_MSG_RESULT(Only one CPU available - no parallelism)
+		fi
+	}
+	else
+		AC_MSG_RESULT(not available)
+		dnl TODO checks for other platforms
+	fi
+}
+else
+{
+	AC_MSG_CHECKING(--with-parallel-make value)
+	if test "i$parallel_make" = "ioff"
+	then
+		parallel_make=""
+		AC_MSG_RESULT(No parallelism)
+	else
+	{
+		if echo $parallel_make | grep '^ *[[0-9]][[0-9]]* *$' >/dev/null 2>&1
+		then
+			AC_MSG_RESULT(Using $parallel_make)
+			parallel_make="-j$parallel_make"
+		else
+			AC_MSG_ERROR($parallel_make is not valid)
+		fi
+	}
+	fi
+}
+fi
+AC_SUBST(parallel_make)
+
 dnl TODO handle also dev package (exclusive with gui case)
 
 dnl Sets TESTS_TARGET and cppunit stuff, if we want to have 

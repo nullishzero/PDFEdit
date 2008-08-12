@@ -161,6 +161,21 @@ uses this feature):
 	 Disabled by default. Note that docbook and its prerequisites
 	 have to be installed for this feature.
 
+Default configuration process will check for the number of CPUs/cores and 
+use this value for make jobs parallelization (each make will use different
+CPU/core). You can change this behavior with --with-parallel-make=VALUE 
+where VALUE is one of the:
+	- auto (default) - (on Linux - checks /proc/cpuinfo and use the CPU
+	  counts for the number of parallel make jobs).
+	- off - no parallelization
+	- number - the number of parallel make jobs (positive number
+	  expected)
+Default behavior (no need for --with-parallel-make parameter) should be OK
+in almost all situations (with benefit of shorter built time), however if 
+you have specific requirements when you don't want/can't use all your
+CPUs/cores for compilation you can use either off or precise number of
+parallel jobs.
+
 
 Libraries and binaries specification
 ------------------------------------

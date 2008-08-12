@@ -68,6 +68,8 @@ BIN_PATH	= $(bindir)
 # Flags definition
 #############################################
 
+MAKEFLAGS += @parallel_make@
+
 # Debug options
 DEBUG	 = @DEBUG@
 # Optimization options
