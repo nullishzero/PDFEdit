@@ -70,9 +70,9 @@ BIN_PATH	= $(bindir)
 
 # Define MAKEFLAGS only for top level makes as this variable is inherited 
 # down in recursion
-#ifeq ($(MAKELEVEL),0)
+ifeq ($(MAKELEVEL),0)
 MAKEFLAGS += @parallel_make@
-#endif
+endif
 
 # Debug options
 DEBUG	 = @DEBUG@
