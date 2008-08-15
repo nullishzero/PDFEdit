@@ -52,7 +52,7 @@ isEmpty( PREFIX ) {
 
 # Translations
 DEPENDPATH += lang
-TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts lang/pdfedit_fr.ts
+TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts lang/pdfedit_fr.ts lang/pdfedit_zh_TW.ts
 
 # All .qm files must exist before continuing, otherwise translations may be omitted from installing. (qmake bug)
 # In release, qm file are already compiled, so lrelease is not necessary
