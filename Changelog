@@ -4,7 +4,7 @@
 	  available CPUs)
 	* Chinese (Traditional) localization added - thanks to Yi-Shun Wang
 	* French localization added - thanks to Sylvain
-	* Bugs 131, 157, 158, 199, 215, 217, 220, 222, 217, 226, 228, 233 fixed
+	* Bugs 131, 157, 158, 199, 215, 217, 220, 222, 217, 226, 228, 233, 246 fixed
 	* Print summary information with used options after running configure script
 	* 64b distributions with boost libraries in lib64 directory can use
 	  --with-boost-libdir configure parameter
