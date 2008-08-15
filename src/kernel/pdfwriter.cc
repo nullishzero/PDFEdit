@@ -414,6 +414,18 @@ using namespace boost;
 		utilsPrintDbg(DBG_DBG, "Linking to previous xref section. Trailer::Prev="<<newPrev.getInt());
 	}
 
+	// hybrid xref files can contain both xref table and xref stream
+	// in such a case startxref points to xreftable and trailer::XrefStm
+	// to the additional objects in xref stream. PDF>=1.5 capable readers
+	// reads both of them and so we have to remove XRefStm for later 
+	// revisions to prevent from confusions.
+	Object * xrefStm = trailer.getDict()->del("XRefStm");
+	if(xrefStm)
+	{
+		utilsPrintDbg(DBG_DBG, "Removing old Trailer::XRefStm.");
+		xpdf::freeXpdfObject(xrefStm);
+	}
+
 	// sets Size entry with the maximum from the original entries count and 
 	// the highest changed object reference number
 	Object newSize;
