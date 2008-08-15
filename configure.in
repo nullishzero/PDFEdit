@@ -253,7 +253,7 @@ then
 	if test -f /proc/cpuinfo
 	then
 	{
-		CPU_NUM=`grep processor /proc/cpuinfo | wc -l`
+		CPU_NUM=`grep "^processor" /proc/cpuinfo | wc -l`
 		if test $CPU_NUM -gt 1
 		then
 			AC_MSG_RESULT($CPU_NUM CPUs/Cores available - using $CPU_NUM parallel jobs)
