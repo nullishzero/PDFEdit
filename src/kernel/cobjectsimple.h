@@ -328,9 +328,10 @@ makeNamePdfValid (Iter it, Iter end)
 	{
 		if ( '!' > (*it) || '~' < (*it))
 		{ // Convert it to ascii
-			Item a = (Item) (*it) >> sizeof (Item) * 4;
-			Item b = (Item) (*it) & ((unsigned) 1 << sizeof(Item) * 4);
-			tmp += std::string ("#") + a + b;
+			char hexstr[4];
+			snprintf(hexstr, sizeof(hexstr), "#%02x", (unsigned)(*it)&0xff);
+			assert(hexstr[sizeof(hexstr)-1] == '\0');
+			tmp += hexstr;
 		}else
 			tmp += *it;
 	}
