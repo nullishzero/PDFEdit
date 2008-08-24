@@ -72,13 +72,20 @@ function editPageMediaBox() {
 									PageSpace.convertUnits(xright,"pt"), gb);
  var eyr = createNumberEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
 									PageSpace.convertUnits(yright,"pt"), gb);
+ var pagePos = createNumberEditAndDisplay(tr("Apply from page"), document.getPagePosition(page()), dialog);
+ var pageCount = createNumberEditAndDisplay(tr("How many pages"), 1, dialog);
+
  if (!dialog.exec()) return;
 
  // Save media box
- page().setMediabox ( PageSpace.convertUnits( exl.value, undefined, "pt" ),
+ for (;pageCount.value > 0 && pagePos.value <= document.getPageCount(); --pageCount.value)
+ {
+   var page = document.getPage(pagePos.value++);
+   page.setMediabox ( PageSpace.convertUnits( exl.value, undefined, "pt" ),
 						PageSpace.convertUnits( eyl.value, undefined, "pt" ),
 						PageSpace.convertUnits( exr.value, undefined, "pt" ),
 						PageSpace.convertUnits( eyr.value, undefined, "pt" ));
+ }
  print (tr("MediaBox changed."));
  go ();
 }
@@ -363,6 +370,8 @@ function setPageTm() {
 	rbtran = createCheckBoxAndDisplay (tr("Translate (shift) page"),gb);
 	rbscal = createCheckBoxAndDisplay (tr("Scale page"),gb);
 	rbskew = createCheckBoxAndDisplay (tr("Skew page"),gb);
+	var pagePos = createNumberEditAndDisplay(tr("Apply from page"), document.getPagePosition(page()), dialog);
+	var pageCount = createNumberEditAndDisplay(tr("Number of pages"), 1, dialog);
 
 
 	/* == Second tab */
@@ -420,7 +429,11 @@ function setPageTm() {
 		}
 	}
 
-	page().setTransformMatrix(tm);
+	for (;pageCount.value > 0 && pagePos.value <= document.getPageCount(); --pageCount.value)
+	{
+		var page = document.getPage(pagePos.value++);
+		page.setTransformMatrix(tm);
+	}
 	
 	print (tr("Page transformation matrix changed to ")+tm);
 	go();
