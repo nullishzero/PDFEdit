@@ -2367,7 +2367,7 @@ using namespace std;
 	if(!file)
 	{
 		kernelPrintDbg(debug::DBG_ERR, "Unable to open file \""<< 
-				fileName <<\" in mode="<< openMode <<
+				filename <<"\" in mode="<< openMode <<
 				" (reason="<<strerror(errno)<<")");
 		throw PdfOpenException("Unable to open file.");
 	}
