@@ -1,4 +1,6 @@
 ????-??-?? PDF Editor 0.4.2
+	* Transformation matrix and page metrics can be changed for multiple
+	  pages at once in GUI.
 	* Configurable make parallelization added for more efficient building
 	  See --with-parallel-make configure parameter (defaults to use all
 	  available CPUs)
