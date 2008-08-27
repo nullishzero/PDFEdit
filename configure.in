@@ -254,6 +254,7 @@ then
 	if test -f /proc/cpuinfo
 	then
 	{
+		dnl /proc/cpuinfo is available in Linux and cygwin systems
 		CPU_NUM=`grep "^processor" /proc/cpuinfo | wc -l`
 		if test $CPU_NUM -gt 1
 		then
@@ -264,8 +265,27 @@ then
 		fi
 	}
 	else
+	{
 		AC_MSG_RESULT(not available)
-		dnl TODO checks for other platforms
+		AC_MSG_CHECKING(for sysctl )
+		dnl sysctl is available on BSD systems
+		CPU_NUM=`/bin/sh -c 'sysctl -n hw.ncpu' 2>/dev/null`
+		if test -n "$CPU_NUM"
+		then
+		{
+			if test $CPU_NUM -gt 1
+			then
+				AC_MSG_RESULT($CPU_NUM CPUs/Cores available - using $CPU_NUM parallel jobs)
+				parallel_make="-j$CPU_NUM"
+			else
+				AC_MSG_RESULT(Only one CPU available - no parallelism)
+			fi
+		}
+		else
+			AC_MSG_RESULT(not available)
+			dnl TODO checks for other platforms
+		fi
+	}
 	fi
 }
 else
