@@ -241,12 +241,13 @@ AC_ARG_WITH([parallel-make],
 		     or number to specify the value explicitly.]
 	     ),
 	     [
-	      	parallel_make="$withval"
+	      	parallel_make_set="$withval"
 	     ],
-	     [parallel_make="auto"]
+	     [parallel_make_set="auto"]
 	      )
 
-if test "i$parallel_make" = "iauto"
+parallel_make=""
+if test "i$parallel_make_set" = "iauto"
 then
 {
 	AC_MSG_CHECKING(for /proc/cpuinfo )
@@ -270,18 +271,17 @@ then
 else
 {
 	AC_MSG_CHECKING(--with-parallel-make value)
-	if test "i$parallel_make" = "ioff"
+	if test "i$parallel_make_set" = "ioff"
 	then
-		parallel_make=""
 		AC_MSG_RESULT(No parallelism)
 	else
 	{
-		if echo $parallel_make | grep '^ *[[0-9]][[0-9]]* *$' >/dev/null 2>&1
+		if echo $parallel_make_set | grep '^ *[[0-9]][[0-9]]* *$' >/dev/null 2>&1
 		then
-			AC_MSG_RESULT(Using $parallel_make)
-			parallel_make="-j$parallel_make"
+			AC_MSG_RESULT(Using $parallel_make_set)
+			parallel_make="-j$parallel_make_set"
 		else
-			AC_MSG_ERROR($parallel_make is not valid)
+			AC_MSG_ERROR($parallel_make_set is not valid)
 		fi
 	}
 	fi
