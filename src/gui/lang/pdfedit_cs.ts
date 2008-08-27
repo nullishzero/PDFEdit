@@ -1091,6 +1091,14 @@ Data: %3
         <source>Unknown error</source>
         <translation>Neznámá chyba</translation>
     </message>
+    <message>
+        <source>Apply from page</source>
+        <translation>Aplikovat od strany</translation>
+    </message>
+    <message>
+        <source>How many pages</source>
+        <translation>Kolik stran</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>

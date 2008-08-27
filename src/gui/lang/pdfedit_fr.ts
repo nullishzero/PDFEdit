@@ -1100,6 +1100,14 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
         <source>Unknown error</source>
         <translation>Erreur inconnu</translation>
     </message>
+    <message>
+        <source>Apply from page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How many pages</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>

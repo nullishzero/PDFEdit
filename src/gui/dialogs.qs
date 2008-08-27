@@ -371,7 +371,7 @@ function setPageTm() {
 	rbscal = createCheckBoxAndDisplay (tr("Scale page"),gb);
 	rbskew = createCheckBoxAndDisplay (tr("Skew page"),gb);
 	var pagePos = createNumberEditAndDisplay(tr("Apply from page"), document.getPagePosition(page()), dialog);
-	var pageCount = createNumberEditAndDisplay(tr("Number of pages"), 1, dialog);
+	var pageCount = createNumberEditAndDisplay(tr("How many pages"), 1, dialog);
 
 
 	/* == Second tab */

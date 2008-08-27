@@ -1094,6 +1094,14 @@ Daten: %3</translation>
         <source>Unknown error</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Apply from page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How many pages</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
