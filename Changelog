@@ -4,6 +4,7 @@
 	* Configurable make parallelization added for more efficient building
 	  See --with-parallel-make configure parameter (defaults to use all
 	  available CPUs)
+	* German localization updated by Andreas Mantke
 	* Chinese (Traditional) localization added - thanks to Yi-Shun Wang
 	* French localization added - thanks to Sylvain
 	* Bugs 131, 157, 158, 199, 207, 215, 217, 220, 222, 217, 226, 228, 233, 
