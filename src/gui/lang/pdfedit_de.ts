@@ -1064,35 +1064,35 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Font face</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftart</translation>
     </message>
     <message>
         <source>Font size (in points)</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftgröße (in Punkten)</translation>
     </message>
     <message>
         <source>Line width (in points)</source>
-        <translation type="unfinished"></translation>
+        <translation>Linienweite (in Punkten)</translation>
     </message>
     <message>
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzen Sie &apos;%1 --help&apos;, um eine Liste Kommandozeilenoptionen und ihren Parametern zu sehen</translation>
     </message>
     <message>
         <source>Saved as</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeichert als</translation>
     </message>
     <message>
         <source>Unable to open file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Außerstande, Datei: %1 zu öffnen</translation>
     </message>
     <message>
         <source>Not implemented: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht implementiert: %1</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Fehler</translation>
     </message>
     <message>
         <source>Apply from page</source>
@@ -1100,7 +1100,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>How many pages</source>
-        <translation type="unfinished"></translation>
+        <translation>Wieviele Seiten</translation>
     </message>
 </context>
 <context>
@@ -1499,11 +1499,11 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Vordergrund</translation>
     </message>
     <message>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund</translation>
     </message>
 </context>
 <context>
@@ -1761,11 +1761,11 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Page view</source>
-        <translation type="unfinished"></translation>
+        <translation>Seitenansicht</translation>
     </message>
     <message>
         <source>Command Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommandozeile</translation>
     </message>
     <message>
         <source>Initial focus</source>
@@ -1773,7 +1773,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>This will specify which part of editor window will receive keyboard focus when new window is opened</source>
-        <translation type="unfinished"></translation>
+        <translation>Dies bestimmt, welcher Teil des Bearbeitungsfensters den Tastaturfocus erhält, wenn ein neues Fenster geöffnet wird</translation>
     </message>
 </context>
 <context>
@@ -1852,7 +1852,8 @@ Daten: %3</translation>
     <message>
         <source>Saving not implemented:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern nicht implementiert:
+%1</translation>
     </message>
     <message>
         <source>Error occured while saving copy:
@@ -1961,7 +1962,8 @@ Daten: %3</translation>
     <message>
         <source>Unable to save:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Außerstande zu speichern:
+%1</translation>
     </message>
 </context>
 <context>
