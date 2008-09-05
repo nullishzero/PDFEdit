@@ -2398,7 +2398,7 @@ using namespace std;
 			instance->mode = ReadOnly;
 		kernelPrintDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
 		return instance;
-	}catch(exception &e)
+	}catch(std::exception &e)
 	{
 		fclose(file);
 		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. cause="<<e.what());
@@ -2670,7 +2670,7 @@ using namespace utils;
 		try
 		{
 			minPos = getNodePosition(_this.lock(), newValue, &nodeCountCache);
-		}catch(exception &e)
+		}catch(std::exception &e)
 		{
 			// position can't be determined
 			// no special handling is needed, minPos keeps its value
@@ -2729,7 +2729,7 @@ using namespace utils;
 				kernelPrintDbg(DBG_WARN, "page with original position="<<i->first<<" is ambiguous. Invalidating.");
 				// page position is ambiguous and so it has to be invalidate
 				i->second->invalidate();
-			}catch(exception & e)
+			}catch(std::exception & e)
 			{
 				kernelPrintDbg(DBG_CRIT, "Unexpected error. cause="<<e.what());
 				assert(!"Possibly bug.");

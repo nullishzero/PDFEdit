@@ -716,7 +716,7 @@ public:
 									storage.push_back(shared_ptr<CAnnotation>(
 												shared_ptr<CAnnotation>(new CAnnotation(annotDict)))
 											);	
-								}catch(exception & e)
+								}catch(std::exception & e)
 								{
 									// target is not a dictionary or CAnnotation
 									// has failed

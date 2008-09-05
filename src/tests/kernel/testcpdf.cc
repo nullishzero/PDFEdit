@@ -594,7 +594,7 @@ public:
 				shared_ptr<CPage> page=pdf->getFirstPage();
 				while(pdf->hasNextPage(page))
 					page=pdf->getNextPage(page);
-			}catch(exception & e)
+			}catch(std::exception & e)
 			{
 				CPPUNIT_FAIL("page iteration methods shouldn't failed");
 			}
@@ -636,7 +636,7 @@ public:
 			{
 				for(size_t pos=1; pos<pdf->getPageCount(); pos++)
 					page=pdf->getPage(pos);
-			}catch(exception & e)
+			}catch(std::exception & e)
 			{
 				CPPUNIT_FAIL("page iteration methods shouldn't failed");
 			}
