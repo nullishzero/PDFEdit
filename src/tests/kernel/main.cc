@@ -30,6 +30,7 @@
  */
 
 #include "kernel/static.h"
+#include "kernel/pdfedit-core-dev.h"
 
 //#include <unistd.h>
 #include "utils/debug.h"
@@ -50,6 +51,15 @@ using namespace debug;
 int 
 main (int argc, char* argv[])
 {
+	//
+	// Initialization
+	//
+	if(pdfedit_core_dev_init(&argc, &argv))
+	{
+		std::cout << "Pdfedit-dev core couldn't be initialized" << std::endl;
+		return 1;
+	}
+
 	// Parse params
 	if (!TestParams::init (argc, argv))
 	{
@@ -60,12 +70,6 @@ main (int argc, char* argv[])
 
 	// If first parameter is "all" clear it
 	CHECK_OUTPUT (TestParams::instance().all_output);
-	
-	//
-	// Initialization
-	//
-	GlobalParams::initGlobalParams("");
-	globalParams->setupBaseFonts(NULL);
 
 	//
 	// Start testing

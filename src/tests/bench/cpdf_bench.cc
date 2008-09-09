@@ -23,6 +23,7 @@
  */
 #include <kernel/cpdf.h>
 #include <kernel/cpage.h>
+#include <kernel/pdfedit-core-dev.h>
 #include "utils.h"
 
 using namespace boost;
@@ -300,6 +301,10 @@ void bench_changeRevision(shared_ptr<CPdf> pdf, struct result * result)
 int main(int argc, char **argv)
 {
 	int ret;
+
+	if(pdfedit_core_dev_init(&argc, &argv))
+		return 1;
+
 	if((ret = parse_cmd_line(argc, argv)))
 		return ret;
 	time_stamp_t start, end;

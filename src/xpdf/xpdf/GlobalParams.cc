@@ -1836,7 +1836,7 @@ void GlobalParams::setBaseDir(char *dir) {
   baseDir = new GString(dir);
 }
 
-void GlobalParams::setupBaseFonts(char *dir) {
+void GlobalParams::setupBaseFonts(const char *dir) {
   GString *fontName;
   GString *fileName;
 #ifdef WIN32

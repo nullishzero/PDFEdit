@@ -22,6 +22,7 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
 #include <kernel/xrefwriter.h>
+#include <kernel/pdfedit-core-dev.h>
 #include <iostream>
 #include "utils.h"
 
@@ -198,6 +199,10 @@ void bench_fetch(XRefWriter *xref, struct result * result_known, struct result *
 int main(int argc, char ** argv)
 {
 	int ret;
+
+	if(pdfedit_core_dev_init(&argc, &argv))
+		return 1;
+
 	if((ret = parse_cmd_line(argc, argv)))
 		return ret;
 	time_stamp_t start, end;

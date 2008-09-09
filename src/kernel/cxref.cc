@@ -26,10 +26,16 @@
 #include "kernel/cxref.h"
 #include "utils/debug.h"
 #include "kernel/factories.h"
+#include "kernel/pdfedit-core-dev.h"
 
 using namespace pdfobjects;
 CXref::CXref(BaseStream * stream):XRef(stream)
 {
+	if(!pdfedit_core_dev_init_check())
+	{
+		kernelPrintDbg(debug::DBG_CRIT, "pdfedit-core-dev core is not initialized");
+		throw PDFedit_devException();
+	}
 	if(!isOk())
 	{
 		// xref is corrupted

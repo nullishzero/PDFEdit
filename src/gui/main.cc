@@ -38,6 +38,7 @@
 #include "util.h"
 #include "version.h"
 #include "kernel/cannotation.h"
+#include "kernel/pdfedit-core-dev.h"
 #include <iostream>
 #include <qapplication.h>
 #include <qdir.h>
@@ -213,6 +214,13 @@ int main(int argc, char *argv[]){
  }
  app.installTranslator(&translator);
 
+ // initializes all global configuration stuff
+ if(pdfedit_core_dev_init(&argc, &argv))
+ {
+   guiPrintDbg(debug::DBG_PANIC, "Unable to initialize pdfedit core");
+   return 1;
+ }
+
  //parse commandline parameters
  /*
   Whole name of one parameter should not be prefix of another parameter, as unpredictable behaviour can occur,
@@ -234,11 +242,6 @@ int main(int argc, char *argv[]){
 
  guiPrintDbg(debug::DBG_DBG,"Commandline parameters processed");
  guiPrintDbg(debug::DBG_DBG,"App path: " << Q_OUT(appPath));
-
- // initializes global parameters for xpdf code - TODO use
- // configuration file - from parameters
- GlobalParams::initGlobalParams("");
- globalParams->setupBaseFonts(NULL);
 
  //load settings
  globalSettings=Settings::getInstance();

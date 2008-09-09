@@ -32,6 +32,7 @@
 #include "kernel/factories.h"
 #include "utils/debug.h"
 #include "kernel/cpageattributes.h"
+#include "kernel/pdfedit-core-dev.h"
 
 using namespace boost;
 using namespace std;
@@ -2353,6 +2354,12 @@ boost::shared_ptr<CPdf> CPdf::getInstance(const char * filename, OpenMode mode)
 using namespace std;
 
 	kernelPrintDbg(debug::DBG_DBG, "");
+
+	if(!pdfedit_core_dev_init_check())
+	{
+		kernelPrintDbg(debug::DBG_CRIT, "pdfedit-core-dev core is not initialized");
+		throw PDFedit_devException();
+	}
 	
 	// openMode is read-only by default
 	const char * openMode="rb";

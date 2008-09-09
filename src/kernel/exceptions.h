@@ -92,6 +92,14 @@ class PdfException: public std::exception
 {
 };
 
+/** General purpose exception for pdfedit-dev related
+ * exceptions.
+ * Thrown for example when pdfedit-dev core is not initialized
+ * and its code is used.
+ */
+class PDFedit_devException: public std::exception
+{
+};
 
 /** Cobject exception base class.
  */

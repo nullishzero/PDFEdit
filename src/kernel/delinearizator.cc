@@ -29,6 +29,7 @@
 #include "kernel/xrefwriter.h"
 #include "kernel/streamwriter.h"
 #include "kernel/factories.h"
+#include "kernel/pdfedit-core-dev.h"
 
 
 using namespace pdfobjects;
@@ -39,6 +40,11 @@ Delinearizator::Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter *
 	pdfWriter(writer),
 	file(f)
 {
+	if(!pdfedit_core_dev_init_check())
+	{
+		utilsPrintDbg(debug::DBG_CRIT, "pdfedit-core-dev not intialized");
+		throw PDFedit_devException();
+	}
 	if(getErrorCode() !=errNone)
 	{
 		// xref is corrupted
