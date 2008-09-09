@@ -13,11 +13,14 @@ REL_ADDR = ../../
 include $(REL_ADDR)/Makefile.rules
 
 all: libxpdf
+
+staticlib: libxpdf
+
 libxpdf:
 	cd goo && $(MAKE)
 	cd fofi && $(MAKE)
 	cd splash && $(MAKE)
-	cd xpdf && $(MAKE) libxpdf
+	cd xpdf && $(MAKE) staticlib
 
 clean:
 	-cd goo && $(MAKE) clean || true

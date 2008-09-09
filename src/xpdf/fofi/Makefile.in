@@ -27,7 +27,10 @@ HEADERS = \
 	FoFiType1C.h \
 #------------------------------------------------------------------------
 
-all: $(LIBPREFIX)fofi.a
+TARGET = $(LIBPREFIX)fofi.a
+all: $(TARGET)
+
+staticlib: $(TARGET)
 
 #------------------------------------------------------------------------
 
@@ -38,15 +41,15 @@ FOFI_OBJS = \
 	FoFiType1.o \
 	FoFiType1C.o
 
-$(LIBPREFIX)fofi.a: deps $(FOFI_OBJS)
-	$(DEL_FILE) $(LIBPREFIX)fofi.a
-	$(AR) $(LIBPREFIX)fofi.a $(FOFI_OBJS)
-	$(RANLIB) $(LIBPREFIX)fofi.a
+$(TARGET): deps $(FOFI_OBJS)
+	$(DEL_FILE) $(TARGET)
+	$(AR) $(TARGET) $(FOFI_OBJS)
+	$(RANLIB) $(TARGET)
 
 #------------------------------------------------------------------------
 
 clean:
-	$(DEL_FILE) $(FOFI_OBJS) $(LIBPREFIX)fofi.a deps
+	$(DEL_FILE) $(FOFI_OBJS) $(TARGET) deps
 
 #------------------------------------------------------------------------
 

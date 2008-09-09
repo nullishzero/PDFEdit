@@ -35,23 +35,25 @@ HEADERS = \
 	parseargs.h\
 #------------------------------------------------------------------------
 
-all: $(LIBPREFIX)Goo.a
+TARGET = $(LIBPREFIX)Goo.a
+all: $(TARGET)
 
+staticlib: $(TARGET)
 #------------------------------------------------------------------------
 
 GOO_CXX_OBJS = GHash.o GList.o GString.o gmem.o gmempp.o gfile.o FixedPoint.o
 GOO_C_OBJS = parseargs.o
 GOO_OBJS = $(GOO_CXX_OBJS) $(GOO_C_OBJS)
 
-$(LIBPREFIX)Goo.a: deps_cxx deps_c $(GOO_OBJS)
-	$(DEL_FILE) $(LIBPREFIX)Goo.a
-	$(AR) $(LIBPREFIX)Goo.a $(GOO_OBJS)
-	$(RANLIB) $(LIBPREFIX)Goo.a
+$(TARGET): deps_cxx deps_c $(GOO_OBJS)
+	$(DEL_FILE) $(TARGET)
+	$(AR) $(TARGET) $(GOO_OBJS)
+	$(RANLIB) $(TARGET)
 
 #------------------------------------------------------------------------
 
 clean:
-	$(DEL_FILE) $(GOO_OBJS) $(LIBPREFIX)Goo.a deps_cxx deps_c
+	$(DEL_FILE) $(GOO_OBJS) $(TARGET) deps_cxx deps_c
 
 #------------------------------------------------------------------------
 

@@ -13,7 +13,7 @@ all: kernel tests $(GUI_TARGET)
 
 # XPdf
 xpdf:
-	cd $(XPDFROOT) && $(MAKE) libxpdf
+	cd $(XPDFROOT) && $(MAKE) staticlib
 
 # PDF editor
 pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
@@ -55,7 +55,7 @@ $(QOUTPUTDEVROOT)/Makefile.qt: $(QOUTPUTDEVROOT)/Makefile.gui $(QOUTPUTDEVROOT)/
 
 # Utils
 utils: xpdf
-	cd $(UTILSROOT) && $(MAKE)
+	cd $(UTILSROOT) && $(MAKE) staticlib
 
 #QSA
 qsa: $(QSAROOT)/Makefile.qsa
@@ -66,7 +66,7 @@ $(QSAROOT)/Makefile.qsa: $(QSAROOT)/qsa.pro
 
 # Kernel
 kernel: xpdf utils
-	cd $(KERNELROOT) && $(MAKE)
+	cd $(KERNELROOT) && $(MAKE) staticlib
 
 # kernel tests
 tests: kernel

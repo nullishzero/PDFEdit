@@ -58,11 +58,6 @@ HEADERS = \
 	SplashXPathScanner.h\
 
 #------------------------------------------------------------------------
-
-all: $(LIBPREFIX)splash.a
-
-#------------------------------------------------------------------------
-
 SPLASH_OBJS = \
 	Splash.o \
 	SplashBitmap.o \
@@ -84,15 +79,20 @@ SPLASH_OBJS = \
 	SplashXPath.o \
 	SplashXPathScanner.o
 
-$(LIBPREFIX)splash.a: deps $(SPLASH_OBJS)
-	$(DEL_FILE) $(LIBPREFIX)splash.a
-	$(AR) $(LIBPREFIX)splash.a $(SPLASH_OBJS)
-	$(RANLIB) $(LIBPREFIX)splash.a
+TARGET = $(LIBPREFIX)splash.a
+all: $(TARGET)
+
+staticlib: all
+
+$(TARGET): deps $(SPLASH_OBJS)
+	$(DEL_FILE) $(TARGET)
+	$(AR) $(TARGET) $(SPLASH_OBJS)
+	$(RANLIB) $(TARGET)
 
 #------------------------------------------------------------------------
 
 clean:
-	$(DEL_FILE) $(SPLASH_OBJS) $(LIBPREFIX)splash.a deps
+	$(DEL_FILE) $(SPLASH_OBJS) $(TARGET) deps
 
 #------------------------------------------------------------------------
 

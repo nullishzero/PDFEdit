@@ -165,12 +165,15 @@ UnicodeTypeTable.o \
 XRef.o \
 XpdfPluginAPI.o
 
-libxpdf:	$(LIBPREFIX)xpdf.a
+TARGET = $(LIBPREFIX)xpdf.a
+libxpdf: $(TARGET)
 
-$(LIBPREFIX)xpdf.a: deps $(LIBXPDF_OBJS)
-	$(DEL_FILE) $(LIBPREFIX)xpdf.a
-	$(AR) $(LIBPREFIX)xpdf.a $(LIBXPDF_OBJS)
-	$(RANLIB) $(LIBPREFIX)xpdf.a
+staticlib: libxpdf
+
+$(TARGET): deps $(LIBXPDF_OBJS)
+	$(DEL_FILE) $(TARGET)
+	$(AR) $(TARGET) $(LIBXPDF_OBJS)
+	$(RANLIB) $(TARGET)
 
 #------------------------------------------------------------------------
 
@@ -182,7 +185,7 @@ SecurityHandler.x.o: SecurityHandler.cc
 
 clean:
 	$(DEL_FILE) *.o
-	$(DEL_FILE) $(LIBPREFIX)xpdf.a deps
+	$(DEL_FILE) $(TARGET) deps
 
 #------------------------------------------------------------------------
 

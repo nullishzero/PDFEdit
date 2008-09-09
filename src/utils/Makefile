@@ -40,6 +40,9 @@ $(TARGET): deps $(BINS)
 	$(AR) $(TARGET) $(BINS)
 	$(RANLIB) $(TARGET)
 
+.PHONY: staticlib
+staticlib: $(TARGET)
+
 .PHONY: clean distclean
 clean:
 	$(DEL_FILE) $(BINS) deps
