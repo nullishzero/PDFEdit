@@ -11,7 +11,7 @@
 #ifndef CHARCODETOUNICODE_H
 #define CHARCODETOUNICODE_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

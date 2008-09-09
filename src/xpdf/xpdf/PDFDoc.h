@@ -9,7 +9,7 @@
 #ifndef PDFDOC_H
 #define PDFDOC_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

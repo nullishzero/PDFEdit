@@ -8,7 +8,7 @@ AC_INIT([PDFedit], PDFEDIT_VERSION,
 AC_CONFIG_SRCDIR([src/gui/base.cc])
 dnl FIXME what do we use src/utils/aconf.h for? No includes according to
 dnl grep. Can we remove it?
-AC_CONFIG_HEADERS(src/utils/aconf.h src/xpdf/aconf.h)
+AC_CONFIG_HEADERS(src/utils/aconf.h src/xpdf/xpdf-aconf.h)
 
 m4_include([config/env.m4])
 m4_include([config/macro.m4])

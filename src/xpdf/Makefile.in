@@ -13,8 +13,8 @@ REL_ADDR = ../../
 include $(REL_ADDR)/Makefile.rules
 
 HEADERS = \
-	aconf.h \
-	aconf2.h
+	xpdf-aconf.h \
+	xpdf-aconf2.h
 
 all: libxpdf
 

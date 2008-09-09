@@ -4,7 +4,7 @@
 //
 //========================================================================
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 

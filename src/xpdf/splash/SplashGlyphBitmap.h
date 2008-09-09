@@ -7,7 +7,7 @@
 #ifndef SPLASHGLYPHBITMAP_H
 #define SPLASHGLYPHBITMAP_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #include "goo/gtypes.h"
 

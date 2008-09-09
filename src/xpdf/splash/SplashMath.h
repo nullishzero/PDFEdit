@@ -7,7 +7,7 @@
 #ifndef SPLASHMATH_H
 #define SPLASHMATH_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 #if USE_FIXEDPONT
 #include "goo/FixedPoint.h"
 #else

@@ -7,7 +7,7 @@
 #ifndef SPLASHT1FONTENGINE_H
 #define SPLASHT1FONTENGINE_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #if HAVE_T1LIB_H
 

@@ -9,7 +9,7 @@
 #ifndef FOFITYPE1C_H
 #define FOFITYPE1C_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

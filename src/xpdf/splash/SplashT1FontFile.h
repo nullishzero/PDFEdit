@@ -7,7 +7,7 @@
 #ifndef SPLASHT1FONTFILE_H
 #define SPLASHT1FONTFILE_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #if HAVE_T1LIB_H
 

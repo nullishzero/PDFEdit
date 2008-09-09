@@ -8,7 +8,7 @@
 //
 //========================================================================
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 #include "goo/gmem.h"
 
 #ifdef DEBUG_MEM

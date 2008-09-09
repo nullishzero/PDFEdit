@@ -6,7 +6,7 @@
 //
 //========================================================================
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 #include <stdio.h>
 #include "goo/parseargs.h"
 #include "goo/gmem.h"

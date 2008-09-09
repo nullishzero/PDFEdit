@@ -7,7 +7,7 @@
 #ifndef SPLASHERRORCODES_H
 #define SPLASHERRORCODES_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 //------------------------------------------------------------------------
 

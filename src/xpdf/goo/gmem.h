@@ -10,7 +10,7 @@
 #define GMEM_H
 
 #include <stdio.h>
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #if USE_EXCEPTIONS
 

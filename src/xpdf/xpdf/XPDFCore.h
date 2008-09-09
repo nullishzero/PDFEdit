@@ -9,7 +9,7 @@
 #ifndef XPDFCORE_H
 #define XPDFCORE_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

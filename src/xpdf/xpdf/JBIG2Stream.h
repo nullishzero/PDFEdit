@@ -9,7 +9,7 @@
 #ifndef JBIG2STREAM_H
 #define JBIG2STREAM_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

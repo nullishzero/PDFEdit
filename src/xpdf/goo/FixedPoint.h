@@ -11,7 +11,7 @@
 #ifndef FIXEDPOINT_H
 #define FIXEDPOINT_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #if USE_FIXEDPOINT
 

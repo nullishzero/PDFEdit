@@ -7,7 +7,7 @@
 #ifndef SPLASHCLIP_H
 #define SPLASHCLIP_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

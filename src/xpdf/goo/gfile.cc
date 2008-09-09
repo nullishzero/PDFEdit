@@ -8,7 +8,7 @@
 //
 //========================================================================
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef WIN32
 #  include <time.h>

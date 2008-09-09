@@ -6,7 +6,7 @@
 //
 //========================================================================
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 #include <stdlib.h>
 #include "xpdf/FontEncodingTables.h"
 

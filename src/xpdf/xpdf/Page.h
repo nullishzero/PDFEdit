@@ -9,7 +9,7 @@
 #ifndef PAGE_H
 #define PAGE_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

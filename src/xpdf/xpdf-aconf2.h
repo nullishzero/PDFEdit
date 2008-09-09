@@ -1,7 +1,7 @@
 /*
  * aconf2.h
  *
- * This gets included by aconf.h, and contains miscellaneous global
+ * This gets included by xpdf-xpdf-aconf.h, and contains miscellaneous global
  * settings not directly controlled by autoconf.  This is a separate
  * file because otherwise the configure script will munge any
  * #define/#undef constructs.

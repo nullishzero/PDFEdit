@@ -12,7 +12,7 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface

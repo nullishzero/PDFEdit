@@ -6,7 +6,7 @@
 //
 //========================================================================
 
-#include "aconf.h"
+#include "xpdf-aconf.h"
 
 #ifdef ENABLE_PLUGINS
 

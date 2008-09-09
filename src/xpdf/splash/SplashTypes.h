@@ -7,7 +7,7 @@
 #ifndef SPLASHTYPES_H
 #define SPLASHTYPES_H
 
-#include <aconf.h>
+#include <xpdf-aconf.h>
 #include "goo/gtypes.h"
 
 //------------------------------------------------------------------------
