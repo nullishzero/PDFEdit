@@ -28,8 +28,8 @@ http://sourceforge.net/mail/?group_id=177354
 
 Prerequisites
 =============
-Base (kernel)
--------------
+Base (kernel), pdfedit-code-dev package
+---------------------------------------
 Boost libraries must be installed. See detailed description about configure
 parameters if you have some unusual installation.
 Freetype library is almost necessary, because nearly all PDFs use these fonts.
@@ -116,6 +116,16 @@ enabled, doxygen documentation is generated, no kernel tests (stored in
 src/kernel/tests/) are compiled and application will be installed into the
 /usr/local/pdfedit directory.
 
+Configuration enables also compilation and installation in so called
+pdfedit-core-dev package which prepares all libraries and header files for
+3rd party application which want to reuse our core (kernel) functionality.
+This is not done by default and you have to enable it explicitly by
+--enable-pdfedit-dev-core configure parameter.
+Note that development package and gui can be mixed together but also single
+dev. package can be created by disabling gui (see bellow).
+pdfedit-dev-core installation comes with pdfedit-core-dev-config script
+which can be used by 3rd party code for its configuration to correctly set
+compiler flags include paths, libraries and so on.
 
 Configure features
 ------------------
@@ -160,6 +170,12 @@ uses this feature):
 	-advanced-doc - generates also docbook design documentation.
 	 Disabled by default. Note that docbook and its prerequisites
 	 have to be installed for this feature.
+	
+	-pdfedit-core-dev - generates libraries needed for 3rd party
+	 applications which want to use pdfedit kernel core. Moreover 
+	 make install will install also header files, libraries and
+	 pdfedit-core-dev-config helper script (see Installation directories
+	 bellow). This option is disabled by default.
 
 Default configuration process will check for the number of CPUs/cores and 
 use this value for make jobs parallelization (each make will use different
@@ -248,6 +264,12 @@ Documentation files are copied to PREFIX/share/pdfedit/doc, configuration
 files and scripts are copied to PREFIX/share/pdfedit and man page is
 copied to PREFIX/share/man/man1.
 
+If pdfedit-core-dev is configured, all relevant header files are copied into
+INCLUDEDIR/pdfedit-version (INCLUDEDIR=PREFIX/include by default), static
+libraries are copied into LIBDIR/pdfedit-version (LIBDIR=EPREFIX/lib by
+default) and pdfedit-core-dev-config script copied into the binary path as
+described for PDFedit bunary.
+
 If you need to change installation root (e. g. if you are packager and
 want to create package or use chrooted environment) use
 	--with-root-dir=YOUR_INSTALLATION_ROOT_DIR
@@ -262,6 +284,10 @@ for example), use --prefix parameter for that.
 Installation directories for specific parts (binary, documentation, 
 configuration files) can be also controlled by configure parameters.
 	--bindir controls directory where the pdfedit binary is copied
+	--libdir controls directory where the pdfedit-core-dev libraries are
+	  installed
+	--includedir controls directory where the pdfedit-core-dev header
+	  files are installed
 	--docdir controls directory where documentation is copied
 	--mandir controls directory where the man page is copied. Note that
 	  we provide only man 1 pdfedit, so that man page is actually copied
