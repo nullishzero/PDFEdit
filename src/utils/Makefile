@@ -30,6 +30,10 @@ HEADERS= \
 	observer.h \
 	rulesmanager.h \
 	types.h \
+	listitem.h \
+	algorithms/basic_algos.h \
+	types/basic_types.h \
+	types/coordinates.h
 
 # FIXME use LIBPREFIX
 TARGET = libutils.a

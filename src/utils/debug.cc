@@ -57,7 +57,4 @@ void changeDebugLevel(unsigned int level)
 	changeDebugLevel(utilsDebugTarget, level);
 }
 
-// API logger initialization
-ApiLogger::Logger ApiLogger::logger (std::cout, "API");
-
 }

@@ -9,7 +9,7 @@ include $(REL_ADDR)/Makefile.rules
 CFLAGS   += $(EXTRA_KERNEL_CFLAGS)
 CXXFLAGS += $(EXTRA_KERNEL_CXXFLAGS)
 
-HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/listitem.h $(UTILSROOT)/iterator.h $(UTILSROOT)/observer.h\
+HEADERS = static.h\
 	  exceptions.h modecontroller.h filters.h xpdf.h utils.h cxref.h xrefwriter.h \
 	  factories.h pdfwriter.h indiref.h iproperty.h cobject.h cobjectsimple.h \
 	  cobjectsimpleI.h carray.h cdict.h cstream.h cstreamsxpdfreader.h \
@@ -19,7 +19,7 @@ HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/listitem.h $(UTILSROOT)/ite
 	  cpdf.h streamwriter.h cinlineimage.h coutline.h \
 	  stateupdater.h cannotation.h textoutput.h textoutputbuilder.h \
 	  textoutputentities.h textoutputengines.h	\
-	  delinearizator.h pdfspecification.h
+	  delinearizator.h pdfspecification.h operatorhinter.h
 
 SOURCES = static.cc xpdf.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
 	  cxref.cc xrefwriter.cc streamwriter.cc iproperty.cc carray.cc \

@@ -33,6 +33,10 @@ HEADERS = \
 	gmem.h\
 	gtypes.h\
 	parseargs.h\
+	vms_dirent.h\
+	vms_sys_dirent.h\
+	vms_unix_time.h
+
 #------------------------------------------------------------------------
 
 TARGET = $(LIBPREFIX)Goo.a
