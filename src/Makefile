@@ -19,6 +19,12 @@ xpdf:
 pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
 
+# PDFedit core development package for 3rd party code
+pdfedit-core-dev:
+	cd $(XPDFROOT) && $(MAKE) staticlib
+	cd $(UTILSROOT) && $(MAKE) staticlib
+	cd $(KERNELROOT) && $(MAKE) staticlib
+
 # generates QT makefile for gui
 # This monkey stuff is here because i was not able to persuade qmake
 # to include our Makefile.flags which contains all configuration stuff
@@ -40,10 +46,6 @@ $(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfedit.pro
 	$(SHELL) $(ROOT)/tools/generate_online_help.sh "$(DOCROOT)" "$(GUIROOT)"
 	$(SHELL) $(ROOT)/tools/generate_lang.sh "$(GUIROOT)" "$(LRELEASE)"
 	cd $(GUIROOT) && $(QMAKE) pdfedit.pro -o Makefile.qt
-
-# Target for devel package - no gui, just header files and core (xpdf and 
-# kernel) libraries
-pdfedit-devel: utils kernel xpdf qoutputdevices
 
 # QOutputDevices - uses same trick with Makefile.{gui.qt} like
 # gui - see above
@@ -72,6 +74,10 @@ kernel: xpdf utils
 tests: kernel
 	cd $(TESTSROOT) && $(MAKE) 
 
+# internal rule for development which should be used when too many
+# changes were introduced
+dev-rebuild: dev-clean utils kernel tests pdfedit
+
 # Cleanup
 clean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
@@ -83,8 +89,6 @@ clean:
 	cd $(QOUTPUTDEVROOT) && $(MAKE) -f Makefile.gui clean || true
 	$(DEL_FILE) $(GUIROOT)/Makefile.qt 
 	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile.qt
-
-dev-rebuild: dev-clean utils kernel tests pdfedit
 
 dev-clean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
