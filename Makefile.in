@@ -24,10 +24,14 @@ install: @INSTALL_TARGET@ doc-dist-install
 install-no:
 	@echo There is no installation target defined!!! You probably have
 	@echo not configured PDFedit with installation target. 
+	exit 1
 
 # Installs gui part
 install-gui: source 
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui install
+
+# TODO - maybe we can create install-dev target too later when we can 
+# extract also some functionality from gui (e.g. scripting layer)
 
 # Installs core development package consisting of header files and
 # configuration script for 3rd party applications depending on kernel
@@ -49,10 +53,14 @@ uninstall-no:
 	@echo There is no uninstallation target defined!!! You probably have
 	@echo not configured PDFedit with installation target so that 
 	@echo uninstallation is neither evailable. 
+	exit 1
 
 # Uninstalls gui part
 uninstall-gui:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui uninstall
+
+# TODO - maybe we can create uninstall-dev target too later when we can 
+# extract also some functionality from gui (e.g. scripting layer)
 
 # Uninstalls core dev packages
 uninstall-core-dev:

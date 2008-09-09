@@ -236,6 +236,11 @@ KERNEL_TESTS_TARGET = @KERNEL_TESTS_TARGET@
 # Cumulative target for all possible tests
 TEST_TARGETS = $(KERNEL_TESTS_TARGET)
 
+# Target for man pages generation/installation
+# These variables are set when --enable-gui is selected
+MAN_TARGET	= @MAN_TARGET@
+MAN_INSTALL_TARGET = @MAN_INSTALL_TARGET@
+
 # configure parameter --enable-doxygen-doc
 DOXYGEN_TARGET	 = @DOXYGEN_TARGET@
 DOXYGEN_INSTALL_TARGET = @DOXYGEN_INSTALL_TARGET@

@@ -12,9 +12,9 @@ include Makefile.rules
 all: doc_dist
 
 # Build man pages and doxygen doc if required
-doc_dist: doc_man $(DOXYGEN_TARGET) $(ADVANCED_DOC_TARGET) $(USER_MANUAL_TARGET)
+doc_dist: $(MAN_TARGET) $(DOXYGEN_TARGET) $(ADVANCED_DOC_TARGET) $(USER_MANUAL_TARGET)
 
-doc_dist_install: doc_man_install \
+doc_dist_install: $(MAN_INSTALL_TARGET) \
 	$(USER_MANUAL_INSTALL_TARGET) \
 	$(DOXYGEN_INSTALL_TARGET) \
 	$(ADVANCED_DOC_INSTALL_TARGET)
