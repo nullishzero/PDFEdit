@@ -1,0 +1,82 @@
+# PDFedit - free program for PDF document manipulation.
+# Copyright (C) 2006, 2007, 2008  PDFedit team: Michal Hocko,
+#                                              Miroslav Jahoda,
+#                                              Jozef Misutka,
+#                                              Martin Petricek
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program (in doc/LICENSE.GPL); if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+#
+# Project is hosted on http://sourceforge.net/projects/pdfedit
+#
+#!/bin/sh
+
+################################################################################
+# This is helper script for 3rd party code which depends on pdfedit-core-dev package.
+# Usage:
+# pdfedit-core-dev-config [--prefix] [--exec-prefix] [--version] [--cflags] [--libs] [--static-libs]
+#
+# where
+# 	--prefix, --exec-prefix return configuration prefix resp. exec-prefix
+#		for the pdfedit-core-dev package
+#	--version prints pdfedit-core-dev installed package version
+#	--cflags prints compiler flags (including -I for all header files)
+#		necessary for proper compilation of depending code
+#	--libs, --static-libs  prints linker flags (including all libraries with
+#		their locations) required for proper linking of depending code
+#
+# This script can be used either in the configure script or directly in the
+# Makefile (but note that this may be tricky because different systems may
+# install this script under different locations /usr/local/bin, /usr/bin, etc.)
+################################################################################
+
+prefix=
+exec_prefix=
+cflags=
+ldflags=
+version=
+
+usage="\
+Usage: `basename $0` [--prefix] [--exec-prefix] [--version] [--cflags] [--libs]\
+ [--static-libs]"
+
+if test $# -eq 0; then
+      echo "${usage}" 1>&2
+      exit 1
+fi
+
+while test $# -gt 0; do
+  case $1 in
+    --prefix)
+      echo $prefix
+      ;;
+    --exec-prefix)
+      echo $exec_prefix
+      ;;
+    --version)
+      echo $version
+      ;;
+    --cflags)
+      echo $cflags
+      ;;
+    --libs|--static-libs)
+      echo $ldflags
+      ;;
+    *)
+      echo "${usage}" 1>&2
+      exit 1
+      ;;
+  esac
+  shift
+done
