@@ -54,6 +54,19 @@ $(TARGET): deps_cxx deps_c $(GOO_OBJS)
 	$(AR) $(TARGET) $(GOO_OBJS)
 	$(RANLIB) $(TARGET)
 
+.PHONY: install-dev uninstall-dev
+install-dev: staticlib $(DEV_CONFIG)
+	$(MKDIR) $(INSTALL_ROOT)$(INCLUDE_PATH)/goo
+	$(COPY_FILE) $(HEADERS) $(INSTALL_ROOT)$(INCLUDE_PATH)/goo
+	$(MKDIR) $(INSTALL_ROOT)$(LIB_PATH)/goo
+	$(COPY_FILE) $(TARGET) $(INSTALL_ROOT)$(LIB_PATH)/goo
+
+uninstall-dev:
+	cd $(INSTALL_ROOT)$(INCLUDE_PATH)/goo && $(DEL_FILE) $(HEADERS)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(INCLUDE_PATH)/goo/
+	cd $(INSTALL_ROOT)$(LIB_PATH)/goo && $(DEL_FILE) $(TARGET)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(LIB_PATH)/goo/
+
 #------------------------------------------------------------------------
 
 clean:

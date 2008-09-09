@@ -26,6 +26,22 @@ libxpdf:
 	cd splash && $(MAKE)
 	cd xpdf && $(MAKE) staticlib
 
+.PHONY: install-dev uninstall-dev
+install-dev:
+	$(MKDIR) $(INSTALL_ROOT)$(INCLUDE_PATH)
+	$(COPY_FILE) $(HEADERS) $(INSTALL_ROOT)$(INCLUDE_PATH)
+	cd goo && $(MAKE) install-dev
+	cd fofi && $(MAKE) install-dev
+	cd splash && $(MAKE) install-dev
+	cd xpdf && $(MAKE) install-dev
+
+uninstall-dev:
+	cd goo && $(MAKE) uninstall-dev
+	cd fofi && $(MAKE) uninstall-dev
+	cd splash && $(MAKE) uninstall-dev
+	cd xpdf && $(MAKE) uninstall-dev
+	cd $(INSTALL_ROOT)$(INCLUDE_PATH) && $(DEL_FILE) $(HEADERS)
+
 clean:
 	-cd goo && $(MAKE) clean || true
 	-cd fofi && $(MAKE) clean || true

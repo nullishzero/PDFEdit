@@ -33,7 +33,14 @@ SOURCES = static.cc xpdf.cc modecontroller.cc filters.cc factories.cc cannotatio
 
 OBJECTS = $(SOURCES:.cc=.o)
 # FIXME use LIBPREFIX
+
 TARGET   = libkernel.a
+
+# Configuration script name
+DEV_CONFIG = pdfedit-core-dev-config
+
+# Template for configuration script generation
+DEV_CONFIG_TMPL = pdfedit-core-dev-config.tmpl
 
 ####### Build rules
 
@@ -59,6 +66,32 @@ dist:
 		&& $(GZIP) kernel.tar ) \
 		&& $(MOVE) `dirname .obj/kernel`/kernel.tar.gz . \
 		&& $(DEL_FILE) -r .obj/kernel
+
+# Generates pdfedit-core-dev-config script from template
+.PHONY: $(DEV_CONFIG)
+$(DEV_CONFIG): 
+	sed     -e 's@\(^ *prefix=\).*@\1"$(PREFIX)"@'\
+		-e 's@\(^ *exec_prefix=\).*@\1"$(EPREFIX)"@'\
+		-e 's@\(^ *cflags=\).*@\1"$(CXX_EXTRA) $(DIST_INCPATH)"@'\
+		-e 's@\(^ *ldflags=\).*@\1"$(DIST_LIBS)"@'\
+		-e 's@\(^ *version=\).*@\1"$(version)"@' $(DEV_CONFIG_TMPL) > $(DEV_CONFIG)
+	chmod 755 $(DEV_CONFIG)
+
+.PHONY: install-dev uninstall-dev
+install-dev: staticlib $(DEV_CONFIG)
+	$(MKDIR) $(INSTALL_ROOT)$(INCLUDE_PATH)/kernel
+	$(COPY_FILE) $(HEADERS) $(INSTALL_ROOT)$(INCLUDE_PATH)/kernel
+	$(MKDIR) $(INSTALL_ROOT)$(LIB_PATH)/kernel
+	$(COPY_FILE) $(TARGET) $(INSTALL_ROOT)$(LIB_PATH)/kernel
+	$(MKDIR) $(INSTALL_ROOT)$(BIN_PATH)
+	$(COPY_FILE) $(DEV_CONFIG) $(INSTALL_ROOT)$(BIN_PATH)
+
+uninstall-dev:
+	cd $(INSTALL_ROOT)$(INCLUDE_PATH)/kernel/ && $(DEL_FILE) $(HEADERS)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(INCLUDE_PATH)/kernel/
+	cd $(INSTALL_ROOT)$(LIB_PATH)/kernel/ && $(DEL_FILE) $(TARGET)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(LIB_PATH)/kernel/
+	$(DEL_FILE) $(INSTALL_ROOT)$(BIN_PATH)/$(DEV_CONFIG)
 
 clean:
 	-$(DEL_FILE) $(OBJECTS) deps

@@ -30,10 +30,7 @@ HEADERS= \
 	observer.h \
 	rulesmanager.h \
 	types.h \
-	listitem.h \
-	algorithms/basic_algos.h \
-	types/basic_types.h \
-	types/coordinates.h
+	listitem.h 
 
 # FIXME use LIBPREFIX
 TARGET = libutils.a
@@ -46,6 +43,24 @@ $(TARGET): deps $(BINS)
 
 .PHONY: staticlib
 staticlib: $(TARGET)
+
+.PHONY: install-dev uninstall-dev
+install-dev: staticlib $(DEV_CONFIG)
+	$(MKDIR) $(INSTALL_ROOT)$(INCLUDE_PATH)/utils
+	$(COPY_FILE) $(HEADERS) $(INSTALL_ROOT)$(INCLUDE_PATH)/utils
+	$(MKDIR) $(INSTALL_ROOT)$(LIB_PATH)/utils
+	$(COPY_FILE) $(TARGET) $(INSTALL_ROOT)$(LIB_PATH)/utils
+	cd algorithms && $(MAKE) install-dev
+	cd types && $(MAKE) install-dev
+
+uninstall-dev:
+	cd algorithms && $(MAKE) uninstall-dev
+	cd types && $(MAKE) uninstall-dev
+	cd $(INSTALL_ROOT)$(INCLUDE_PATH)/utils && $(DEL_FILE) $(HEADERS)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(INCLUDE_PATH)/utils/
+	cd $(INSTALL_ROOT)$(LIB_PATH)/utils && $(DEL_FILE) $(TARGET)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(LIB_PATH)/utils/
+
 
 .PHONY: clean distclean
 clean:

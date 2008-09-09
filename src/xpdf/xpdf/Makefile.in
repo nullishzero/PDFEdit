@@ -181,6 +181,19 @@ SecurityHandler.x.o: SecurityHandler.cc
 	$(CXX) $(CXXFLAGS) -DHAVE_XPDFCORE -c -o SecurityHandler.x.o \
 		SecurityHandler.cc
 
+.PHONY: install-dev uninstall-dev
+install-dev: staticlib $(DEV_CONFIG)
+	$(MKDIR) $(INSTALL_ROOT)$(INCLUDE_PATH)/xpdf
+	$(COPY_FILE) $(HEADERS) $(INSTALL_ROOT)$(INCLUDE_PATH)/xpdf
+	$(MKDIR) $(INSTALL_ROOT)$(LIB_PATH)/xpdf
+	$(COPY_FILE) $(TARGET) $(INSTALL_ROOT)$(LIB_PATH)/xpdf
+
+uninstall-dev:
+	cd $(INSTALL_ROOT)$(INCLUDE_PATH)/xpdf && $(DEL_FILE) $(HEADERS)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(INCLUDE_PATH)/xpdf/
+	cd $(INSTALL_ROOT)$(LIB_PATH)/xpdf && $(DEL_FILE) $(TARGET)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(LIB_PATH)/xpdf/
+
 #------------------------------------------------------------------------
 
 clean:

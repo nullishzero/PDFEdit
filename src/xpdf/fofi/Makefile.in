@@ -46,6 +46,19 @@ $(TARGET): deps $(FOFI_OBJS)
 	$(AR) $(TARGET) $(FOFI_OBJS)
 	$(RANLIB) $(TARGET)
 
+.PHONY: install-dev uninstall-dev
+install-dev: staticlib $(DEV_CONFIG)
+	$(MKDIR) $(INSTALL_ROOT)$(INCLUDE_PATH)/fofi
+	$(COPY_FILE) $(HEADERS) $(INSTALL_ROOT)$(INCLUDE_PATH)/fofi
+	$(MKDIR) $(INSTALL_ROOT)$(LIB_PATH)/fofi
+	$(COPY_FILE) $(TARGET) $(INSTALL_ROOT)$(LIB_PATH)/fofi
+
+uninstall-dev:
+	cd $(INSTALL_ROOT)$(INCLUDE_PATH)/fofi && $(DEL_FILE) $(HEADERS)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(INCLUDE_PATH)/fofi/
+	cd $(INSTALL_ROOT)$(LIB_PATH)/fofi && $(DEL_FILE) $(TARGET)
+	$(DEL_DIR)  $(INSTALL_ROOT)$(LIB_PATH)/fofi/
+
 #------------------------------------------------------------------------
 
 clean:
