@@ -77,6 +77,8 @@ There are 3 levels of documentation in this project.
 	    --enable-doxygen-doc parameter to ./configure
 	    Result documentation is placed in the DOC_PATH/doxygen
 	    directory (DOC_PATH is PREFIX/share/doc/pdfedit)
+	    It is strongly recommended for pdfedit-core-dev package
+	    done by distributors.
 * user manual - html pages with user manual about PDFedit usage.
 	    This documentation is not created by default and you
 	    have to enable it by configure parameter
@@ -118,7 +120,8 @@ src/kernel/tests/) are compiled and application will be installed into the
 
 Configuration enables also compilation and installation in so called
 pdfedit-core-dev package which prepares all libraries and header files for
-3rd party application which want to reuse our core (kernel) functionality.
+3rd party application which want to reuse our core (kernel) functionality 
+(see more in the Pdfedit devel package bellow).
 This is not done by default and you have to enable it explicitly by
 --enable-pdfedit-dev-core configure parameter.
 Note that development package and gui can be mixed together but also single
@@ -439,3 +442,32 @@ Altlinux 64b
 Altlinux has boost libraries stored in /usr/lib64 directory. This
 directory is not searched by default. Therefore you have to set 
 library path by hand with --with-boost-libdir=/usr/lib64.
+
+
+PDFedit devel package
+=====================
+PDFedit core functionality (read as non-gui) can be reused by 3rd party
+applications. For this purpose, we have provided separate configuration
+options and installation targets as described above.
+If you want to use this package following steps are required:
+* install pdfedit-core-dev package (either from distribution package if
+  available or from sources as described above).
+* update your configure script or modify Makefile to set proper CXXFLAGS 
+  and LDFLAGS to contain proper include and library paths. You can use
+  EPREFIX/pdfedit-core-dev-config script 
+  e.g. this way in Makefile:
+	CXXFLAGS = $(shell pdfedit-core-dev-config --cflags)
+	LDFALGS = $(shell pdfedit-core-dev-config --libs)
+* update your sources which are using pdfedit-core-dev:
+	- initialize library by:
+	if(pdfedit_core_dev_init())
+	{
+		// Fatal error in initialization
+		exit();
+	}
+	before you call any PDFedit related code
+	- cleanup library stuff at the end when pdfedit-core-dev is no
+	  longer used by:
+	pdfedit_core_dev_destroy();
+        [See doxygen documentation for these functions for more information]
+
