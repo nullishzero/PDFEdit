@@ -1,12 +1,40 @@
 PDFedit readme
 ==============
 
+TOC
+===
+License
+Contact
+Prerequisites
+	Base (kernel), pdfedit-core-dev package
+	Tests
+	Gui
+Documentation
+Configuration
+	Configure features
+	Libraries and binaries specification
+	Installation directories
+Compilation
+Installation
+Cygwin build
+FreeBSD build
+NetBSD installation
+Debian package
+RPM based distros
+Gentoo package
+Altlinux 64b
+PDFedit devel package
+
+
+License
+=======
 PDFedit is distributed under terms of GNU GPL in version 2.
 See doc/LICENSE.GPL for full license text.
 See doc/AUTHORS for full list of authors and contributors.
 For other more detailed documentation, look into "doc" subdirectory.
 File doc/user/user_doc.html contain more detailed installation instructions
 (in the Installation section) and list of required libraries.
+
 
 Contact
 =======
