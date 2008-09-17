@@ -43,6 +43,7 @@
 #include "numbertool.h"
 #include "optionwindow.h"
 #include "pagespace.h"
+#include "passworddialog.h"
 #include "pdfeditwindow.h"
 #include "propertyeditor.h"
 #include "qscobject.h"
@@ -311,6 +312,15 @@ void BaseGUI::addObjectDialog(QObject *container) {
   //No IProperty? Nothing
   errorBadParameter("","addObjectDialog",1,container,"IProperty");
  }
+}
+
+/**
+ Shows dialog that will ask user for password.
+ @param title Title of the dialog. If not specified, some default like "Enter password" is used.
+ @return entered password or NULL if dialog is cancelled
+*/
+QString BaseGUI::askPassword(const QString &title/*=QString::null*/) {
+ return PasswordDialog::ask(w,title);
 }
 
 /** \copydoc Menu::checkByName */

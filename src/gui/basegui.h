@@ -70,6 +70,12 @@ public slots: //This will be all exported to scripting
  */
  void processEvents();
  /*-
+  Shows dialog that will ask user for password.
+  Parameter title specifies title of the dialog. If not specified, some default like "Enter password" is used.
+  Return entered password or null if dialog is cancelled
+ */
+ QString askPassword(const QString &title=QString::null);
+ /*-
   Set text of all menu and toolbar items with given name to specified string.
   The string will be transtated according to the translation file, so it is
   suggested to supply english text and add corresponding localized translation

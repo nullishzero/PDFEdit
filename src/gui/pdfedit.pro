@@ -212,8 +212,8 @@ HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
 HEADERS += selfdestructivewidget.h  staticsettings.h  pageviewmode.h
 SOURCES += selfdestructivewidget.cc staticsettings.cc pageviewmode.cc
-HEADERS += operatorhint.h  units.h
-SOURCES += operatorhint.cc units.cc
+HEADERS += operatorhint.h  units.h  passworddialog.h
+SOURCES += operatorhint.cc units.cc passworddialog.cc
 
 # Scripting base files
 HEADERS += base.h  basecore.h  basegui.h  baseconsole.h
