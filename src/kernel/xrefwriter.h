@@ -40,9 +40,7 @@
 
 namespace pdfobjects
 {
-
-namespace utils
-{
+namespace utils {
 
 /** Checks whether given stream is linearized.
  * @param stream Pdf stream to read (from the file begin).
@@ -53,11 +51,14 @@ namespace utils
  * dictionary, checks whether it contains Linearized version entry. If so
  * returns true and if given ref is not NULL, sets object and generation number.
  * Otherwise just returns false and doesn't care for ref parameter.
+ * <br>
+ * This method doesn't check whether credentials are set properly. You have
+ * to do it before it is called.
  *
  * @return true if first indirect object is Linearized dictionary, false
  * otherwise.
  */
-bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref);
+bool checkLinearized(StreamWriter & stream, CXref * xref, Ref * ref);
 
 } // end of namespace utils
 
@@ -337,6 +338,7 @@ public:
 	 * revision is not the newest one or if pdf is in read-only mode.
 	 * @throw ElementBadTypeException if mode is paranoid and paranoidCheck
 	 * method fails for obj.
+	 * @throw NotImplementedException if document is encrypted.
 	 */ 
 	void changeObject(int num, int gen, ::Object * obj);
 
@@ -354,6 +356,8 @@ public:
 	 * 
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
+	 * @throw NotImplementedException if document is encrypted or when trailer
+	 * dictionary can't be cloned (because clone method failes).
 	 * @return Previous value of object or 0 if previous revision not
 	 * available (new name value pair in trailer).
 	 */
@@ -560,6 +564,7 @@ public:
 	 *
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
+	 * @throw NotImplementedException if document is encrypted.
 	 */
 	virtual ::Object * createObject(::ObjType type, ::Ref * ref);
 	

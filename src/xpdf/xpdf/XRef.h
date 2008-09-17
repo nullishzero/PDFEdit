@@ -95,7 +95,7 @@ public:
 		     CryptAlgorithm encAlgorithmA);
 
   // Is the file encrypted?
-  virtual GBool isEncrypted() { return encrypted; }
+  virtual GBool isEncrypted()const { return encrypted; }
 
   // Check various permissions.
   virtual GBool okToPrint(GBool ignoreOwnerPW = gFalse);

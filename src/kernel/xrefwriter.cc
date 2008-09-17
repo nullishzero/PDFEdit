@@ -45,7 +45,7 @@ namespace pdfobjects {
 
 namespace utils {
 
-bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
+bool checkLinearized(StreamWriter & stream, CXref * xref, Ref * ref)
 {
 	// searches num gen obj entry. Starts from stream begining
 	stream.reset();
@@ -146,14 +146,26 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 	// searches %%EOF element from startxref position.
 	storePos=XRef::eofPos;
 
-	// checks whether file is linearized
+	// enables internal fetch for case of encrypted document.
+	// Fetching is ok in such a case because we fetching only
+	// uncrypted data - trailer and check for linearized dictionary
+	enableInternalFetch();
+
+	// check for linearized document is safe also for encrypted
+	// documents because only strings are encrypted and the
+	// Linearized entry is the name object
 	Ref linearizedRef;
 	linearized=utils::checkLinearized(*stream, this, &linearizedRef);
 	if(linearized)
 		kernelPrintDbg(DBG_DBG, "Pdf content is linearized. Linearized dictionary "<<linearizedRef);
-	
-	// collects all available revisions
+
+	// revisions can be collected also for encrypted documents, because
+	// we are parsing only trailer which doesn't contain any directly
+	// encrypted data - strings
 	collectRevisions();
+
+	// sets internal fetch back to normal
+	disableInternalFetch();
 }
 
 utils::IPdfWriter * XRefWriter::setPdfWriter(utils::IPdfWriter * writer)
@@ -213,6 +225,8 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	::Ref ref={num, gen};
 	kernelPrintDbg(DBG_DBG, ref);
 
+	check_need_credentials(this);
+
 	if(revision)
 	{
 		// we are in later revision, so no changes can be
@@ -226,7 +240,11 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
-
+	if(isEncrypted())
+	{
+		kernelPrintDbg(DBG_ERR, "Document is encrypted. Changing content is not supported");
+		throw NotImplementedException("changeObject is not implemented for encryted document");
+	}
 	
 	// paranoid checking
 	if(!paranoidCheck(ref, obj))
@@ -245,6 +263,15 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 ::Object * XRefWriter::changeTrailer(const char * name, ::Object * value)
 {
 	kernelPrintDbg(DBG_DBG, "name="<<name);
+
+	check_need_credentials(this);
+
+	if(isEncrypted())
+	{
+		kernelPrintDbg(DBG_ERR, "Document is encrypted. Changing content is not supported");
+		throw NotImplementedException("changeObject is not implemented for encryted document");
+	}
+
 	if(revision)
 	{
 		// we are in later revision, so no changes can be
@@ -286,6 +313,8 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 {
 	kernelPrintDbg(DBG_DBG, "");
 
+	check_need_credentials(this);
+
 	// checks read-only mode
 	
 	if(revision)
@@ -312,6 +341,8 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 {
 	kernelPrintDbg(DBG_DBG, "type="<<type);
 
+	check_need_credentials(this);
+
 	// checks read-only mode
 	
 	if(revision)
@@ -328,6 +359,12 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
+	if(isEncrypted())
+	{
+		kernelPrintDbg(DBG_ERR, "Document is encrypted. Changing content is not supported");
+		throw NotImplementedException("changeObject is not implemented for encryted document");
+	}
+
 	// changes are availabe
 	// delegates to CXref
 	return CXref::createObject(type, ref);
@@ -338,6 +375,8 @@ void XRefWriter::saveChanges(bool newRevision)
 using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "");
+
+	check_need_credentials(this);
 
 	if(linearized)
 		kernelPrintDbg(DBG_WARN, "Pdf is linearized and changes may break rules for linearization.");
@@ -507,6 +546,8 @@ int XRefWriter::getOldStyleTrailer(Object * trailer, size_t off)
 	return -1;
 }
 
+// TODO is this ok for encrypted documents (streams should be encrypted there -
+// but how is this handled in trailer)?
 int XRefWriter::getStreamTrailer(Object * trailer, size_t off, ::Parser & parser)
 {
 	// gen number should follow
@@ -557,6 +598,9 @@ void XRefWriter::collectRevisions()
 
 	// linearized pdf doesn't support multiversion document clearly, so we don't
 	// implement collecting for such documents
+	// FIXME we might not have linearized flag set at the moment, because
+	// checkLinearized is not called for encrypted documents without credentials
+	// available. How to handle properly?
 	if(isLinearized())
 	{
 		// creates just one revision information with the newest one
@@ -651,6 +695,8 @@ void XRefWriter::collectRevisions()
 void XRefWriter::changeRevision(unsigned revNumber)
 {
 	kernelPrintDbg(DBG_DBG, "revNumber="<<revNumber);
+
+	check_need_credentials(this);
 	
 	// change to same revision
 	if(revNumber==revision)
@@ -718,6 +764,14 @@ void XRefWriter::cloneRevision(FILE * file)const
 using namespace debug;
 
 	kernelPrintDbg(DBG_ERR, "");
+
+	check_need_credentials(this);
+
+	if(isEncrypted())
+	{
+		kernelPrintDbg(debug::DBG_WARN, "Operation is not supported for encrypted documents");
+		throw NotImplementedException("cloneRevision");
+	}
 
 	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(str);
 	size_t pos=streamWriter->getPos();
