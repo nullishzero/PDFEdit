@@ -28,6 +28,7 @@
 #include "kernel/xpdf.h"
 #include "kernel/exceptions.h"
 #include "kernel/pdfwriter.h"
+#include "kernel/cxref.h"
 
 /** Exception for not linearized pdf documents.
  * This exception is thrown if Delinearizator is used for non linearized
@@ -79,6 +80,10 @@ namespace utils
  * IPdfWriter * contentWriter=new OldStylePdfWriter();
  * Delinearizator * delinearizator=Delinearizator::getInstance(fileName, contentWriter);
  *
+ * // check for encryption and set credentials if necessary
+ * if (delinearizator->isEncrypted())
+ * 	delinearizator->setCredentials(ownerPasswd, userPasswd);
+ *
  * // delinearize file content to file specified by name
  * delinearizator->delinearize(outputFile);
  * 
@@ -88,7 +93,7 @@ namespace utils
  * delete delinearizator;
  * </pre>
  */
-class Delinearizator: protected ::XRef
+class Delinearizator: public pdfobjects::CXref
 {
 	/** Pdf content writer implementator.
 	 *
@@ -131,8 +136,6 @@ public:
 	{
 		if(pdfWriter)
 			delete pdfWriter;
-		// XRef doesn't deallocate stream, so we have to do it here
-		delete str;
 		// FILE stream has to be closed - FileStream::close method doesn't do that!
 		fclose(file);
 	}
@@ -181,6 +184,7 @@ public:
 	 * @see delinearize(FILE *)
 	 *
 	 * @return 0 if everything ok, otherwise value of errno of the error.
+	 * @throw NotImplementedException if document is encrypted.
 	 */
 	int delinearize(const char * fileName);
 	
@@ -201,6 +205,7 @@ public:
 	 * returns.
 	 *
 	 * @return 0 if everything ok, otherwise valie of error of the error.
+	 * @throw NotImplementedException if document is encrypted.
 	 */
 	int delinearize(FILE * file);
 };

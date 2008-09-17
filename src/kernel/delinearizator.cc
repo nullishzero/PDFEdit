@@ -36,7 +36,7 @@ using namespace pdfobjects;
 using namespace utils;
 
 Delinearizator::Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter * writer)
-	:XRef(stream), 
+	:CXref(stream),
 	pdfWriter(writer),
 	file(f)
 {
@@ -125,6 +125,19 @@ using namespace debug;
 		utilsPrintDbg(DBG_ERR, "No pdfWriter specified. Aborting");
 		// FIXME to constant
 		return -1;
+	}
+
+	// don't use check_need_credentials here, because we don't want to throw
+	// exception in negative case
+	if(getNeedCredentials())
+	{
+		utilsPrintDbg(DBG_ERR, "No credentials available for encrypted document.");
+		return -1;
+	}
+	if(isEncrypted())
+	{
+		utilsPrintDbg(DBG_ERR, "Delinearization of encrypted documents is not implemented");
+		throw NotImplementedException("Encrypted document");
 	}
 	
 	// stream from input file
