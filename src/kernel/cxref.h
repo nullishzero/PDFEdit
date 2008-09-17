@@ -44,6 +44,7 @@ const int MAXOBJNUM = INT_MAX;
  */
 const int MAXOBJGEN = 65535;
 
+
 /** Adapter for xpdf XRef class.
  * 
  * This class has responsibility to transparently (same way as XRef do) provide
@@ -95,13 +96,27 @@ class CXref: public XRef
 {
 private:
 	//ObjectCache * cache=NULL;		/**< Cache for objects. */
+
+	/** Flag for decryption credentials.
+	 * Set in constructor if document is encrypted and no credentials are
+	 * provided. This implies that each method which provides encrypted data
+	 * throws an exception.
+	 */
+	bool needs_credentials;
+
+	/** Flag for internal fetching.
+	 * This is used when fetch method is requrired and no credentials are
+	 * prepared yet (and we are sure that fetched object is not encrypted).
+	 */
+	bool internal_fetch;
+
 protected:
 	/** Empty constructor.
 	 *
 	 * This constructor is protected to prevent uninitialized instances.
 	 * We need at least to specify stream with data.
 	 */
-	CXref(): XRef(NULL){}
+	CXref(): XRef(NULL), needs_credentials(false), internal_fetch(false){}
 
 	/** Entry for ObjectStorage.
 	 *
@@ -253,9 +268,36 @@ protected:
 	 * specific for CXref.
 	 */
 	void cleanUp();
+
+	/** Checks whether document is encrypted and if so, sets needs_credentials
+	 * and encrypted fields to true.
+	 *
+	 * @return true if additional credentials are required, false otherwise.
+	 */
+	bool checkEncryptedContent();
+
+	/** Enables internal fetching.
+	 * This implies that fetch method is used for internal purposes, thus
+	 * some checks are not performed (e.g. whether we have credentials for
+	 * encrypted document).
+	 * <br>
+	 * This method should be called before fetch method and disableInternalFetch
+	 * should be called after we are done.
+	 */
+	void enableInternalFetch()
+	{
+		internal_fetch = true;
+	}
+
+	/** Disables internal fetching.
+	 * @see enableInternalFetch
+	 */
+	void disableInternalFetch()
+	{
+		internal_fetch = false;
+	}
 public:
 
-	
 	/** Initialize constructor.
 	 * @param stream Stream with file data.
 	 *
@@ -277,13 +319,15 @@ public:
 	 * unusable in such situation).
 	 */
 	/* FIXME uncoment when cache is available
-	CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c)
+	CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c), internal_fetch(true)
 	{
 		if(getErrorCode() !=errNone)
 		{
 			// xref is corrupted
 			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode);
 		}
+		checkEncryptedContent();
+		internal_fetch = false;
 	}
 	*/
 	
@@ -292,7 +336,24 @@ public:
 	 * Calls cleanUp for all internals deallocation and deletes stream.
 	 */
 	virtual ~CXref();
-	
+
+	/** Sets credentials for encrypted documents.
+	 * This method is mandatory prerequisity if encrypted content is required.
+	 * If it has not been called before the fetch method is called, it will
+	 * throw the PermissionException.
+	 * <br>
+	 * If credentials are correct, sets needs_credentials to false, thus enables
+	 * encrypted content returning.
+	 */
+	virtual void setCredentials(const char * ownerPasswd, const char * userPasswd);
+
+	/** Returns true if setCredentials method is required.
+	 */
+	bool getNeedCredentials()const
+	{
+		return needs_credentials;
+	}
+
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.
 	 *
@@ -389,17 +450,33 @@ public:
 	 * deallocated by caller). 
 	 * To register a change use change method.
 	 * <br>
-	 * This method provide transparent access to changed objects throught
+	 * This method provides transparent access to changed objects throught
 	 * XRef (xpdf class) interface.
+	 * <br>
+	 * Unless internal_fetch is set (by enableInternalFetch method), checks
+	 * needs_credentials and throws PermissionException if flags is set.
 	 *
 	 * @throw NotImplementedException if object cloning fails.
-	 * @throw MalformedFormatExeption if not able to fetch object from the
-	 * stream.
+	 * @throw PermissionException if we don't have credentials for encrypted
+	 * document.
 	 * @return Pointer with initialized object given as parameter, if not
 	 * found obj is set to objNull.
 	 */
 	virtual ::Object * fetch(int num, int gen, ::Object *obj);
 };
+
+/** Checks whether encryption credentials have been probevided to the
+ * given xref.
+ * @param xref Cross reference.
+ * @throw PermissionException if no credentials have been provided.
+ */
+static inline void check_need_credentials(const CXref *xpdf)
+{
+	if(xpdf->getNeedCredentials())	{
+		kernelPrintDbg(debug::DBG_ERR, "No credentials available for encrypted document.");
+		throw PermissionException("Encryption credentials required");
+	}
+}
 
 } // end of pdfobjects namespace
 

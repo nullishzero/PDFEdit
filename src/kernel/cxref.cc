@@ -23,13 +23,15 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #include "kernel/static.h"
+#include "xpdf/Object.h"
+#include "xpdf/encrypt_utils.h"
 #include "kernel/cxref.h"
 #include "utils/debug.h"
 #include "kernel/factories.h"
 #include "kernel/pdfedit-core-dev.h"
 
 using namespace pdfobjects;
-CXref::CXref(BaseStream * stream):XRef(stream)
+CXref::CXref(BaseStream * stream):XRef(stream), internal_fetch(true)
 {
 	if(!pdfedit_core_dev_init_check())
 	{
@@ -42,8 +44,11 @@ CXref::CXref(BaseStream * stream):XRef(stream)
 		kernelPrintDbg(debug::DBG_ERR, 
 				"Unable to parse xref table. errorCode="
 				<<getErrorCode());
-		throw MalformedFormatExeption("bad xref");
+		throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode());
 	}
+
+	checkEncryptedContent();
+	internal_fetch = false;
 }
 
 void CXref::cleanUp()
@@ -123,6 +128,8 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, ref);
 	assert(ref.num!=0);
 
+	check_need_credentials(this);
+
 	// discards from cache
 	/* FIXME uncoment if cache is available
 	if(cache)
@@ -180,6 +187,8 @@ using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "name="<<name<<" value type="<<value->getType());
 	
+	check_need_credentials(this);
+
 	Dict * trailer = trailerDict.getDict(); 
 
 	Object * clonedObject=value->clone();
@@ -209,6 +218,8 @@ using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 	
+	check_need_credentials(this);
+
 	// goes through entries array in XRef class (xref entries)
 	// and reuses first free entry with its gen number.
 	// Considers just first XRef::getNumObjects because entries array
@@ -363,6 +374,8 @@ using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 
+	check_need_credentials(this);
+
 	// checks newly created object only with true flag
 	// not found returns 0, so it's ok
 	::RefState state;
@@ -464,6 +477,9 @@ using namespace debug;
 using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
+
+	// TODO needs credentials ?
+
 	// gets object
 	::Object docObj;
 	XRef::getDocInfo(&docObj);
@@ -488,6 +504,9 @@ using namespace debug;
 using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
+
+	// TODO needs credentials ?
+
 	// gets object
 	::Object docObj;
 	XRef::getDocInfoNF(&docObj);
@@ -515,6 +534,13 @@ using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "num="<<num<<" gen="<<gen);
 	
+	// internal objects fetching don't require credentials.
+	// However we have to be very carefull where to enable
+	// internal_fetch, because if we try to fetch encrypted
+	// content we will get wrong objects
+	if(!internal_fetch)
+		check_need_credentials(this);
+
 	::Ref ref={num, gen};
 	
 	// tries to use cache
@@ -632,4 +658,59 @@ using namespace debug;
 	// sets lastXRefPos to xrefOff, because initRevisionSpecific doesn't do it
 	lastXRefPos=xrefOff;
 	kernelPrintDbg(DBG_DBG, "New lastXRefPos value="<<lastXRefPos);
+
+	// checks encryption state for the revision
+	checkEncryptedContent();
+}
+
+bool CXref::checkEncryptedContent()
+{
+	Object encrypt;
+	needs_credentials = false;
+	enableInternalFetch();
+	getTrailerDict()->dictLookup("Encrypt", &encrypt);
+	disableInternalFetch();
+	encrypted = false;
+	if ((encrypted = encrypt.isDict())) {
+		needs_credentials = true;
+		encrypted = true;
+	}
+	encrypt.free();
+
+	return needs_credentials;
+}
+
+void CXref::setCredentials(const char * ownerPasswd, const char * userPasswd)
+{
+	if(!needs_credentials)
+	{
+		kernelPrintDbg(debug::DBG_WARN, "credentials provided when not required");
+		return;
+	}
+
+	GString * op = NULL, * up = NULL;
+	if(ownerPasswd)
+		op = new GString(ownerPasswd);
+	if(userPasswd)
+		up = new GString(userPasswd);
+
+	GBool result;
+	enableInternalFetch();
+	SecurityHandler * handler = ::checkEncryptionCred(this, op, up, result);
+	disableInternalFetch();
+
+	if(!result)
+	{
+		kernelPrintDbg(debug::DBG_ERR, "Bad credentials");
+		throw PermissionException("Bad credentials");
+	}
+
+	needs_credentials = false;
+	if(handler)
+	{
+		kernelPrintDbg(debug::DBG_INFO, "Setting provided ecnryption credentials.");
+		::setEncryptionCred(this, handler);
+		delete handler;
+	}else
+		kernelPrintDbg(debug::DBG_INFO, "No special credentials required for encrypted document");
 }
