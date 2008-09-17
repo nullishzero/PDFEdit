@@ -43,6 +43,7 @@
 #include "numbertool.h"
 #include "optionwindow.h"
 #include "pagespace.h"
+#include "pdfutil.h"
 #include "passworddialog.h"
 #include "pdfeditwindow.h"
 #include "propertyeditor.h"
@@ -88,6 +89,15 @@ BaseGUI::BaseGUI(PdfEditWindow *parent) : Base() {
 /** destructor */
 BaseGUI::~BaseGUI() {
  delete consoleWriter;
+}
+
+boost::shared_ptr<pdfobjects::CPdf> BaseGUI::getBasePdfInstance(const QString &filename, const QString &openMode/*=QString::null*/, bool askPassword/*=true*/) {
+ CPdf::OpenMode mode=CPdf::ReadWrite;
+ if (openMode=="advanced") mode=CPdf::Advanced;
+ if (openMode=="readonly") mode=CPdf::ReadOnly;
+ if (openMode=="readwrite") mode=CPdf::ReadWrite;
+ //Basic mode without asking a password (we do not know how)
+ return util::getPdfInstance(w,util::convertFromUnicode(filename,util::NAME).c_str(),mode,askPassword);
 }
 
 /**

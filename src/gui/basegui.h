@@ -64,6 +64,7 @@ public:
  void addNumberTool(NumberTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
+ virtual boost::shared_ptr<pdfobjects::CPdf> getBasePdfInstance(const QString &filename, const QString &openMode=QString::null, bool askPassword=true);
  /*-
   Allow application to process its events, so the gui can redraw itself.
   Useful, it it is called periodically while doing some lenthy operation

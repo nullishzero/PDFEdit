@@ -29,13 +29,13 @@
 */
 
 #include "pdfutil.h"
+#include "passworddialog.h"
 #include "qtcompat.h"
-#include <qstring.h>
-#include <qobject.h>
-#include <kernel/cobject.h>
-#include <kernel/cpdf.h>
-#include <kernel/factories.h>
 #include "util.h"
+#include <kernel/cobject.h>
+#include <kernel/factories.h>
+#include <qobject.h>
+#include <qstring.h>
 #include <utils/debug.h>
 
 namespace util {
@@ -441,6 +441,49 @@ QString annotType(boost::shared_ptr<CAnnotation> anot) {
 */
 QString annotTypeName(boost::shared_ptr<CAnnotation> anot) {
  return QObject::tr(annotType(anot->getType()),"annotation_type");
+}
+
+/**
+ Get PDF instance - call CPdf::getInstance with appropriate parameters
+ @param parent parent widget of dialog that may spawn
+ @param filename Name of file for CPdf::getInstance
+ @param mode Open mode for CPdf::getInstance
+ @param askPassword If true, password will be asked for if necessary
+*/
+boost::shared_ptr<CPdf> getPdfInstance(QWidget *parent, const QString &filename, CPdf::OpenMode mode, bool askPassword) {
+ boost::shared_ptr<CPdf> pdf=CPdf::getInstance(util::convertFromUnicode(filename,util::NAME).c_str(), mode);
+ if (askPassword && pdf->needsCredentials()) {
+  for(;;) {
+   //Ask for password until we either get the right one or user gets bored with retrying
+   QString pwd=gui::PasswordDialog::ask(parent,QObject::tr("Enter password for %1:").arg(filename));
+
+   //Dialog aborted -> exit
+   if (pwd.isNull()) return pdf;
+
+   //We succedded with passwod -> exit
+   if (setPdfPassword(pdf,pwd)) return pdf;
+  }
+ }
+ return pdf;
+}
+
+/**
+ Try to set PDF password for document.
+ @param pdf CPdf instance
+ @param pass Password to use
+ @return true if the password is correct or false if the password is wrong.
+*/
+bool setPdfPassword(boost::shared_ptr<CPdf> pdf, const QString &pass) {
+ string ownerPasswd, userPasswd;
+ //Password is converted to UTF8. We have no idea in what character set actually is the password
+ //and it is very bad idea to use accented characters in password anyway.
+ ownerPasswd=userPasswd=pass.utf8();
+ try {
+  pdf->setCredentials(ownerPasswd.c_str(),userPasswd.c_str());
+  return true;
+ }catch(PermissionException) {
+ }
+ return false;
 }
 
 } // namespace util

@@ -30,6 +30,9 @@
 #include <qstringlist.h>
 #include <qvariant.h>
 
+namespace pdfobjects {
+ class CPdf;
+}
 namespace gui {
 
 class QSAnnotation;
@@ -129,8 +132,11 @@ public slots: //This will be all exported to scripting
   after it don't need to use it anymore.
   If advancedMode is set to true, document is opened in "advanced mode"
   (more advanced, but also more dangerous changes to it are possible)
+  If askPassword is set to false, password to document (if the document is encrypted)
+  will not be solicited from user and setPassword method of PDF object have to be
+  called in script with correct password to allow manipulating the encrypted document.
  */
- QSPdf* loadPdf(const QString &name,bool advancedMode=false);
+ QSPdf* loadPdf(const QString &name,bool advancedMode=false, bool askPassword=true);
  /*-
   Debugging function usable by script developers.
   Returns list of all objects that are in current script interpreter
@@ -248,6 +254,9 @@ public slots: //This will be all exported to scripting
   or versions from branches, which would have branch tag added)
  */
  QString version();
+
+protected:
+ virtual boost::shared_ptr<pdfobjects::CPdf> getBasePdfInstance(const QString &filename, const QString &openMode=QString::null, bool askPassword=true);
 
 private:
  bool runFile(const QString &scriptName);

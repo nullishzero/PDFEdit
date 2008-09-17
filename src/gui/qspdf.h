@@ -57,6 +57,11 @@ public slots:
  /*- Return true, if document is linearized PDF, false otherwise */
  bool isLinearized();
  /*-
+  Return true if document is protected and opening the document reqires credentials
+  (usually a password), false otherwise.
+ */
+ bool needsCredentials();
+ /*-
   Check for PDF validity - return true, if this object is valid PDF document,
   false if the PDF document was closed or not yet opened
   (so the object is invalid)
@@ -82,6 +87,11 @@ public slots:
   Return true if saved successfully, false if failed to save because of any reason
  */
  bool save(bool newRevision=false);
+ /*-
+  Sets PDF password to use for decryption. Needed for opening password-protected documents
+  Return true if the password was successfully set, false in case of error (bad password ...)
+ */
+ bool setPassword(const QString &pass);
  /*- Get document dictionary (object catalog) */
  QSDict* getDictionary();
  /*- Remove page with given number from document. */

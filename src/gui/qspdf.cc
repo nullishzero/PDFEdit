@@ -69,6 +69,23 @@ void QSPdf::unloadPdf() {
 }
 
 /**
+ Sets PDF password to use for decryption. Needed for opening password-protected documents
+ @param pass password to set
+ @return true if the password was successfully set, false in case of error (bad password ...)
+*/
+bool QSPdf::setPassword(const QString &pass) {
+ return util::setPdfPassword(obj,pass);
+}
+
+/**
+ Return true if document is protected and opening the document reqires credentials
+ (usually a password), false otherwise.
+*/
+bool QSPdf::needsCredentials() {
+ return obj->needsCredentials();
+}
+
+/**
  Check validity of specified reference
  @param valueNum Object number
  @param valueGen Generation number

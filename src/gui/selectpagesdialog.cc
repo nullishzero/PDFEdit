@@ -30,6 +30,7 @@
  */
 
 #include "selectpagesdialog.h"
+#include "pdfutil.h"
 #include "util.h"
 #include <qvariant.h>
 #include <qpushbutton.h>
@@ -343,7 +344,7 @@ bool SelectPagesDialog::init (const QString& fileName) {
 	try {
 
 		guiPrintDbg (debug::DBG_DBG,"Opening document.");
-		document = CPdf::getInstance (util::convertFromUnicode(fileName,util::NAME).c_str(),mode);
+		document = util::getPdfInstance (this,util::convertFromUnicode(fileName,util::NAME).c_str(),mode);
 		assert(document);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	

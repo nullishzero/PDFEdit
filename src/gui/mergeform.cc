@@ -28,6 +28,7 @@
 */
 
 #include "mergeform.h"
+#include "pdfutil.h"
 #include "util.h"
 #include <qvariant.h>
 #include <qpushbutton.h>
@@ -362,7 +363,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
  CPdf::OpenMode mode=CPdf::ReadOnly;
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
-  document=CPdf::getInstance(util::convertFromUnicode(fileName,util::NAME).c_str(),mode);
+  document=util::getPdfInstance(this,util::convertFromUnicode(fileName,util::NAME),mode);
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
  } catch (PdfOpenException &ex) {

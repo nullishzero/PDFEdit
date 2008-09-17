@@ -27,6 +27,7 @@
  @author Martin Petricek
 */
 
+#include "passworddialog.h"
 #include "base.h"
 #include "qtcompat.h"
 #include "qsannotation.h"
@@ -465,6 +466,29 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   delin=utils::Delinearizator::getInstance(inFile,wr);
   if (!delin) return false;//No delinearizator instance?
   guiPrintDbg(debug::DBG_DBG,"Delinearizator created");
+
+  for(;delin->getNeedCredentials();) {
+    //Ask for password until we either get the right one or user gets bored with retrying
+    // FIXME is the first NULL parameter OK?
+    QString pwd=gui::PasswordDialog::ask(NULL, QObject::tr("Enter password for %1:").arg(inFile));
+
+    //Dialog aborted -> exit
+    if (pwd.isNull()) { 
+      delete delin;
+      guiPrintDbg(debug::DBG_ERR, "No password available");
+      return false;
+    }
+
+    //We succedded with passwod -> exit
+    string passwd;
+    passwd = pwd.utf8();
+    try {
+      delin->setCredentials(passwd.c_str(), passwd.c_str());
+    }catch(PermissionException &e)
+    {
+	    guiPrintDbg(debug::DBG_ERR, "Bad password");
+    }
+  }
   int ret=delin->delinearize(outFile);
   guiPrintDbg(debug::DBG_DBG,"Delinearizator finished");
   if (ret) {
@@ -503,12 +527,11 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 	
 	// Create cpdf
 	boost::shared_ptr<CPdf> pdf;
-	CPdf::OpenMode mode = CPdf::ReadOnly;
 
 	try {
 
 		guiPrintDbg (debug::DBG_DBG,"Opening document.");
-		pdf = CPdf::getInstance (util::convertFromUnicode(inFile,util::NAME).c_str(),mode);
+		pdf = getBasePdfInstance (util::convertFromUnicode(inFile,util::NAME).c_str(),"readonly");
 		assert(pdf);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	
@@ -588,18 +611,35 @@ QStringList Base::functions(bool includeSignatures/*=false*/) {
  script should also take care to close the file after he does not need to use it anymore
  @param name Name of file to load
  @param advancedMode Set to true to use Advanced mode whilwe opening the file
+ @param askPassword if true, attempt to ask user for password would be made if document is encrypted
  @return Loaded document, or NULL if error occured while loading it.
 */
-QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/) {
+QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/, bool askPassword/*=true*/) {
  if (name.isNull()) return NULL;
  CPdf::OpenMode mode=advancedMode?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
-  boost::shared_ptr<CPdf> opened=CPdf::getInstance(util::convertFromUnicode(name,util::NAME).c_str(),mode);
+   boost::shared_ptr<CPdf> opened=getBasePdfInstance(util::convertFromUnicode(name,util::NAME).c_str(),advancedMode?"advanced":"readwrite");
   //Return pdf wrapper with 'destructive close' behavior
   return new QSPdf(opened,this,true);
  } catch (...) {
   return NULL;
  }
+}
+
+/**
+ Open PDF instance.
+ Specific password solicitation (GUI, console) should be implemented in subclasses - BaseGUI ands BaseConsole
+ @param filename filename to open
+ @param openMode Mode in which to open the file (advanced, readonly and readwrite - default)
+ @param askPassword if true, attempt to ask user for password would be made if document is encrypted
+*/
+boost::shared_ptr<pdfobjects::CPdf> Base::getBasePdfInstance(const QString &filename, const QString &openMode/*=QString::null*/, bool askPassword/*=true*/) {
+ CPdf::OpenMode mode=CPdf::ReadWrite;
+ if (openMode=="advanced") mode=CPdf::Advanced;
+ if (openMode=="readonly") mode=CPdf::ReadOnly;
+ if (openMode=="readwrite") mode=CPdf::ReadWrite;
+ //Basic mode without asking a password (we do not know how)
+ return CPdf::getInstance(util::convertFromUnicode(filename,util::NAME).c_str(),mode);
 }
 
 /** \copydoc loadFromFile */

@@ -27,13 +27,12 @@
  \brief PDF manipulation utility functions header
 */
 
-#include <kernel/iproperty.h>
-#include <kernel/cobject.h>
 #include <kernel/cannotation.h>
+#include <kernel/cobject.h>
+#include <kernel/cpdf.h>
+#include <kernel/iproperty.h>
 class QString;
-namespace pdfobjects {
-class CPdf;
-}
+class QWidget;
 
 namespace util {
 
@@ -60,6 +59,10 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj);
 QString annotType(CAnnotation::AnnotType at);
 QString annotType(boost::shared_ptr<CAnnotation> anot);
 QString annotTypeName(boost::shared_ptr<CAnnotation> anot);
+
+//Password-related functions
+boost::shared_ptr<CPdf> getPdfInstance(QWidget *parent, const QString &filename, CPdf::OpenMode mode, bool askPassword=true);
+bool setPdfPassword(boost::shared_ptr<CPdf> pdf, const QString &pass);
 
 } // namespace util
 
