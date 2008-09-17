@@ -37,6 +37,7 @@
 #include "kernel/modecontroller.h"
 #include "kernel/cobject.h"
 #include "kernel/xrefwriter.h"
+#include "kernel/cxref.h"
 
 // =============================================================================
 namespace pdfobjects {
@@ -1282,6 +1283,7 @@ public:
 	 */
 	boost::shared_ptr<CDict> getDictionary()const
 	{
+		// TODO need credentials?
 		return docCatalog;
 	}
 
@@ -1557,6 +1559,9 @@ public:
 	template<typename Container>
 	void getOutlines (Container& cont)
 	{
+
+		check_need_credentials(xref);
+
 		// Clear outline container
 		cont.clear ();
 		
@@ -1587,6 +1592,25 @@ public:
 
 	/** Throws an exception if this document can not be changed. */
 	void canChange () const;
+
+	/** Checks whether encryption credentials are required for docuement.
+	 * @return true if no credentials have been set yet and they are
+	 * required (setCredentials method has to be called), false otherwise.
+	 */
+	bool needsCredentials()const
+	{
+		return xref->getNeedCredentials();
+	}
+
+	/** Sets credentials for encrypted document.
+	 * Delegates to CXref::setCredentials method.
+	 */
+	void setCredentials(const char * ownerPasswd, const char * userPasswd)
+	{
+		kernelPrintDbg(debug::DBG_INFO, "Setting credentions");
+		xref->setCredentials(ownerPasswd, userPasswd);
+		initRevisionSpecific();
+	}
 };
 
 

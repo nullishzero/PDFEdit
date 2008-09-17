@@ -1579,10 +1579,18 @@ using namespace observer;
 
 void CPdf::initRevisionSpecific()
 {
-using namespace utils;
-using namespace observer;
+	kernelPrintDbg(debug::DBG_DBG, "");
 
-	kernelPrintDbg(DBG_DBG, "");
+	// if we need credentials
+	// for encrypted document, we have to wait until setCredentials is called,
+	// which in turn calls this method. All other public methods which could
+	// require encrypted content has to check check_need_credentials to ensute that
+	// everything is prepared to be used
+	if(needsCredentials())
+	{
+		kernelPrintDbg(debug::DBG_WARN, "Credentials for document are required. Waiting for setCredentials method");
+		return;
+	}
 
 	// Clean up part:
 	// =============
@@ -1595,11 +1603,11 @@ using namespace observer;
 	// cleans up and invalidates all returned pages
 	if(pageList.size())
 	{
-		kernelPrintDbg(DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
+		kernelPrintDbg(debug::DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
 		PageList::iterator i;
 		for(i=pageList.begin(); i!=pageList.end(); ++i)
 		{
-			kernelPrintDbg(DBG_DBG, "invalidating page at pos="<<i->first);
+			kernelPrintDbg(debug::DBG_DBG, "invalidating page at pos="<<i->first);
 			i->second->invalidate();
 		}
 		pageList.clear();
@@ -1615,9 +1623,9 @@ using namespace observer;
 			IndiRef ref=i->first;
 			shared_ptr<IProperty> value=i->second;
 			if(!value.unique())
-				kernelPrintDbg(DBG_WARN, "Somebody still holds property with with "<<ref);
+				kernelPrintDbg(debug::DBG_WARN, "Somebody still holds property with with "<<ref);
 		}
-		kernelPrintDbg(DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
+		kernelPrintDbg(debug::DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
 		indMap.clear();
 	}
 
@@ -1628,16 +1636,16 @@ using namespace observer;
 	// if someone holds reference (in shared_ptr assigned from them), prints
 	// warning
 	if((trailer.get()) && (!trailer.unique()))
-		kernelPrintDbg(DBG_WARN, "Trailer dictionary is held by somebody.");
+		kernelPrintDbg(debug::DBG_WARN, "Trailer dictionary is held by somebody.");
 	trailer.reset();
 	if((docCatalog.get()) && (!docCatalog.unique()))
-		kernelPrintDbg(DBG_WARN, "Document catalog dictionary is held by somebody.");
+		kernelPrintDbg(debug::DBG_WARN, "Document catalog dictionary is held by somebody.");
 	
-	kernelPrintDbg(DBG_DBG, "Cleaning up nodeCountCache with "<<nodeCountCache.size()<<" entries");
-	clearCache(nodeCountCache);
+	kernelPrintDbg(debug::DBG_DBG, "Cleaning up nodeCountCache with "<<nodeCountCache.size()<<" entries");
+	utils::clearCache(nodeCountCache);
 	
-	kernelPrintDbg(DBG_DBG, "Cleaning up pageTreeKidsParentCache with "<<pageTreeKidsParentCache.size()<<" entries");
-	clearCache(pageTreeKidsParentCache);
+	kernelPrintDbg(debug::DBG_DBG, "Cleaning up pageTreeKidsParentCache with "<<pageTreeKidsParentCache.size()<<" entries");
+	utils::clearCache(pageTreeKidsParentCache);
 
 	// cleanup all returned outlines  -------------||----------------- 
 	
@@ -1648,25 +1656,25 @@ using namespace observer;
 	// no free should be called because trailer is returned directly from XRef
 	Object * trailerObj=xref->getTrailerDict();
 	assert(trailerObj->isDict());
-	kernelPrintDbg(DBG_DBG, "Creating trailer dictionary from type="<<trailerObj->getType());
+	kernelPrintDbg(debug::DBG_DBG, "Creating trailer dictionary from type="<<trailerObj->getType());
 	trailer=boost::shared_ptr<CDict>(CDictFactory::getInstance(*trailerObj));
 	
 	// Intializes document catalog dictionary.
 	// gets Root field from trailer, which should contain reference to catalog.
 	// If no present or not reference, we have corrupted PDF file and exception
 	// is thrown
-	kernelPrintDbg(DBG_DBG, "Getting Root field - document catalog");
+	kernelPrintDbg(debug::DBG_DBG, "Getting Root field - document catalog");
 	IndiRef rootRef=utils::getRefFromDict("Root", trailer);
 	shared_ptr<IProperty> prop_ptr=getIndirectProperty(rootRef);
 	if(prop_ptr->getType()!=pDict)
 	{
-		kernelPrintDbg(DBG_CRIT, "Trailer dictionary doesn't point to correct document catalog.");
+		kernelPrintDbg(debug::DBG_CRIT, "Trailer dictionary doesn't point to correct document catalog.");
 		throw ElementBadTypeException("Root");
 	}
-	kernelPrintDbg(DBG_INFO, "Document catalog successfully fetched");
+	kernelPrintDbg(debug::DBG_INFO, "Document catalog successfully fetched");
 	docCatalog=IProperty::getSmartCObjectPtr<CDict>(prop_ptr);
 	
-	kernelPrintDbg(DBG_DBG, "Registering observers to page tree structure");
+	kernelPrintDbg(debug::DBG_DBG, "Registering observers to page tree structure");
 	// registers pageTreeRootObserver to document catalog and to Pages property
 	// if it is reference
 	REGISTER_SHAREDPTR_OBSERVER(docCatalog, pageTreeRootObserver);
@@ -1676,13 +1684,13 @@ using namespace observer;
 		if(isRef(pagesProp))
 			REGISTER_SHAREDPTR_OBSERVER(pagesProp, pageTreeRootObserver);
 		else
-			kernelPrintDbg(DBG_WARN, "Pages field is not reference as required");
+			kernelPrintDbg(debug::DBG_WARN, "Pages field is not reference as required");
 	}else
-		kernelPrintDbg(DBG_WARN, "Document doesn contain page tree structure");
+		kernelPrintDbg(debug::DBG_WARN, "Document doesn't contain page tree structure");
 	
 	// registers pageTreeNodeObserver and pageTreeKidsObserver to page tree root
 	// dictionary which registers these observers to whole page tree structure
-	shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(_this.lock());
+	shared_ptr<IProperty> pageTreeRoot=utils::getPageTreeRoot(_this.lock());
 	if(pageTreeRoot.get())
 		registerPageTreeObservers(pageTreeRoot);
 }
@@ -1852,6 +1860,8 @@ CPdf::~CPdf()
 boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef &ref)
 {
 using namespace debug;
+
+	check_need_credentials(xref);
 
 	// find the key, if it exists
 	IndirectMapping::iterator i = indMap.find(ref);
@@ -2126,6 +2136,8 @@ using namespace boost;
 
 	kernelPrintDbg(DBG_DBG, "");
 
+	check_need_credentials(xref);
+
 	if(getMode()==ReadOnly)
 	{
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
@@ -2231,15 +2243,24 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 {
 	kernelPrintDbg(DBG_DBG, "");
 	
+	check_need_credentials(xref);
+
 	if(getMode()==ReadOnly)
 	{
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
+
+	shared_ptr<CPdf> _thisP = _this.lock();
+	if(utils::isEncrypted(_thisP))
+	{
+		kernelPrintDbg(DBG_WARN, "Changing properties for encrypted documents si not implemented");
+		throw NotImplementedException("changeIndirectProperty");
+	}
 	
 	// checks property at first
 	// it must be from same pdf
-	if(prop->getPdf().lock() != _this.lock())
+	if(prop->getPdf().lock() != _thisP)
 	{
 		kernelPrintDbg(DBG_ERR, "Given property is not from same pdf.");
 		throw CObjInvalidObject();
@@ -2380,6 +2401,8 @@ using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "");
 
+	check_need_credentials(xref);
+
 	if(!POSITION_IN_RANGE(pos))
 	{
 		kernelPrintDbg(DBG_WARN, "Page out of range pos="<<pos);
@@ -2417,6 +2440,8 @@ using namespace utils;
 	
 	kernelPrintDbg(DBG_DBG, "");
 	
+	check_need_credentials(xref);
+
 	// try to use cached value - if zero, we have to get it from Page tree root
 	if(pageCount)
 	{
@@ -2435,6 +2460,7 @@ bool CPdf::hasNextPage(boost::shared_ptr<CPage> page) const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
+	// check for the credentials is done in getPagePosition
 	size_t pos=getPagePosition(page);
 	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
 	++pos;
@@ -2468,6 +2494,7 @@ boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
+	// check for the credentials is done in getPagePosition
 	size_t pos=getPagePosition(page);
 	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
 	pos--;
@@ -2480,6 +2507,8 @@ size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 		
+	check_need_credentials(xref);
+
 	// search in returned page list
 	PageList::iterator i;
 	for(i=pageList.begin(); i!=pageList.end(); ++i)
@@ -2908,6 +2937,8 @@ using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "pos="<<pos);
 
+	check_need_credentials(xref);
+
 	if(getMode()==ReadOnly)
 	{
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
@@ -3056,6 +3087,8 @@ using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "");
 
+	check_need_credentials(xref);
+
 	if(getMode()==ReadOnly)
 	{
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
@@ -3129,6 +3162,7 @@ void CPdf::save(bool newRevision)const
 	// we are in the newest revision, so changes can be saved
 	// delegates all work to the XRefWriter and set change to 
 	// mark, that no changes were stored
+	// check for credentials is done in XRefWriter
 	xref->saveChanges(newRevision);
 	change=false;
 }
@@ -3149,15 +3183,15 @@ using namespace debug;
 	if(isLinearized())
 		throw NotImplementedException("Linearized PDF cloning is not supported");
 
-	// delagates to XRefWriter
+	// delagates to XRefWriter - check for credentials is done there
 	xref->cloneRevision(file);
 }
 
 void CPdf::changeRevision(revision_t revisionNum)
 {
 	kernelPrintDbg(DBG_DBG, "");
-	
-	// set revision xref->changeRevision
+
+	// credentials are checked in XRefWriter
 	xref->changeRevision(revisionNum);
 	
 	// prepares internal structures for new revision
@@ -3166,17 +3200,15 @@ void CPdf::changeRevision(revision_t revisionNum)
 
 void CPdf::canChange () const
 {
+	check_need_credentials(xref);
+
 	if (xref->isLinearized())
 		throw ReadOnlyDocumentException("Dcoument is linearized");
 
-	//
 	// Not in lates revision
-	//
 	if (xref->getActualRevision())
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
-	//
 	// In read only mode
-	//
 	if (ReadOnly == getMode())
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 }
