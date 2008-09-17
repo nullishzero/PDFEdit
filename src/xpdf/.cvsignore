@@ -3,3 +3,4 @@ aconf.h
 config.log
 config.status
 config_xpdf_variables
+xpdf-aconf.h
