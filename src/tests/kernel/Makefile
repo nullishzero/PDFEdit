@@ -22,6 +22,7 @@ SOURCES = testcobjectsimple.cc \
 		testoutlines.cc \
 		testtextoutput.cc \
 		testparams.cc \
+		testencrypt.cc \
 		main.cc
 HEADERS = testcobject.h \
 	  testcpage.h \

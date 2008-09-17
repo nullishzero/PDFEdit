@@ -33,6 +33,8 @@
 //
 const char* TestParams::DEFAULT_DIR = "../../../testset/";
 const char* TestParams::DEFAULT_PDF = "zadani.pdf";
+const char* TestParams::DEFAULT_ENCRYPT_PASSWD_RC = "encrypt_passwd.rc";
+const std::string TestParams::PASSWD_RC("-passwd_rc");
 const std::string TestParams::INPUT_DIR	("-dir");
 const std::string TestParams::ALL_OUTPUT("-all");
 const std::string TestParams::TESTS("-tests");
@@ -45,9 +47,11 @@ bool
 TestParams::init (int argc, char* argv[])
 {
 	// init
-	instance().all_output = false;
-	instance().input_dir = DEFAULT_DIR;
-	instance().debugLevel = TestParams::DEFAULT_DEBUG_LEVEL;
+	TestParams &params = instance();
+	params.all_output = false;
+	params.input_dir = DEFAULT_DIR;
+	params.debugLevel = TestParams::DEFAULT_DEBUG_LEVEL;
+	params.passwd_rc = TestParams::DEFAULT_ENCRYPT_PASSWD_RC;
 
 	// 
 	while (1 < argc)
@@ -57,7 +61,7 @@ TestParams::init (int argc, char* argv[])
 		
 		if (ALL_OUTPUT == param) 
 		{
-			instance().all_output = true;
+			params.all_output = true;
 			continue;
 		
 		}else if (INPUT_DIR == param) 
@@ -65,7 +69,7 @@ TestParams::init (int argc, char* argv[])
 			param = argv[1];
 			--argc;++argv;
 			if (0 < argc) {
-				instance().input_dir = param;
+				params.input_dir = param;
 				continue;
 			}
 			else
@@ -79,12 +83,25 @@ TestParams::init (int argc, char* argv[])
 				int val = atoi(param);
 				if(val < 0 || val > (int)debug::DBG_DBG)
 					return false;
-				instance().debugLevel = (unsigned int)val;
+				params.debugLevel = (unsigned int)val;
 				continue;
 			}else
 				return false;
-		}else {
-
+		}else if (PASSWD_RC == param)
+		{
+			param = argv[1];
+			--argc;++argv;
+			struct stat info;
+			if(0 < argc || !stat(param, &info)) {
+				if(S_ISREG(info.st_mode))
+				{
+					params.passwd_rc = param;
+					continue;
+				}
+			}
+			return false;
+		}else
+		{
 			struct stat info;
 			if (!stat(param, &info))
 			{
@@ -92,19 +109,19 @@ TestParams::init (int argc, char* argv[])
 				if(S_ISREG(info.st_mode))
 				{
 					// Push all files for testing into this conatiner	
-					instance().files.push_back (param);
+					params.files.push_back (param);
 					continue;
 				}
 			}
 		}
 
 		// none of special parameters, so fallback to the testname
-		instance().tests.push_back(param);
+		params.tests.push_back(param);
 	
 	} // while
 
-	if (0 == instance().files.size())
-		instance().files.push_back (instance().input_dir+DEFAULT_PDF);
+	if (0 == params.files.size())
+		params.files.push_back (params.input_dir+DEFAULT_PDF);
 
 	return true;
 }

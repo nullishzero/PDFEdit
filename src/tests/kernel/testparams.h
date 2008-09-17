@@ -45,6 +45,7 @@ public:
 	static const char* DEFAULT_PDF;
 	static const char* DEFAULT_DIR;
 	static const unsigned int DEFAULT_DEBUG_LEVEL;
+	static const char* DEFAULT_ENCRYPT_PASSWD_RC;
 	
 	//
 	// Params
@@ -62,6 +63,9 @@ public:
 
 	static const std::string DEBUG_LEVEL;
 	unsigned int debugLevel;
+
+	static const std::string PASSWD_RC;
+	std::string passwd_rc;
 	//
 	// Methods
 	//
