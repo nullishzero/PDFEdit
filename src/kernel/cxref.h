@@ -465,18 +465,20 @@ public:
 	virtual ::Object * fetch(int num, int gen, ::Object *obj);
 };
 
+// implemented as macro because we want to have better log information
+// where this check failure was triggered
 /** Checks whether encryption credentials have been probevided to the
  * given xref.
  * @param xref Cross reference.
  * @throw PermissionException if no credentials have been provided.
  */
-static inline void check_need_credentials(const CXref *xpdf)
-{
-	if(xpdf->getNeedCredentials())	{
-		kernelPrintDbg(debug::DBG_ERR, "No credentials available for encrypted document.");
-		throw PermissionException("Encryption credentials required");
-	}
-}
+#define check_need_credentials(xref)					\
+	do{								\
+	if((xref)->getNeedCredentials()) { 				\
+		kernelPrintDbg(debug::DBG_ERR, "No credentials available for encrypted document."); \
+		throw PermissionException("Encryption credentials required"); 	\
+	}									\
+	}while(0)
 
 } // end of pdfobjects namespace
 
