@@ -808,9 +808,10 @@ void PdfEditWindow::destroyFile() {
 /**
  Open file in editor.
  @param name Name of file to open
+ @param askPassword Ask user directly for password? If not, password have to be set other ways if necessary (via script for example)
  @return True if success, false if failure
 */
-bool PdfEditWindow::openFile(const QString &name) {
+bool PdfEditWindow::openFile(const QString &name, bool askPassword/*=true*/) {
  destroyFile();
  if (name.isNull()) {
   base->setError(tr("Name is empty"));
@@ -819,11 +820,21 @@ bool PdfEditWindow::openFile(const QString &name) {
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
-  document=getPdfInstance(this,util::convertFromUnicode(name,util::NAME).c_str(),mode);
+  document=getPdfInstance(this,util::convertFromUnicode(name,util::NAME).c_str(),mode,askPassword);
+  if (askPassword && document->needsCredentials()) {
+   //User failed to enter correct password when asked.
+   //resets document instance to force closing
+   document.reset();
+   base->setError(tr("Password entered for document is not valid"));
+   //File failed to open, keep window opened with empty file.
+   emptyFile();
+   base->call("onLoadError");
+   return false;
+  }
   // registers observer with progress bar on document writer
   // this will cause displaying of content saving progress
   pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();
-  if(writer) {
+  if (writer) {
    REGISTER_PTR_OBSERVER(writer, progressObserver);
   }
   assert(document);

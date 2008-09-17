@@ -582,8 +582,8 @@ bool BaseGUI::modified() {
 }
 
 /** \copydoc PdfEditWindow::openFile */
-bool BaseGUI::openFile(const QString &name) {
- return w->openFile(name);
+bool BaseGUI::openFile(const QString &name, bool askPassword/*=true*/) {
+ return w->openFile(name,askPassword);
 }
 
 /**

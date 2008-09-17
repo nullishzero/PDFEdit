@@ -79,7 +79,7 @@ public:
  bool save(bool newRevision=false);
  bool saveCopy(const QString &name);
  bool closeFile(bool askSave,bool onlyAsk=false);
- bool openFile(const QString &name);
+ bool openFile(const QString &name, bool askPassword=true);
  void exitApp();
  void closeWindow();
  int pageNumber();

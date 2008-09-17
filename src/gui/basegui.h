@@ -238,9 +238,13 @@ public slots: //This will be all exported to scripting
  /*-
   Opens file with given name in this editor window.
   Opens without any questions, does not ask user to save changes to current file, etc ...
+  If askPassword is true (default), user is asked for password to the
+   document and loading fails if user does not enter correct password.
+  If askPassword is false, script have to handle entering the correct
+   password and possible closing of the document on failure by itself.
   Return true on success, false on failure to load file.
  */
- bool openFile(const QString &name);
+ bool openFile(const QString &name, bool askPassword=true);
  /*- Opens file with given name in new editor window */
  void openFileNew(const QString &name);
  /*- Invokes options dialog. Does not wait for dialog to be closed by user and return immediately. */

@@ -78,7 +78,7 @@ function func_load() {
    }
    enc=document.isEncrypted();
    if (enc) {
-    warn(tr('Warning: This document is encrypted!'));
+    print(tr('Warning: This document is encrypted!'));
    }
   }
  } catch (e) {
