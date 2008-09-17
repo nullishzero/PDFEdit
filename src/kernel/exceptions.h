@@ -68,6 +68,9 @@ class NotImplementedException;
 class IndirectObjectNotFoundException;
 class ElementNotFoundException;
 class ElementBadTypeException;
+
+class PermissionException;
+
 struct CObjBadValue;
 struct CObjInvalidObject;
 struct CObjInvalidOperation;
@@ -496,6 +499,34 @@ public:
 	const char * what()const throw()
 	{
 		return message.c_str();
+	}
+};
+
+/** Exception for permission violation.
+ */
+class PermissionException: public CObjectException
+{
+	const std::string message;
+public:
+	/** Exception constructor.
+	 * @param _message Feature description which is not implemented.
+	 */
+	PermissionException(std::string _message):message(_message)
+	{
+	}
+
+	~PermissionException() throw()
+	{
+	}
+
+	const char * what()const throw()
+	{
+		return message.c_str();
+	}
+
+	void getMessage(std::string _message)
+	{
+		_message=message;
 	}
 };
 
