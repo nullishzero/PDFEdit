@@ -236,7 +236,7 @@ void XRef::initInternals(Guint pos)
   objStr = NULL;
   maxObj = 0;
 
-  encrypted = gFalse;
+  useEncrypt = gFalse;
   permFlags = defPermFlags;
   ownerPasswordOk = gFalse;
 
@@ -845,7 +845,7 @@ void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
 			 CryptAlgorithm encAlgorithmA) {
   int i;
 
-  encrypted = gTrue;
+  useEncrypt = gTrue;
   permFlags = permFlagsA;
   ownerPasswordOk = ownerPasswordOkA;
   if (keyLengthA <= 16) {
@@ -919,7 +919,7 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
       delete parser;
       goto err_damaged;
     }
-    if (!parser->getObj(obj, encrypted ? fileKey : (Guchar *)NULL,
+    if (!parser->getObj(obj, useEncrypt ? fileKey : (Guchar *)NULL,
 		   encAlgorithm, keyLength, num, gen)) 
       failed = gTrue;
 

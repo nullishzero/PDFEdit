@@ -193,7 +193,9 @@ protected:
 				//   damaged files
   int streamEndsLen;		// number of valid entries in streamEnds
   ObjectStream *objStr;		// cached object stream
-  GBool encrypted;		// true if file is encrypted
+  GBool useEncrypt;		// true if we want to decrypt content
+  // TODO where is this field initialized ???
+  GBool encrypted;		// Flag whether document is encrypted.
   int permFlags;		// permission bits
   GBool ownerPasswordOk;	// true if owner password is correct
   Guchar fileKey[16];		// file decryption key
