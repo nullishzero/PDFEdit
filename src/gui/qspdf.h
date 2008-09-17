@@ -52,8 +52,8 @@ QSPdf(boost::shared_ptr<CPdf>_pdf,BaseCore *_base,bool _destructive=false);
  boost::shared_ptr<CPdf> get() const;
  void set(boost::shared_ptr<CPdf> pdf);
 public slots:
- /*- Return name of filter used to encrypt the document, or NULL if document is not encrypted */
- QString encryption();
+ /*- Returns true if document is encrypted. */
+ bool isEncrypted();
  /*- Return true, if document is linearized PDF, false otherwise */
  bool isLinearized();
  /*-

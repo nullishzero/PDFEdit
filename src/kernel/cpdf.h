@@ -1815,16 +1815,12 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
 
 /** Checks whether file content is encrypted.
  * @param pdf Pdf instance to check.
- * @param filterName Name of the filter used for encryption (set only if
- * content is encrypted).
- *
- * Checks for Encrypt entry in document's trailer. If it is present, it means
- * that content is enctypted and so tries to get FilterName entry from Encrypt
- * dictionary (if filterName is non NULL).
  * 
+ * Simple helper which asks its cross reference table.
+ *
  * @return true if file content is encrypted, false otherwise.
  */
-bool isEncrypted(boost::shared_ptr<CPdf> &pdf, std::string * filterName);
+bool isEncrypted(boost::shared_ptr<CPdf> &pdf);
 
 /** Returns cobjects from given reference property.
  * @param refProp Reference property (must be pRef typed).

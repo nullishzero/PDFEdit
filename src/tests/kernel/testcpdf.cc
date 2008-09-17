@@ -1143,10 +1143,9 @@ public:
 			printf("\nTests for file:%s\n", fileName.c_str());
 			boost::shared_ptr<CPdf> pdf=getTestCPdf(fileName.c_str());
 			string filterName;
-			if(pdfobjects::utils::isEncrypted(pdf, &filterName))
+			if(pdfobjects::utils::isEncrypted(pdf))
 			{
 				printf("Test file is encrypted and so not supported.\n");
-				printf("File is encrypted by %s method\n", filterName.c_str());
 				continue;
 			}
 			// pageIterationTC is before indirectPropertyTC because it needs to

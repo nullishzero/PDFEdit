@@ -813,53 +813,9 @@ using namespace utils;
 	}
 }
 
-bool isEncrypted(boost::shared_ptr<CPdf> &pdf, string * filterName)
+bool isEncrypted(boost::shared_ptr<CPdf> &pdf)
 {
-	utilsPrintDbg(DBG_DBG, "");
-
-	// gets trailer dictionary and checks Encrypt entry
-	shared_ptr<const CDict> trailer=pdf->getTrailer();
-	if(! trailer->containsProperty("Encrypt"))
-	{
-		utilsPrintDbg(DBG_DBG, "Document content is not encrypted.");
-		return false;
-	}
-	
-	// Encrypt entry found
-	shared_ptr<IProperty> encryptProp=trailer->getProperty("Encrypt");
-	shared_ptr<CDict> encryptDict;
-	if(isRef(*encryptProp))
-	{
-		IndiRef ref=getValueFromSimple<CRef>(encryptProp);
-		utilsPrintDbg(DBG_DBG, "Encrypt is reference. "<<ref);
-		try
-		{
-			encryptDict=getCObjectFromRef<CDict>(ref, pdf);
-		}catch(CObjectException &)
-		{
-			utilsPrintDbg(DBG_WARN, ref<<" doesn't refere to dictionary.");
-		}
-	}else
-		if(isDict(*encryptProp))
-			encryptDict=IProperty::getSmartCObjectPtr<CDict>(encryptProp);
-
-	// checks whether encryptDict is intialized and if so, document is encrypted
-	if(encryptDict.get())
-	{
-		utilsPrintDbg(DBG_INFO, "Document content contains Encrypt dictionary.");
-		// if filterName parameter is non NULL, set its value to encryption
-		// algorithm 
-		if(filterName && encryptDict->containsProperty("Filter"))
-		{
-			shared_ptr<IProperty> filter=encryptDict->getProperty("Filter");
-			filter->getStringRepresentation(*filterName);
-			utilsPrintDbg(DBG_DBG, "Encrypt uses "<<filterName<<" filter method.");
-		}
-		return true;
-	}
-
-	utilsPrintDbg(DBG_WARN, "Encrypt entry found in trailer but it is not a dictionary.");
-	return false;
+ 	return pdf->getCXref()->isEncrypted();
 }
 
 } // end of utils namespace

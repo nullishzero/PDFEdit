@@ -407,14 +407,12 @@ void QSPdf::set(boost::shared_ptr<CPdf> pdf) {
 }
 
 /**
- Return name of filter used to encrypt the document, or NULL if document is not encrypted
- @return Encryption filter
+ Checks whether document is encrypted.
+ @return true if encrypted, false otherwise.
  */
-QString QSPdf::encryption() {
- if (nullPtr(obj,"encryption")) return 0;
- std::string filter;
- if (!pdfobjects::utils::isEncrypted(obj,&filter)) return QString::null;
- return util::convertToUnicode(filter,util::PDF);
+bool QSPdf::isEncrypted() {
+ if (nullPtr(obj,"isEncrypted")) return 0;
+ return pdfobjects::utils::isEncrypted(obj);
 }
 
 } // namespace gui

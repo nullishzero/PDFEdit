@@ -76,11 +76,9 @@ function func_load() {
    if (document.isLinearized()) {
     print(tr('Warning: This document is linearized PDF!'));
    }
-   enc=document.encryption();
+   enc=document.isEncrypted();
    if (enc) {
-    warn(tr('Warning: This document is encrypted!')+"\n"+
-         tr('Encryption filter:')+" "+enc+"\n"+
-         tr('Encrypted content will show up as garbage and many operations will be impossible'));
+    warn(tr('Warning: This document is encrypted!'));
    }
   }
  } catch (e) {
