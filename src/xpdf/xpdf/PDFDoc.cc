@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <assert.h>
 #ifdef WIN32
 #  include <windows.h>
 #endif
@@ -33,6 +34,7 @@
 #include "xpdf/Lexer.h"
 #include "xpdf/Parser.h"
 #include "xpdf/SecurityHandler.h"
+#include "xpdf/encrypt_utils.h"
 #ifndef DISABLE_OUTLINE
 #include "xpdf/Outline.h"
 #endif
@@ -272,37 +274,16 @@ void PDFDoc::checkHeader() {
 }
 
 GBool PDFDoc::checkEncryption(GString *ownerPassword, GString *userPassword) {
-  Object encrypt;
-  GBool encrypted;
-  SecurityHandler *secHdlr;
   GBool ret;
+  SecurityHandler *secHdlr = checkEncryptionCred(xref, ownerPassword, userPassword, ret);
 
-  xref->getTrailerDict()->dictLookup("Encrypt", &encrypt);
-  if ((encrypted = encrypt.isDict())) {
-    if ((secHdlr = SecurityHandler::make(this, &encrypt))) {
-      if (secHdlr->checkEncryption(ownerPassword, userPassword)) {
-	// authorization succeeded
-       	xref->setEncryption(secHdlr->getPermissionFlags(),
-			    secHdlr->getOwnerPasswordOk(),
-			    secHdlr->getFileKey(),
-			    secHdlr->getFileKeyLength(),
-			    secHdlr->getEncVersion(),
-			    secHdlr->getEncAlgorithm());
-	ret = gTrue;
-      } else {
-	// authorization failed
-	ret = gFalse;
-      }
-      delete secHdlr;
-    } else {
-      // couldn't find the matching security handler
-      ret = gFalse;
-    }
-  } else {
-    // document is not encrypted
-    ret = gTrue;
+  // credentials must be correct and also required
+  // it is not possible that secHdlr is set also when credentials are not correct
+  assert(!(secHdlr && !ret));
+  if(ret && secHdlr) {
+	  setEncryptionCred(xref, secHdlr);
+	  delete secHdlr;
   }
-  encrypt.free();
   return ret;
 }
 

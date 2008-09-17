@@ -31,7 +31,7 @@
 // SecurityHandler
 //------------------------------------------------------------------------
 
-SecurityHandler *SecurityHandler::make(PDFDoc *docA, Object *encryptDictA) {
+SecurityHandler *SecurityHandler::make(XRef *xrefA, Object *encryptDictA) {
   Object filterObj;
   SecurityHandler *secHdlr;
 #ifdef ENABLE_PLUGINS
@@ -40,11 +40,11 @@ SecurityHandler *SecurityHandler::make(PDFDoc *docA, Object *encryptDictA) {
 
   encryptDictA->dictLookup("Filter", &filterObj);
   if (filterObj.isName("Standard")) {
-    secHdlr = new StandardSecurityHandler(docA, encryptDictA);
+    secHdlr = new StandardSecurityHandler(xrefA, encryptDictA);
   } else if (filterObj.isName()) {
 #ifdef ENABLE_PLUGINS
     if ((xsh = globalParams->getSecurityHandler(filterObj.getName()))) {
-      secHdlr = new ExternalSecurityHandler(docA, encryptDictA, xsh);
+      secHdlr = new ExternalSecurityHandler(xref, encryptDictA, xsh);
     } else {
 #endif
       error(-1, "Couldn't find the '%s' security handler",
@@ -61,8 +61,8 @@ SecurityHandler *SecurityHandler::make(PDFDoc *docA, Object *encryptDictA) {
   return secHdlr;
 }
 
-SecurityHandler::SecurityHandler(PDFDoc *docA) {
-  doc = docA;
+SecurityHandler::SecurityHandler(XRef *xrefA) {
+  xref = xrefA;
 }
 
 SecurityHandler::~SecurityHandler() {
@@ -83,6 +83,8 @@ GBool SecurityHandler::checkEncryption(GString *ownerPassword,
   if (authData) {
     freeAuthData(authData);
   }
+  /* Don't mix gui with low level stuff given values should
+   * be enough.
   for (i = 0; !ok && i < 3; ++i) {
     if (!(authData = getAuthData())) {
       break;
@@ -92,6 +94,7 @@ GBool SecurityHandler::checkEncryption(GString *ownerPassword,
       freeAuthData(authData);
     }
   }
+  */
   if (!ok) {
     error(-1, "Incorrect password");
   }
@@ -123,9 +126,9 @@ public:
   GString *userPassword;
 };
 
-StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
+StandardSecurityHandler::StandardSecurityHandler(XRef *xrefA,
 						 Object *encryptDictA):
-  SecurityHandler(docA)
+  SecurityHandler(xrefA)
 {
   Object versionObj, revisionObj, lengthObj;
   Object ownerKeyObj, userKeyObj, permObj, fileIDObj;
@@ -145,7 +148,7 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
   encryptDictA->dictLookup("O", &ownerKeyObj);
   encryptDictA->dictLookup("U", &userKeyObj);
   encryptDictA->dictLookup("P", &permObj);
-  doc->getXRef()->getTrailerDict()->dictLookup("ID", &fileIDObj);
+  xref->getTrailerDict()->dictLookup("ID", &fileIDObj);
   if (versionObj.isInt() &&
       revisionObj.isInt() &&
       ownerKeyObj.isString() && ownerKeyObj.getString()->getLength() == 32 &&
@@ -261,6 +264,7 @@ void *StandardSecurityHandler::makeAuthData(GString *ownerPassword,
 }
 
 void *StandardSecurityHandler::getAuthData() {
+/*
 #if HAVE_XPDFCORE
   XPDFCore *core;
   GString *password;
@@ -282,7 +286,10 @@ void *StandardSecurityHandler::getAuthData() {
 #else
   return NULL;
 #endif
+*/
+  return NULL;
 }
+
 
 void StandardSecurityHandler::freeAuthData(void *authData) {
   delete (StandardAuthData *)authData;

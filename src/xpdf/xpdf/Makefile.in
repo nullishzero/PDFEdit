@@ -60,7 +60,8 @@ CXX_SRC = \
 	pdfinfo.cc \
 	pdffonts.cc \
 	pdftoppm.cc \
-	pdfimages.cc 
+	pdfimages.cc \
+	encrypt_utils.cc
 HEADERS = \
 	Annot.h \
 	Array.h \
@@ -163,7 +164,8 @@ TextOutputDev.o \
 UnicodeMap.o \
 UnicodeTypeTable.o \
 XRef.o \
-XpdfPluginAPI.o
+XpdfPluginAPI.o \
+encrypt_utils.o
 
 TARGET = $(LIBPREFIX)xpdf.a
 libxpdf: $(TARGET)

@@ -29,9 +29,9 @@ struct XpdfSecurityHandler;
 class SecurityHandler {
 public:
 
-  static SecurityHandler *make(PDFDoc *docA, Object *encryptDictA);
+  static SecurityHandler *make(XRef *xrefA, Object *encryptDictA);
 
-  SecurityHandler(PDFDoc *docA);
+  SecurityHandler(XRef *xref);
   virtual ~SecurityHandler();
 
   // Check the document's encryption.  If the document is encrypted,
@@ -78,7 +78,7 @@ public:
 
 protected:
 
-  PDFDoc *doc;
+  XRef *xref;
 };
 
 //------------------------------------------------------------------------
@@ -88,7 +88,7 @@ protected:
 class StandardSecurityHandler: public SecurityHandler {
 public:
 
-  StandardSecurityHandler(PDFDoc *docA, Object *encryptDictA);
+  StandardSecurityHandler(XRef *xrefA, Object *encryptDictA);
   virtual ~StandardSecurityHandler();
 
   virtual void *makeAuthData(GString *ownerPassword,
@@ -120,6 +120,7 @@ private:
 };
 
 #ifdef ENABLE_PLUGINS
+#error Plugins are not supported for PDFedit
 //------------------------------------------------------------------------
 // ExternalSecurityHandler
 //------------------------------------------------------------------------
