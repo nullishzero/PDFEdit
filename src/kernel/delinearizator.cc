@@ -117,14 +117,12 @@ using namespace debug;
 	if(!file)
 	{
 		utilsPrintDbg(DBG_ERR, "Bad file handle");
-		// FIXME to constant
-		return -1;
+		return EINVAL;
 	}
 	if(!pdfWriter)
 	{
 		utilsPrintDbg(DBG_ERR, "No pdfWriter specified. Aborting");
-		// FIXME to constant
-		return -1;
+		return EINVAL;
 	}
 
 	// don't use check_need_credentials here, because we don't want to throw
@@ -132,7 +130,7 @@ using namespace debug;
 	if(getNeedCredentials())
 	{
 		utilsPrintDbg(DBG_ERR, "No credentials available for encrypted document.");
-		return -1;
+		return EPERM;
 	}
 	if(isEncrypted())
 	{
@@ -161,7 +159,7 @@ using namespace debug;
 		{
 			// this should never happen
 			utilsPrintDbg(DBG_ERR, "File is corrupted because, doesn't contain proper PDF header.");
-			return -1;
+			throw MalformedFormatExeption("pdf header missing");
 		}
 	}while(!strstr(buffer, PDFHEADER));
 

@@ -196,7 +196,7 @@ public:
 	 * dictionary - which are available in XRef::entries array.
 	 * Finally stores xref and trailer section.
 	 * <br>
-	 * Caller is responsible for file opening and closing.
+	 * Caller is responsible for file handle closing.
 	 * <br>
 	 * NOTE that method doesn't check whether given file is same as one used for
 	 * input data. If it refers to same file, result is unpredictable.
@@ -204,8 +204,9 @@ public:
 	 * If no pdfWriter is specified (it is NULL), does nothing and immediatelly
 	 * returns.
 	 *
-	 * @return 0 if everything ok, otherwise valie of error of the error.
+	 * @return 0 if everything ok, otherwise value of error of the error.
 	 * @throw NotImplementedException if document is encrypted.
+	 * @throw MalformedFormatExeption if the input file is currupted.
 	 */
 	int delinearize(FILE * file);
 };
