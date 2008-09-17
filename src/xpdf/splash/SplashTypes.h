@@ -88,7 +88,14 @@ static inline void splashColorCopy(SplashColorPtr dest, SplashColorPtr src) {
 #endif
 }
 
-static inline void splashColorXor(SplashColorPtr dest, SplashColorPtr src) {
+// This function is not used anywhere in the code, but as I am not sure about
+// its original purpose it is defined so that it should yell loudly if it
+// is used somewhere later - if not compiler should omit it as not referenced
+// This will remove annoying and bogus warning from gcc:
+// conversion to 'unsigned char' from 'int' may alter its value
+void splashColorXor(SplashColorPtr dest, SplashColorPtr src);
+/*
+{
   dest[0] ^= src[0];
   dest[1] ^= src[1];
   dest[2] ^= src[2];
@@ -96,6 +103,7 @@ static inline void splashColorXor(SplashColorPtr dest, SplashColorPtr src) {
   dest[3] ^= src[3];
 #endif
 }
+*/
 
 //------------------------------------------------------------------------
 // blend functions
