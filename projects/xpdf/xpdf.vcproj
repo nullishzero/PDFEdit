@@ -25,7 +25,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="XPDF needs generated header file for each operating system. Generate it. Remove after first build (xpdf Property Page-&gt;Configuration Properties-&gt;Build Events-&gt;Pre-Build Event)"
-				CommandLine="copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\aconf.h"
+				CommandLine="copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

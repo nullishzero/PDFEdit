@@ -612,6 +612,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\kernel\pdfedit-core-dev.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\kernel\pdfoperators.h"
 					>
 				</File>
@@ -782,6 +786,18 @@
 				<File
 					RelativePath="..\..\src\kernel\modecontroller.cc"
 					>
+				</File>
+				<File
+					RelativePath="..\..\src\kernel\pdfedit-core-dev.cc"
+					>
+					<FileConfiguration
+						Name="Debug-Tests|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\pdfoperators.cc"
