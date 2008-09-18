@@ -96,7 +96,7 @@ boost::shared_ptr<pdfobjects::CPdf> BaseGUI::getBasePdfInstance(const QString &f
  if (openMode=="advanced") mode=CPdf::Advanced;
  if (openMode=="readonly") mode=CPdf::ReadOnly;
  if (openMode=="readwrite") mode=CPdf::ReadWrite;
- //Basic mode without asking a password (we do not know how)
+ //Password is asked for (or not) based on askPassword parameter
  return util::getPdfInstance(w,util::convertFromUnicode(filename,util::NAME).c_str(),mode,askPassword);
 }
 

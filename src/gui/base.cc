@@ -501,9 +501,13 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   if (delin) delete delin;
   guiPrintDbg(debug::DBG_DBG,"Delinearizator exit");
   return (ret==0);
+ } catch (NotImplementedException &e) {
+  lastErrorMessage=tr("Delinearization of encrypted documents is not supported");
+  if (delin) delete delin;
+  return false;
  } catch (...) {
   //This is the case of failure ..
-  if (wr) delete wr;
+  lastErrorMessage=tr("Unknown error occured");
   if (delin) delete delin;
   return false;
  }
@@ -618,7 +622,7 @@ QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/, bool askPa
  if (name.isNull()) return NULL;
  CPdf::OpenMode mode=advancedMode?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
-   boost::shared_ptr<CPdf> opened=getBasePdfInstance(util::convertFromUnicode(name,util::NAME).c_str(),advancedMode?"advanced":"readwrite");
+   boost::shared_ptr<CPdf> opened=getBasePdfInstance(util::convertFromUnicode(name,util::NAME).c_str(),advancedMode?"advanced":"readwrite",askPassword);
   //Return pdf wrapper with 'destructive close' behavior
   return new QSPdf(opened,this,true);
  } catch (...) {

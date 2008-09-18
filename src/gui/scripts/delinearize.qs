@@ -26,7 +26,7 @@
 function delinearize_fail(err) {
  print(tr("Delinearization failed!"));
  print(err);
- message(tr("Delinearization failed!")+err);
+ message(tr("Delinearization failed!")+" "+err);
 }
 
 /** Function to invoke the plugin functionality */
