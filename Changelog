@@ -18,6 +18,7 @@
 	* Internal changes
 		- Removed unused obsolete code (QSA for Qt4) from source tree
 		- smart pointers are used also for CPdf instance
+	* Added isReadOnly() method to scripting
 	
 2008-02-24 PDF Editor 0.4.1
 	* Missing src/kernel/Makefile in source tarball fixed

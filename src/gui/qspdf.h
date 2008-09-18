@@ -52,6 +52,8 @@ QSPdf(boost::shared_ptr<CPdf>_pdf,BaseCore *_base,bool _destructive=false);
  boost::shared_ptr<CPdf> get() const;
  void set(boost::shared_ptr<CPdf> pdf);
 public slots:
+ /*- Returns true if document is opened in read-only mode, false if in read-write mode */
+ bool isReadOnly();
  /*- Returns true if document is encrypted. */
  bool isEncrypted();
  /*- Return true, if document is linearized PDF, false otherwise */

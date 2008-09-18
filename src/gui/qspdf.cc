@@ -432,4 +432,13 @@ bool QSPdf::isEncrypted() {
  return pdfobjects::utils::isEncrypted(obj);
 }
 
+/**
+ Checks whether document is opened in read-only mode
+ @return true if read-only, false if read-write.
+ */
+bool QSPdf::isReadOnly() {
+ if (nullPtr(obj,"isReadOnly")) return 0;
+ return obj->getMode()==CPdf::ReadOnly;
+}
+
 } // namespace gui

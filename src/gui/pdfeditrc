@@ -66,30 +66,30 @@ MainMenu	= list Main menu,filemenu,editopersmenu,showmenu,pagemenu,toolsmenu,hel
   #Tools submenu
   toolsmenu		= list &Tools,opts,mergeDoc
     opts		= item &Options,options(),F9,options.png
-    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,insert_pages.png,need_document
+    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,insert_pages.png,need_document,need_rw
   #Page submenu
   pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinee,drawrecte,addtext,striketrough,highlightingtext
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
-    reloadpage		= item Reload Page (show changes), go()			, F5	, reload.png		,need_page
+    reloadpage		= item Reload Page (show changes), go()			, F5	, reload.png		,need_page,need_rw
     pagetext		= item Extract text from page	, viewPageText()	,	, page_text.png		,need_page
-    rot-90		= item Rotate page 270 degrees	, rotatePage(-90)	,Ctrl+[	, page_rotate_-90.png	,need_page
-    rot90		= item Rotate page 90 degrees	, rotatePage(90)	,Ctrl+]	, page_rotate_90.png	,need_page
-    delpage		= item Remove page		, delPage()		,	, page_del.png		,need_document
-    editPageMediaBox	= item Edit page metrics	, editPageMediaBox()	,	, page_edit_metrics.png	,need_page
-    setpagetm		= item Set page transformation matrix,setPageTm()	,	, page_settm.png	,need_page
-    addSystemFont	= item Add system font to page	, addSystemFont()	,	, page_add_font.png	,need_page
+    rot-90		= item Rotate page 270 degrees	, rotatePage(-90)	,Ctrl+[	, page_rotate_-90.png	,need_page,need_rw
+    rot90		= item Rotate page 90 degrees	, rotatePage(90)	,Ctrl+]	, page_rotate_90.png	,need_page,need_rw
+    delpage		= item Remove page		, delPage()		,	, page_del.png		,need_document,need_rw
+    editPageMediaBox	= item Edit page metrics	, editPageMediaBox()	,	, page_edit_metrics.png	,need_page,need_rw
+    setpagetm		= item Set page transformation matrix,setPageTm()	,	, page_settm.png	,need_page,need_rw
+    addSystemFont	= item Add system font to page	, addSystemFont()	,	, page_add_font.png	,need_page,need_rw
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectGraphical,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
     selectAllObjects	= item Select all objects		, onSelectMode_AllObjects()		, , selectmode_allobjects.png	,mode_button
     selectGraphical	= item Select graphical operators	, onSelectMode_GraphicalOperators()	, , selectmode_all_gfx.png	,mode_button
     selectText		= item Select text			, onSelectMode_Text()			, , selectmode_text.png		,mode_button
     selectAnnot		= item Select annotations		, onSelectMode_Annot()			, , selectmode_all.png		,mode_button
-    opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator
-    opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator
-    opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator
-    opsetfont		= item Set font			,editFontProps()	,	, operator_editfont.png		,need_operator
-    opsetdash		= item Set line dash style	,setDashPattern()	,	, operator_dashpattern.png	,need_operator
-    opsetlinewidth	= item Set line width		,setLineWidth()		,	, operator_linewidth.png	,need_operator
+    opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator,need_rw
+    opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator,need_rw
+    opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator,need_rw
+    opsetfont		= item Set font			,editFontProps()	,	, operator_editfont.png		,need_operator,need_rw
+    opsetdash		= item Set line dash style	,setDashPattern()	,	, operator_dashpattern.png	,need_operator,need_rw
+    opsetlinewidth	= item Set line width		,setLineWidth()		,	, operator_linewidth.png	,need_operator,need_rw
   #Help submenu
   helpmenu		= list &Help,help_about,help_index
     help_about		= item &About	,about()	,	, about.png
@@ -108,20 +108,20 @@ PageRiderToolbar	= list PageRider Toolbar,firstpage,prevpage,_page_tool,nextpage
   # _page_tool is special toolbar item to show/change current page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
-  pageMoveUp		= item Move page up,movePage(page()\,-1);rootReload(),,page_move_up.png,need_page
-  pageMoveDown		= item Move page down,movePage(page()\,1);rootReload(),,page_move_down.png,need_page
-  pageRemove		= item Remove page,removePage(document.getPagePosition(page()));rootReload(),,page_delete.png,need_page
+  pageMoveUp		= item Move page up,movePage(page()\,-1);rootReload(),,page_move_up.png,need_page,need_rw
+  pageMoveDown		= item Move page down,movePage(page()\,1);rootReload(),,page_move_down.png,need_page,need_rw
+  pageRemove		= item Remove page,removePage(document.getPagePosition(page()));rootReload(),,page_delete.png,need_page,need_rw
 
 DrawToolbar		= list Draw Toolbar,drawlinee,drawarrowe,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
-  drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button
-  drawlinee		= item Draw line		, onSelectMode_drawLinee()		, , draw_line.png	,need_page,mode_button
-  drawarrow		= item Draw arrow		, onSelectMode_drawArrow()		, , draw_arrow.png	,need_page,mode_button
-  drawarrowe	= item Draw arrow		, onSelectMode_drawArrowe()		, , draw_arrow.png	,need_page,mode_button
-  drawrect		= item Draw rectangle		, onSelectMode_drawRect()		, , draw_rect.png	,need_page,mode_button
-  drawrecte		= item Draw rectangle		, onSelectMode_drawRecte()		, , draw_rect.png	,need_page,mode_button
-  addtext		= item Add text			, onSelectMode_addText()		, , add_text.png	,need_page,mode_button
-  striketrough		= item Strike through		, onSelectMode_strikeTrough()		, , selectmode_strike.png	,need_page,mode_button
-  highlightingtext	= item Highlighting text	, onSelectMode_highlightingText()	, , selectmode_hilite.png	,need_page,mode_button
+  drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button,need_rw
+  drawlinee		= item Draw line		, onSelectMode_drawLinee()		, , draw_line.png	,need_page,mode_button,need_rw
+  drawarrow		= item Draw arrow		, onSelectMode_drawArrow()		, , draw_arrow.png	,need_page,mode_button,need_rw
+  drawarrowe		= item Draw arrow		, onSelectMode_drawArrowe()		, , draw_arrow.png	,need_page,mode_button,need_rw
+  drawrect		= item Draw rectangle		, onSelectMode_drawRect()		, , draw_rect.png	,need_page,mode_button,need_rw
+  drawrecte		= item Draw rectangle		, onSelectMode_drawRecte()		, , draw_rect.png	,need_page,mode_button,need_rw
+  addtext		= item Add text			, onSelectMode_addText()		, , add_text.png	,need_page,mode_button,need_rw
+  striketrough		= item Strike through		, onSelectMode_strikeTrough()		, , selectmode_strike.png	,need_page,mode_button,need_rw
+  highlightingtext	= item Highlighting text	, onSelectMode_highlightingText()	, , selectmode_hilite.png	,need_page,mode_button,need_rw
   # _color_tool is special toolbar item to select current color
   # _number_tool is special toolbar item to select line width
   # look in menu for definition of rest of items
