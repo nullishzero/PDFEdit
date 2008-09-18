@@ -45,7 +45,9 @@ namespace gui {
 */
 ColorTool::ColorTool(const QString &cName,const QString &niceName,QWidget *parent/*=0*/,const char *name/*=NULL*/) : QWidget (parent,name) {
  colorName=cName;
- color=QColor(0,0,0);
+ //Reasonable defaults: yellow background color, black foreground
+ if (cName=="bg") color=QColor(255,255,0);
+ else color=QColor(0,0,0);
  pm=new QPixmap(20,20);
  QString toolTip=tr("Choose color")+": "+niceName;
  pb=new ToolButton(pm,toolTip,-1,this);
