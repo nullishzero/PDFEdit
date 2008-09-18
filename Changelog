@@ -11,14 +11,13 @@
 	* Chinese (Traditional) localization added - thanks to Yi-Shun Wang
 	* French localization added - thanks to Sylvain
 	* Bugs 131, 157, 158, 199, 207, 215, 217, 220, 222, 217, 226, 228, 233, 
-	  246, 249, 257, 260 fixed
+	  246, 249, 257, 258, 260 fixed
 	* Print summary information with used options after running configure script
 	* 64b distributions with boost libraries in lib64 directory can use
 	  --with-boost-libdir configure parameter
 	* Internal changes
 		- Removed unused obsolete code (QSA for Qt4) from source tree
 		- smart pointers are used also for CPdf instance
-	* Added isReadOnly() method to scripting
 	
 2008-02-24 PDF Editor 0.4.1
 	* Missing src/kernel/Makefile in source tarball fixed
