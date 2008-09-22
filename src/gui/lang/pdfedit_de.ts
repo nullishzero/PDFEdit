@@ -2147,9 +2147,7 @@ fsave</translation>
     <message>
         <source>Draw arrow</source>
         <comment>drawarrowe</comment>
-        <translation>Pfeil zeichnen
-
-drawarrowe</translation>
+        <translation>Pfeil zeichnen</translation>
     </message>
     <message>
         <source>Draw rectangle</source>
