@@ -473,7 +473,7 @@
     </message>
     <message>
         <source>Page scaling</source>
-        <translation>Seite scalieren</translation>
+        <translation>Seite skalieren</translation>
     </message>
     <message>
         <source>Page skewing</source>
@@ -2030,9 +2030,7 @@ Daten: %3</translation>
     <message>
         <source>&amp;Save</source>
         <comment>fsave</comment>
-        <translation>&amp;Speichern
-
-fsave</translation>
+        <translation>&amp;Speichern</translation>
     </message>
     <message>
         <source>&amp;Options</source>
@@ -2192,9 +2190,7 @@ fsave</translation>
     <message>
         <source>Set font</source>
         <comment>opsetfont</comment>
-        <translation>Schriftart setzen
-
-opsetfont</translation>
+        <translation>Schriftart setzen</translation>
     </message>
     <message>
         <source>Set line width</source>
@@ -2289,7 +2285,7 @@ opsetfont</translation>
     <message>
         <source>Save new &amp;revision</source>
         <comment>fsaverev</comment>
-        <translation>Speichern als neu &amp;Revision</translation>
+        <translation>Speichern als neue &amp;Revision</translation>
     </message>
     <message>
         <source>New &amp;Window</source>
