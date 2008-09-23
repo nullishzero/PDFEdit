@@ -1,4 +1,5 @@
 ????-??-?? PDF Editor 0.4.2
+	* changed streams are encoded with FlateDecode compression
 	* read-only support for encrypted documents added
 	* new --enable-pdfedit-core-dev parameter for configure for
 	  development package installation (see README for more information)
@@ -7,17 +8,18 @@
 	* Configurable make parallelization added for more efficient building
 	  See --with-parallel-make configure parameter (defaults to use all
 	  available CPUs)
-	* German localization updated by Andreas Mantke
+	* German localization updated by Andreas Mantke and Georg Hofmann
 	* Chinese (Traditional) localization added - thanks to Yi-Shun Wang
 	* French localization added - thanks to Sylvain
 	* Bugs 131, 157, 158, 199, 207, 215, 217, 220, 222, 217, 226, 228, 233, 
-	  246, 247, 249, 257, 258, 260 fixed
+	  241, 246, 247, 249, 257, 258, 260 fixed
 	* Print summary information with used options after running configure script
 	* 64b distributions with boost libraries in lib64 directory can use
 	  --with-boost-libdir configure parameter
 	* Internal changes
 		- Removed unused obsolete code (QSA for Qt4) from source tree
 		- smart pointers are used also for CPdf instance
+		- support for stream encoding in the pdfwriter
 	
 2008-02-24 PDF Editor 0.4.1
 	* Missing src/kernel/Makefile in source tarball fixed
