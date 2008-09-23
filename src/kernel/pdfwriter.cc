@@ -27,6 +27,7 @@
 #include "kernel/static.h"
 #include "kernel/pdfwriter.h"
 #include "kernel/cobject.h"
+#include <zlib.h>
 
 /** Size of buffer for xref table row.
  * This includes also 1 byte for trailing '\0' (end of string marker).
@@ -137,9 +138,162 @@ public:
 	}
 };
 
+/** Implementation of FlateDecode filter stream writer.
+ * It is based on zlib implementation of default deflate method.
+ */
+class ZlibFilterStreamWriter: public FilterStreamWriter
+{
+	/** Shared writer instance */
+	static boost::shared_ptr<ZlibFilterStreamWriter> instance;
+
+	/** Updates given stream object with the applied fiter data.
+	 * @param obj Stream object.
+	 *
+	 * Only for internal use of ZlibFilterStreamWriter class.
+	 */
+	static void update_dict(Object& obj)
+	{
+		assert(obj.isStream());
+		Object filterArray, filterName;
+		filterName.initName("FlateDecode");
+		filterArray.initArray(obj.getDict()->getXRef());
+		filterArray.arrayAdd(&filterName);
+		Dict * dict = obj.streamGetDict();
+		dict->add(copyString("Filter"), &filterArray);
+	}
+public:
+	static boost::shared_ptr<ZlibFilterStreamWriter> getInstance()
+	{
+		if(!instance)
+			instance=boost::shared_ptr<ZlibFilterStreamWriter>(
+					new ZlibFilterStreamWriter());
+
+		return instance;
+	}
+
+	/** Checks whether given stream object is supported by this writer.
+	 * @param obj Stream object.
+	 * @param allways true.
+	 */
+	virtual bool supportObject(UNUSED_PARAM Object& obj)const
+	{
+		assert(obj.isStream());
+		return true;
+	}
+
+	/** Compress given buffer with deflate method.
+	 * @param in Input buffer.
+	 * @param in_size Input buffer size.
+	 * @param size Size of the output buffer data.
+	 * @return allocated buffer with the size data bytes or NULL on failure.
+	 *
+	 * Uses zlib interface to deflate given data.
+	 */
+	static unsigned char* deflate_buffer(unsigned char * in, size_t in_size, size_t& size)
+	{
+		z_stream z;
+		z.zalloc = NULL; 
+		z.zfree = NULL;
+		z.opaque = NULL;
+		z.next_in = in; 
+		z.avail_in = in_size; 
+
+		// we do expect some comprimation so in_size should be definitely enough
+		size_t out_size = in_size;
+		unsigned char * out_buff = (unsigned char*)malloc(sizeof(unsigned char)*out_size);
+		z.next_out = out_buff; 
+		z.avail_out = out_size;
+		int ret;
+		size_t total=0;
+		if ((ret = deflateInit(&z, Z_DEFAULT_COMPRESSION)) != Z_OK)
+		{
+			utilsPrintDbg(debug::DBG_ERR, "deflateInit failed with ret="<<ret);
+			goto out_free_error;
+		}
+		do
+		{
+			size_t window_size = out_size;
+			// we need to reallocate if output buffer run out
+			// of space
+			if(z.avail_out == 0)
+			{
+				out_size *= 2;
+				utilsPrintDbg(debug::DBG_DBG, 
+						"Output buffer size not sufficient, resizing to "
+						<< out_size);
+				out_buff = (unsigned char*)realloc(out_buff, out_size);
+				window_size = z.avail_out = out_size - total;
+				z.next_out = out_buff + total;
+			}
+			ret = ::deflate(&z, Z_FINISH);
+			if(ret == Z_STREAM_ERROR)
+			{
+				utilsPrintDbg(debug::DBG_ERR, "compression failed with ret="<<ret);
+				goto out_error;
+			}
+			total += window_size - z.avail_out;
+		}while(z.avail_out == 0);
+		assert(z.avail_in == 0);
+		assert(ret == Z_STREAM_END);
+		deflateEnd(&z);
+		size = total;
+		return out_buff;
+
+	out_free_error:
+		free(out_buff);
+	out_error:
+		deflateEnd(&z);
+		return NULL;
+	}
+
+	/** Stream data extractor implementation for streamToCharBuffer function.
+	 * @param obj Stream object.
+	 * @param size Size of the returned buffer data.
+	 * @return allocated buffer with data or NULL on failure.
+	 * 
+	 * Uses bufferFromStreamData to get raw data without any filters,
+	 * compresses returned buffer with the deflate_buffer function and 
+	 * updates given stream object's dictionary to contain proper filter 
+	 * data.
+	 */
+	static unsigned char* deflate(Object& obj, size_t& size)
+	{
+		assert(obj.isStream());
+		unsigned char *rawBuffer, *deflateBuff = NULL;
+		size_t rawSize;
+		if((rawBuffer = bufferFromStreamData(obj, rawSize)) == NULL)
+			goto out;
+		utilsPrintDbg(debug::DBG_DBG, "Raw buffer size="<<rawSize);
+		if((deflateBuff = deflate_buffer(rawBuffer, rawSize, size))==NULL)
+			goto free_out;
+		utilsPrintDbg(debug::DBG_DBG, "Compressed buffer size="<<size);
+		update_dict(obj);
+
+	free_out:
+		free(rawBuffer);
+	out:
+		return deflateBuff;
+	}
+
+	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const
+	{
+		CharBuffer charBuffer;
+		assert(obj.isStream());
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, deflate);
+		if(!size)
+		{
+			utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
+			return;
+		}
+		outStream.putLine(charBuffer.get(), size);
+		return;
+	}
+};
+
 // initialization of static data for FilterStreamWriter classes
 boost::shared_ptr<NullFilterStreamWriter> NullFilterStreamWriter::instance;
-boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::defaultWriter;
+boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::instance;
+boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::defaultWriter = ZlibFilterStreamWriter::getInstance();
 FilterStreamWriter::WritersList FilterStreamWriter::writers;
 
 void FilterStreamWriter::registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)

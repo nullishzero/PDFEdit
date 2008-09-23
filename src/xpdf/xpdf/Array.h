@@ -5,7 +5,9 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 // Changes: 
-// Michal Hocko   - public clone method for deep copy of Array
+// Michal Hocko   
+// 	- public clone method for deep copy of Array
+// 	- getXRef added
 //
 //========================================================================
 
@@ -50,6 +52,8 @@ public:
   // Accessors.
   Object *get(int i, Object *obj);
   Object *getNF(int i, Object *obj);
+
+  XRef *getXRef() {return xref;}
 
 private:
 

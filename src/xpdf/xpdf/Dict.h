@@ -12,6 +12,7 @@
 //                - all methods which doesn't store key are const char *
 //                  instead of char *
 //                - public del method for removig of entries
+//                - getXRef added
 //
 //========================================================================
 
@@ -87,6 +88,8 @@ public:
   // trailer dictionary, which is read before the xref table is
   // parsed.
   void setXRef(XRef *xrefA) { xref = xrefA; }
+
+  XRef* getXRef() {return xref; }
 
 private:
 

@@ -141,6 +141,13 @@ Object *Object::initArray(XRef *xref) {
   return this;
 }
 
+Object *Object::initArray(Array *array) {
+  initObj(objArray);
+  this->array = array;
+  array->incRef();
+  return this;
+}
+
 Object *Object::initDict(XRef *xref) {
   initObj(objDict);
   dict = new Dict(xref);

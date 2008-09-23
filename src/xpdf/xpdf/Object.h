@@ -8,6 +8,7 @@
 // Michal Hocko   - public clone method for deep copy of object
 //                - all methods which can have const char * instead of 
 //                  char * are changed to const char *
+//                - initArray from Array added
 //
 //========================================================================
 
@@ -97,11 +98,12 @@ public:
     { initObj(objReal); real = realA; return this; }
   Object *initString(GString *stringA)
     { initObj(objString); string = stringA; return this; }
-  Object *initName(char *nameA)
+  Object *initName(const char *nameA)
     { initObj(objName); name = copyString(nameA); return this; }
   Object *initNull()
     { initObj(objNull); return this; }
   Object *initArray(XRef *xref);
+  Object *initArray(Array *array);
   Object *initDict(XRef *xref);
   Object *initDict(Dict *dictA);
   Object *initStream(Stream *streamA);
