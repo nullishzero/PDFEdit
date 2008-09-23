@@ -885,38 +885,78 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	return obj;
 }
 
-
-size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, bool asIndirect)
+unsigned char* bufferFromStreamData (Object& obj, size_t& size)
 {
-using namespace std;
-using namespace debug;
+	size_t i = 0;
+	Object lenObj;
+	obj.streamGetDict()->lookup("Length", &lenObj);
+	assert(lenObj.isInt());
+	size_t streamLength = lenObj.getInt();
+	unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*streamLength);
+	BaseStream* str = obj.getStream()->getBaseStream();
+	for(; i<streamLength; i++)
+	{
+		int ch=str->getChar();
+		if(ch==EOF)
+			break;
+		// NOTE that we are reducing int -> char here, so multi-bytes
+		// returned from a stream will be stripped to 1B
+		if((unsigned char)ch != ch)
+			utilsPrintDbg(debug::DBG_DBG, "Too wide character("<<(int)ch<<") in the stream at pos="<<i);
+		buffer[i]=(unsigned char)ch;
+	}
 
-	utilsPrintDbg(DBG_DBG, "");
+	if(i != streamLength)
+	{
+		utilsPrintDbg(debug::DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read. "
+				<<streamLength<< " expected");
+		free(buffer);
+		return NULL;
+	}
+	if(str->getChar()!=EOF)
+	{
+		utilsPrintDbg(debug::DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
+		free(buffer);
+		return NULL;
+	}
+	// restore stream object to the begining
+	obj.getStream()->reset();
+
+	// if there were some filters we have to remove them with 
+	// all associated parameters, because they are no longer 
+	// used for output stream
+	const char * fieldsToRemove[] = {"Filter", "DecodeParams", "F", "FFilter", "FDecodeParams", "DL", NULL};
+	for(int i=0; fieldsToRemove[i]; ++i)
+	{
+		Object * entry = obj.streamGetDict()->del(fieldsToRemove[i]);
+		if(entry)
+		{
+			utilsPrintDbg(debug::DBG_DBG, "Removing "<< fieldsToRemove[i] <<" entry from the stream");
+			freeXpdfObject(entry);
+		}
+	}
+	
+	size = i;
+	return buffer;
+}
+
+size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
+		stream_data_extractor extractor)
+{
+	utilsPrintDbg(debug::DBG_DBG, "");
 	if(streamObject.getType()!=objStream)
 	{
-		utilsPrintDbg(DBG_ERR, "Given object is not a stream. Object type="<<streamObject.getType());
+		utilsPrintDbg(debug::DBG_ERR, "Given object is not a stream. Object type="<<streamObject.getType());
 		return 0;
 	}
 	
-	// gets stream dictionary string at first
-	string dict;
-	Dict *streamDict = streamObject.streamGetDict();
-
-	// FIXME dirty workaround because we don't have dedicated function
-	// for Dict -> String conversion
-	// initDict increases streamDict's reference thus we need to
-	// decrease it by free method.
-	Object streamDictObj;
-	streamDictObj.initDict(streamDict);
-	xpdfObjToString(streamDictObj, dict);
-	streamDictObj.free();
-
 	// gets buffer len from stream dictionary Length field
 	Object lenghtObj;
+	Dict *streamDict = streamObject.streamGetDict();
 	streamDict->lookup("Length", &lenghtObj);
 	if(!lenghtObj.isInt())
 	{
-		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
+		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
 		lenghtObj.free();
 		return 0;
 	}
@@ -924,75 +964,81 @@ using namespace debug;
 	// int which doesn't allocate any memory for internal data
 	if(0>lenghtObj.getInt())
 	{
-		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
+		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
 		return 0;
 	}
-	size_t bufferLen=(size_t)lenghtObj.getInt();
-
+	
+	// TODO we should prevent from copying here and place data into the
+	// result buffer rather than to the separate one - any idea how?
+	// [problem is that we don't know how big is the dataBuff in advance
+	// and also dictionary can't be written sooner that we have this
+	// lenght]
+	size_t realBufferLen;
+	unsigned char * dataBuff = extractor(streamObject, realBufferLen);
+	if(!realBufferLen)
+		return 0;
+	
 	// indirect header is filled only if asIndirect flag is set
 	// same way footer
-	string header="";
-	string footer="";
-	if(asIndirect)
+	std::string header="";
+	std::string footer="";
+	if(ref)
 	{
-		assert(ref);
 		ostringstream indirectHeader;
 		indirectHeader << *ref << " " << Specification::INDIRECT_HEADER << "\n";
 		header += indirectHeader.str();
 		footer = Specification::INDIRECT_FOOTER;
 	}
 
-	// gets total length and allocates CharBuffer for output	
-	size_t len = header.length() + total_size_stream (dict.length(), bufferLen) + footer.length(); 
+	// Update dict stream with the new Length value (if necessary)
+	// TODO indirect value would be much better, but we don't have
+	// access to the XrefWriter here
+	if (lenghtObj.getInt() != realBufferLen)
+	{
+		lenghtObj.initInt(realBufferLen);
+		// don't need to give copyString(Length) because we are sure, that
+		// this entry already exists
+		Object* oldLen = streamDict->update("Length", &lenghtObj);
+		if(oldLen)
+			freeXpdfObject(oldLen);
+	}
+
+	// FIXME dirty workaround because we don't have dedicated function
+	// for Dict -> String conversion
+	// initDict increases streamDict's reference thus we need to
+	// decrease it back by free
+	Object streamDictObj;
+	streamDictObj.initDict(streamDict);
+	std::string dict;
+	xpdfObjToString(streamDictObj, dict);
+	streamDictObj.free();
+
+	// gets total length and allocates CharBuffer for output
+	size_t len = header.length() + 
+		dict.length() + 
+		Specification::CSTREAM_HEADER.length() +
+		realBufferLen + 
+		Specification::CSTREAM_FOOTER.length() + 
+		footer.length(); 
 	char* buf = char_buffer_new (len);
 	outputBuf = CharBuffer (buf, char_buffer_delete()); 
-	
+
 	// get everything together into created buf - we can't use
 	// str* functions here, because there may be \0 inside
-	// dictionary string represenatation (string entries)
+	// dictionary string represenatation (string entries) and
+	// stream can contain '\0' too
 	size_t copied=0;
+
+	// copy all parts 
 	memcpy(buf, header.c_str(), header.length());
 	copied+=header.length();
 	memcpy(buf+copied, dict.c_str(), dict.length());
 	copied+=dict.length();
 	memcpy(buf+copied, Specification::CSTREAM_HEADER.c_str(), Specification::CSTREAM_HEADER.length());
 	copied+=Specification::CSTREAM_HEADER.length();
-	// streamBuffer may contain '\0' so rest has to be copied by memcpy
-	BaseStream * base=streamObject.getStream()->getBaseStream();
-	base->reset();
-	size_t i=0;
-	for(; i<bufferLen; i++)
-	{
-		int ch=base->getChar();
-		if(ch==EOF)
-			break;
-		// NOTE that we are reducing int -> char here, so multi-bytes
-		// returned from a stream will be stripped to 1B
-		if((unsigned char)ch != ch)
-			utilsPrintDbg(DBG_DBG, "Too wide character("<<ch<<") in the stream at pos="<<i);
-		buf[copied+i]=ch;
-	}
-	// checks number of written bytes and if any problem (more or less data),
-	// clears buffer and returns with 0
-	if(i!=bufferLen)
-	{
-		utilsPrintDbg(DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read.");
-		// TODO do we really need to clear whole buffer here? Is it enough to clear
-		// the first byte?
-		memset(buf, '\0', len);
-		streamObject.getStream()->reset();
-		return 0;
-	}
-	if(base->getChar()!=EOF)
-	{
-		utilsPrintDbg(DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
-		// TODO do we really need to clear whole buffer here? Is it enough to clear
-		// the first byte?
-		memset(buf, '\0', len);
-		streamObject.getStream()->reset();
-		return 0;
-	}
-	copied+=bufferLen;
+	memcpy(buf+copied, dataBuff, realBufferLen);
+	free(dataBuff);
+	copied+=realBufferLen;
 	memcpy(buf + copied, Specification::CSTREAM_FOOTER.c_str(), Specification::CSTREAM_FOOTER.length());
 	copied+=Specification::CSTREAM_FOOTER.length();
 	memcpy(buf + copied, footer.c_str(), footer.length());
@@ -1001,9 +1047,7 @@ using namespace debug;
 	// just to be sure
 	assert(copied==len);
 	
-	// restore stream object to the begining
-	streamObject.getStream()->reset();
-	return len;
+	return copied;
 }
 
 // =====================================================================================

@@ -114,7 +114,7 @@ using namespace std;
 	if(obj.isStream())
 	{
 		CharBuffer charBuffer;
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, indirect);
+		size_t size=streamToCharBuffer(obj, ref, charBuffer);
 		stream.putLine(charBuffer.get(), size);
 	}else
 	{

@@ -455,25 +455,60 @@ void dictFromXpdfObj (CDict& resultDict, ::Object& dict);
  */
 size_t stringToCharBuffer(Object & stringObject, CharBuffer & outputBuf);
 
+/** Helper function for getting decoded data from the given stream.
+ * If given obj used some filters, they are all decoded to get orignal
+ * data and the stream dictionary is updated so that it doesn't contain
+ * any filters.
+ * @param obj Stream object.
+ * @param size Size of returned buffer
+ * @return Buffer with raw stream data or NULL on error.
+ */
+unsigned char* bufferFromStreamData (Object& obj, size_t& size);
+
+/** Function to be used for data extracting from the given stream object.
+ * Note that implementation can apply additional filters to the stream
+ * data currently stored in the obj.stream and update object accordingly
+ * (change Filter and associated entry). Length entry doesn't have to 
+ * be changed by the implementation as it is supposed to be updated by 
+ * caller (because we want to prevent useless object updating when a
+ * chain of this function is called for multiple filters).
+ * <br>
+ * Function is called from the streamToCharBuffer function to have transparent
+ * access to the stream data without any knowledge about filters.
+ * bufferFromStreamData is the referencial implementation which provides
+ * encoded data without any filters applied (all other implementations
+ * can use this function as the base and convert returned buffer into
+ * their represenation).
+ *
+ * @param Stream object.
+ * @param size Number of bytes written to the returned buffer.
+ * @return Buffer (size bytes) with data (must be deallocated by caller) or 
+ * NULL on error.
+ */
+typedef unsigned char* (*stream_data_extractor)(Object& obj, size_t& size);
+
 /** Makes a valid pdf indirect object representation of stream object.
  * @param streamObject Xpdf object representing stream.
- * @param ref Reference for this indirect object (ignored when asIndirect==false).
+ * @param ref Reference for this indirect object.
  * @param outputBuf Output byte buffer containing complete representation.
- * @param asIndirect Flag for indirect output.
+ * @param extractor Function to be used to extract data from the object's 
+ * 	stream.
  *
- * Allocates and fill buffer in given outputBuf with pdf object format
+ * Allocates and fills buffer in given outputBuf with pdf object format
  * representation of given stream object. Moreover adds indirect header and
- * footer if asIndirect parameter is true. 
+ * footer if ref is non NULL. 
+ * <br>
+ * If you want some filters to be used to encode stream data, use extractor
+ * function parameter for this purpose. bufferFromStreamData used by default
+ * returns stream data without any filters applied.
  * <br>
  * Given buffer may contain NUL bytes inside. Caller should consume number of
  * returned bytes from outputBuf.
- * <br>
- * Reference parameter is ignored if asIndirect is false, because it is used
- * only for indirect object header.
  * 
  * @return number of bytes used in outputBuf or 0 if problem occures.
  */
-size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, bool asIndirect=true);
+size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
+		stream_data_extractor extractor=bufferFromStreamData);
 	
 /**
  * Convert xpdf object to string
