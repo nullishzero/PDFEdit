@@ -36,26 +36,71 @@
  
   <sect2 id="encoding_filter_design"><title>Encoding filter design</title>
   <para>
-  The idea behind filtering streams is quite simple and common so we use boost 
-  filtering iostreams which give us a very nice filtering input/output concept. 
-  Filtering stream consists of filters and devices. A device can be 
-  either a sink(input) a or a source(output). We need just buffer encoding so we use only sources (devices you can read from). 
-  We can connect arbitrary number of filters to source. When we read from a filtering input stream, the read call is delegated through 
-  the chain of filters to first device which returns raw character(s). Then every filter, in reverse order, encodes 
-  the character(s) and passes it to the next filter. Finally an encoded character(s) falls from the filtering input stream.
-  
-  Which filters to use is specified in stream dictionary.
+	  Our implementation is based on simple observation that we don't have to bother with 
+	  stream data encoding until we actualy need to write them to the file. In the meantime
+	  we can use unencoded data in their raw format. This way we can prevent from 
+	  useless encoding/decoding when modifying data several times.
+  </para>
+  <para>
+	  Therefore we have moved whole encoding to the code writing code path which is under
+	  responsibility of IPdfWriter class implementation which uses FilterStreamWriter class
+	  to provide proper implemenation for data encoding. OldStylePdfWriter (current implementation
+	  of the IPdfWriter) uses FilterStreamWriter factory interface (see below) to get
+	  proper FilterStreamWriter implementation which is used for stream object writing.
+  </para>
+  <para>
+To provide easy-to-use and transparent interface we are using the following
+hierarchy and class relations:
+</para>
+<para>
+FilterStreamWriter
+<itemizedlist>
+<listitem>
+          provides factory method getInstance which returns proper filter
+          writer instance based on the given stream object
+</listitem>
+<listitem>
+         stream writers can be registered in runtime by
+          registerFilterStreamWriter method
+</listitem>
+<listitem>
+         if getInstance is not able to find any suitable writer for a given
+          object, it will try default writer
+</listitem>
+<listitem>
+         if even default doesn't support given object, it will fall back to
+          the NullFilterStreamWriter which writes raw data without any filters.
+</listitem>
+</itemizedlist>
+</para>
+<para>
+Default filter stream writer is useful for give-at-least some filter if
+  the required one is not available (e.g. LZWDecode can be replaced by
+  FlateDecode or stack of filters can be replaced by only one of them).
+</para>
+<para>
+  Finally, each filter stream implementation is required to provide:
 
-    <mediaobject>
-	  <imageobject>
-                  <imagedata fileref="kernel/images/boost_streams_pdfedit.png" format="PNG" />
-	  </imageobject>
-	  <textobject><phrase>Boost stream concept in pdfedit</phrase></textobject>
-	  <caption><para>Stream concept in pdfedit</para></caption>
-	</mediaobject>
-
-  This design is flexible, easily extensible as we only have to implement the new filter and connect it to the source 
-  when the filter name matches the filter name specified in the stream dictionary.
+<itemizedlist>
+<listitem>
+         supportObject - it understands how to write filtered data
+          specified by object.
+  </listitem>
+<listitem>
+         compress - write data from given object to the stream. Note that
+          this method can use different filters than specified in the
+          object, but it definitely has to write valid object (e.g. stack of
+          filters can be reduced or one filter can be replaced by another).
+</listitem>
+</itemizedlist>
+</para>
+<para>
+	  This design is flexible, easily extensible as we only have to implement the new filter implemenation
+	  (FilterStreamWriter descendants) and register them with the FilterStreamWriter::registerFilterStreamWriter
+	  method. Each FilterStreamWriter implementation knows which filters it is able to 
+	  provide and annouces this information by the FilterStreamWriter::supportObject method.
+	  Finally PdfWriter will simply pick up writer which supports current object
+	  and writes its content by the FilterStreamWriter::compress method.
   </para>
   </sect2>
 

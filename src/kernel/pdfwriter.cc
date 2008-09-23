@@ -91,6 +91,100 @@ using namespace observer;
 	}
 }
 
+/** Stream writer implementation with no filters.
+ * This writer will write raw stream data without any compression
+ */
+class NullFilterStreamWriter: public FilterStreamWriter
+{
+	static boost::shared_ptr<NullFilterStreamWriter> instance;
+public:
+	static boost::shared_ptr<NullFilterStreamWriter> getInstance()
+	{
+		if(!instance)
+			instance=boost::shared_ptr<NullFilterStreamWriter>(
+					new NullFilterStreamWriter());
+
+		return instance;
+	}
+
+	/** Checks whether given object is supported.
+	 * @return allways true as it can write all stream objects.
+	 */
+	virtual bool supportObject(UNUSED_PARAM Object& obj)const
+	{
+		assert(obj.isStream());
+		return true;
+	}
+
+	/** Writes given stream object to the stream.
+	 * @param obj Stream object.
+	 * @param ref Indirect reference for object (NULL if direct).
+	 * @param outStream Stream where to write data.
+	 *
+	 * Uses streamToCharBuffer with bufferFromStreamData extractor.
+	 */
+	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const
+	{
+		assert(obj.isStream());
+		CharBuffer charBuffer;
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, bufferFromStreamData);
+		if(!size)
+		{
+			utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
+			return;
+		}
+		outStream.putLine(charBuffer.get(), size);
+	}
+};
+
+// initialization of static data for FilterStreamWriter classes
+boost::shared_ptr<NullFilterStreamWriter> NullFilterStreamWriter::instance;
+boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::defaultWriter;
+FilterStreamWriter::WritersList FilterStreamWriter::writers;
+
+void FilterStreamWriter::registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
+{
+	writers.push_back(streamWriter);
+}
+
+void FilterStreamWriter::setDefaultStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
+{
+	defaultWriter = streamWriter;
+}
+
+
+/** Helper function to find the first filter writer which supports given
+ * object.
+ * @param obj Stream object to write.
+ * @param filters Container of supported filter writers.
+ * @return Appropriate filter writer or NULL.
+ */
+boost::shared_ptr<FilterStreamWriter> lookupFilterStreamWriter(Object& obj, 
+		FilterStreamWriter::WritersList& filters)
+{
+	FilterStreamWriter::WritersList::const_iterator i;
+	for(i=filters.begin(); i!=filters.end(); ++i)
+	{
+		boost::shared_ptr<FilterStreamWriter> writer=*i;
+		if(writer->supportObject(obj))
+			return writer;
+	}
+	return boost::shared_ptr<FilterStreamWriter>();
+}
+
+boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::getInstance(Object& objStream)
+{
+	if(!objStream.isStream())
+		throw ElementBadTypeException("");
+	boost::shared_ptr<FilterStreamWriter> suppWriter = lookupFilterStreamWriter(objStream, writers);
+	if(suppWriter)
+		return suppWriter;
+	if(!defaultWriter || !defaultWriter->supportObject(objStream))
+		return NullFilterStreamWriter::getInstance();
+	return defaultWriter;
+		
+}
+
 /** Helper method for xpdf object writing to the stream.
  * @param obj Xpdf object to write.
  * @param ref Object's reference (NULL for indirect object).
@@ -113,9 +207,9 @@ using namespace std;
 	// contain binary data
 	if(obj.isStream())
 	{
-		CharBuffer charBuffer;
-		size_t size=streamToCharBuffer(obj, ref, charBuffer);
-		stream.putLine(charBuffer.get(), size);
+		shared_ptr<FilterStreamWriter> filter = FilterStreamWriter::getInstance(obj);
+		assert(filter->supportObject(obj));
+		filter->compress(obj, ref, stream);
 	}else
 	{
 		// converts xpdf object to cobject and gets correct string

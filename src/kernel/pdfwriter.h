@@ -213,6 +213,71 @@ public:
 	}
 };
 
+
+/** Base class for filter stream writers.
+ * Note that this class - unlike StreamWriter classes defined in streamwriter.h 
+ * file is not based on xpdf Stream object. Its purpose is to help IPdfWriter
+ * class to write stream object into the pdf document.
+ * <br>
+ * Use factory getInstance method to get proper filter stream writer 
+ * implementation for given stream object. Default writer is used if no such 
+ * implementation is available.
+ */
+class FilterStreamWriter
+{
+public:
+	typedef std::vector<boost::shared_ptr<FilterStreamWriter> > WritersList;
+protected:
+	/** List of the registered filter stream writers.
+	 */
+	static WritersList writers;
+
+	/** Default filter stream writer used if no registered can be used.
+	 */
+	static boost::shared_ptr<FilterStreamWriter> defaultWriter;
+public:
+	/** Finds proper filter stream writer for given obj.
+	 * If no registered appropriate writer exists, defaultWriter is tried. 
+	 * If neither defaultWriter is ok, NullFilterStreamWriter is used which 
+	 * writes stream object as it is without no filters.
+	 *
+	 * @param objStream Stream object.
+	 * @return Appropriate filter stream writer (never NULL).
+	 */
+	static boost::shared_ptr<FilterStreamWriter> getInstance(Object& objStream);
+
+	/** Adds new filter writer to the registered.
+	 * @param streamwriter Filter stream writer implementation.
+	 */
+	static void registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter);
+
+	/** Sets default stream writer.
+	 * @param streamWriter Writer to be set.
+	 */
+	static void setDefaultStreamWriter(boost::shared_ptr<FilterStreamWriter> defaultWriter);
+
+	/** Checks whether this filter writer is able to handle given object.
+	 * Implementation is absolutely free on which criteria it decides whether
+	 * it is or not able to handle this object. Usual way, however, is to check
+	 * Filter entry and check if curren writer is able to write data in given
+	 * format. @see compress method for more information
+	 * @param obj Object to be written.
+	 * @return true if able, false otherwise.
+	 */
+	virtual bool supportObject(Object& obj)const =0;
+
+	/** Writes given stream object to the output stream.
+	 * Implementation has to follow pdf specification in format of the data
+	 * writen in the stream. Nevertheless it is absolutely free in how it does it.
+	 * It can modify given object to use those filters (and all associated 
+	 * parameters) which are then used when data are written.
+	 * @param obj Object to write (must be stream).
+	 * @param ref Indirect reference for object (NULL for direct object).
+	 * @param outStream Output stream where to put data.
+	 */
+	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const =0;
+};
+
 /** Interface for pdf content writer.
  *
  * Implementator knows how to put data to the file to create correct pdf
