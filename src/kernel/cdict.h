@@ -457,7 +457,7 @@ size_t stringToCharBuffer(Object & stringObject, CharBuffer & outputBuf);
 
 /** Makes a valid pdf indirect object representation of stream object.
  * @param streamObject Xpdf object representing stream.
- * @param ref Reference for this indirect object.
+ * @param ref Reference for this indirect object (ignored when asIndirect==false).
  * @param outputBuf Output byte buffer containing complete representation.
  * @param asIndirect Flag for indirect output.
  *
@@ -473,7 +473,7 @@ size_t stringToCharBuffer(Object & stringObject, CharBuffer & outputBuf);
  * 
  * @return number of bytes used in outputBuf or 0 if problem occures.
  */
-size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect=true);
+size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, bool asIndirect=true);
 	
 /**
  * Convert xpdf object to string

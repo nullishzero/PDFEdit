@@ -886,7 +886,7 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 }
 
 
-size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect)
+size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, bool asIndirect)
 {
 using namespace std;
 using namespace debug;
@@ -935,8 +935,9 @@ using namespace debug;
 	string footer="";
 	if(asIndirect)
 	{
+		assert(ref);
 		ostringstream indirectHeader;
-		indirectHeader << ref << " " << Specification::INDIRECT_HEADER << "\n";
+		indirectHeader << *ref << " " << Specification::INDIRECT_HEADER << "\n";
 		header += indirectHeader.str();
 		footer = Specification::INDIRECT_FOOTER;
 	}

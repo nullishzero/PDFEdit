@@ -91,19 +91,20 @@ using namespace observer;
 	}
 }
 
-/* FIXME unify writeDirectObject and writeIndirectObject because they contain 
- * a lot of common code
- */
-
-/** Helper method for xpdf direct object writing to the stream.
+/** Helper method for xpdf object writing to the stream.
  * @param obj Xpdf object to write.
+ * @param ref Object's reference (NULL for indirect object).
  * @param stream Stream where to write.
+ * @param indirect Flag for indirect object
  *
- * Creates correct pdf string representation of given object and writes
- * everything to the given stream. Given xpdf object data (like stream
- * or string) can contain unprintable or 0 bytes.
+ * Creates correct pdf string representation of given object, adds indirect
+ * header and footer if indirect flag is specified and writes everything to 
+ * the given stream. 
+ * <br>
+ * Given xpdf object data (like stream or string) can contain unprintable or 
+ * 0 bytes.
  */
-void writeDirectObject(::Object & obj, StreamWriter & stream)
+void writeObject(::Object & obj, StreamWriter & stream, ::Ref* ref, bool indirect)
 {
 using namespace boost;
 using namespace std;
@@ -113,8 +114,7 @@ using namespace std;
 	if(obj.isStream())
 	{
 		CharBuffer charBuffer;
-		::Ref ref={0,0};
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, false);
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, indirect);
 		stream.putLine(charBuffer.get(), size);
 	}else
 	{
@@ -124,7 +124,17 @@ using namespace std;
 		string objPdfFormat;
 		cobj_ptr->getStringRepresentation(objPdfFormat);
 		
-		// objPdfFormat may contain 0 bytes, so we can't use c_str()
+		if(indirect)
+		{
+			// we have to add some more information to write indirect
+			// object (this includes header and footer)
+			std::string indirectFormat;
+			IndiRef indiRef(*ref);
+			createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
+			objPdfFormat = indirectFormat;
+		}
+
+		// indirectFormat may contain 0 bytes, so we can't use c_str()
 		// method and have to copy all bytes to the CharBuffer (which also
 		// handles correct deallocation)
 		size_t bufSize=objPdfFormat.length();
@@ -132,52 +142,6 @@ using namespace std;
 		CharBuffer charBuffer(buf, char_buffer_delete());
 		for(size_t i=0; i<bufSize; i++)
 			buf[i]=objPdfFormat[i];
-		stream.putLine(buf, bufSize);
-	}
-}
-/** Helper method for xpdf object writing to the stream.
- * @param obj Xpdf object to write.
- * @param ref Object's reference.
- * @param stream Stream where to write.
- *
- * Creates correct pdf string representation of given object, adds indirect
- * header and footer and writes everything to the given stream. Given xpdf
- * object data (like stream or string) can contain unprintable or 0 bytes.
- */
-void writeIndirectObject(::Object & obj, ::Ref ref, StreamWriter & stream)
-{
-using namespace boost;
-using namespace std;
-
-	// stream requires special handling, because it may
-	// contain binary data
-	if(obj.isStream())
-	{
-		CharBuffer charBuffer;
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, true);
-		stream.putLine(charBuffer.get(), size);
-	}else
-	{
-		// converts xpdf object to cobject and gets correct string
-		// representation
-		scoped_ptr<IProperty> cobj_ptr(createObjFromXpdfObj(obj));
-		string objPdfFormat;
-		cobj_ptr->getStringRepresentation(objPdfFormat);
-		
-		// we have to add some more information to write indirect
-		// object (this includes header and footer)
-		std::string indirectFormat;
-		IndiRef indiRef(ref);
-		createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
-
-		// indirectFormat may contain 0 bytes, so we can't use c_str()
-		// method and have to copy all bytes to the CharBuffer (which also
-		// handles correct deallocation)
-		size_t bufSize=indirectFormat.length();
-		char * buf=char_buffer_new(bufSize);
-		CharBuffer charBuffer(buf, char_buffer_delete());
-		for(size_t i=0; i<bufSize; i++)
-			buf[i]=indirectFormat[i];
 		stream.putLine(buf, bufSize);
 	}
 }
@@ -236,7 +200,7 @@ using namespace boost;
 		size_t objPos=stream.getPos();
 		offTable.insert(OffsetTab::value_type(ref, objPos));		
 		
-		writeIndirectObject(*obj, ref, stream);	
+		writeObject(*obj, stream, &ref, true);	
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		
 		// calls observers
@@ -444,7 +408,7 @@ using namespace boost;
 
 	// stores changed trailer to the file
 	stream.putLine(TRAILER_KEYWORD, strlen(TRAILER_KEYWORD));
-	writeDirectObject(trailer, stream);
+	writeObject(trailer, stream, NULL, false);
 	kernelPrintDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table
