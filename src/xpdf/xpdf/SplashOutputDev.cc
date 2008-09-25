@@ -2475,14 +2475,14 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   tx = (int)floor(xMin);
   if (tx < 0) {
     tx = 0;
-  } else if (tx > bitmap->getWidth()) {
-    tx = bitmap->getWidth();
+  } else if (tx >= bitmap->getWidth()) {
+    tx = bitmap->getWidth()-1;
   }
   ty = (int)floor(yMin);
   if (ty < 0) {
     ty = 0;
-  } else if (ty > bitmap->getHeight()) {
-    ty = bitmap->getHeight();
+  } else if (ty >= bitmap->getHeight()) {
+    ty = bitmap->getHeight()-1;
   }
   w = (int)ceil(xMax) - tx + 1;
   if (tx + w > bitmap->getWidth()) {
