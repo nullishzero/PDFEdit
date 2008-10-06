@@ -219,10 +219,13 @@ class PageNotFoundException: public PdfException
 {
 	size_t position;
 	std::string message;
+	
 public:
 	/** Exception constructor without position specified.
+	 * This exception should be called when page is searched by 
+	 * CPage instance.
 	 */
-	PageNotFoundException():message("Page not found")
+	PageNotFoundException():position(0),message("Page not found")
 	{
 	}
 	
