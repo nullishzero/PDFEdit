@@ -498,7 +498,7 @@ c_xpdfctor (const char* filename)
 		// Array
 		//
 		Object obj;
-		obj.initArray (NULL);
+		obj.initArray ((XRef*)NULL);
 
 		Object item1; item1.initBool	(gFalse);
 		Object item2; item2.initBool	(gTrue);
