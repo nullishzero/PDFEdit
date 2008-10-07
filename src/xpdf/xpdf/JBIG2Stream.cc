@@ -1159,16 +1159,19 @@ JBIG2Stream::~JBIG2Stream() {
 // If stream holder cloning fails (returns NULL), also fails and returns NULL
 Stream * JBIG2Stream::clone()
 {
-  fprintf(stderr, "%s: JBIG2Stream::clone is not implemented\n", __FUNCTION__);
-  return 0;
-/* TODO implement
   // clones stream and if clone returns NULL, return NULL too
   Stream * cloneStream=str->clone();
   if(!cloneStream)
     return NULL;
 
-  return 0;
-*/
+  if (globalsStream.isStream()) {
+    // Usage of globalsStream is not very clear to me, so it is better to print
+    // some message when it is not in initial state
+    Stream * str = globalsStream.getStream();
+    if (str->getPos())
+      error(-1, "globalStream is not in initial state when cloning JBIG2Stream");
+  }
+  return new JBIG2Stream(cloneStream, &globalsStream);
 }
 
 void JBIG2Stream::reset() {
