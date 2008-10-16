@@ -201,10 +201,16 @@ public:
 		// we do expect some comprimation so in_size should be definitely enough
 		size_t out_size = in_size;
 		unsigned char * out_buff = (unsigned char*)malloc(sizeof(unsigned char)*out_size);
-		z.next_out = out_buff; 
-		z.avail_out = out_size;
 		int ret;
 		size_t total=0;
+
+		if(!out_buff)
+		{
+			utilsPrintDbg(debug::DBG_CRIT, "Unable to allocate buffer with size="<<out_size);
+			goto out_error;
+		}
+		z.next_out = out_buff; 
+		z.avail_out = out_size;
 		if ((ret = deflateInit(&z, Z_DEFAULT_COMPRESSION)) != Z_OK)
 		{
 			utilsPrintDbg(debug::DBG_ERR, "deflateInit failed with ret="<<ret);
@@ -221,15 +227,21 @@ public:
 				utilsPrintDbg(debug::DBG_DBG, 
 						"Output buffer size not sufficient, resizing to "
 						<< out_size);
-				out_buff = (unsigned char*)realloc(out_buff, out_size);
+				unsigned char *tmp_buff = (unsigned char*)realloc(out_buff, out_size);
+				if(!tmp_buff)
+				{
+					utilsPrintDbg(debug::DBG_CRIT, "Unable to reallocate buffer with size="<<out_size);
+					goto out_free_error;
+				}
+				out_buff = tmp_buff;
 				window_size = z.avail_out = out_size - total;
 				z.next_out = out_buff + total;
 			}
 			ret = ::deflate(&z, Z_FINISH);
-			if(ret == Z_STREAM_ERROR)
+			if(ret < 0)
 			{
 				utilsPrintDbg(debug::DBG_ERR, "compression failed with ret="<<ret);
-				goto out_error;
+				goto out_free_error;
 			}
 			total += window_size - z.avail_out;
 		}while(z.avail_out == 0);
