@@ -887,40 +887,47 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 
 unsigned char* bufferFromStreamData (Object& obj, size_t& size)
 {
-	size_t i = 0;
 	Object lenObj;
 	obj.streamGetDict()->lookup("Length", &lenObj);
 	assert(lenObj.isInt());
+
+	// this is the encoded size of the stream. NOTE that this doesn't
+	// mean that this will be result size of the uncompressed stream
 	size_t streamLength = lenObj.getInt();
 	unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*streamLength);
-	BaseStream* str = obj.getStream()->getBaseStream();
-	for(; i<streamLength; i++)
+	if(!buffer)
 	{
-		int ch=str->getChar();
-		if(ch==EOF)
-			break;
+		utilsPrintDbg(debug::DBG_CRIT, "Allocation failure");
+		return NULL;
+	}
+	Stream* str = obj.getStream();
+	str->reset();
+	int ch;
+	size_t i = 0;
+	while((ch=str->getChar())!=EOF)
+	{
+		if(i == streamLength)
+		{
+			streamLength *= 2;
+			unsigned char *buf = (unsigned char*)realloc(buffer, sizeof(unsigned char)*streamLength);
+			if(!buf)
+			{
+				utilsPrintDbg(debug::DBG_CRIT, "Allocation failure");
+				free(buffer);
+				return NULL;
+			}
+			buffer = buf;
+		}
 		// NOTE that we are reducing int -> char here, so multi-bytes
 		// returned from a stream will be stripped to 1B
 		if((unsigned char)ch != ch)
 			utilsPrintDbg(debug::DBG_DBG, "Too wide character("<<(int)ch<<") in the stream at pos="<<i);
-		buffer[i]=(unsigned char)ch;
+		buffer[i++]=(unsigned char)ch;
 	}
 
-	if(i != streamLength)
-	{
-		utilsPrintDbg(debug::DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read. "
-				<<streamLength<< " expected");
-		free(buffer);
-		return NULL;
-	}
-	if(str->getChar()!=EOF)
-	{
-		utilsPrintDbg(debug::DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
-		free(buffer);
-		return NULL;
-	}
 	// restore stream object to the begining
-	obj.getStream()->reset();
+	str->reset();
+	size = i;
 
 	// if there were some filters we have to remove them with 
 	// all associated parameters, because they are no longer 
@@ -936,7 +943,6 @@ unsigned char* bufferFromStreamData (Object& obj, size_t& size)
 		}
 	}
 	
-	size = i;
 	return buffer;
 }
 
