@@ -975,8 +975,10 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	// lenght]
 	size_t realBufferLen;
 	unsigned char * dataBuff = extractor(streamObject, realBufferLen);
-	if(!realBufferLen)
+	if(!dataBuff)
 		return 0;
+	if(!realBufferLen)
+		utilsPrintDbg(debug::DBG_WARN, "Stream " << *ref << " with zero bytes in encountered");
 	
 	// indirect header is filled only if asIndirect flag is set
 	// same way footer
