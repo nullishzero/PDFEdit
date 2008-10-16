@@ -275,6 +275,18 @@ public:
 		size_t rawSize;
 		if((rawBuffer = bufferFromStreamData(obj, rawSize)) == NULL)
 			goto out;
+		// This should never happen - why would we want to have/change 
+		// emty streams? It is much simpler to remove it from the streams
+		// if we want to get rid of it. Nevertheless we have already seen
+		// streams with zero decoded content (e.g. PDFreference obj. 
+		// [4129 0] - content stream from the page 1236)
+		// If we let an empty string to the deflate_buffer, this will fail
+		// and we will get corrupted document!!!
+		if(!rawSize)
+		{
+			size = rawSize;
+			return rawBuffer;
+		}
 		utilsPrintDbg(debug::DBG_DBG, "Raw buffer size="<<rawSize);
 		if((deflateBuff = deflate_buffer(rawBuffer, rawSize, size))==NULL)
 			goto free_out;
