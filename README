@@ -241,8 +241,7 @@ You can also control search paths for required libraries and binaries:
 
 	- Boost
 	./configure --with-boost=YOUR_BOOST_INSTALLATION_PATH \
-		--with-boost-libdir=YOUR_BOOST_LIB_PATH \
-		--with-boost-iostreams=IOSTREAM_LIBRARY
+		--with-boost-libdir=YOUR_BOOST_LIB_PATH 
 
 	- qmake is searched in $QTDIR/bin, /usr/bin, /usr/local/bin,
 	  /usr/lib/qt3/bin and in directories in $PATH. If you have
@@ -421,7 +420,7 @@ And if you want to create deb package by your self, Eric Doviak
 
 First, install the packages necessary to build PDF Editor.
 
-# apt-get install dh-make libboost-dev libboost-iostreams-dev
+# apt-get install dh-make libboost-dev 
 
 Then, download the tarball from Sourceforge and extracted the files:
 

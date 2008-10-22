@@ -10,7 +10,7 @@ CFLAGS   += $(EXTRA_KERNEL_CFLAGS)
 CXXFLAGS += $(EXTRA_KERNEL_CXXFLAGS)
 
 HEADERS = static.h\
-	  exceptions.h modecontroller.h filters.h xpdf.h utils.h cxref.h xrefwriter.h \
+	  exceptions.h modecontroller.h xpdf.h utils.h cxref.h xrefwriter.h \
 	  factories.h pdfwriter.h indiref.h iproperty.h cobject.h cobjectsimple.h \
 	  cobjectsimpleI.h carray.h cdict.h cstream.h cstreamsxpdfreader.h \
 	  cobjecthelpers.h ccontentstream.h pdfoperatorsbase.h pdfoperators.h pdfoperatorsiter.h \
@@ -22,7 +22,7 @@ HEADERS = static.h\
 	  delinearizator.h pdfspecification.h operatorhinter.h \
 	  pdfedit-core-dev.h
 
-SOURCES = static.cc xpdf.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
+SOURCES = static.cc xpdf.cc modecontroller.cc factories.cc cannotation.cc \
 	  cxref.cc xrefwriter.cc streamwriter.cc iproperty.cc carray.cc \
 	  cdict.cc cstream.cc cobject.cc cobject2xpdf.cc cobject2string.cc cobjecthelpers.cc \
 	  ccontentstream.cc pdfoperatorsbase.cc  pdfoperators.cc pdfoperatorsiter.cc \

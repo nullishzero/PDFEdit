@@ -12,7 +12,7 @@
        (For example in ubuntu it is <filename>libq3-mt-dev</filename> for the development version, while the library binaries are named <filename>libq3-mt</filename>)
       </note> 
      </entry></row>
-     <row><entry>boost</entry><entry>Boost C++ Libraries (smart_ptr, iostreams)</entry></row>
+     <row><entry>boost</entry><entry>Boost C++ Libraries (smart_ptr)</entry></row>
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
    </informaltable>

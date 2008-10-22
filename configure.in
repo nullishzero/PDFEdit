@@ -14,7 +14,6 @@ AC_CONFIG_HEADERS(src/utils/aconf.h src/xpdf/xpdf-aconf.h)
 m4_include([config/env.m4])
 m4_include([config/macro.m4])
 m4_include([config/boost_base.m4])
-m4_include([config/boost_iostreams.m4])
 m4_include([config/cppunit.m4])
 m4_include([config/freetype2.m4])
 
@@ -49,11 +48,6 @@ AC_STRUCT_TM
 
 dnl Checks for boost and boost iostreams
 AX_BOOST_BASE
-AX_BOOST_IOSTREAMS
-if test "x$ax_cv_boost_iostreams" = "xno" 
-then
-	AC_MSG_ERROR(Boost IOStreams is required by PDFedit)
-fi
 
 AC_ARG_ENABLE(stack-protector,
 	      [AS_HELP_STRING([--enable-stack-protector],

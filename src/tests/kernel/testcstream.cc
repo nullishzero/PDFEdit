@@ -30,7 +30,6 @@
 #include "tests/kernel/testcpdf.h"
 
 #include "kernel/factories.h"
-#include "kernel/filters.h"
 
 
 //=====================================================================================
@@ -38,6 +37,22 @@ namespace {
 //=====================================================================================
 using namespace boost;
 using namespace std;
+
+/** Functor replacing non printable characters with printable. */
+template<typename T>
+struct Printable
+{
+	typedef char Char;
+	Char operator () (T _c) const
+	{
+		Char c = _c;
+		if ('!' < c && c < '~')
+			return c;
+		else
+			// FIXME is this OK?
+			return '+';
+	}
+};
 
 //=====================================================================================
 bool setbuffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileName)
@@ -202,7 +217,7 @@ bool getPdfString (UNUSED_PARAM std::ostream& oss, const char* fileName)
 
 		string tmp;
 		stream->getDecodedStringRepresentation (tmp);
-		filters::Printable<char> p;
+		Printable<char> p;
 		for (size_t i = 0; i < tmp.length(); ++i)
 			p (tmp[i]);
 	}
