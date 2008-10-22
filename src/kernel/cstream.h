@@ -29,8 +29,6 @@
 #include "kernel/static.h"
 #include "kernel/cdict.h"
 #include "kernel/iproperty.h"
-// Filters
-#include "kernel/filters.h"
 
 
 //=====================================================================================
@@ -72,7 +70,8 @@ public:
 	// We should be able to access xpdf stream by CStreamsXpdfReader 
 	template<typename T> friend class CStreamsXpdfReader;
 
-	typedef std::vector<filters::StreamChar> 		Buffer;
+	typedef char StreamChar;
+	typedef std::vector<StreamChar> 		Buffer;
 	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
 
 	/** 
@@ -299,10 +298,10 @@ public:
 	void setRawBuffer (const Buffer& buf);
 
 	/**
-	 * Set decoded buffer. 
-	 * Use avaliable filters. If a filter is not avaliable an exception is thrown.
+	 * Set decoded (raw) buffer. 
+	 * Drops all filters if present.
 	 *
-	 * @param buf New buffer.
+	 * @param buf New buffer (can be string or Buffer types).
 	 */
 	template<typename Container>
 	void setBuffer (const Container& buf)
@@ -321,8 +320,17 @@ public:
 		// Make buffer pdf valid, encode buf and save it to buffer
 		std::string strbuf;
 		utils::makeStreamPdfValid (buf.begin(), buf.end(), strbuf);
-		encodeBuffer (strbuf);
+		buffer.clear();
+		copy(strbuf.begin(), strbuf.end(), back_inserter(buffer));
 		// Change length
+		std::vector<std::string> filters;
+		getFilters(filters);
+		if (filters.size()) {
+			// TODO when can this happen? Our changes are
+			// always made in the separate streams!!!
+			kernelPrintDbg(debug::DBG_DBG, "Removing Filter entry from the stream");
+			dictionary.delProperty ("Filter");
+		}
 		setLength (buffer.size());
 		
 		try {
@@ -422,57 +430,6 @@ private:
 	 */
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context);
 
-	/**
-	 * Get encoded buffer.
-	 *
-	 * @param container Output container.
-	 */
-	template<typename Container>
-	void encodeBuffer (const Container& container)
-	{
-		kernelPrintDbg (debug::DBG_DBG, "");
-
-		//
-		// Create input filtes and add filters according to Filter item in
-		// stream dictionary
-		// 
-		filters::InputStream in;
-		std::vector<std::string> filters;
-		getFilters (filters);
-		
-		// Try adding filters if one is not supported use none
-		try {
-			
-			filters::CFilterFactory::addFilters (in, filters);
-		
-		}catch(FilterNotSupported&)
-		{
-			kernelPrintDbg (debug::DBG_DBG, "One of the filters is not supported, using none..");
-			
-			dictionary.delProperty ("Filter");
-			// Clear buffer
-			buffer.clear ();
-			copy (container.begin(), container.end(), back_inserter (buffer));
-			return;
-		}
-		
-		// Clear buffer
-		buffer.clear ();
-
-		// Create input source from buffer
-		boost::iostreams::stream<filters::buffer_source<Container> > input (container);
-		in.push (input);
-		// Copy it to container
-		Buffer::value_type c;
-		in.get (c);
-		while (!in.eof())
-		{//\TODO Improve this !!!!
-			buffer.push_back (c);
-			in.get (c);
-		}
-		// Close the stream
-		in.reset ();
-	}
 
 
 private:
@@ -513,22 +470,7 @@ public:
 		for	(; it != dictionary.value.end (); ++it)
 			store.push_back ((*it).second);
 	}
-
 	
-	//
-	// Special functions
-	//
-public:
-
-	/**
-	 * Return the list of all supported streams.
-	 *
-	 * @return List of supported stream filters.
-	 */
-	template<typename Container>
-	static void getSupportedStreams (Container& supported) 
-		{ filters::CFilterFactory::getSupportedStreams (supported); }
-
 };
 
 

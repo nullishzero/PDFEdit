@@ -103,15 +103,11 @@
 			  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
 			  not do it the other way round. (it is because it never needs it) Xpdf impelementation of streams is very rough.
 			
-			  We use boost filtering iostream which provide us with the necessary general concept of
-			  encoded streams. However we have to implement the filters ourselves. (the easiest way is to save decoded streams
-			  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
-			  or we can save decoded stream which is automatically encoded when saved using avaliable filters.
-			
 			  Each stream consists of a dictionary and stream buffer. The dictionary can not be accessed directly. 
 			  Dictionary interface is simulated by simple methods which delegate the calls to the dictionary object. 
-			  Buffer is stored in encoded form allowing us to return the same byte representation of an
-			  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
+			  When a stream object is modified, we will drop all encoding filters (meaning that all filter relevant
+			  entries from dictionary are removed) and treat the stream data as uncompressed. Data are compressed
+			  later when we are writing stream to the file with the help of the FilterStreamWriter class hierarchy.
 			  </para>
 
 			  <sect5 id="accessing_streams">

@@ -275,22 +275,6 @@ bool testmakexpdf (UNUSED_PARAM std::ostream& oss, const char* fileName)
 
 
 //=========================================================================
-
-bool getSupportedF (std::ostream& oss)
-{
-	vector<string> supported;
-	CStream::getSupportedStreams (supported);
-	
-	oss << " Supported: ";
-	for (vector<string>::iterator it = supported.begin(); it != supported.end(); ++it)
-		oss << *it << endl;
-	
-	return true;
-}
-
-
-
-//=========================================================================
 // class TestCStream
 //=========================================================================
 
@@ -302,7 +286,6 @@ class TestCStream : public CppUnit::TestFixture
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestString);
 		CPPUNIT_TEST(TestFilter);
-		CPPUNIT_TEST(TestSupFilter);
 		CPPUNIT_TEST(TestDict);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -372,8 +355,6 @@ public:
 			OK_TEST;
 		}
 			
-		TEST(" get supported filters");
-		CPPUNIT_ASSERT (getSupportedF (OUTPUT));
 		OK_TEST;
 	}
 	//
@@ -393,15 +374,6 @@ public:
 			CPPUNIT_ASSERT (getFilter (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
-	}
-	//
-	//
-	//
-	void TestSupFilter ()
-	{
-		TEST(" get supported filters");
-		CPPUNIT_ASSERT (getSupportedF (OUTPUT));
-		OK_TEST;
 	}
 	//
 	//
