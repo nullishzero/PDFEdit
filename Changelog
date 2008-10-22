@@ -1,4 +1,5 @@
 ????-??-?? PDF Editor 0.4.2
+	* dependency to boost-iostreams dropped
 	* Debian fixes (462544-crash, 444648-bad SCII85Encoding output) backported
 	* changed streams are encoded with FlateDecode compression
 	* read-only support for encrypted documents added
