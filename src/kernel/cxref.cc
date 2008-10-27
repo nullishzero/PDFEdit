@@ -141,7 +141,7 @@ using namespace debug;
 	if(!clonedObject)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, ref <<" object can't be cloned.");
+		kernelPrintDbg(DBG_ERR, ref <<" object ("<< instance->getType()<<") can't be cloned.");
 		throw NotImplementedException("clone failure.");
 	}
 
@@ -195,7 +195,11 @@ using namespace debug;
 	if(!clonedObject)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "trailer can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "object ("
+				<< value->getType()
+				<<") can't be cloned for name="
+				<<name
+				<<". Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	char * key=copyString(name);
@@ -466,7 +470,9 @@ using namespace debug;
 	if(!retValue)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Trailer::"<<name<<" can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Trailer::"<<name<<" ("
+				<<obj.getType() 
+				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 
@@ -492,7 +498,9 @@ using namespace debug;
 	if(!retObj)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Trailer::Info can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Trailer::Info ("
+				<<docObj.getType()
+				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	*obj=*retObj;
@@ -520,7 +528,9 @@ using namespace debug;
 	if(!retObj)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Trailer::Info can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Trailer::Info ("
+				<<docObj.getType()
+				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	// shallow copy of the content (deep copied)
@@ -570,6 +580,7 @@ using namespace debug;
 			return obj;
 		}
 		::Object * deepCopy=entry->object->clone();
+		assert(deepCopy);
 
 		// shallow copy of content
 		// content is deep copy of found object, so
@@ -601,7 +612,9 @@ using namespace debug;
 	if(!cloneObj)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, ref << " object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, ref << " object ("
+				<<tmpObj.getType()
+				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 
