@@ -216,7 +216,7 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 			kernelPrintDbg(DBG_DBG, "Reference is not initialized yet. No checking done.");
 	}
 
-	kernelPrintDbg(DBG_INFO, "paranoidCheck successfull");
+	kernelPrintDbg(DBG_DBG, "paranoidCheck successfull");
 	return true;
 }
 
@@ -384,7 +384,7 @@ using namespace utils;
 	// if changedStorage is empty, there is nothing to do
 	if(changedStorage.size()==0)
 	{
-		kernelPrintDbg(DBG_INFO, "Nothing to be saved - changedStorage is empty");
+		kernelPrintDbg(DBG_DBG, "Nothing to be saved - changedStorage is empty");
 		return;
 	}
 	// checks if we have pdf content writer
@@ -423,7 +423,8 @@ using namespace utils;
 	// now.
 	if(newRevision)
 	{
-		kernelPrintDbg(DBG_INFO, "Saving changes as new revision.");
+		kernelPrintDbg(DBG_INFO, "Saving changes as new revision number "
+				<<revisions.size()+1);
 		storePos=newEofPos;
 		kernelPrintDbg(DBG_DBG, "New storePos="<<storePos);
 
@@ -487,7 +488,7 @@ int XRefWriter::getOldStyleTrailer(Object * trailer, size_t off)
 {
 	// old style cross reference table, we have to skip whole table and
 	// then we will get to trailer
-	kernelPrintDbg(DBG_INFO, "New old style cross reference section found. off="<<off);
+	kernelPrintDbg(DBG_DBG, "New old style cross reference section found. off="<<off);
 	
 	// searches for TRAILER_KEYWORD to be able to parse older trailer (one
 	// for xref on off position) - this works only for oldstyle XRef tables
@@ -578,7 +579,7 @@ int XRefWriter::getStreamTrailer(Object * trailer, size_t off, ::Parser & parser
 	
 	// xref stream object contains also trailer information, so parses
 	// stream object and uses just dictionary part
-	kernelPrintDbg(DBG_INFO, "New xref stream section. off="<<off);
+	kernelPrintDbg(DBG_DBG, "New xref stream section. off="<<off);
 	return 0;
 malformedErr:
 	kernelPrintDbg(DBG_ERR, "Unable to parse trailer");
@@ -702,7 +703,7 @@ void XRefWriter::changeRevision(unsigned revNumber)
 	if(revNumber==revision)
 	{
 		// nothing to do, we are already here
-		kernelPrintDbg(DBG_INFO, "Revision changed to "<<revNumber);
+		kernelPrintDbg(DBG_INFO, "Revision kept at "<<revNumber);
 		return;
 	}
 
@@ -763,7 +764,7 @@ void XRefWriter::cloneRevision(FILE * file)const
 {
 using namespace debug;
 
-	kernelPrintDbg(DBG_ERR, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	check_need_credentials(this);
 

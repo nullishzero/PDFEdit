@@ -433,7 +433,7 @@ boost::shared_ptr<CDict> findPageDict(
 	utilsPrintDbg(DBG_DBG, "startPos=" << startPos << " pos=" << pos);
 	if(startPos > pos)
 	{
-		utilsPrintDbg(DBG_ERR, "startPos > pos");
+		utilsPrintDbg(DBG_ERR, "startPos("<<startPos<<") > pos("<<pos<<")");
 		// impossible to find such page
 		throw PageNotFoundException(pos);
 	}
@@ -455,7 +455,7 @@ boost::shared_ptr<CDict> findPageDict(
 		}catch(ElementBadTypeException & )
 		{
 			// malformed pdf
-			utilsPrintDbg(DBG_ERR, "pagesDict doesn't refer to dictionary");
+			utilsPrintDbg(DBG_ERR, "pagesDict "<< pagesDict <<" doesn't refer to dictionary");
 			throw ElementBadTypeException("pagesDict");
 		}
 	}else
@@ -483,7 +483,7 @@ boost::shared_ptr<CDict> findPageDict(
 		// everything ok 
 		if(startPos == pos)
 		{
-			utilsPrintDbg(DBG_INFO, "Page found");
+			utilsPrintDbg(DBG_DBG, "Page found");
 			return dict_ptr;
 		}
 		
@@ -556,7 +556,7 @@ boost::shared_ptr<CDict> findPageDict(
 			{
 				if(min_pos == pos)
 				{
-					utilsPrintDbg(DBG_INFO, "page at pos="<<pos<<" found. Node reference "<<child_ptr->getIndiRef());
+					utilsPrintDbg(DBG_DBG, "page at pos="<<pos<<" found. Node reference "<<child_ptr->getIndiRef());
 					return child_ptr;
 				}
 				++min_pos;
@@ -1084,20 +1084,20 @@ using namespace utils;
 				// unregister observer from reference
 				if(isRef(oldValue))
 				{
-					kernelPrintDbg(DBG_INFO, "unregistering obsever from old Pages property.");
+					kernelPrintDbg(DBG_DBG, "unregistering obsever from old Pages property "<<oldValue);
 					try
 					{
 						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, pdf->pageTreeRootObserver);
 					}catch(ObserverException & e)
 					{
-						kernelPrintDbg(DBG_ERR, "oldValue observer unregistration failed.");
+						kernelPrintDbg(DBG_ERR, "oldValue "<<oldValue<<" observer unregistration failed.");
 					}
 				}
 
 				// registers 
 				if(isRef(newValue))
 				{
-					kernelPrintDbg(DBG_INFO, "registering observer to new Pages property.");
+					kernelPrintDbg(DBG_DBG, "registering observer to new Pages property "<<newValue);
 					REGISTER_SHAREDPTR_OBSERVER(newValue, pdf->pageTreeRootObserver);
 				}
 			}
@@ -1124,7 +1124,8 @@ using namespace utils;
 			kernelPrintDbg(DBG_WARN, "oldValue's "<<ref<<" is not dictionary.");
 		}catch(ObserverException & e)
 		{
-			kernelPrintDbg(DBG_ERR, "oldValue's target unregisterPageTreeObservers failed.");
+			kernelPrintDbg(DBG_ERR, "oldValue's "<<oldValue
+					<<" target unregisterPageTreeObservers failed.");
 		}
 	}
 
@@ -1162,7 +1163,7 @@ using namespace utils;
 
 	// we have new page tree root dictionary and so observers have to be
 	// registered
-	kernelPrintDbg(DBG_INFO, "Registering obsevers to new page tree with root "<<newValueRef);
+	kernelPrintDbg(DBG_DBG, "Registering obsevers to new page tree with root "<<newValueRef);
 	pdf->registerPageTreeObservers(newValueProp);
 
 	kernelPrintDbg(DBG_DBG, "PageTreeRootObserver finished");
@@ -1222,7 +1223,7 @@ using namespace observer;
 						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, pdf->pageTreeNodeObserver);
 					}catch(ObserverException & e)
 					{
-						kernelPrintDbg(DBG_ERR, "unregisterObserver has failed for oldValue.");
+						kernelPrintDbg(DBG_ERR, "unregisterObserver has failed for oldValue "<<oldValue);
 					}
 				}
 
@@ -1444,7 +1445,7 @@ using namespace utils;
 	// because old mess has been replaced by new mess
 	if(oldType!=pRef && newType!=pRef)
 	{
-		kernelPrintDbg(DBG_INFO, "Nothing to consolidate because newValue and oldValue are not CRef");
+		kernelPrintDbg(DBG_DBG, "Nothing to consolidate because newValue and oldValue are not CRef");
 		return;
 	}
 
@@ -1462,7 +1463,8 @@ using namespace utils;
 			kernelPrintDbg(DBG_WARN, "oldValue "<<ref<<" doesn't refer to dictionary.");
 		}catch(ObserverException & e)
 		{
-			kernelPrintDbg(DBG_ERR, "oldValue unregisterPageTreeObservers has failed.");
+			kernelPrintDbg(DBG_ERR, "oldValue "<<oldValue
+					<<" unregisterPageTreeObservers has failed.");
 		}
 	}
 		
@@ -1485,7 +1487,7 @@ using namespace utils;
 	{
 		// target of the parent reference is not dictionary,
 		// this should not happen - some one is doing something nasty
-		kernelPrintDbg(DBG_ERR, "newValue's parent is not dictionary. THIS SHOUL NOT HAPPEN");
+		kernelPrintDbg(DBG_CRIT, "newValue's parent is not dictionary. THIS SHOUL NOT HAPPEN");
 		return;
 	}
 
@@ -1603,7 +1605,7 @@ void CPdf::initRevisionSpecific()
 	// cleans up and invalidates all returned pages
 	if(pageList.size())
 	{
-		kernelPrintDbg(debug::DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
+		kernelPrintDbg(debug::DBG_DBG, "Cleaning up pages list with "<<pageList.size()<<" elements");
 		PageList::iterator i;
 		for(i=pageList.begin(); i!=pageList.end(); ++i)
 		{
@@ -1625,7 +1627,7 @@ void CPdf::initRevisionSpecific()
 			if(!value.unique())
 				kernelPrintDbg(debug::DBG_WARN, "Somebody still holds property with with "<<ref);
 		}
-		kernelPrintDbg(debug::DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
+		kernelPrintDbg(debug::DBG_DBG, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
 		indMap.clear();
 	}
 
@@ -1668,10 +1670,11 @@ void CPdf::initRevisionSpecific()
 	shared_ptr<IProperty> prop_ptr=getIndirectProperty(rootRef);
 	if(prop_ptr->getType()!=pDict)
 	{
-		kernelPrintDbg(debug::DBG_CRIT, "Trailer dictionary doesn't point to correct document catalog.");
+		kernelPrintDbg(debug::DBG_CRIT, "Trailer dictionary doesn't point to correct document catalog "
+				<<"(type="<<prop_ptr->getType()<<")");
 		throw ElementBadTypeException("Root");
 	}
-	kernelPrintDbg(debug::DBG_INFO, "Document catalog successfully fetched");
+	kernelPrintDbg(debug::DBG_DBG, "Document catalog successfully fetched");
 	docCatalog=IProperty::getSmartCObjectPtr<CDict>(prop_ptr);
 	
 	kernelPrintDbg(debug::DBG_DBG, "Registering observers to page tree structure");
@@ -1781,7 +1784,7 @@ void CPdf::setPdfId()
 	// sets id as address of this instance
 	id = getIdFromCPdf(this);
 	assert(getCPdfFromId(id) == this);
-	kernelPrintDbg(DBG_INFO, "pdf "<< this 
+	kernelPrintDbg(DBG_DBG, "pdf "<< this 
 			<< " is associated with id=" << id);
 	CPdf::allPdfs.push_back(id);
 }
@@ -1890,10 +1893,10 @@ using namespace debug;
 		IProperty * prop=utils::createObjFromXpdfObj(_this.lock(), obj, ref);
 		prop_ptr=shared_ptr<IProperty>(prop);
 		indMap.insert(IndirectMapping::value_type(ref, prop_ptr));
-		kernelPrintDbg(DBG_INFO, "Mapping created for "<<ref);
+		kernelPrintDbg(DBG_DBG, "Mapping created for "<<ref);
 	}else
 	{
-		kernelPrintDbg(DBG_INFO, ref<<" not available or points to objNull");
+		kernelPrintDbg(DBG_DBG, ref<<" not available or points to objNull");
 		prop_ptr=shared_ptr<CNull>(CNullFactory::getInstance());
 	}
 
@@ -2288,7 +2291,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	// Mapping will be created in next getIndirectProperty call.
 	if(prop==getIndirectProperty(indiRef))
 	{
-		kernelPrintDbg(DBG_INFO,  "Indirect mapping kept for "<<indiRef);
+		kernelPrintDbg(DBG_DBG, "Indirect mapping kept for "<<indiRef);
 	}
 	else
 	{
@@ -2322,7 +2325,7 @@ public:
 					<<strerror(err) << "\"");
 		}
 
-		kernelPrintDbg(debug::DBG_INFO, "Instance deleted.");
+		kernelPrintDbg(debug::DBG_DBG, "Instance deleted.");
 	}
 };
 
@@ -2380,12 +2383,14 @@ using namespace std;
 		// prevent from changes at all.
 		if(instance->isLinearized())
 			instance->mode = ReadOnly;
-		kernelPrintDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
+		kernelPrintDbg(debug::DBG_INFO, "Instance created successfully file="
+				<<filename<<" openMode=" << openMode);
 		return instance;
 	}catch(std::exception &e)
 	{
 		fclose(file);
-		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. cause="<<e.what());
+		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. filename="
+				<<filename<<" cause="<<e.what());
 		string what=string("CPdf open failed. reason=")+e.what();
 		throw PdfOpenException(what);
 	}
@@ -2413,7 +2418,7 @@ using namespace utils;
 	PageList::const_iterator i;
 	if((i=pageList.find(pos))!=pageList.end())
 	{
-		kernelPrintDbg(DBG_INFO, "Page at pos="<<pos<<" found in pageList");
+		kernelPrintDbg(DBG_DBG, "Page at pos="<<pos<<" found in pageList");
 		return i->second;
 	}
 
@@ -2445,15 +2450,16 @@ using namespace utils;
 	// try to use cached value - if zero, we have to get it from Page tree root
 	if(pageCount)
 	{
-		kernelPrintDbg(DBG_DBG, "Uses cached value");
-		kernelPrintDbg(DBG_INFO, "Page Count="<<pageCount);
+		kernelPrintDbg(DBG_DBG, "cached page count="<<pageCount);
 		return pageCount;
 	}
 	
 	shared_ptr<CDict> rootDict=getPageTreeRoot(_this.lock());
 	if(!rootDict.get())
 		return 0;
-	return pageCount=getKidsCount(rootDict, &nodeCountCache);
+	pageCount=getKidsCount(rootDict, &nodeCountCache);
+	kernelPrintDbg(DBG_DBG, "page count="<<pageCount);
+	return pageCount;
 }
 
 bool CPdf::hasNextPage(boost::shared_ptr<CPage> page) const
@@ -2517,7 +2523,7 @@ size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
 		// This is ok even if they manage same page dictionary
 		if(i->second == page)
 		{
-			kernelPrintDbg(DBG_INFO, "Page found at pos="<<i->first);
+			kernelPrintDbg(DBG_DBG, "Page found at pos="<<i->first);
 			return i->first;
 		}
 	}
@@ -2570,7 +2576,10 @@ using namespace utils;
 						size_t pos=i->first;
 						minPos=pos;
 						pageList.erase(i);
-						kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
+						kernelPrintDbg(DBG_DBG, "CPage(pos="
+								<<pos
+								<<") associated with oldValue page dictionary removed. pageList.size="
+								<<pageList.size());
 						break;
 					}
 				}
@@ -2606,7 +2615,10 @@ using namespace utils;
 						
 						page->invalidate();
 						pageList.erase(i++);
-						kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
+						kernelPrintDbg(DBG_DBG, "CPage(pos="
+								<<pos
+								<<") associated with oldValue page dictionary removed. pageList.size="
+								<<pageList.size());
 						continue;
 					}
 					// if this element is not in subtree and found is true,
@@ -2739,7 +2751,7 @@ using namespace utils;
 		kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<i->first+difference);
 		pageList.insert(PageList::value_type(i->first+difference, i->second));	
 	}
-	kernelPrintDbg(DBG_INFO, "pageList consolidation done.");
+	kernelPrintDbg(DBG_DBG, "pageList consolidation done.");
 }
 
 
@@ -3013,7 +3025,8 @@ using namespace utils;
 		getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currRef, positions);
 		if(positions.size()>1)
 		{
-			kernelPrintDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="<<storePostion);
+			kernelPrintDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="
+					<<storePostion<<" candidate positions="<<positions.size());
 			throw AmbiguousPageTreeException();
 		}
 		kidsIndex=positions[0]+append;
@@ -3126,7 +3139,8 @@ using namespace utils;
 	getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currRef, positions);
 	if(positions.size()>1)
 	{
-		kernelPrintDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="<<pos);
+		kernelPrintDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="
+				<<pos<<" candidate positions="<<positions.size());
 		throw AmbiguousPageTreeException();
 	}
 	

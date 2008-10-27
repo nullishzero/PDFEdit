@@ -114,7 +114,7 @@ using namespace debug;
 	}
 	*/
 	
-	kernelPrintDbg(DBG_INFO, "Deallocating internal structures");
+	kernelPrintDbg(DBG_DBG, "Deallocating internal structures");
 	cleanUp();
 	
 	// XRef doesn't deallocate stream, so it has to be deallocated here
@@ -141,7 +141,7 @@ using namespace debug;
 	if(!clonedObject)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned.");
+		kernelPrintDbg(DBG_ERR, ref <<" object can't be cloned.");
 		throw NotImplementedException("clone failure.");
 	}
 
@@ -195,7 +195,7 @@ using namespace debug;
 	if(!clonedObject)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "trailer can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	char * key=copyString(name);
@@ -299,7 +299,7 @@ using namespace debug;
 	// initialized value is overwritten by change method.
 	::Ref objRef={num, gen};
 	newStorage.put(objRef, RESERVED_REF);
-	kernelPrintDbg(DBG_INFO, objRef<<" registered to newStorage");
+	kernelPrintDbg(DBG_DBG, objRef<<" registered to newStorage");
 
 	return objRef;
 }
@@ -398,6 +398,7 @@ using namespace debug;
 
 	if(!obj1 || !obj2)
 	{
+		assert(!obj1 || !obj2);
 		if(!obj1)
 			kernelPrintDbg(DBG_ERR, "obj1 is null");
 		
@@ -465,7 +466,7 @@ using namespace debug;
 	if(!retValue)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Trailer::"<<name<<" can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 
@@ -491,7 +492,7 @@ using namespace debug;
 	if(!retObj)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Trailer::Info can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	*obj=*retObj;
@@ -519,7 +520,7 @@ using namespace debug;
 	if(!retObj)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Trailer::Info can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	// shallow copy of the content (deep copied)
@@ -555,7 +556,7 @@ using namespace debug;
 	ObjectEntry * entry=changedStorage.get(ref);
 	if(entry)
 	{
-		kernelPrintDbg(DBG_INFO, ref<<" is changed - using changedStorage");
+		kernelPrintDbg(DBG_DBG, ref<<" is changed - using changedStorage");
 		
 		// object has been changed
 		// this clone never fails, because it had to be cloned before storing to
@@ -565,7 +566,7 @@ using namespace debug;
 		{
 			// this shouldn't not happen
 			// TODO handle - exception should be called
-			kernelPrintDbg(DBG_CRIT, "Changed object is NULL!");
+			kernelPrintDbg(DBG_CRIT, ref << " changed object is NULL!");
 			return obj;
 		}
 		::Object * deepCopy=entry->object->clone();
@@ -581,7 +582,7 @@ using namespace debug;
 	}
 
 	// delegates to original implementation
-	kernelPrintDbg(DBG_INFO, ref<<" is not changed - using Xref");
+	kernelPrintDbg(DBG_DBG, ref<<" is not changed - using Xref");
 	Object tmpObj;
 	XRef::fetch(num, gen, &tmpObj);
 	if (!isOk())
@@ -600,7 +601,7 @@ using namespace debug;
 	if(!cloneObj)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, ref << " object can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 
@@ -634,7 +635,7 @@ using namespace debug;
 		if(i->second==INITIALIZED_REF)
 			++newSize;
 
-	kernelPrintDbg(DBG_INFO, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);
+	kernelPrintDbg(DBG_DBG, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);
 	return XRef::getNumObjects() + newSize;
 }
 
@@ -646,13 +647,13 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "");
 
 	// clears all object storages
-	kernelPrintDbg(DBG_INFO, "Destroying CXref internals");
+	kernelPrintDbg(DBG_DBG, "Destroying CXref internals");
 	cleanUp();
 
 	// clears XRef internals and forces to fill them again
-	kernelPrintDbg(DBG_INFO, "Destroing XRef internals");
+	kernelPrintDbg(DBG_DBG, "Destroing XRef internals");
 	XRef::destroyInternals();
-	kernelPrintDbg(DBG_INFO, "Initializes XRef internals");
+	kernelPrintDbg(DBG_DBG, "Initializes XRef internals");
 	XRef::initInternals(xrefOff);
 
 	// sets lastXRefPos to xrefOff, because initRevisionSpecific doesn't do it
@@ -708,9 +709,9 @@ void CXref::setCredentials(const char * ownerPasswd, const char * userPasswd)
 	needs_credentials = false;
 	if(handler)
 	{
-		kernelPrintDbg(debug::DBG_INFO, "Setting provided ecnryption credentials.");
+		kernelPrintDbg(debug::DBG_DBG, "Setting provided ecnryption credentials.");
 		::setEncryptionCred(this, handler);
 		delete handler;
 	}else
-		kernelPrintDbg(debug::DBG_INFO, "No special credentials required for encrypted document");
+		kernelPrintDbg(debug::DBG_DBG, "No special credentials required for encrypted document");
 }
