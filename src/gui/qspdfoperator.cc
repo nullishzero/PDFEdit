@@ -112,6 +112,16 @@ QString QSPdfOperator::getText() {
  return util::convertToUnicode(text,util::PDF);
 }
 
+QString QSPdfOperator::getEncodedText() {
+ std::string text;
+ TextSimpleOperator * textOp = dynamic_cast<TextSimpleOperator*>(obj.get());
+ if (!textOp)
+	 return QString::null;
+ // TODO change to return Font encoded text
+ textOp->getRawText(text);
+ return util::convertToUnicode(text, util::PDF);
+}
+
 /**
  Create new operator iterator from this PDF operator.
  The iterator will be initially positioned at this item

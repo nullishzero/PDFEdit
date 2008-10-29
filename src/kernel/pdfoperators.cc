@@ -171,6 +171,69 @@ SimpleGenericOperator::init_operands (shared_ptr<observer::IObserver<IProperty> 
 }
 
 
+void TextSimpleOperator::getRawText(std::string& str)const
+{
+using namespace utils;
+	utilsPrintDbg(debug::DBG_DBG, "");
+	std::string name, rawStr;
+	getOperatorName(name);
+	Operands ops;
+	getParameters(ops);
+	if(name == "'" || name == "Tj")
+	{
+		if(ops.size() != 1 || !isString(ops[0]))
+		{
+			utilsPrintDbg(debug::DBG_WARN, "Bad operands for operator "
+					<<name<<" count="<<ops.size()
+					<<" ops[0] type="<< ops[0]->getType());
+			return;
+		}
+		rawStr = getStringFromIProperty(ops[0]);
+	}
+	else if (name == "\"")
+	{
+		if(ops.size() != 3 || !isArray(ops[2]))
+		{
+			utilsPrintDbg(debug::DBG_WARN, "Bad operands for operator "
+					<<name<<" count="<<ops.size()
+					<<" ops[2] type="<< ops[2]->getType());
+			return;
+		}
+		rawStr = getStringFromIProperty(ops[2]);
+	}
+	else if (name == "TJ")
+	{
+		shared_ptr<IProperty> op = ops[0];
+		if (!isArray(op) || ops.size() != 1)
+		{
+			utilsPrintDbg(debug::DBG_WARN, "Bad operands for TJ operator: ops[type="
+					<< op->getType() <<" size="<<ops.size()<<"]");
+			return;
+		}
+		shared_ptr<CArray> opArray = IProperty::getSmartCObjectPtr<CArray>(op);
+		std::vector<shared_ptr<IProperty> > props;
+		opArray->_getAllChildObjects(props);
+		std::vector<shared_ptr<IProperty> >::iterator i;
+		for(i=props.begin(); i!=props.end(); ++i)
+		{
+			shared_ptr<IProperty> p = *i;
+
+			// TODO consider spacing coming from values
+			if(!(isString(p)))
+				continue;
+			rawStr += getStringFromIProperty(p);
+		}
+
+	}else
+	{
+		utilsPrintDbg(debug::DBG_WARN, "Bad operator name="<<name);
+		return;
+	}
+
+	str = rawStr;
+}
+
+
 //==========================================================
 // Concrete implementations of CompositePdfOperator
 //==========================================================
@@ -305,6 +368,12 @@ boost::shared_ptr<PdfOperator> createOperator(const std::string& name, PdfOperat
 	
 	// Get operands count
 	size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
+
+	//
+	// If endTag is "" it is a simple operator, composite otherwise
+	// 
+	if (isTextOp(*chcktp))
+		return shared_ptr<PdfOperator> (new TextSimpleOperator(chcktp->name, argNum, operands));
 
 	if (isSimpleOp(*chcktp))
 		return shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));

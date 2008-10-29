@@ -116,6 +116,31 @@ public:
 }; // class SimpleGenericOperator
 
 
+/** Text dedicated operator class.
+ * This class represents those text operators which contains text to be 
+ * displayed. This is necessary, because text string stored in operator's
+ * operands is not the same as the displayed one in general and may be 
+ * affected by font encoding. 
+ */
+class TextSimpleOperator: public SimpleGenericOperator
+{
+public:
+	TextSimpleOperator (const char* opTxt, const size_t numOper, Operands& opers)
+		:SimpleGenericOperator(opTxt, numOper, opers) {}
+	TextSimpleOperator(const std::string& opTxt, Operands& opers)
+		:SimpleGenericOperator(opTxt, opers) {}
+
+	virtual ~TextSimpleOperator() {}
+	
+	/** Returns string represented by this text operator in raw format.
+	 * Raw format doesn't take care about font used for this operator.
+	 * @param str String to be set.
+	 */
+	virtual void getRawText(std::string& str)const;
+
+}; // class TextSimpleOperator
+
+
 
 //==========================================================
 // Concrete implementations of CompositePdfOperator

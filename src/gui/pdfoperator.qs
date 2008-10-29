@@ -971,37 +971,7 @@ function getTextFromTextOperator( op ) {
 	if (! isTextOp( op ))
 		return "";
 
-	switch (op.getName()) {
-		case "'":
-		case "Tj":
-				if (op.paramCount() == 1) {
-					return op.params().property(0).value();
-				}
-				break;
-		case "\"":
-				if (op.paramCount() == 3) {
-					return op.params().property(2).value();
-				}
-				break;
-		case "TJ":
-				if ((op.paramCount() != 1) ||
-					(op.params().property(0).type() != "Array")) {
-					break;
-				}
-				var p = op.params().property(0);	// Array of String and Numbers
-				var c = p.count();
-				var i = 0;
-				var text = "";
-				for ( ; i < c ; ++i ) {
-					if (p.property(i).getType() == "String") {
-						text = text + p.property(i).value();
-					}
-				}
-				return text;
-				break;
-	}
-
-	return "";
+	return op.getEncodedText();
 }
 
 /** Move text operator relative [dx,dy] */

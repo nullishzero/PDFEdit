@@ -126,6 +126,14 @@ public slots:
  int childCount();
  /*- Return text representation of this pdf operator */
  QString getText();
+
+ // TODO place to somehow better place or leave it here?
+ /*-
+  Returns encoded text from text operator. Returns an empty string 
+  for all other operators.
+  */
+ QString getEncodedText();
+
  /*- Return name of this pdf operator */
  QString getName();
  /*- Returns parameters of this operator in array */

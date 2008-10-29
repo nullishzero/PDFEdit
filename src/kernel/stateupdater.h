@@ -226,6 +226,22 @@ isSimpleOp (const StateUpdater::CheckTypes& chck)
 	{ return ('\0' == chck.endTag[0]); }
 
 /**
+ * Is it a text operator (one which holds text to be displayed).
+ * @param chck Check type structure.
+ * @return True if chck is a text operator, false otherwise.
+ */
+inline bool isTextOp(const StateUpdater::CheckTypes& chck)
+{
+	if (!strcmp(chck.name, "TJ") || 
+	    !strcmp(chck.name, "Tj") || 
+	    !strcmp(chck.name, "\"") || 
+	    !strcmp(chck.name, "'")
+	   )
+		return true;
+	return false;
+}
+
+/**
  * Check if the operands match the specification and replace operand with
  * its stronger equivalent.
  *
