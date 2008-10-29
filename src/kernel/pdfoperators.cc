@@ -233,6 +233,104 @@ using namespace utils;
 	str = rawStr;
 }
 
+/** Simple class for font data encapsulation.
+ */
+class TextSimpleOperator::FontData 
+{
+	char * fontName;
+	char * fontTag;
+public:
+	FontData(GfxFont* font)
+	{
+		fontName = strdup(font->getName()->getCString());
+		fontTag = strdup(font->getTag()->getCString());
+	}
+	~FontData()
+	{
+		if(fontName)
+			free(fontName);
+		if(fontTag)
+			free(fontTag);
+	}
+
+	const char * getFontName()const
+	{
+		return fontName;
+	}
+
+	const char * getFontTag()const
+	{
+		return fontTag;
+	}
+};
+
+GfxFont* TextSimpleOperator::getCurrentFont()const
+{
+	assert(fontData);
+	const char* tag = fontData->getFontTag();
+	shared_ptr<GfxResources> res = getContentStream()->getResources(); 
+	GfxFont* font = res->lookupFont(tag);
+	if(!font)
+		utilsPrintDbg(debug::DBG_ERR, "Unable to get font(name="
+				<<fontData->getFontName()
+				<<", tag="<<fontData->getFontTag()
+				<<") for operator");
+	return font;
+}
+
+void TextSimpleOperator::getFontText(std::string& str)const
+{
+ 	std::string rawStr;
+	getRawText(rawStr);
+
+ 	int len = rawStr.size();
+ 	GString raw(rawStr.c_str(), len);
+ 	GfxFont* font = getCurrentFont();
+	if(!font)
+		return;
+	utilsPrintDbg(debug::DBG_INFO, "Textoperator uses font="<<fontData->getFontName());
+ 	CharCode code;
+ 	Unicode u;
+ 	int uSize, uLen;
+ 	double dx, dy, originX, originY;
+ 	char * p=raw.getCString();
+ 	while(len>0)
+ 	{
+ 		int n = font->getNextChar(p, len, &code, &u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+ 			    &dx, &dy, &originX, &originY);
+ 		for (int i=0; i<uLen; ++i)
+ 			str += (&u)[i];
+ 		p += n;
+ 		len -= n;
+  	}
+}
+
+TextSimpleOperator::~TextSimpleOperator()
+{
+	if(fontData)
+		delete fontData;
+}
+
+const char* TextSimpleOperator::getFontName()const
+{
+	assert(fontData);
+	return fontData->getFontName();
+}
+
+void TextSimpleOperator::setFontData(GfxFont* gfxFont)const
+{
+	assert(gfxFont);
+	if (!gfxFont)
+	{
+		utilsPrintDbg(debug::DBG_ERR, "Null font encountered");
+		return;
+	}
+	if(fontData)
+		delete fontData;
+	fontData = new FontData(gfxFont);
+}
+
+
 
 //==========================================================
 // Concrete implementations of CompositePdfOperator

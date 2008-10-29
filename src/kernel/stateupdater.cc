@@ -434,13 +434,19 @@ namespace {
 	}
 	// "Tj"
 	GfxState *
-	opTjUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, BBox* rc)
+	opTjUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, BBox* rc)
 	{
 		assert (1 <= args.size ());
 
 		// This can happen in really damaged pdfs
- 		if (state->getFont())
-			StateUpdater::printTextUpdate (state, getStringFromIProperty (args[0]), rc);
+ 		if (state->getFont()) {
+			const TextSimpleOperator *txtOp = dynamic_cast<const TextSimpleOperator*>(op.get());
+			assert(txtOp);
+			txtOp->setFontData(state->getFont());
+			std::string rawStr;
+			txtOp->getRawText(rawStr);
+			StateUpdater::printTextUpdate (state, rawStr, rc);
+		}
 		
 		// return changed state
 		return state;
@@ -481,7 +487,7 @@ namespace {
 	}
 	// "\"
 	GfxState *
-	opSlashUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, BBox* rc)
+	opSlashUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, BBox* rc)
 	{
 		assert (3 <= args.size ());
 		
@@ -498,7 +504,13 @@ namespace {
 		double ty = state->getLineY() - state->getLeading();
 		state->textMoveTo(tx, ty);
 
- 		StateUpdater::printTextUpdate (state, getStringFromIProperty (args[2]), rc);	// to 'rc' save only text bbox
+
+		const TextSimpleOperator *txtOp = dynamic_cast<const TextSimpleOperator*>(op.get());
+		assert(txtOp);
+		txtOp->setFontData(state->getFont());
+		std::string rawStr;
+		txtOp->getRawText(rawStr);
+		StateUpdater::printTextUpdate (state, rawStr, rc);
 
 		// Set edge of rectangle from actual position on output devices
 		//state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
@@ -508,7 +520,7 @@ namespace {
 	}
 	// "TJ"
 	GfxState *
-	opTJUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, BBox* rc)
+	opTJUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, BBox* rc)
 	{
 		assert (1 <= args.size ());
 
@@ -570,6 +582,9 @@ namespace {
 			rc->yright = max( rc->yright, max( h_rc.yleft, h_rc.yright ) );
 		}// for
 		
+		const TextSimpleOperator *txtOp = dynamic_cast<const TextSimpleOperator*>(op.get());
+		assert(txtOp);
+		txtOp->setFontData(state->getFont());
 		// return changed state
 		return state;
 	}

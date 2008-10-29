@@ -117,8 +117,7 @@ QString QSPdfOperator::getEncodedText() {
  TextSimpleOperator * textOp = dynamic_cast<TextSimpleOperator*>(obj.get());
  if (!textOp)
 	 return QString::null;
- // TODO change to return Font encoded text
- textOp->getRawText(text);
+ textOp->getFontText(text);
  return util::convertToUnicode(text, util::PDF);
 }
 

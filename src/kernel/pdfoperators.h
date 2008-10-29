@@ -121,22 +121,59 @@ public:
  * displayed. This is necessary, because text string stored in operator's
  * operands is not the same as the displayed one in general and may be 
  * affected by font encoding. 
+ * <br>
+ * Use getFontText method to retreive text from text operator filtered 
+ * through its font code maps.
  */
 class TextSimpleOperator: public SimpleGenericOperator
 {
+	// forward declaration
+	struct FontData;
+
+	/** Font data for later identification of associated font
+	 */
+	mutable FontData* fontData;
+protected:
+	/** Finds current font for operator from fontName.
+	 * Uses resources from content stream to retriev font by name.
+	 * Returned instance must not be deallocated by caller.
+	 * @return Font instance for this operator.
+	 */
+	GfxFont* getCurrentFont()const;
 public:
 	TextSimpleOperator (const char* opTxt, const size_t numOper, Operands& opers)
-		:SimpleGenericOperator(opTxt, numOper, opers) {}
+		:SimpleGenericOperator(opTxt, numOper, opers), fontData(NULL) {}
 	TextSimpleOperator(const std::string& opTxt, Operands& opers)
-		:SimpleGenericOperator(opTxt, opers) {}
+		:SimpleGenericOperator(opTxt, opers), fontData(NULL) {}
 
-	virtual ~TextSimpleOperator() {}
+	virtual ~TextSimpleOperator();
 	
 	/** Returns string represented by this text operator in raw format.
 	 * Raw format doesn't take care about font used for this operator.
 	 * @param str String to be set.
 	 */
 	virtual void getRawText(std::string& str)const;
+
+	/** Returns string represented by this text operator converted 
+	 * according the font encoding.
+	 * @param str String to be set.
+	 */
+	virtual void getFontText(std::string& str)const;
+
+	/** Sets font specific stuff.
+	 * This method should be called from StateUpdater when we do know the 
+	 * current font for this operator.
+	 * <br>
+	 * This method doesn't influence operator itself (or its operands).
+	 * @param gfxFont Xpdf GfxFont instance.
+	 */
+	void setFontData(GfxFont* gfxFont)const;
+
+	/** Returns font name for this operator.
+	 * May return null if setFontData hasn't been called yet.
+	 * @return Font name or NULL if not initialized yet.
+	 */
+	const char* getFontName()const;
 
 }; // class TextSimpleOperator
 
