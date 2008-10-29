@@ -92,277 +92,238 @@ using namespace observer;
 	}
 }
 
-/** Stream writer implementation with no filters.
- * This writer will write stream data as is with all original
- * filters and no modifications to original data.
- */
-class NullFilterStreamWriter: public FilterStreamWriter
+boost::shared_ptr<NullFilterStreamWriter> NullFilterStreamWriter::getInstance()
 {
-	static boost::shared_ptr<NullFilterStreamWriter> instance;
-public:
-	static boost::shared_ptr<NullFilterStreamWriter> getInstance()
-	{
-		if(!instance)
-			instance=boost::shared_ptr<NullFilterStreamWriter>(
-					new NullFilterStreamWriter());
+	if(!instance)
+		instance=boost::shared_ptr<NullFilterStreamWriter>(
+				new NullFilterStreamWriter());
 
-		return instance;
-	}
+	return instance;
+}
 
-	/** Checks whether given object is supported.
-	 * @return allways true as it can write all stream objects.
-	 */
-	virtual bool supportObject(UNUSED_PARAM Object& obj)const
-	{
-		assert(obj.isStream());
-		return true;
-	}
-
-	/** Extracts stream data without any decoding.
-	 */
-	static unsigned char * null_extractor(Object&obj, size_t& size)
-	{
-		assert(obj.isStream());
-		Object lenghtObj;
-		obj.streamGetDict()->lookup("Length", &lenghtObj);
-		if(!lenghtObj.isInt())
-		{
-			utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
-			lenghtObj.free();
-			return NULL;
-		}
-		size_t streamLen = lenghtObj.getInt();
-
-		// we are using BaseStream here because we want to read data
-		// without any decoding
-		Stream* str = obj.getStream()->getBaseStream();
-		unsigned char* buffer = bufferFromStream(*str, streamLen, size);
-		if(!buffer)
-			return NULL;
-		// size must be same because we are using stream data as is
-		if(streamLen != size)
-			utilsPrintDbg(debug::DBG_WARN, "Retrieved stream doesn't have correct length. "
-					<<size<<" bytes read but "<<streamLen<<" expected");
-		return buffer;
-	}
-
-	/** Writes given stream object to the stream.
-	 * @param obj Stream object.
-	 * @param ref Indirect reference for object (NULL if direct).
-	 * @param outStream Stream where to write data.
-	 *
-	 * Uses streamToCharBuffer with null_extractor extractor.
-	 */
-	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const
-	{
-		assert(obj.isStream());
-		CharBuffer charBuffer;
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, null_extractor);
-		if(!size)
-		{
-			utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
-			return;
-		}
-		outStream.putLine(charBuffer.get(), size);
-	}
-};
-
-/** Implementation of FlateDecode filter stream writer.
- * It is based on zlib implementation of default deflate method.
- */
-class ZlibFilterStreamWriter: public FilterStreamWriter
+bool NullFilterStreamWriter::supportObject(UNUSED_PARAM Object& obj)const
 {
-	/** Shared writer instance */
-	static boost::shared_ptr<ZlibFilterStreamWriter> instance;
+	assert(obj.isStream());
+	return true;
+}
 
-	/** Updates given stream object with the applied fiter data.
-	 * @param obj Stream object.
-	 *
-	 * Only for internal use of ZlibFilterStreamWriter class.
-	 */
-	static void update_dict(Object& obj)
+unsigned char * NullFilterStreamWriter::null_extractor(Object&obj, size_t& size)
+{
+	assert(obj.isStream());
+	Object lenghtObj;
+	obj.streamGetDict()->lookup("Length", &lenghtObj);
+	if(!lenghtObj.isInt())
 	{
-		assert(obj.isStream());
-		Object filterArray, filterName;
-		filterName.initName("FlateDecode");
-		filterArray.initArray(obj.getDict()->getXRef());
-		filterArray.arrayAdd(&filterName);
-		Dict * dict = obj.streamGetDict();
-		dict->add(copyString("Filter"), &filterArray);
-	}
-public:
-	static boost::shared_ptr<ZlibFilterStreamWriter> getInstance()
-	{
-		if(!instance)
-			instance=boost::shared_ptr<ZlibFilterStreamWriter>(
-					new ZlibFilterStreamWriter());
-
-		return instance;
-	}
-
-	/** Checks whether given stream object is supported by this writer.
-	 * @param obj Stream object.
-	 * @return true if no filter FlateDecode are used.
-	 */
-	virtual bool supportObject(Object& obj)const
-	{
-		assert(obj.isStream());
-		Dict * streamDict = obj.streamGetDict();
-		Object filter;
-		streamDict->lookup("Filter", &filter);
-		if(filter.isNull())
-			return true;
-		if(filter.isName())
-		{
-			const char* name = filter.getName();
-			if(!strcmp(name, "FlateDecode"))
-				return true;
-		}
-		return false;
-	}
-
-	/** Compress given buffer with deflate method.
-	 * @param in Input buffer.
-	 * @param in_size Input buffer size.
-	 * @param size Size of the output buffer data.
-	 * @return allocated buffer with the size data bytes or NULL on failure.
-	 *
-	 * Uses zlib interface to deflate given data.
-	 */
-	static unsigned char* deflate_buffer(unsigned char * in, size_t in_size, size_t& size)
-	{
-		z_stream z;
-		z.zalloc = NULL; 
-		z.zfree = NULL;
-		z.opaque = NULL;
-		z.next_in = in; 
-		z.avail_in = in_size; 
-
-		// we do expect some comprimation so in_size should be definitely enough
-		size_t out_size = in_size;
-		unsigned char * out_buff = (unsigned char*)malloc(sizeof(unsigned char)*out_size);
-		int ret;
-		size_t total=0;
-
-		if(!out_buff)
-		{
-			utilsPrintDbg(debug::DBG_CRIT, "Unable to allocate buffer with size="<<out_size);
-			goto out_error;
-		}
-		z.next_out = out_buff; 
-		z.avail_out = out_size;
-		if ((ret = deflateInit(&z, Z_DEFAULT_COMPRESSION)) != Z_OK)
-		{
-			utilsPrintDbg(debug::DBG_ERR, "deflateInit failed with ret="<<ret);
-			goto out_free_error;
-		}
-		do
-		{
-			size_t window_size = out_size;
-			// we need to reallocate if output buffer run out
-			// of space
-			if(z.avail_out == 0)
-			{
-				out_size *= 2;
-				utilsPrintDbg(debug::DBG_DBG, 
-						"Output buffer size not sufficient, resizing to "
-						<< out_size);
-				unsigned char *tmp_buff = (unsigned char*)realloc(out_buff, out_size);
-				if(!tmp_buff)
-				{
-					utilsPrintDbg(debug::DBG_CRIT, "Unable to reallocate buffer with size="<<out_size);
-					goto out_free_error;
-				}
-				out_buff = tmp_buff;
-				window_size = z.avail_out = out_size - total;
-				z.next_out = out_buff + total;
-			}
-			ret = ::deflate(&z, Z_FINISH);
-			if(ret < 0)
-			{
-				utilsPrintDbg(debug::DBG_ERR, "compression failed with ret="<<ret);
-				goto out_free_error;
-			}
-			total += window_size - z.avail_out;
-		}while(z.avail_out == 0);
-		assert(z.avail_in == 0);
-		assert(ret == Z_STREAM_END);
-		deflateEnd(&z);
-		size = total;
-		return out_buff;
-
-	out_free_error:
-		free(out_buff);
-	out_error:
-		deflateEnd(&z);
+		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
+		lenghtObj.free();
 		return NULL;
 	}
+	size_t streamLen = lenghtObj.getInt();
 
-	/** Stream data extractor implementation for streamToCharBuffer function.
-	 * @param obj Stream object.
-	 * @param size Size of the returned buffer data.
-	 * @return allocated buffer with data or NULL on failure.
-	 * 
-	 * Uses bufferFromStreamData to get raw data without any filters,
-	 * compresses returned buffer with the deflate_buffer function and 
-	 * updates given stream object's dictionary to contain proper filter 
-	 * data.
-	 */
-	static unsigned char* deflate(Object& obj, size_t& size)
+	// we are using BaseStream here because we want to read data
+	// without any decoding
+	Stream* str = obj.getStream()->getBaseStream();
+	unsigned char* buffer = bufferFromStream(*str, streamLen, size);
+	if(!buffer)
+		return NULL;
+	// size must be same because we are using stream data as is
+	if(streamLen != size)
+		utilsPrintDbg(debug::DBG_WARN, "Retrieved stream doesn't have correct length. "
+				<<size<<" bytes read but "<<streamLen<<" expected");
+	return buffer;
+}
+
+void NullFilterStreamWriter::compress(Object& obj, Ref* ref, StreamWriter& outStream)const
+{
+	assert(obj.isStream());
+	CharBuffer charBuffer;
+	size_t size=streamToCharBuffer(obj, ref, charBuffer, null_extractor);
+	if(!size)
 	{
-		assert(obj.isStream());
-		unsigned char *rawBuffer, *deflateBuff = NULL;
-		size_t rawSize;
-		if((rawBuffer = convertStreamToDecodedData(obj, rawSize)) == NULL)
-			goto out;
-		// This should never happen - why would we want to have/change 
-		// emty streams? It is much simpler to remove it from the streams
-		// if we want to get rid of it. Nevertheless we have already seen
-		// streams with zero decoded content (e.g. PDFreference obj. 
-		// [4129 0] - content stream from the page 1236)
-		// If we let an empty string to the deflate_buffer, this will fail
-		// and we will get corrupted document!!!
-		if(!rawSize)
-		{
-			size = rawSize;
-			return rawBuffer;
-		}
-		utilsPrintDbg(debug::DBG_DBG, "Raw buffer size="<<rawSize);
-		if((deflateBuff = deflate_buffer(rawBuffer, rawSize, size))==NULL)
-			goto free_out;
-		utilsPrintDbg(debug::DBG_DBG, "Compressed buffer size="<<size);
-		update_dict(obj);
-
-	free_out:
-		free(rawBuffer);
-	out:
-		return deflateBuff;
-	}
-
-	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const
-	{
-		CharBuffer charBuffer;
-		assert(obj.isStream());
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, deflate);
-		if(!size)
-		{
-			utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
-			return;
-		}
-		outStream.putLine(charBuffer.get(), size);
+		utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
 		return;
 	}
-};
+	outStream.putLine(charBuffer.get(), size);
+}
+
+void ZlibFilterStreamWriter::update_dict(Object& obj)
+{
+	assert(obj.isStream());
+	Object filterArray, filterName;
+	filterName.initName("FlateDecode");
+	filterArray.initArray(obj.getDict()->getXRef());
+	filterArray.arrayAdd(&filterName);
+	Dict * dict = obj.streamGetDict();
+	dict->add(copyString("Filter"), &filterArray);
+}
+
+boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::getInstance()
+{
+	if(!instance)
+		instance=boost::shared_ptr<ZlibFilterStreamWriter>(
+				new ZlibFilterStreamWriter());
+
+	return instance;
+}
+
+bool ZlibFilterStreamWriter::supportObject(Object& obj)const
+{
+	assert(obj.isStream());
+	Dict * streamDict = obj.streamGetDict();
+	Object filter;
+	streamDict->lookup("Filter", &filter);
+	if(filter.isNull())
+		return true;
+	if(filter.isName())
+	{
+		const char* name = filter.getName();
+		if(!strcmp(name, "FlateDecode"))
+			return true;
+	}
+	return false;
+}
+
+unsigned char* ZlibFilterStreamWriter::deflate_buffer(unsigned char * in, size_t in_size, size_t& size)
+{
+	z_stream z;
+	z.zalloc = NULL; 
+	z.zfree = NULL;
+	z.opaque = NULL;
+	z.next_in = in; 
+	z.avail_in = in_size; 
+
+	// we do expect some comprimation so in_size should be definitely enough
+	size_t out_size = in_size;
+	unsigned char * out_buff = (unsigned char*)malloc(sizeof(unsigned char)*out_size);
+	int ret;
+	size_t total=0;
+
+	if(!out_buff)
+	{
+		utilsPrintDbg(debug::DBG_CRIT, "Unable to allocate buffer with size="<<out_size);
+		goto out_error;
+	}
+	z.next_out = out_buff; 
+	z.avail_out = out_size;
+	if ((ret = deflateInit(&z, Z_DEFAULT_COMPRESSION)) != Z_OK)
+	{
+		utilsPrintDbg(debug::DBG_ERR, "deflateInit failed with ret="<<ret);
+		goto out_free_error;
+	}
+	do
+	{
+		size_t window_size = out_size;
+		// we need to reallocate if output buffer run out
+		// of space
+		if(z.avail_out == 0)
+		{
+			out_size *= 2;
+			utilsPrintDbg(debug::DBG_DBG, 
+					"Output buffer size not sufficient, resizing to "
+					<< out_size);
+			unsigned char *tmp_buff = (unsigned char*)realloc(out_buff, out_size);
+			if(!tmp_buff)
+			{
+				utilsPrintDbg(debug::DBG_CRIT, "Unable to reallocate buffer with size="<<out_size);
+				goto out_free_error;
+			}
+			out_buff = tmp_buff;
+			window_size = z.avail_out = out_size - total;
+			z.next_out = out_buff + total;
+		}
+		ret = ::deflate(&z, Z_FINISH);
+		if(ret < 0)
+		{
+			utilsPrintDbg(debug::DBG_ERR, "compression failed with ret="<<ret);
+			goto out_free_error;
+		}
+		total += window_size - z.avail_out;
+	}while(z.avail_out == 0);
+	assert(z.avail_in == 0);
+	assert(ret == Z_STREAM_END);
+	deflateEnd(&z);
+	size = total;
+	return out_buff;
+
+out_free_error:
+	free(out_buff);
+out_error:
+	deflateEnd(&z);
+	return NULL;
+}
+
+unsigned char* ZlibFilterStreamWriter::deflate(Object& obj, size_t& size)
+{
+	assert(obj.isStream());
+	unsigned char *rawBuffer, *deflateBuff = NULL;
+	size_t rawSize;
+	if((rawBuffer = convertStreamToDecodedData(obj, rawSize)) == NULL)
+		goto out;
+	// This should never happen - why would we want to have/change 
+	// emty streams? It is much simpler to remove it from the streams
+	// if we want to get rid of it. Nevertheless we have already seen
+	// streams with zero decoded content (e.g. PDFreference obj. 
+	// [4129 0] - content stream from the page 1236)
+	// If we let an empty string to the deflate_buffer, this will fail
+	// and we will get corrupted document!!!
+	if(!rawSize)
+	{
+		size = rawSize;
+		return rawBuffer;
+	}
+	utilsPrintDbg(debug::DBG_DBG, "Raw buffer size="<<rawSize);
+	if((deflateBuff = deflate_buffer(rawBuffer, rawSize, size))==NULL)
+		goto free_out;
+	utilsPrintDbg(debug::DBG_DBG, "Compressed buffer size="<<size);
+	update_dict(obj);
+
+free_out:
+	free(rawBuffer);
+out:
+	return deflateBuff;
+}
+
+void ZlibFilterStreamWriter::compress(Object& obj, Ref* ref, StreamWriter& outStream)const
+{
+	CharBuffer charBuffer;
+	assert(obj.isStream());
+	size_t size=streamToCharBuffer(obj, ref, charBuffer, deflate);
+	if(!size)
+	{
+		utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
+		return;
+	}
+	outStream.putLine(charBuffer.get(), size);
+	return;
+}
 
 // initialization of static data for FilterStreamWriter classes
 boost::shared_ptr<NullFilterStreamWriter> NullFilterStreamWriter::instance;
 boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::instance;
-boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::defaultWriter = ZlibFilterStreamWriter::getInstance();
+boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::defaultWriter;
 FilterStreamWriter::WritersList FilterStreamWriter::writers;
 
 void FilterStreamWriter::registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
 {
 	writers.push_back(streamWriter);
+}
+
+void FilterStreamWriter::unregisterFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
+{
+	WritersList::iterator iter;
+	for(iter=writers.begin(); iter != writers.end(); ++iter)
+	{
+		if(iter->get() == streamWriter.get())
+		{
+			writers.erase(iter);
+			return;
+		}
+	}
+}
+
+void FilterStreamWriter::clearAllFilterStreamWriters()
+{
+	writers.clear();
 }
 
 void FilterStreamWriter::setDefaultStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)

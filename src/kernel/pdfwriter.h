@@ -251,6 +251,15 @@ public:
 	 */
 	static void registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter);
 
+	/** Removes already registerd filter writer.
+	 * @param streamWriter Filter stream writer to remove.
+	 */
+	static void unregisterFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter);
+
+	/** Removes all registered filter writers.
+	 */
+	static void clearAllFilterStreamWriters();
+
 	/** Sets default stream writer.
 	 * @param streamWriter Writer to be set.
 	 */
@@ -276,6 +285,83 @@ public:
 	 * @param outStream Output stream where to put data.
 	 */
 	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const =0;
+};
+
+/** Stream writer implementation with no filters.
+ * This writer will write stream data as is with all original
+ * filters and no modifications to original data.
+ */
+class NullFilterStreamWriter: public FilterStreamWriter
+{
+	static boost::shared_ptr<NullFilterStreamWriter> instance;
+public:
+	static boost::shared_ptr<NullFilterStreamWriter> getInstance();
+
+	/** Checks whether given object is supported.
+	 * @return allways true as it can write all stream objects.
+	 */
+	virtual bool supportObject(UNUSED_PARAM Object& obj)const;
+
+	/** Extracts stream data without any decoding.
+	 */
+	static unsigned char * null_extractor(Object&obj, size_t& size);
+
+	/** Writes given stream object to the stream.
+	 * @param obj Stream object.
+	 * @param ref Indirect reference for object (NULL if direct).
+	 * @param outStream Stream where to write data.
+	 *
+	 * Uses streamToCharBuffer with null_extractor extractor.
+	 */
+	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const;
+};
+
+/** Implementation of FlateDecode filter stream writer.
+ * It is based on zlib implementation of default deflate method.
+ */
+class ZlibFilterStreamWriter: public FilterStreamWriter
+{
+	/** Shared writer instance */
+	static boost::shared_ptr<ZlibFilterStreamWriter> instance;
+
+	/** Updates given stream object with the applied fiter data.
+	 * @param obj Stream object.
+	 *
+	 * Only for internal use of ZlibFilterStreamWriter class.
+	 */
+	static void update_dict(Object& obj);
+public:
+	static boost::shared_ptr<ZlibFilterStreamWriter> getInstance();
+
+	/** Checks whether given stream object is supported by this writer.
+	 * @param obj Stream object.
+	 * @return true if no filter FlateDecode are used.
+	 */
+	virtual bool supportObject(Object& obj)const;
+
+	/** Compress given buffer with deflate method.
+	 * @param in Input buffer.
+	 * @param in_size Input buffer size.
+	 * @param size Size of the output buffer data.
+	 * @return allocated buffer with the size data bytes or NULL on failure.
+	 *
+	 * Uses zlib interface to deflate given data.
+	 */
+	static unsigned char* deflate_buffer(unsigned char * in, size_t in_size, size_t& size);
+
+	/** Stream data extractor implementation for streamToCharBuffer function.
+	 * @param obj Stream object.
+	 * @param size Size of the returned buffer data.
+	 * @return allocated buffer with data or NULL on failure.
+	 * 
+	 * Uses bufferFromStreamData to get raw data without any filters,
+	 * compresses returned buffer with the deflate_buffer function and 
+	 * updates given stream object's dictionary to contain proper filter 
+	 * data.
+	 */
+	static unsigned char* deflate(Object& obj, size_t& size);
+
+	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const;
 };
 
 /** Interface for pdf content writer.

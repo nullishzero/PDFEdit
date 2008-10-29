@@ -1,7 +1,10 @@
 #include <errno.h>
 #include "kernel/pdfedit-core-dev.h"
+#include "kernel/pdfwriter.h"
 
 static bool initialized = false;
+using namespace pdfobjects;
+using namespace utils;
 
 /** Parse command line parameters relevant for pdfedit-core-dev.
  * @param argc Pointer to the argv elements count (ignored if NULL).
@@ -44,6 +47,17 @@ static int init_xpdf_core(const struct pdfedit_core_dev_init *init)
 	return 0;
 }
 
+/** Registers all global filtewriters.
+ */
+static void init_stream_filterwriters()
+{
+	// NullFilterStreamWriter doesn't have to be registered as it is default 
+	// and we will fallback to it anyway
+	FilterStreamWriter::registerFilterStreamWriter(ZlibFilterStreamWriter::getInstance());
+
+	utils::FilterStreamWriter::setDefaultStreamWriter(NullFilterStreamWriter::getInstance());
+}
+
 int pdfedit_core_dev_init(int *argc, char ***argv, const struct pdfedit_core_dev_init * init)
 {
 	if(initialized)
@@ -56,6 +70,7 @@ int pdfedit_core_dev_init(int *argc, char ***argv, const struct pdfedit_core_dev
 	if((ret = init_xpdf_core(init)))
 		return ret;
 
+	init_stream_filterwriters();
 	initialized = true;
 	return 0;
 }
@@ -69,4 +84,5 @@ void pdfedit_core_dev_destroy()
 {
 	GlobalParams::destroyGlobalParams();
 	initialized = false;
+	FilterStreamWriter::unregisterFilterStreamWriter(ZlibFilterStreamWriter::getInstance());
 }
