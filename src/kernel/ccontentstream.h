@@ -457,6 +457,13 @@ public:
 		gfxres = res;
 	}
 
+	/** Returns resources used by this content stream.
+	 * @return Resources instance wrapped by shared pointer.
+	 */
+	boost::shared_ptr<GfxResources> getResources()const
+	{
+		return gfxres;
+	}
 
 	/**
 	 * Save content stream to underlying cstream(s) and notify all observers. 
