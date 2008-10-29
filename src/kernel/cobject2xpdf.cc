@@ -885,26 +885,19 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	return obj;
 }
 
-unsigned char* bufferFromStreamData (Object& obj, size_t& size)
+unsigned char* bufferFromStream(Stream& str, size_t dictLength, size_t& size)
 {
-	Object lenObj;
-	obj.streamGetDict()->lookup("Length", &lenObj);
-	assert(lenObj.isInt());
-
-	// this is the encoded size of the stream. NOTE that this doesn't
-	// mean that this will be result size of the uncompressed stream
-	size_t streamLength = lenObj.getInt();
+	size_t streamLength = dictLength;
 	unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*streamLength);
 	if(!buffer)
 	{
 		utilsPrintDbg(debug::DBG_CRIT, "Allocation failure");
 		return NULL;
 	}
-	Stream* str = obj.getStream();
-	str->reset();
+	str.reset();
 	int ch;
 	size_t i = 0;
-	while((ch=str->getChar())!=EOF)
+	while((ch=str.getChar())!=EOF)
 	{
 		if(i == streamLength)
 		{
@@ -926,8 +919,24 @@ unsigned char* bufferFromStreamData (Object& obj, size_t& size)
 	}
 
 	// restore stream object to the begining
-	str->reset();
+	str.reset();
 	size = i;
+	return buffer;
+}
+
+unsigned char* convertStreamToDecodedData(Object& obj, size_t& size)
+{
+	Object lenObj;
+	obj.streamGetDict()->lookup("Length", &lenObj);
+	assert(lenObj.isInt());
+
+	// this is the encoded size of the stream. NOTE that this doesn't
+	// mean that this will be result size of the uncompressed stream
+	size_t streamLength = lenObj.getInt();
+	Stream *str = obj.getStream();
+	unsigned char * buffer = bufferFromStream(*str, streamLength, size);
+	if(!buffer)
+		return NULL;
 
 	// if there were some filters we have to remove them with 
 	// all associated parameters, because they are no longer 

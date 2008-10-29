@@ -455,15 +455,37 @@ void dictFromXpdfObj (CDict& resultDict, ::Object& dict);
  */
 size_t stringToCharBuffer(Object & stringObject, CharBuffer & outputBuf);
 
-/** Helper function for getting decoded data from the given stream.
- * If given obj used some filters, they are all decoded to get orignal
- * data and the stream dictionary is updated so that it doesn't contain
- * any filters.
- * @param obj Stream object.
- * @param size Size of returned buffer
- * @return Buffer with raw stream data or NULL on error.
+/** Helper function which returns data from given stream.
+ * @param str Stream to read (until it returns EOF).
+ * @param dictLength Initial size reported by the stream dictionary.
+ * @param size Output size of the buffer.
+ *
+ * This is low-level function which simply reads given stream from its 
+ * beginning until EOF. It can be used to retrieve data from whatever
+ * Stream filter stack layer. E.g. if we want to get encoded data we
+ * can simply give stream->getBaseStream() as parameter and this function
+ * will return buffer as it is written in the file.
+ *
+ * @return Buffer with stream data (size will contain number of bytes
+ * stored) or NULL on error.
  */
-unsigned char* bufferFromStreamData (Object& obj, size_t& size);
+unsigned char* bufferFromStream(Stream& str, size_t dictLength, size_t& size);
+
+/** Helper function for removing filters from the given stream object.
+ * @param obj Stream object.
+ * @param size Size of returned buffer.
+ * @return Buffer with raw stream data or NULL on error.
+ *
+ * If the given obj used some filters, they are all decoded to get orignal
+ * data and the stream dictionary is updated so that it doesn't contain
+ * any filters. 
+ * <br>
+ * Stream object stored in the given obj is not touched (because it doesn't
+ * give much sense - it returns decoded data anyway, it doesn't use dictionary
+ * to find out how to decode). Nevertheless this operation may be considered 
+ * harmfull for later usage of given the object in the xpdf code paths!
+ */
+unsigned char* convertStreamToDecodedData (Object& obj, size_t& size);
 
 /** Function to be used for data extracting from the given stream object.
  * Note that implementation can apply additional filters to the stream
@@ -508,7 +530,7 @@ typedef unsigned char* (*stream_data_extractor)(Object& obj, size_t& size);
  * @return number of bytes used in outputBuf or 0 if problem occures.
  */
 size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
-		stream_data_extractor extractor=bufferFromStreamData);
+		stream_data_extractor extractor);
 	
 /**
  * Convert xpdf object to string

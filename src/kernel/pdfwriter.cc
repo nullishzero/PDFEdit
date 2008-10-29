@@ -128,7 +128,7 @@ public:
 	{
 		assert(obj.isStream());
 		CharBuffer charBuffer;
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, bufferFromStreamData);
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, convertStreamToDecodedData);
 		if(!size)
 		{
 			utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
@@ -273,7 +273,7 @@ public:
 		assert(obj.isStream());
 		unsigned char *rawBuffer, *deflateBuff = NULL;
 		size_t rawSize;
-		if((rawBuffer = bufferFromStreamData(obj, rawSize)) == NULL)
+		if((rawBuffer = convertStreamToDecodedData(obj, rawSize)) == NULL)
 			goto out;
 		// This should never happen - why would we want to have/change 
 		// emty streams? It is much simpler to remove it from the streams
