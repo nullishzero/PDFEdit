@@ -93,7 +93,8 @@ using namespace observer;
 }
 
 /** Stream writer implementation with no filters.
- * This writer will write raw stream data without any compression
+ * This writer will write stream data as is with all original
+ * filters and no modifications to original data.
  */
 class NullFilterStreamWriter: public FilterStreamWriter
 {
@@ -117,18 +118,46 @@ public:
 		return true;
 	}
 
+	/** Extracts stream data without any decoding.
+	 */
+	static unsigned char * null_extractor(Object&obj, size_t& size)
+	{
+		assert(obj.isStream());
+		Object lenghtObj;
+		obj.streamGetDict()->lookup("Length", &lenghtObj);
+		if(!lenghtObj.isInt())
+		{
+			utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
+			lenghtObj.free();
+			return NULL;
+		}
+		size_t streamLen = lenghtObj.getInt();
+
+		// we are using BaseStream here because we want to read data
+		// without any decoding
+		Stream* str = obj.getStream()->getBaseStream();
+		unsigned char* buffer = bufferFromStream(*str, streamLen, size);
+		if(!buffer)
+			return NULL;
+		// size must be same because we are using stream data as is
+		if(streamLen != size)
+			utilsPrintDbg(debug::DBG_WARN, "Retrieved stream doesn't have correct length. "
+					<<size<<" bytes read but "<<streamLen<<" expected");
+		return buffer;
+	}
+
 	/** Writes given stream object to the stream.
 	 * @param obj Stream object.
 	 * @param ref Indirect reference for object (NULL if direct).
 	 * @param outStream Stream where to write data.
 	 *
-	 * Uses streamToCharBuffer with bufferFromStreamData extractor.
+	 * Uses streamToCharBuffer with null_extractor extractor.
 	 */
 	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const
 	{
 		assert(obj.isStream());
 		CharBuffer charBuffer;
-		size_t size=streamToCharBuffer(obj, ref, charBuffer, convertStreamToDecodedData);
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, null_extractor);
 		if(!size)
 		{
 			utilsPrintDbg(debug::DBG_WARN, "zero size stream returned. Probably error in the the object");
