@@ -138,7 +138,7 @@ SimpleGenericOperator::clone ()
 	assert (ops.size () == _operands.size());
 
 	// Create clone
-	return shared_ptr<PdfOperator> (new SimpleGenericOperator (_opText,ops));
+	return createOperator (_opText,ops);
 }
 
 
@@ -281,6 +281,44 @@ InlineImageCompositePdfOperator::clone ()
 //==========================================================
 // Helper funcions
 //==========================================================
+
+boost::shared_ptr<PdfOperator> createOperator(const std::string& name, PdfOperator::Operands& operands)
+{
+	if (name == "BI")
+		throw NotImplementedException("Inline images not implemented here");
+
+	// Try to find the op by its name
+	const StateUpdater::CheckTypes* chcktp = StateUpdater::findOp (name.c_str());
+	// Operator not found, create unknown operator
+	if (NULL == chcktp)
+		return shared_ptr<PdfOperator> (new SimpleGenericOperator (name ,operands));
+	
+	assert (chcktp);
+	utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
+	// Check the type against specification
+	// 
+	if (!checkAndFixOperator (*chcktp, operands))
+	{
+		//assert (!"Content stream bad operator type.");
+		throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
+	}
+	
+	// Get operands count
+	size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
+
+	if (isSimpleOp(*chcktp))
+		return shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
+		
+	// Composite operator
+	return shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));
+
+}
+
+boost::shared_ptr<PdfOperator> createOperator(const char *name, PdfOperator::Operands& operands)
+{
+	std::string n = name;
+	return createOperator(n, operands);
+}
 
 //
 //\todo improve performance

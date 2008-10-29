@@ -225,6 +225,19 @@ inline bool
 isSimpleOp (const StateUpdater::CheckTypes& chck)
 	{ return ('\0' == chck.endTag[0]); }
 
+/**
+ * Check if the operands match the specification and replace operand with
+ * its stronger equivalent.
+ *
+ * (e.g. When xpdf returns an object with integer type, but the operand can be a real, we have to
+ * convert it to real.)
+ *
+ * @param ops Operator specification
+ * @param operands Operand stack.
+ *
+ * @return True if type and count match, false otherwise.
+ */
+bool checkAndFixOperator (const pdfobjects::StateUpdater::CheckTypes& ops, PdfOperator::Operands& operands);
 
 
 //==========================================================

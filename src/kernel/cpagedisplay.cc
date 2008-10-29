@@ -263,7 +263,7 @@ CPageDisplay::setTransformMatrix (double tm[6])
 	operands.push_back (shared_ptr<IProperty> (new CReal (tm[3])));
 	operands.push_back (shared_ptr<IProperty> (new CReal (tm[4])));
 	operands.push_back (shared_ptr<IProperty> (new CReal (tm[5])));
-	shared_ptr<PdfOperator> cmop (new SimpleGenericOperator ("cm", 6, operands));
+	shared_ptr<PdfOperator> cmop = createOperator("cm", operands);
 
 	// Insert at the beginning
 	_page->contents()->getContentStream((size_t)0)->frontInsertOperator (cmop);

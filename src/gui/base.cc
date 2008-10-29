@@ -294,8 +294,7 @@ QSPdfOperator* Base::createOperator(const QString &text,QSIPropertyArray* parame
  std::string opTxt=util::convertFromUnicode(text,util::PDF);
  PdfOperator::Operands param;
  parameters->copyTo(param);
- boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(opTxt,param));
- return new QSPdfOperator(op,this);
+ return new QSPdfOperator(pdfobjects::createOperator(opTxt, param),this);
 }
 
 /**

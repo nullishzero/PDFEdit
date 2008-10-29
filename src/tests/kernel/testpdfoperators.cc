@@ -287,7 +287,7 @@ delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 		shared_ptr<PdfOperator> oper;
 		string strr;
 
-		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("BT", 0, operands));
+		oper = createOperator ("BT", operands);
 		cs->insertOperator (PdfOperator::Iterator (), oper, false);
 		cs->getPdfOperators (opers);
 
@@ -303,7 +303,7 @@ delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 		operands.clear ();
 		operands.push_back (shared_ptr<IProperty> (new CInt (200)));
 		operands.push_back (shared_ptr<IProperty> (new CInt (400)));
-		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("Td", 2, operands));
+		oper = createOperator ("Td", operands);
 		cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
 		cs->getPdfOperators (opers);
 		cs->getStringRepresentation (strr);
@@ -320,7 +320,7 @@ delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 		operands.push_back (shared_ptr<IProperty> (new CReal (1.0)));
 		operands.push_back (shared_ptr<IProperty> (new CReal (0.0)));
 		operands.push_back (shared_ptr<IProperty> (new CReal (0.0)));
-		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands));
+		oper = createOperator ("rg", operands);
 		cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
 		cs->getPdfOperators (opers);
 		cs->getStringRepresentation (strr);
@@ -335,13 +335,13 @@ delAllOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 	*/
 		operands.clear ();
 		operands.push_back (shared_ptr<IProperty> (new CString ("halooooooooooo")));
-		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("Tj", 1, operands));
+		oper = createOperator ("Tj", operands);
 		cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
 		cs->getPdfOperators (opers);
 		cs->getStringRepresentation (strr);
 		_working (oss);
 
-		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("ET", 0, operands));
+		oper = createOperator ("ET", operands);
 		cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
 		cs->getPdfOperators (opers);
 		cs->getStringRepresentation (strr);
@@ -383,7 +383,7 @@ insertOper (UNUSED_PARAM	ostream& oss, const char* fileName)
 		//
 		PdfOperator::Operands operands;
 		operands.push_back (shared_ptr<IProperty> (new CString ("halooooooooooo")));
-		shared_ptr<PdfOperator> oper (new SimpleGenericOperator ("Tj", 1, operands));
+		shared_ptr<PdfOperator> oper = createOperator ("Tj", operands);
 		
 		string str;
 		//cs->getStringRepresentation (str);

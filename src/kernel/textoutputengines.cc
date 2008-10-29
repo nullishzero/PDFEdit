@@ -254,7 +254,7 @@ namespace {
 					string txt = getStringFromIProperty (ip);
 					PdfOperator::Operands opers;
 					opers.push_back (shared_ptr<CString> (new CString (txt)));
-					shared_ptr<SimpleGenericOperator> newop (new SimpleGenericOperator ("Tj", opers));
+					shared_ptr<PdfOperator> newop = createOperator ("Tj", opers);
 					// Set bbox 
 					BBox bbox;
 					StateUpdater::printTextUpdate (s.get(), txt, &bbox);

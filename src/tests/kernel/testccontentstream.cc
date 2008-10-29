@@ -449,7 +449,7 @@ addcc (UNUSED_PARAM	ostream& oss, const char* fileName)
 			PdfOperator::Operands operands;
 				
 			Opers ops;
-			ops.push_back (boost::shared_ptr<PdfOperator> (new SimpleGenericOperator("lala",0,operands)));
+			ops.push_back (createOperator("lala",operands));
 			page->addContentStreamToFront (ops);
 
 			vector<boost::shared_ptr<CContentStream> > cccs;

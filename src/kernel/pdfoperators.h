@@ -28,6 +28,7 @@
 
 // static includes
 #include "kernel/pdfoperatorsbase.h"
+#include "kernel/stateupdater.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -223,6 +224,29 @@ protected:
 //==========================================================
 // Helper funcions - general
 //==========================================================
+
+/** Factory function for operators creation.
+ * Creates instance depending on type of the operator.
+ * <br>
+ * Note that this function doesn't cover inline images (BI operator).
+ * @param name Opertor name.
+ * @param operands Operands for operator.
+ * @return Valid pdfoperator object.
+ * @throw ElementBadTypeException if operator or its operands are not valid.
+ * @throw NotImplementedException if given operator is inline image (BI).
+ */
+boost::shared_ptr<PdfOperator> createOperator(const std::string& name, PdfOperator::Operands& operands);
+
+/** Factory function for operators creation.
+ * Transforms const char parameter to the string and delegates to 
+ * createOperator(std::string&, PdfOperator::Operands&)
+ * @param name Opertor name.
+ * @param operands Operands for operator.
+ * @return Valid pdfoperator object.
+ * @throw ElementBadTypeException if operator or its operands are not valid.
+ * @throw NotImplementedException if given operator is inline image (BI).
+ */
+boost::shared_ptr<PdfOperator> createOperator(const char *name, PdfOperator::Operands& operands);
 
 /** Is an operator a composite. */
 inline bool 

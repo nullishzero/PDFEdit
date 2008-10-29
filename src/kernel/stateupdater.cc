@@ -1169,6 +1169,55 @@ StateUpdater::getEndTag (const string& name)
 	return string (chcktp->endTag);
 }
 
+bool checkAndFixOperator (const StateUpdater::CheckTypes& ops, PdfOperator::Operands& operands)
+{
+	size_t argNum = static_cast<size_t> ((ops.argNum > 0) ? ops.argNum : -ops.argNum);
+		
+	//
+	// Check operator size if > 0 than it is the exact size, maximum
+	// otherwise
+	//
+	if (((ops.argNum >= 0) && (operands.size() != argNum)) 
+		 || ((ops.argNum <  0) && (operands.size() > argNum)) )
+	{
+		utilsPrintDbg (DBG_ERR, "Number of operands mismatch.. expected " << ops.argNum << " got: " << operands.size());
+		return false;
+	}
+	
+	//
+	// Check arguments
+	//
+	PdfOperator::Operands::reverse_iterator rit = operands.rbegin ();
+	// Be careful -- buffer overflow
+	argNum = std::min (argNum, operands.size());
+	advance (rit, argNum);
+	PdfOperator::Operands::iterator it = rit.base ();
+	// Loop from the first operator to the end
+	for (int pos = 0; it != operands.end (); ++it, ++pos)
+	{			
+		if (!isBitSet(ops.types[pos], (*it)->getType()))
+		{
+			utilsPrintDbg (DBG_ERR, "Bad " << pos << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[pos]);
+			return false;
+		}
+
+		// 
+		// If xpdf returned an Int, but the operand can be a real convert it
+		// 
+		if (isInt(*it))
+		{
+			if (isBitSet(ops.types[pos], pReal))
+			{ // Convert it to real
+				double dval = 0.0;
+				dval = IProperty::getSmartCObjectPtr<CInt>(*it)->getValue();
+				shared_ptr<IProperty> pIp (new CReal (dval));
+				std::replace (operands.begin(), operands.end(), *it, pIp);
+			}
+		}
+	}
+
+	return true;
+}
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

@@ -63,7 +63,7 @@ ContentsChangeTag::create ()
 	opers.push_back (dict);
 	
 	// Operator
-	return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator (CHANGE_TAG_NAME, opers));
+	return createOperator (CHANGE_TAG_NAME, opers);
 }
 
 

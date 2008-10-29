@@ -91,68 +91,6 @@ namespace {
 		}
 	}
 	
-	/**
-	 * Check if the operands match the specification and replace operand with
-	 * its stronger equivalent.
-	 *
-	 * (e.g. When xpdf returns an object with integer type, but the operand can be a real, we have to
-	 * convert it to real.)
-	 *
-	 * @param ops Operator specification
-	 * @param operands Operand stack.
-	 *
-	 * @return True if type and count match, false otherwise.
-	 */
-	bool checkAndFix (const StateUpdater::CheckTypes& ops, PdfOperator::Operands& operands)
-	{
-		size_t argNum = static_cast<size_t> ((ops.argNum > 0) ? ops.argNum : -ops.argNum);
-			
-		//
-		// Check operator size if > 0 than it is the exact size, maximum
-		// otherwise
-		//
-		if (((ops.argNum >= 0) && (operands.size() != argNum)) 
-			 || ((ops.argNum <  0) && (operands.size() > argNum)) )
-		{
-			utilsPrintDbg (DBG_ERR, "Number of operands mismatch.. expected " << ops.argNum << " got: " << operands.size());
-			return false;
-		}
-		
-		//
-		// Check arguments
-		//
-		PdfOperator::Operands::reverse_iterator rit = operands.rbegin ();
-		// Be careful -- buffer overflow
-		argNum = std::min (argNum, operands.size());
-		advance (rit, argNum);
-		PdfOperator::Operands::iterator it = rit.base ();
-		// Loop from the first operator to the end
-		for (int pos = 0; it != operands.end (); ++it, ++pos)
-		{			
-  			if (!isBitSet(ops.types[pos], (*it)->getType()))
-			{
-				utilsPrintDbg (DBG_ERR, "Bad " << pos << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[pos]);
-				return false;
-			}
-
-			// 
-			// If xpdf returned an Int, but the operand can be a real convert it
-			// 
-			if (isInt(*it))
-			{
-  				if (isBitSet(ops.types[pos], pReal))
-				{ // Convert it to real
-					double dval = 0.0;
-					dval = IProperty::getSmartCObjectPtr<CInt>(*it)->getValue();
-					shared_ptr<IProperty> pIp (new CReal (dval));
-					std::replace (operands.begin(), operands.end(), *it, pIp);
-				}
-			}
-		}
-
-		return true;
-	}
-
 	
 	/**
 	 * Parse inline image. 
@@ -248,7 +186,7 @@ namespace {
 	 * @return True if everything ok, false if end of stream reached.
 	 */
 	bool
-	createOperands (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
+	createOperandsFromStream (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
 					PdfOperator::Operands& operands,
 					xpdf::XpdfObject& o)
 	{
@@ -287,54 +225,35 @@ namespace {
 	 * @param operands Operands of operator. They are shared through subcalls.
 	 */
 	shared_ptr<PdfOperator>
-	createOperator (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
+	createOperatorFromStream (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
 					PdfOperator::Operands& operands)
 	{
 		// Get operands
 		xpdf::XpdfObject o;
-		if (!createOperands (streamreader, operands, o))
+		if (!createOperandsFromStream (streamreader, operands, o))
 			return shared_ptr<PdfOperator> ();
 		
-		// Try to find the op by its name
-		const StateUpdater::CheckTypes* chcktp = StateUpdater::findOp (o->getCmd());
-		// Operator not found, create unknown operator
-		if (NULL == chcktp)
-			return shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o->getCmd()),operands));
-		
-		assert (chcktp);
-		utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
-
-		//
-		// Check the type against specification
-		// 
-		if (!checkAndFix (*chcktp, operands))
-		{
-			//assert (!"Content stream bad operator type.");
-			throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
-		}
-
 		//
 		// SPECIAL CASE for inline image (stream within a text stream)
 		//
-		if ( 0 == strncmp (chcktp->name, "BI", 2))
+		if ( 0 == strncmp (o->getCmd(), "BI", 2))
 		{
 			utilsPrintDbg (debug::DBG_DBG, "");
+			const StateUpdater::CheckTypes* chcktp = StateUpdater::findOp (o->getCmd());
+			assert(chcktp);
+			if (!checkAndFixOperator (*chcktp, operands))
+			{
+				//assert (!"Content stream bad operator type.");
+				throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
+			}
 			
 			shared_ptr<CInlineImage> inimg (getInlineImage (streamreader));
 			return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
 		}
-		
-		// Get operands count
-		size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
 
-		//
-		// If endTag is "" it is a simple operator, composite otherwise
-		// 
-		if (isSimpleOp(*chcktp))
-			return shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
-			
-		else // Composite operator
-			return shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
+		// factory function for all other operators
+		std::string name = o->getCmd();
+		return createOperator(name, operands);
 	}
 	
 	/**
@@ -355,7 +274,7 @@ namespace {
 	parseOp (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
 	{
 		// Create operator with its operands
-		shared_ptr<PdfOperator> result = createOperator (streamreader, operands);
+		shared_ptr<PdfOperator> result = createOperatorFromStream (streamreader, operands);
 	
 		if (result && isCompositeOp (result) && !isInlineImageOp (result))
 		{
