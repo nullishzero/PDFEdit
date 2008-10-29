@@ -202,12 +202,23 @@ public:
 
 	/** Checks whether given stream object is supported by this writer.
 	 * @param obj Stream object.
-	 * @param allways true.
+	 * @return true if no filter FlateDecode are used.
 	 */
-	virtual bool supportObject(UNUSED_PARAM Object& obj)const
+	virtual bool supportObject(Object& obj)const
 	{
 		assert(obj.isStream());
-		return true;
+		Dict * streamDict = obj.streamGetDict();
+		Object filter;
+		streamDict->lookup("Filter", &filter);
+		if(filter.isNull())
+			return true;
+		if(filter.isName())
+		{
+			const char* name = filter.getName();
+			if(!strcmp(name, "FlateDecode"))
+				return true;
+		}
+		return false;
 	}
 
 	/** Compress given buffer with deflate method.
