@@ -8,8 +8,14 @@ my $appname="pdfedit";
 my $longname="PDFedit";
 my $desc="Editor for PDF files";
 
+#Direcotory with script
+my $selfdir=`dirname $0`;
+$selfdir=~s/[\r\n]+//g;
 #version
-my $version=`grep 'define VERSION' ../../src/gui/version.h`;
+my $version=`$selfdir/../../getversion -v -r`;
+if ($version eq '') {
+ die "No version information - aborting";
+}
 $version=~s/^.*"(.*)".*[\r\n]*/$1/;
 
 my $appnameu=uc($appname);

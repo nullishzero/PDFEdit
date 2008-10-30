@@ -1,4 +1,106 @@
 #!/bin/sh
-#Get version number from src/gui/version.h
-VERSION=`grep "#define VERSION" <src/gui/version.h |sed 's/.*"\(.*\)".*/\1/'`
-echo -n $VERSION
+
+# This file controls current PDFedit version for whole build process.
+# We recognize two types of versions:
+#	- short - contains only VERSION (see bellow) and it is used for
+#		  package name and distribution directory names if we
+#		  want to distinguish different installations
+#	- full - contains VERSION[-RELEASE] and it is only as information
+#		 about built tree state in version strings and so on. This
+#		 should be used when reporting bugs.
+#
+# where
+#	VERSION - stands for the last upstream release
+#	RELEASE - contains the times-stamp (in YYYYMMDDHHMMSS format) of the 
+#		  last modified file so that we are able to find out the state 
+#		  of compiled sources (newer than released, patch for testing 
+#		  correctly applied, etc.). 
+#		  This string is empty for upstream releases (when 
+#		  PACKAGE_VERSION variable changes) which is recognized 
+#		  by the times-stamp stored in the RELEASE_STAMP_FILE when we
+#		  do a release. If the current time-stamp is different from
+#		  the one stored in RELEASE_STAMP_FILE (or this file doesn't
+#		  exist - case for CVS checkout) than the release string is
+#		  used - and we know that the compiled version is not from
+#		  the same released sources (or at least we can check that 
+#		  easily).
+#
+# Usage:
+# ./getversion [[v] [-r]|[-f]|[-t]
+# where
+#	-v prints VERSION
+#	-r prints REVISION
+#	-f prints files (with full paths) examined for getting proper revision 
+#	   (all other parameters are ignored if this parameter is specified).
+#	   This can be used for dependency creation for files which directly
+#	   depend on generated revision
+#	-t prints time-stamp for revision (intended for makedist script which 
+#	   should store this time-stamp to the RELEASE_STAMP_FILE)
+#	   (all other parameters are ignored if this parameter is specified).
+#
+# Nothing is printed if no parameter is specified
+
+PACKAGE_VERSION=0.4.1
+PACKAGE_RELEASE=""
+GETVERSION_DIR=`dirname $0`
+EXLUDE_FILES="version_exclude"
+RELEASE_STAMP_FILE="release_stamp"
+
+cd $GETVERSION_DIR
+
+function print_version()
+{
+	echo -n $PACKAGE_VERSION
+}
+
+CWD=`pwd`
+FIND="find src -type f \( -name '*.cc' -o -name '*.h' -o -name '*.qs' \) \
+	| grep -v -f $EXLUDE_FILES \
+	| sed 's@^@$CWD/@'"
+
+function print_files()
+{
+	eval $FIND	
+}
+
+function print_timestamp()
+{
+	export TZ="UTC"
+	date --date=@`print_files | xargs stat -c "%Y" | \
+		grep -v -f $EXLUDE_FILES| \
+		sort -r | head -n1` -u +%Y%m%d%H%M%S
+}
+
+function print_release()
+{
+	# Files which shouldn't be checked during PACKAGE_RELEASE calculation
+	PACKAGE_RELEASE_FILE="`print_timestamp`"
+
+	# Calculates current release, if we are not releasing
+
+	# set release only if timestamp doesn't exist (sources from CVS)
+	# or timestamp is doesn't match
+	if [ ! -f "$RELEASE_STAMP_FILE" ] || [ "`cat $RELEASE_STAMP_FILE`" != "$PACKAGE_RELEASE_FILE" ]
+	then  
+		echo Using new revision: $PACKAGE_RELEASE_FILE >&2
+		PACKAGE_RELEASE="-$PACKAGE_RELEASE_FILE"
+		echo -n $PACKAGE_RELEASE
+		exit 0
+	fi
+	echo We are at the clean release tree: no release >&2
+}
+
+while [ $# -gt 0 ]
+do
+	case $1 in
+		-v ) PRINT_VERSION="1" ;;
+		-r ) PRINT_RELEASE="1" ;;
+		-t ) print_timestamp; exit 0;;
+		-f ) print_files; exit 0;;
+	esac
+	shift
+done
+
+[ -n "$PRINT_VERSION" ] && print_version
+[ -n "$PRINT_RELEASE" ] && print_release
+exit 0

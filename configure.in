@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
 dnl TODO change for devel package
-define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion),[]))
+define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion -v),[]))
 AC_INIT([PDFedit], PDFEDIT_VERSION, 
 	[BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
 AC_CONFIG_SRCDIR([src/gui/base.cc])

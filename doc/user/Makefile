@@ -76,8 +76,8 @@ scripts/qsa-util.xml: qsa-util.leaf $(TOP_DIR)/tools/leaf2xml.pl
 	$(TOP_DIR)/tools/leaf2xml.pl <$< >$@ no
 
 # refresh version number
-version.xml: ../../src/gui/version.h
-	cd ../.. && ./getversion >doc/user/$@
+version.xml: 
+	cd ../.. && ./getversion -v >doc/user/$@
 
 # include rules to generate various documentation formats
 include $(TOP_DIR)/Makefile.rules

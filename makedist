@@ -9,6 +9,10 @@
 set -e
 
 AUTOCONF=`which autoconf`
+
+# creates release timestamp
+./getversion -t > release_stamp
+
 # Checks for configure script and generates it if either
 # existing one is older than configure.in or it doesn't exist at all
 if [ ! -x configure -o configure -ot configure.in ]
@@ -30,7 +34,7 @@ then
 fi
 
 #Get version number
-VERSION=`./getversion`
+VERSION=`./getversion -v`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
 rm -f ../pdfedit-$VERSION
 ln -s pdfedit ../pdfedit-$VERSION
