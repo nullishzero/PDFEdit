@@ -8,6 +8,16 @@
 # Terminate on any error, so if something fails, broken or incomplete packages won't be generated
 set -e
 
+# Target path is directory where we want to create distribution tarballs
+TARGET_PATH="../"
+if [ $# -gt 0 ]
+then
+	[ -d $1 ] && TARGET_PATH="${1}/"
+fi
+
+# This directory
+RELEASE_DIR=`pwd`
+
 AUTOCONF=`which autoconf`
 
 # creates release timestamp
@@ -32,22 +42,29 @@ then
 		exit 1
 	fi
 fi
+# generates online help
+tools/generate_online_help.sh doc src/gui
+echo Online help generated
+
+# generates man page
+cd doc/tools/
+./docbook2man.pl ../user/pdfedit.xml > ../user/pdfedit.1
+cd ../../
+echo Man page generated
 
 #Get version number
 VERSION=`./getversion -v`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
-rm -f ../pdfedit-$VERSION
-ln -s pdfedit ../pdfedit-$VERSION
-cd ..
+rm -f "${TARGET_PATH}pdfedit-$VERSION"
+ln -s "${RELEASE_DIR}" "${TARGET_PATH}pdfedit-$VERSION"
+cd "${TARGET_PATH}"
 
-# generates online help
-pdfedit-$VERSION/tools/generate_online_help.sh pdfedit-$VERSION/doc pdfedit-$VERSION/src/gui
-
-# generates man page
-pdfedit-$VERSION/doc/tools/docbook2man.pl pdfedit-$VERSION/doc/user/pdfedit.xml > pdfedit-$VERSION/doc/user/pdfedit.1
 
 # creates distribution tarball
-tar -czhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
+tar -czhf "pdfedit-$VERSION.tar.gz" "pdfedit-$VERSION"/* --exclude-from="pdfedit-$VERSION/dist-exclude"
 echo pdfedit-$VERSION.tar.gz created
-tar -cjhf pdfedit-$VERSION.tar.bz2 pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
+tar -cjhf "pdfedit-$VERSION.tar.bz2" "pdfedit-$VERSION"/* --exclude-from="pdfedit-$VERSION/dist-exclude"
 echo pdfedit-$VERSION.tar.bz2 created
+
+cd "$RELEASE_DIR"
+rm "${TARGET_PATH}pdfedit-${VERSION}"
