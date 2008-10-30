@@ -87,7 +87,7 @@ void handleHelp(){
  Print version to STDOUT and exit
  */
 void handleVersion(){
- cout << VERSION << endl;
+ cout << PDFEDIT_VERSION << endl;
  exit(0);
 }
 

@@ -43,7 +43,7 @@ namespace gui {
 using namespace std;
 
 /** Version of program */
-QString app=APP_NAME " " VERSION;
+QString app=QString(APP_NAME) +" "+ QString(PDFEDIT_VERSION);
 
 /** About Dialog flags */
 const Qt::WFlags aboutDialogFlags=Qt::WDestructiveClose | Qt::WType_Dialog;

@@ -141,6 +141,7 @@ SOURCES += annotdialog.cc
 HEADERS += annotdialog.h
 HEADERS += mergeform.h selectpagesdialog.h
 SOURCES += mergeform.cc selectpagesdialog.cc
+SOURCES += version.cc
 
 # Help window
 HEADERS += helpwindow.h

@@ -81,14 +81,14 @@ const QString nextParam(const QString &param);
  Print out application header (name and version) to stdout
 */
 void printHeader() {
- cout << APP_NAME << " " << VERSION << endl;
+ cout << APP_NAME << " " << PDFEDIT_VERSION << endl;
 }
 
 /**
  Print out application header (name and version) to stderr
 */
 void printHeaderErr() {
- cerr << APP_NAME << " " << VERSION << endl;
+ cerr << APP_NAME << " " << PDFEDIT_VERSION << endl;
 }
 
 /**

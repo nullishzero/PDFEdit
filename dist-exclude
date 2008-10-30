@@ -24,6 +24,7 @@ src/gui/pdfedit
 src/gui/run-pdfedit-nd
 src/gui/ulab-fix
 src/gui/Makefile.qt
+src/gui/version.cc
 src/kpdf-kde-3.3.2/*.a
 src/kpdf-kde-3.3.2/*.o
 src/kpdf-kde-3.3.2/Makefile.qt

@@ -755,7 +755,7 @@ QStringList Base::variables() {
 /** Return version of editor as string
  @return Version of editor (major.minor.release or major.minor.relase-suffix) */
 QString Base::version() {
- return VERSION;
+ return PDFEDIT_VERSION;
 }
 
 
