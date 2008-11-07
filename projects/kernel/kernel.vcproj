@@ -234,7 +234,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
+				AdditionalDependencies="zlib.lib cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
 				OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
 				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"
@@ -776,10 +776,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\kernel\filters.cc"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\kernel\iproperty.cc"
 					>
 				</File>
@@ -790,6 +786,14 @@
 				<File
 					RelativePath="..\..\src\kernel\pdfedit-core-dev.cc"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug-Tests|Win32"
 						>

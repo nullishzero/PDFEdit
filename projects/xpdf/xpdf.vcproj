@@ -252,6 +252,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\xpdf\xpdf\encrypt_utils.cc"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\xpdf\xpdf\Error.cc"
 					>
 				</File>
@@ -433,6 +437,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\xpdf\xpdf\Dict.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\xpdf\xpdf\encrypt_utils.h"
 					>
 				</File>
 				<File
