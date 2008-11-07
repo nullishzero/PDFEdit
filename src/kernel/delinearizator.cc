@@ -79,8 +79,6 @@ using namespace debug;
 	}catch(std::exception & e)
 	{
 		utilsPrintDbg(DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
-		delete inputStream;
-		fclose(file);
 		return NULL;
 	}
 
