@@ -347,6 +347,7 @@ opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 				{
 					shared_ptr<IProperty> ent = utils::getReferencedObject(IProperty::getSmartCObjectPtr<CArray> (tmp)->getProperty (i));
 					streams.push_back ( shared_ptr<CStream> (new CStream (pdf,  *(obj.arrayGet (i, &o)), ent->getIndiRef())));
+					o.free ();
 				}
 			}else
 			{
@@ -638,6 +639,7 @@ cstreamsreader (UNUSED_PARAM	ostream& oss, const char* fileName)
 				{
 					shared_ptr<IProperty> ent = utils::getReferencedObject (IProperty::getSmartCObjectPtr<CArray> (tmp)->getProperty (i));
 					streams.push_back ( shared_ptr<CStream> (new CStream (pdf,  *(obj.arrayGet (i, &o)), ent->getIndiRef())));
+					o.free ();
 				}
 			}else
 			{
