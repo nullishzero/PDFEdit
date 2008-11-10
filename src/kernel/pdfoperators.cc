@@ -243,9 +243,9 @@ public:
 	FontData(GfxFont* font)
 	{
 		if (font->getName() && font->getName()->getCString())
-			fontName = strdup(font->getName()->getCString());
+			fontName = font->getName()->getCString();
 		if (font->getTag() && font->getTag()->getCString())
-			fontTag = strdup(font->getTag()->getCString());
+			fontTag = font->getTag()->getCString();
 	}
 
 	const char * getFontName()const
