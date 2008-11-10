@@ -189,7 +189,6 @@ FREETYPE_LIBS    = @FT2_LIBS@
 T1_LIBS		 = @t1_LIBS@
 
 BOOST_LIBS 	 = @BOOST_LDFLAGS@
-BOOST_IOSTREAMS_LIBS = @BOOST_IOSTREAMS_LIB@
 
 # PDFedit specific libs
 CPPUNIT_LIBS	 = @CPPUNIT_LIBS@
@@ -203,13 +202,13 @@ STANDARD_LIBS	 = @LIBS@
 STANDARD_LDFLAGS = @LDFLAGS@
 
 # all necessary libraries
-MANDATORY_LIBS	 = $(BOOST_LIBS) $(BOOST_IOSTREAMS_LIB) $(PDFEDIT_LIBS) \
+MANDATORY_LIBS	 = $(BOOST_LIBS) $(PDFEDIT_LIBS) \
 		   $(FREETYPE_LIBS) $(T1_LIBS)
 
 # All necessary libraries for 3rd party code depending on pdfedit-core-dev
 # TODO change to have only one library containing kernel, utils, xpdf, fofi,
 # goo, splash libraries
-DIST_LIBS =  $(BOOST_LIBS) $(BOOST_IOSTREAMS_LIB) \
+DIST_LIBS =  $(BOOST_LIBS) \
 	     -lkernel -L$(LIB_PATH)/kernel -lutils -L$(LIB_PATH)/utils \
 	     -lxpdf -L$(LIB_PATH)/xpdf -lfofi -L$(LIB_PATH)/fofi \
 	     -lGoo -L$(LIB_PATH)/goo -lsplash -L$(LIB_PATH)/splash \
