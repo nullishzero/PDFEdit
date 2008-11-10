@@ -831,6 +831,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 				if(!parser->getObj (obj.get())) 
 					throwMalformedFormat("bad data stream");
 			  }
+			  obj.reset();
+
 
 			  if (!parser->eofOfActualStream())
 			  {
@@ -840,7 +842,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 				  if(!parser->getObj (obj.get())) 
 					  throwMalformedFormat("bad data stream");
 				  while (!obj->isCmd("ID") && !obj->isEOF()) 
-				  { 
+				  {
 					if (obj->isName()) 
 					{
 					  // Get name
@@ -871,6 +873,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 						kernelPrintDbg (DBG_DBG, "Bad inline image dictionary.");
 						break;
 					}
+					obj.reset();
 					if(!parser->getObj(obj.get())) 
 						throwMalformedFormat("bad data stream");
 				  }
