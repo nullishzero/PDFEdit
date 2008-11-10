@@ -844,7 +844,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 					if (obj->isName()) 
 					{
 					  // Get name
-					  string key (copyString (obj->getName()));
+					  string key (obj->getName());
 					  obj.reset();
 					  // Get key
 					  if(!parser->getObj(obj.get())) 
