@@ -440,7 +440,7 @@ namespace {
 
 		// This can happen in really damaged pdfs
  		if (state->getFont()) {
-			const TextSimpleOperator *txtOp = dynamic_cast<const TextSimpleOperator*>(op.get());
+			TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 			assert(txtOp);
 			txtOp->setFontData(state->getFont());
 			std::string rawStr;
@@ -505,7 +505,7 @@ namespace {
 		state->textMoveTo(tx, ty);
 
 
-		const TextSimpleOperator *txtOp = dynamic_cast<const TextSimpleOperator*>(op.get());
+		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 		assert(txtOp);
 		txtOp->setFontData(state->getFont());
 		std::string rawStr;
@@ -582,7 +582,7 @@ namespace {
 			rc->yright = max( rc->yright, max( h_rc.yleft, h_rc.yright ) );
 		}// for
 		
-		const TextSimpleOperator *txtOp = dynamic_cast<const TextSimpleOperator*>(op.get());
+		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 		assert(txtOp);
 		txtOp->setFontData(state->getFont());
 		// return changed state

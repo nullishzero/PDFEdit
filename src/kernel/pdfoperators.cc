@@ -237,30 +237,25 @@ using namespace utils;
  */
 class TextSimpleOperator::FontData 
 {
-	char * fontName;
-	char * fontTag;
+	string fontName;
+	string fontTag;
 public:
 	FontData(GfxFont* font)
 	{
-		fontName = strdup(font->getName()->getCString());
-		fontTag = strdup(font->getTag()->getCString());
-	}
-	~FontData()
-	{
-		if(fontName)
-			free(fontName);
-		if(fontTag)
-			free(fontTag);
+		if (font->getName() && font->getName()->getCString())
+			fontName = strdup(font->getName()->getCString());
+		if (font->getTag() && font->getTag()->getCString())
+			fontTag = strdup(font->getTag()->getCString());
 	}
 
 	const char * getFontName()const
 	{
-		return fontName;
+		return fontName.c_str();
 	}
 
 	const char * getFontTag()const
 	{
-		return fontTag;
+		return fontTag.c_str();
 	}
 };
 
@@ -317,7 +312,7 @@ const char* TextSimpleOperator::getFontName()const
 	return fontData->getFontName();
 }
 
-void TextSimpleOperator::setFontData(GfxFont* gfxFont)const
+void TextSimpleOperator::setFontData(GfxFont* gfxFont)
 {
 	assert(gfxFont);
 	if (!gfxFont)

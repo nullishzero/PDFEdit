@@ -128,11 +128,11 @@ public:
 class TextSimpleOperator: public SimpleGenericOperator
 {
 	// forward declaration
-	struct FontData;
+	class FontData;
 
 	/** Font data for later identification of associated font
 	 */
-	mutable FontData* fontData;
+	FontData* fontData;
 protected:
 	/** Finds current font for operator from fontName.
 	 * Uses resources from content stream to retriev font by name.
@@ -167,7 +167,7 @@ public:
 	 * This method doesn't influence operator itself (or its operands).
 	 * @param gfxFont Xpdf GfxFont instance.
 	 */
-	void setFontData(GfxFont* gfxFont)const;
+	void setFontData(GfxFont* gfxFont);
 
 	/** Returns font name for this operator.
 	 * May return null if setFontData hasn't been called yet.
