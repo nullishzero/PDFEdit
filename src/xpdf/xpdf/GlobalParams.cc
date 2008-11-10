@@ -1866,6 +1866,7 @@ void GlobalParams::setupBaseFonts(const char *dir) {
 	winFontDir[0] = '\0';
       }
     }
+	FreeLibrary (shell32Lib);
   }
 #endif
   for (i = 0; displayFontTab[i].name; ++i) {
