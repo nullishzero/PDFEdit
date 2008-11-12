@@ -40,20 +40,10 @@ Delinearizator::Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter *
 	pdfWriter(writer),
 	file(f)
 {
-	if(!pdfedit_core_dev_init_check())
-	{
-		utilsPrintDbg(debug::DBG_CRIT, "pdfedit-core-dev not intialized");
-		throw PDFedit_devException();
-	}
-	if(getErrorCode() !=errNone)
-	{
-		// xref is corrupted
-		throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode());
-	}
-
 	if(!checkLinearized(*stream, this, &linearizedRef))
 		throw NotLinearizedException();
 }
+
 Delinearizator * Delinearizator::getInstance(const char * fileName, IPdfWriter * pdfWriter)
 {
 using namespace debug;
@@ -76,9 +66,19 @@ using namespace debug;
 	try
 	{
 		instance=new Delinearizator(file, inputStream, pdfWriter);
+	}catch(NotLinearizedException &e)
+	{
+		utilsPrintDbg(DBG_ERR, "Document is not linearized.");
+		// exception from Delinearizator (~CXref deallocates stream
+		// and we have to close file handle
+		fclose(file);
+		return NULL;
 	}catch(std::exception & e)
 	{
+		// exception thrown from CXref so we have to do a cleanup
 		utilsPrintDbg(DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
+		fclose(file);
+		delete inputStream;
 		return NULL;
 	}
 
