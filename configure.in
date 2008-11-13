@@ -49,6 +49,56 @@ AC_STRUCT_TM
 dnl Checks for boost and boost iostreams
 AX_BOOST_BASE
 
+dnl Default (and configurable) values for files/directories manipulation 
+dnl programs (you can overwrite them by ./configure NAME=value)
+CHK_OR_DEFINE_VAR(COPY, "cp -f")
+CHK_OR_DEFINE_VAR(DEL_FILE, "rm -f")
+CHK_OR_DEFINE_VAR(DEL_DIR, "rmdir")
+CHK_OR_DEFINE_VAR(DEL_FORCE_DIR, "rm -rf")
+CHK_OR_DEFINE_VAR(SYMLINK, "ln -s")
+CHK_OR_DEFINE_VAR(MOVE, "mv -f")
+CHK_OR_DEFINE_VAR(CHK_DIR_EXISTS, "tets -d")
+CHK_OR_DEFINE_VAR(MKDIR, "mkdir -p")
+AC_SUBST(COPY)
+AC_SUBST(DEL_FILE)
+AC_SUBST(DEL_DIR)
+AC_SUBST(DEL_FORCE_DIR)
+AC_SUBST(SYMLINK)
+AC_SUBST(MOVE)
+AC_SUBST(CHK_DIR_EXISTS)
+AC_SUBST(MKDIR)
+
+
+dnl compiler options which might be set by environment viariable
+dnl TODO check whether this is ok also for other platforms
+CHK_OR_DEFINE_VAR(ARCH, "")
+CHK_OR_DEFINE_VAR(C_EXTRA, "-fmessage-length=0 -D_FORTIFY_SOURCE=2 -fno-strict-aliasing")
+CHK_OR_DEFINE_VAR(EXTRA_UTILS_CFLAGS, "")
+CHK_OR_DEFINE_VAR(EXTRA_KERNEL_CFLAGS, "")
+CHK_OR_DEFINE_VAR(EXTRA_TESTS_CFLAGS, "")
+CHK_OR_DEFINE_VAR(CXX_EXTRA, "-fmessage-length=0 -D_FORTIFY_SOURCE=2 -fno-strict-aliasing -fexceptions")
+CHK_OR_DEFINE_VAR(EXTRA_UTILS_CXXFLAGS, "")
+CHK_OR_DEFINE_VAR(EXTRA_KERNEL_CXXFLAGS, "")
+CHK_OR_DEFINE_VAR(EXTRA_TESTS_CXXFLAGS, "")
+CHK_OR_DEFINE_VAR(EXTRA_GUI_CXXFLAGS, "")
+AC_SUBST(ARCH)
+AC_SUBST(C_EXTRA)
+AC_SUBST(EXTRA_UTILS_CFLAGS)
+AC_SUBST(EXTRA_KERNEL_CFLAGS)
+AC_SUBST(EXTRA_TESTS_CFLAGS)
+AC_SUBST(CXX_EXTRA)
+AC_SUBST(EXTRA_UTILS_CXXFLAGS)
+AC_SUBST(EXTRA_KERNEL_CXXFLAGS)
+AC_SUBST(EXTRA_TESTS_CXXFLAGS)
+AC_SUBST(EXTRA_GUI_CXXFLAGS)
+
+dnl Default (and configurable) values for libraries
+CHK_OR_DEFINE_VAR(AR, "ar cqs")
+CHK_OR_DEFINE_VAR(LIBPREFIX, "lib")
+AC_SUBST(AR)
+AC_SUBST(LIBPREFIX)
+
+
 AC_ARG_ENABLE(stack-protector,
 	      [AS_HELP_STRING([--enable-stack-protector],
 			      [Turn on stack protector (disabled by default)])],

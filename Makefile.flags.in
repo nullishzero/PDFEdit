@@ -22,31 +22,37 @@ CONFIG_LINK = $(CONFIG_CXX)
 CC = $(CONFIG_CC)
 CXX = $(CONFIG_CXX)
 LINK = $(CONFIG_LINK)
-# TODO from autoconf
-AR       = ar cqs
+CONFIG_AR = @AR@
+AR       = $(CONFIG_AR)
 CONFIG_RANLIB = @RANLIB@
 RANLIB = $(CONFIG_RANLIB)
-# TODO from autoconf
-COPY     = cp -f
-COPY_FILE= $(COPY)
-COPY_DIR = $(COPY) -r
-INSTALL_FILE= $(COPY_FILE)
-INSTALL_DIR = $(COPY_DIR)
-# TODO from autoconf
-DEL_FILE = rm -f
-# TODO from autoconf
-SYMLINK  = ln -sf
-# TODO from autoconf
-DEL_DIR  = rmdir
-DEL_FORCE_DIR = rm -rf
-MOVE     = mv -f
-# TODO from autoconf
-CHK_DIR_EXISTS= test -d
-MKDIR    = mkdir -p
-SHELL	 = @SHELL@
+CONFIG_COPY     = @COPY@
+COPY	 = $(CONFIG_COPY)
+CONFIG_COPY_FILE = $(COPY)
+COPY_FILE= $(CONFIG_COPY_FILE)
+CONFIG_COPY_DIR = $(COPY) -r
+COPY_DIR = $(CONFIG_COPY_DIR)
+CONFIG_INSTALL_FILE = $(COPY_FILE)
+INSTALL_FILE= $(CONFIG_INSTALL_FILE)
+CONFIG_INSTALL_DIR = $(COPY_DIR)
+INSTALL_DIR = $(CONFIG_INSTALL_DIR)
+CONFIG_DEL_FILE= @DEL_FILE@
+DEL_FILE = $(CONFIG_DEL_FILE)
+CONFIG_SYMLINK = @SYMLINK@
+SYMLINK  = $(CONFIG_SYMLINK)
+CONFIG_DEL_DIR = @DEL_DIR@
+DEL_DIR  = $(CONFIG_DEL_DIR)
+CONFIG_DEL_FORCE_DIR = @DEL_FORCE_DIR@
+DEL_FORCE_DIR = $(CONFIG_DEL_FORCE_DIR)
+CONFIG_MOVE = @MOVE@
+MOVE     = $(MOVE)
+CONFIG_CHK_DIR_EXISTS = @CHK_DIR_EXISTS@
+CHK_DIR_EXISTS = $(CONFIG_CHK_DIR_EXISTS)
+CONFIG_MKDIR = @MKDIR@
+MKDIR    = $(CONFIG_MKDIR)
+SHELL = @SHELL@
 DOXYGEN_BIN = @DOXYGEN_BIN@
-# TODO from autoconf ?
-LIBPREFIX = lib
+LIBPREFIX = @LIBPREFIX@
 
 ###########################################
 # Installation directories
@@ -97,17 +103,13 @@ DEBUG	 = @DEBUG@
 # Optimization options
 OPTIM	 = @OPTIM@
 # Architecture specific options
-# TODO how to find out?
-ARCH	 = 
+ARCH	 = @ARCH@
 # Warning options
 WARN	 = @WARN@ 
-# TODO check whether this is ok also for other platforms
-C_EXTRA	 = -fmessage-length=0 -D_FORTIFY_SOURCE=2 \
-	   -fno-strict-aliasing
+C_EXTRA	 = @C_EXTRA@ 
 # Note that this value will be used also for pdfedit-core-dev CFLAGS
 # (so don't put any debug, optimization or architecture specific options here)
-CXX_EXTRA = -fmessage-length=0 -D_FORTIFY_SOURCE=2 \
-	    -fno-strict-aliasing -fexceptions
+CXX_EXTRA = @CXX_EXTRA@ 
 
 #######################################
 # Optional C parameters
@@ -115,9 +117,9 @@ CXX_EXTRA = -fmessage-length=0 -D_FORTIFY_SOURCE=2 \
 # In fact we are not using many pure C files, so this will be usually out of your concern
 #######################################
 
-EXTRA_UTILS_CFLAGS = 
-EXTRA_KERNEL_CFLAGS = 
-EXTRA_TESTS_CFLAGS = 
+EXTRA_UTILS_CFLAGS = @EXTRA_UTILS_CFLAGS@
+EXTRA_KERNEL_CFLAGS = @EXTRA_KERNEL_CFLAGS@
+EXTRA_TESTS_CFLAGS = @EXTRA_TESTS_CFLAGS@
 
 
 #######################################
@@ -128,10 +130,10 @@ EXTRA_TESTS_CFLAGS =
 # from autoconf --enable-observer-debug
 OBSERVER_CXXFLAGS = @OBSERVER_CXXFLAGS@
 
-EXTRA_UTILS_CXXFLAGS = 
-EXTRA_KERNEL_CXXFLAGS = 
-EXTRA_TESTS_CXXFLAGS = 
-EXTRA_GUI_CXXFLAGS = -D CONFIG_DATA_PATH="$(DATA_PATH)"
+EXTRA_UTILS_CXXFLAGS = @EXTRA_UTILS_CXXFLAGS@
+EXTRA_KERNEL_CXXFLAGS = @EXTRA_KERNEL_CXXFLAGS@
+EXTRA_TESTS_CXXFLAGS = @EXTRA_TESTS_CXXFLAGS@
+EXTRA_GUI_CXXFLAGS = @EXTRA_GUI_CXXFLAGS@ -D CONFIG_DATA_PATH="$(DATA_PATH)"
 
 # same like for compiler stuff we also define 2 levels 
 # CONFIG_{NAME} can be used for qmake direct {NAME} can be used

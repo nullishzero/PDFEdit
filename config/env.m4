@@ -14,3 +14,12 @@ AC_DEFUN(CHK_ENV_VAR_NOTICE,[
  fi
 ])
 
+AC_DEFUN(CHK_OR_DEFINE_VAR, [ 
+	if test -z "$[]$1"
+	then
+		$1=$2
+		AC_MSG_NOTICE(Using default $1=$2)
+	else
+		AC_MSG_NOTICE(Using provided $1=$[]$1)
+	fi
+	])

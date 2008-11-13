@@ -230,12 +230,23 @@ exists( .menu-trans.h  ) {
  HEADERS += .menu-trans.h 
 }
 
-# Force configure compiler
+# Force configure compiler and all other programs used for installation
 QMAKE_CC = $(CONFIG_CC)
 QMAKE_CXX = $(CONFIG_CXX)
 QMAKE_LINK = $(CONFIG_LINK)
 QMAKE_LINK_SHLIB = $(CONFIG_LINK)
 QMAKE_RANLIB = $(CONFIG_RANLIB)
+QMAKE_AR = $(CONFIG_AR)
+QMAKE_COPY = $(CONFIG_COPY)
+QMAKE_COPY_FILE = $(CONFIG_COPY_FILE)
+QMAKE_COPY_DIR = $(CONFIG_COPY_DIR)
+QMAKE_DEL_FILE = $(CONFIG_DEL_FILE)
+# qmake doesn't like QMAKE_SYMLINK and ignores it
+QMAKE_SYMLINK = $(CONFIG_SYMLINK)
+QMAKE_DEL_DIR = $(CONFIG_DEL_DIR)
+QMAKE_MOVE = $(CONFIG_MOVE)
+QMAKE_CHK_DIR_EXISTS = $(CONFIG_CHK_DIR_EXISTS)
+QMAKE_MKDIR = $(CONFIG_MKDIR)
 
 # QSA include
 INCPATH += $(QSAPATH)
