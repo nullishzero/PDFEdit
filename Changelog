@@ -19,6 +19,8 @@
 	* 64b distributions with boost libraries in lib64 directory can use
 	  --with-boost-libdir configure parameter
 	* Internal changes
+		- versioning updated - released and dirty or CVS builds cotain
+		  the timestamp of the most recently changed file
 		- Removed unused obsolete code (QSA for Qt4) from source tree
 		- smart pointers are used also for CPdf instance
 		- support for stream encoding in the pdfwriter
