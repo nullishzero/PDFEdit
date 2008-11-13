@@ -49,6 +49,35 @@ AC_STRUCT_TM
 dnl Checks for boost and boost iostreams
 AX_BOOST_BASE
 
+dnl fake-install-tools can be used to installation tools (COPY, DEL_*, 
+dnl SYMLINK, etc) by those which are safe for testing - don't touch
+dnl anything and instead logs all actions - tools/fake_install_tools.sh
+dnl script with the first parameter as original operation
+AC_ARG_WITH([fake-install],
+	    AS_HELP_STRING([--with-fake-install=YES|NO],
+			   [Only log actions that would be done during make 
+			    {un}install, instead of doing them (to the 
+			    /tmp/fake_install_tools.log). This is only 
+			    for testing purposes.]
+	     ),
+	     [
+	      	fake_install="$withval"
+	     ],
+	     [fake_install="NO"]
+	      )
+if test "x$fake_install" = "xYES"
+then
+	AC_MSG_NOTICE("Using fake-install-tools.")
+	COPY='sh $(ROOT)/tools/fake_install_tools.sh COPY'
+	DEL_FILE='sh $(ROOT)/tools/fake_install_tools.sh DEL_FILE'
+	DEL_FORCE_DIR='sh $(ROOT)/tools/fake_install_tools.sh DEL_FORCE_DIR'
+	DEL_DIR='sh $(ROOT)/tools/fake_install_tools.sh DEL_DIR'
+	SYMLINK='sh $(ROOT)/tools/fake_install_tools.sh SYMLINK'
+	MKDIR='sh $(ROOT)/tools/fake_install_tools.sh MKDIR'
+	CHK_DIR_EXISTS='sh $(ROOT)/tools/fake_install_tools.sh CHK_DIR_EXISTS'
+fi
+
+
 dnl Default (and configurable) values for files/directories manipulation 
 dnl programs (you can overwrite them by ./configure NAME=value)
 CHK_OR_DEFINE_VAR(COPY, "cp -f")
