@@ -82,7 +82,7 @@ dnl Default (and configurable) values for files/directories manipulation
 dnl programs (you can overwrite them by ./configure NAME=value)
 CHK_OR_DEFINE_VAR(COPY, "cp -f")
 CHK_OR_DEFINE_VAR(DEL_FILE, "rm -f")
-CHK_OR_DEFINE_VAR(DEL_DIR, "rmdir")
+CHK_OR_DEFINE_VAR(DEL_DIR, "sh \$(ROOT)/tools/rmdir.sh")
 CHK_OR_DEFINE_VAR(DEL_FORCE_DIR, "rm -rf")
 CHK_OR_DEFINE_VAR(SYMLINK, "ln -s")
 CHK_OR_DEFINE_VAR(MOVE, "mv -f")

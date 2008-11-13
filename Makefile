@@ -63,13 +63,17 @@ uninstall-gui:
 # extract also some functionality from gui (e.g. scripting layer)
 
 # Uninstalls core dev packages
+# DEL_DIR here is just to be super-sure that we don't forget anything.
+# In fact we should put some assert here that those directories don't
+# exist because if all dedicated uninstall-devs are correct there 
+# shouldn't be nothing left
 uninstall-core-dev:
 	cd $(XPDFROOT) && $(MAKE) uninstall-dev
 	cd $(UTILSROOT) && $(MAKE) uninstall-dev
 	cd $(KERNELROOT) && $(MAKE) uninstall-dev
 	cd $(OSROOT) && $(MAKE) uninstall-dev
-	$(DEL_DIR) $(INSTALL_ROOT)$(INCLUDE_PATH)
-	$(DEL_DIR) $(INSTALL_ROOT)$(LIB_PATH)
+	$(DEL_DIR) $(INSTALL_ROOT)$(INCLUDE_PATH) || true
+	$(DEL_DIR) $(INSTALL_ROOT)$(LIB_PATH) || true
 
 # Target for distributed documentation. 
 doc-dist:

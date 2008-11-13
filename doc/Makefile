@@ -22,10 +22,16 @@ doc_dist_install: $(MAN_INSTALL_TARGET) \
 	$(COPY_FILE) LICENSE.GPL ../README ../Changelog AUTHORS README-* \
 		README.cygwin $(INSTALL_ROOT)$(DOC_PATH)
 
-# TODO maybe we should be less brutal here and delete only our files
+# TODO maybe we should be less brutal here and delete only our files However we
+# have no list of installed doc files. This list is probably too much effort
+# with not worthy benefit. Therefore we are using DEL_FORCE_DIR here which
+# removes everything. DEL_DIR used immediatelly after cleans whole empty upward
+# hierarchy
 doc_dist_uninstall:
-	$(DEL_FORCE_DIR) $(INSTALL_ROOT)$(DOC_PATH) || true;
+	$(DEL_FORCE_DIR) $(INSTALL_ROOT)$(DOC_PATH)/* || true;
+	$(DEL_DIR) $(INSTALL_ROOT)$(DOC_PATH) || true
 	$(DEL_FILE) $(INSTALL_ROOT)$(MAN_PATH)/pdfedit.1
+	$(DEL_DIR) $(INSTALL_ROOT)$(MAN_PATH)
 
 # Man pages are the core for documenation
 doc_man: 
