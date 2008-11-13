@@ -4,8 +4,14 @@
 # Include this file to the each subdirectory makefile. Note that REL_ADDR 
 # variable has to be defined if we are in deeper subdirectory.
 #
-# If you need only configuration data, use Makefile.flags instead
+# If you need only project configuration data, use Makefile.flags instead
 ################################################################################
+
+# Define MAKEFLAGS only for top level makes as this variable is inherited 
+# down in recursion
+ifeq ($(MAKELEVEL),0)
+MAKEFLAGS += @parallel_make@
+endif
 
 include $(REL_ADDR)Makefile.flags
 

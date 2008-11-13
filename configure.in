@@ -477,7 +477,7 @@ then
 	dnl TODO: if xsltproc and stylesheet is missing, docbook2html from jade can be used
 fi
 
-AC_CONFIG_FILES([Makefile Makefile.flags])
+AC_CONFIG_FILES([Makefile.flags Makefile.rules])
 
 dnl
 dnl XPDF specific stuff taken from the original xpdf distribution

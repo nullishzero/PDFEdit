@@ -1,3 +1,12 @@
+################################################################################
+# This file contains project global configuration for building and installation
+# process.
+#
+# Don't include this file to the Makefiles directly unless you need only project
+# specific configuration data (like in the QT project files) and include
+# Makefile.rules instead
+################################################################################
+
 E_RELEASE= @enable_release@
 QMAKE 	 = @QMAKE@
 LRELEASE = @LRELEASE@
@@ -82,12 +91,6 @@ INCLUDE_PATH	= $(includedir)
 #############################################
 # Flags definition
 #############################################
-
-# Define MAKEFLAGS only for top level makes as this variable is inherited 
-# down in recursion
-ifeq ($(MAKELEVEL),0)
-MAKEFLAGS += @parallel_make@
-endif
 
 # Debug options
 DEBUG	 = @DEBUG@
@@ -251,3 +254,7 @@ ADVANCED_DOC_INSTALL_TARGET = @ADVANCED_INSTALL_TARGET@
 # configure parameter --enable-user-manual
 USER_MANUAL_TARGET = @USER_MANUAL_TARGET@
 USER_MANUAL_INSTALL_TARGET = @USER_MANUAL_INSTALL_TARGET@
+
+# installation rules
+INSTALL_TARGET = @INSTALL_TARGET@
+UNINSTALL_TARGET = @UNINSTALL_TARGET@

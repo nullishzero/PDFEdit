@@ -19,7 +19,7 @@ configure: configure.in
 
 # Common install target. It depends on configuration which specific 
 # installation target will be used.
-install: @INSTALL_TARGET@ doc-dist-install 
+install:  $(INSTALL_TARGET) doc-dist-install 
 
 install-no:
 	@echo There is no installation target defined!!! You probably have
@@ -47,7 +47,7 @@ install-core-dev: pdfedit-core-dev
 
 # Common uninstall target. It depends on configuration which specific
 # uninstallation target will be used
-uninstall: @UNINSTALL_TARGET@ doc-dist-uninstall
+uninstall:  $(UNINSTALL_TARGET) uninstall-gui doc-dist-uninstall
 
 uninstall-no:
 	@echo There is no uninstallation target defined!!! You probably have
@@ -100,6 +100,6 @@ clean:
 distclean:
 	cd $(DOCROOT) && $(MAKE) clean || true
 	cd $(SRCROOT) && $(MAKE) distclean || true
-	$(DEL_FILE) Makefile config.status config.log Makefile.flags || true
+	$(DEL_FILE) config.status config.log Makefile.flags Makefile.rules|| true
 	$(DEL_FILE) autom4te.cache/* || true
 	$(DEL_DIR) autom4te.cache || true

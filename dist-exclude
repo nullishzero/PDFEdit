@@ -7,6 +7,8 @@ maintains
 dist-exclude
 makedist
 testset
+Makefile.flags
+Makefile.rules
 doc/doxygen.warnings
 doc/navrh
 doc/programmer
