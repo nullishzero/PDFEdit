@@ -75,9 +75,7 @@
 // boost
 //============================================
 #include <boost/smart_ptr.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-
+#include <boost/noncopyable.hpp>
 
 //============================================
 // our stuff

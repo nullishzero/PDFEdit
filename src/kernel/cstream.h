@@ -63,7 +63,6 @@ namespace utils { template<typename Iter> void makeStreamPdfValid (Iter it, Iter
  */
 class CStream : noncopyable, public IProperty
 {
-	typedef boost::iostreams::filtering_streambuf<boost::iostreams::output> filtering_ostreambuf;
 	typedef std::string PropertyId;
 
 public:

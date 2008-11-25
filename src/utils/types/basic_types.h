@@ -98,26 +98,6 @@ Derived& Singleton<Derived>::instance()
 
 
 //============================================
-// Class copy constructor abbreviations
-//============================================
-
-/**
- * This empty class ensures that the derived object can not use copy
- * constructor.
- *
- * Idea from from boost library.
- */
-class noncopyable
-{
-protected:
-	noncopyable() {}
-	~noncopyable() {}
-private:  // emphasize the following members are private
-	noncopyable( const noncopyable& );
-	const noncopyable& operator=( const noncopyable& );
-};
-
-//============================================
 } // namespace _JM_NAMESPACE
 //============================================
 
