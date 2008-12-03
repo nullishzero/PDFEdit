@@ -80,4 +80,4 @@ version.xml:
 	cd ../.. && ./getversion -v >doc/user/$@
 
 # include rules to generate various documentation formats
-include $(TOP_DIR)/Makefile.rules
+include $(TOP_DIR)/doc_format.rules

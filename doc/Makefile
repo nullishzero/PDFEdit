@@ -5,7 +5,7 @@ include ../Makefile.flags
 
 TOP_DIR=.
 # Documentation generation rules
-include Makefile.rules
+include doc_format.rules
 
 .PHONY: clean all doc_dist doc_man doc_doxygen doc_user doc_extended doc_user_nopdf doc_extended_nopdf
 
