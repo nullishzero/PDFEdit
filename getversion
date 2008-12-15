@@ -40,7 +40,7 @@
 #
 # Nothing is printed if no parameter is specified
 
-PACKAGE_VERSION=0.4.2-pre1
+PACKAGE_VERSION=0.4.2
 PACKAGE_RELEASE=""
 GETVERSION_DIR=`dirname $0`
 EXLUDE_FILES="version_exclude"
