@@ -9,6 +9,6 @@ cd ../..
 mkdir -p $INSTALL_ROOT
 make install
 cp -f doc/README.cygwin $INSTALL_ROOT/readme.txt
-VERSION=`./getversion`
+VERSION=`./getversion -v`
 cd $INSTALL_ROOT
 echo 7z a -mx -r -tzip -x!*.bat -x!*.zip pdfedit-$VERSION-cygwin.zip >pack.bat
