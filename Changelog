@@ -1,3 +1,6 @@
+XXXX-XX-XX PDF Editor 0.4.X
+	* French translation update (bug 275)
+
 2008-12-15 PDF Editor 0.4.2
 	* dependency to boost-iostreams dropped
 	* Debian fixes (462544-crash, 444648-bad SCII85Encoding output) backported
