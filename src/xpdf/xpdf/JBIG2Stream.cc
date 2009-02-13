@@ -1733,6 +1733,13 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
     ex = !ex;
   }
 
+  // Fix backported from poppler git tree:
+  for ( ; j < numExSyms; ++j) {
+    // this should never happen but happens on PDF we don't parse
+    // correctly like bug #19702
+    symbolDict->setBitmap(j, NULL);
+  }
+
   for (i = 0; i < numNewSyms; ++i) {
     delete bitmaps[numInputSyms + i];
   }
