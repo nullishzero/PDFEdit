@@ -12,7 +12,8 @@ A copy of is available in usr/local/share/doc/LICENSE.GPL in this package.
 Requirements
 ------------
 You will need to have cygwin installed.
-From cygwin packages, you will need Qt3 and X Window installed.
+From cygwin packages, you will need Qt3 and X Window installed. If you want
+to use icons then you need to have libpng installed.
 
 Installation
 ------------
