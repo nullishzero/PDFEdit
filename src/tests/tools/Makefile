@@ -12,12 +12,21 @@ UTILS_OBJS = $(UTILS_SRCS:.cc=.o)
 TARGET_SRCS = displaycs.cc
 SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
-TARGET = displaycs
+TARGET = displaycs pdf_object_printer pdf_page_from_ref pdf_page_to_ref
 .PHONY: all clean
 all: $(TARGET)
 
 displaycs: displaycs.o
 	$(LINK) $(LDFLAGS) -o displaycs displaycs.o $(UTILS_OBJS) $(MANDATORY_LIBS)
+
+pdf_object_printer: pdf_object_printer.o common.o
+	$(CXX) -o pdf_object_printer pdf_object_printer.o common.o $(LDFALGS) $(MANDATORY_LIBS)
+
+pdf_page_from_ref: pdf_page_from_ref.o common.o
+	$(CXX) -o pdf_page_from_ref pdf_page_from_ref.o common.o $(LDFALGS) $(MANDATORY_LIBS)
+
+pdf_page_to_ref: pdf_page_to_ref.o common.o
+	$(CXX) -o pdf_page_to_ref pdf_page_to_ref.o common.o $(LDFALGS) $(MANDATORY_LIBS)
 
 clean: 
 	-rm $(UTILS_OBJS) || true
