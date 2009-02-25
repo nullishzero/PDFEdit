@@ -344,7 +344,7 @@ bool SelectPagesDialog::init (const QString& fileName) {
 	try {
 
 		guiPrintDbg (debug::DBG_DBG,"Opening document.");
-		document = util::getPdfInstance (this,util::convertFromUnicode(fileName,util::NAME).c_str(),mode);
+		document = util::getPdfInstance (this,fileName,mode);
 		assert(document);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	

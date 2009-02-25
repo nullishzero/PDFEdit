@@ -820,7 +820,7 @@ bool PdfEditWindow::openFile(const QString &name, bool askPassword/*=true*/) {
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
-  document=getPdfInstance(this,util::convertFromUnicode(name,util::NAME).c_str(),mode,askPassword);
+  document=getPdfInstance(this,name,mode,askPassword);
   if (askPassword && document->needsCredentials()) {
    //User failed to enter correct password when asked.
    //resets document instance to force closing

@@ -97,7 +97,7 @@ boost::shared_ptr<pdfobjects::CPdf> BaseGUI::getBasePdfInstance(const QString &f
  if (openMode=="readonly") mode=CPdf::ReadOnly;
  if (openMode=="readwrite") mode=CPdf::ReadWrite;
  //Password is asked for (or not) based on askPassword parameter
- return util::getPdfInstance(w,util::convertFromUnicode(filename,util::NAME).c_str(),mode,askPassword);
+ return util::getPdfInstance(w,filename,mode,askPassword);
 }
 
 /**

@@ -363,7 +363,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
  CPdf::OpenMode mode=CPdf::ReadOnly;
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
-  document=util::getPdfInstance(this,util::convertFromUnicode(fileName,util::NAME),mode);
+  document=util::getPdfInstance(this,fileName,mode);
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
  } catch (PdfOpenException &ex) {
