@@ -50,6 +50,43 @@ namespace pdfobjects
 namespace utils
 {
 	
+// TODO probably should go to some other more appropriate place
+/** Helper function to get all filters from the stream object.
+ * @param obj Stream object.
+ * @param filters Container for filter names.
+ * @return Number of the filters present in the stream or -1 if some of
+ * them is not correct.
+ */
+int getFiltersFromStream(Object &obj, std::vector<std::string>& filters)
+{
+	assert(obj.isStream());
+	Dict * streamDict = obj.streamGetDict();
+	Object filter;
+	streamDict->lookup("Filter", &filter);
+	if(filter.isNull())
+		return 0;
+	if(filter.isName())
+	{
+		filters.push_back(filter.getName());
+		return 1;
+	}
+	if(filter.isArray())
+	{
+		Array * array = filter.getArray();
+		int count=0;
+		for(int i=0; i<array->getLength();++i, ++count)
+		{
+			Object o;
+			array->get(i, &o);
+			if(!o.isName())
+				return -1;
+			filters.push_back(o.getName());
+			o.free();
+		}
+		return count;
+	}
+	return -1;
+}	
 void ProgressObserver::notify(boost::shared_ptr<OperationStep> newValue,
 		boost::shared_ptr<const observer::IChangeContext<OperationStep> > context)const throw()
 {
@@ -169,17 +206,19 @@ boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::getInstance()
 bool ZlibFilterStreamWriter::supportObject(Object& obj)const
 {
 	assert(obj.isStream());
-	Dict * streamDict = obj.streamGetDict();
-	Object filter;
-	streamDict->lookup("Filter", &filter);
-	if(filter.isNull())
+	std::vector<std::string> filters; 
+	int count = getFiltersFromStream(obj, filters);
+	// with 0 filters we will simply support such an object and turn it
+	// into FlateDecode
+	if(!count)
 		return true;
-	if(filter.isName())
-	{
-		const char* name = filter.getName();
-		if(!strcmp(name, "FlateDecode"))
-			return true;
-	}
+	// single filter is ovious
+	if(count==1 && filters[0] == "FlateDecode")
+		return true;
+	// If the filters are somehow incorrect then we will replace
+	// them with the flatedecode
+	if(count==-1)
+		return true;
 	return false;
 }
 
