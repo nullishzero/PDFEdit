@@ -406,13 +406,20 @@ using namespace utils;
 	{
 		::Ref ref=i->first;
 		Object * obj=i->second->object;
-		changed.push_back(IPdfWriter::ObjectElement(ref, obj));
+		// for sake of paranoia we should send clones and not the
+		// object itself to writer which is allowed to alter object
+		changed.push_back(IPdfWriter::ObjectElement(ref, obj->clone()));
 	}
 
 	// delegates writing to pdfWriter using streamWriter stream from storePos
-	// position.
-	// Stores position of the cross reference section to xrefPos
+	// position and frees all clones from changed storage.
 	pdfWriter->writeContent(changed, *streamWriter, storePos);
+	for(IPdfWriter::ObjectList::iterator i=changed.begin(); i!=changed.end(); ++i){
+		Object *o = i->second;
+		xpdf::freeXpdfObject(o);
+	}
+
+	// Stores position of the cross reference section to xrefPos
 	size_t xrefPos=streamWriter->getPos();
 	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::maxObj+1};
 	size_t newEofPos=pdfWriter->writeTrailer(trailerDict, secInfo, *streamWriter);
