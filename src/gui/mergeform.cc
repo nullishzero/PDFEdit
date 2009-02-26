@@ -136,9 +136,8 @@ void MergeDialog::mergeList_currentChanged( Q_ListBoxItem * item)
                 else
                         upBtn->setEnabled(FALSE);
 
-                // down button is enabled only if we are not on last
-                // item
-                if(mergeList->currentItem() + 1>=(int)(mergeList->count())) downBtn->setEnabled(FALSE);
+                // down button is enabled only if we are before END page
+                if(mergeList->currentItem()+1>pageCount) downBtn->setEnabled(FALSE);
                 else downBtn->setEnabled(TRUE);
         } else {
                 upBtn->setEnabled(FALSE);
@@ -266,7 +265,7 @@ void MergeDialog::upBtn_clicked() {
 
 void MergeDialog::downBtn_clicked() {
         int pos=mergeList->currentItem();
-        if (pos<(int)(mergeList->count())) {
+        if (pos<pageCount) {
                 Q_ListBoxItem * item=mergeList->item(pos);
                 mergeList->takeItem(item);
                 mergeList->insertItem(item, pos+1);
@@ -345,6 +344,8 @@ void MergeDialog::initOriginal( size_t count ) {
   //ListItem * listItem=
   new ListItem(new NodeData(NodeData::ORIGINAL, i), mergeList, itemLabel);
  }
+ new ListItem(new NodeData(NodeData::ORIGINAL, count+1), mergeList, 
+		 QString("[")+tr("END","end of document marker")+QString("]"));
 }
 
 
@@ -363,7 +364,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
  CPdf::OpenMode mode=CPdf::ReadOnly;
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
-  document=util::getPdfInstance(this,fileName,mode);
+  document=util::getPdfInstance(this,util::convertFromUnicode(fileName,util::NAME),mode);
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
  } catch (PdfOpenException &ex) {
@@ -372,7 +373,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
   //TODO: some messagebox?
   return false;
  }
- size_t count = document->getPageCount();
+ size_t count = pageCount = document->getPageCount();
  document.reset();
  char itemLabel[128];
  QFileInfo fi(fileName);

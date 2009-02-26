@@ -163,6 +163,7 @@ public:
 class MergeDialog : public QDialog {
     Q_OBJECT
 
+    size_t pageCount;
 public:
     MergeDialog( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~MergeDialog();
