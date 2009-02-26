@@ -21,15 +21,19 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
+#include <kernel/static.h>
 #include <sstream>
 #include <kernel/pdfedit-core-dev.h>
 #include <kernel/cpdf.h>
 #include <kernel/cpage.h>
 #include <kernel/ccontentstream.h>
+#include <boost/program_options.hpp>
 
-using namespace boost;
+
 using namespace pdfobjects;
 using namespace std;
+using namespace boost;
+namespace po = program_options;
 
 namespace {
 	template<typename T, typename U>
@@ -47,36 +51,61 @@ int main(int argc, char ** argv)
 	if (pdfedit_core_dev_init(&argc, &argv))
 		return 1;
 
-	std::vector<string> args (argv+1, argv+argc);
+	// Declare the supported options.
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("help", "produce help message")
+		("file", po::value<string>(), "set compression level")
+		("from", po::value<size_t>()->default_value(1), "start page (default 0)")
+		("to", po::value<size_t>(), "end page (default till the end)")
+	;
 
-	if (args.size() < 3)
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);    
+
+	if (vm.count("help")) {
+		cout << desc << "\n";
 		return 1;
+	}
 
-	string filename = args[0];
-	string frompage = args[1];
-	string topage = args[2];
+	if (!vm.count("file")) 
+	{
+		cout << "File not specified" << endl;
+		return 1;
+	}
+	string file = vm["file"].as<string>(); 
+	size_t from = vm["from"].as<size_t>();
+
+	// open pdf
+	shared_ptr<CPdf> pdf = CPdf::getInstance (file.c_str(), CPdf::ReadWrite);
+
+	// sane values
+	size_t to = pdf->getPageCount();
+	if (vm.count("to")) 
+		to = std::min(to, vm["to"].as<size_t>());
 
 	//
-	shared_ptr<CPdf> pdf = CPdf::getInstance (filename.c_str(), CPdf::ReadWrite);
-
-	//
-	cout << "# Pages: " << pdf->getPageCount () << endl;
+	cout << "File: " << file << " #pages: " << pdf->getPageCount ()
+			<< " from: " << from << " to: " << to << endl;
 	
 	// speciality
-	for (int i = _to<int,string>(frompage); i < std::min (_to<unsigned int,string>(topage), pdf->getPageCount()); ++i)
+	for (size_t i = from; i < to; ++i)
 	{
+		std::cout << "=====================" << endl;
+		std::cout << "PAGE NUMBER " << i << endl;
 		shared_ptr<CPage> page = pdf->getPage(i);
 		typedef vector<shared_ptr<CContentStream> > CCs;
 		CCs ccs;
 		page->getContentStreams (ccs);
-		std::cout << "PAGE NUMBER " << i << endl;
-		std::cout << "=====================" << endl;
+		std::cout << "- parsed" << endl;
 		for (CCs::const_iterator it = ccs.begin(); it != ccs.end(); ++it)
 		{
 			string str;
 			(*it)->getStringRepresentation (str);
 			std::cout << str << flush;
 		}
+		std::cout << "- got the repre" << endl;
 	}
 	
 	gMemReport(stdout);
