@@ -234,6 +234,7 @@ CPageContents::~CPageContents ()
 shared_ptr<CContentStream> 
 CPageContents::getContentStream (CContentStream* cc)
 {
+	init();
 	for (CCs::iterator it = _ccs.begin(); it != _ccs.end(); ++it)
 		if ((*it).get() == cc)
 		  return *it;
@@ -246,8 +247,9 @@ CPageContents::getContentStream (CContentStream* cc)
 shared_ptr<CContentStream> 
 CPageContents::getContentStream (size_t pos)
 {
-		if (pos >= _ccs.size())
-			throw CObjInvalidOperation ();
+	init();
+	if (pos >= _ccs.size())
+		throw CObjInvalidOperation ();
 	return _ccs[pos];
 }
 
@@ -282,6 +284,7 @@ CPageContents::addToFront (const Container& cont)
 
 	// copy it to front
 	_tmp.push_back (cc);
+	init();
 	std::copy (_ccs.begin(), _ccs.end(), std::back_inserter(_tmp));
 	_ccs = _tmp;
 
@@ -320,7 +323,7 @@ CPageContents::addToBack (const Container& cont)
 	// Init and save smart pointer
 	boost::shared_ptr<CContentStream> cc (new CContentStream(streams,state,res));
 	cc->setSmartPointer (cc);
-
+	init();
 	_ccs.push_back (cc);
 
 	// Indicate change
@@ -338,6 +341,7 @@ CPageContents::remove (size_t csnum)
 {
 	if (!hasValidPdf(_dict))
 		throw CObjInvalidObject ();
+	init();
 	if (csnum >= _ccs.size())
 		throw OutOfRange ();
 
@@ -672,6 +676,8 @@ CPageContents::reparse ( )
 	_xpdf_display_params (res, state);
 	
 	// Set only bboxes
+	// TODO: is there any possible way that _ccs is not initialized yet?
+	// can someone call reparse sooner than parse?
 	for (CCs::iterator it = _ccs.begin(); it != _ccs.end(); ++it)
 		(*it)->reparse (true, state, res);
 
@@ -817,6 +823,7 @@ void
 CPageContents::moveAbove (shared_ptr<const CContentStream> ct)
 {
 	// Get the next item
+	init();
 	CCs::iterator itNext = find (_ccs.begin(), _ccs.end(), ct);
 		if (itNext == _ccs.end())
 			throw CObjInvalidOperation ();
@@ -847,6 +854,7 @@ CPageContents::moveBelow (shared_ptr<const CContentStream> ct)
 {
 	// Get the item index
 	unsigned int pos = 0;
+	init();
 	for (pos = 0; pos < _ccs.size(); ++pos)
 		if (_ccs[pos] == ct)
 			break;

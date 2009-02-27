@@ -196,6 +196,7 @@ public:
 		TextSource text_source;
 
 		// Get text from all content streams
+		init();
 		for (CCs::iterator it = _ccs.begin(); it != _ccs.end(); ++it)
 		{
 			// Get operators and build text representation if not empty
