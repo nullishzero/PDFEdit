@@ -119,6 +119,7 @@ main(int argc, char ** argv)
 	// 
 	// pdf lib init & work
 	//
+	try
 	{
 		_pdf_lib _lib(argc, argv);
 			if (!_lib._ok)
@@ -143,6 +144,10 @@ main(int argc, char ** argv)
 		}
 
 		pdf->save ();
+	
+	}catch (std::exception& e)
+	{
+		std::cout << "exception - " << e.what();
 	}
 
 	return 0;
