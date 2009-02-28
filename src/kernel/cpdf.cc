@@ -3217,7 +3217,7 @@ void CPdf::canChange () const
 	check_need_credentials(xref);
 
 	if (xref->isLinearized())
-		throw ReadOnlyDocumentException("Dcoument is linearized");
+		throw ReadOnlyDocumentException("Document is linearized");
 
 	// Not in lates revision
 	if (xref->getActualRevision())
