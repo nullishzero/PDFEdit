@@ -99,8 +99,14 @@ main(int argc, char ** argv)
 	;
 
 	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, desc), vm);
-	po::notify(vm);    
+	try {
+		po::store(po::parse_command_line(argc, argv, desc), vm);
+		po::notify(vm);    
+	}catch(std::exception& e)
+	{
+		std::cout << "exception - " << e.what() << ". Please, check your parameters." << endl;
+		return 1;
+	}
 
 		if (!vm.count("file") || !vm.count("p")) 
 		{
@@ -114,7 +120,6 @@ main(int argc, char ** argv)
 	size_t to = numeric_limits<size_t>::max();
 	if (vm.count("to")) 
 		to = vm["to"].as<size_t>();
-
 
 	// 
 	// pdf lib init & work
