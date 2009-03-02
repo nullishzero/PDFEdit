@@ -61,7 +61,7 @@ namespace {
 		void operator () (shared_ptr<CPage> page, P& p)
 		{
 				if (p.size() < 1) throw std::runtime_error ("too few p params");
-			page->setRotation ((int)(&p[0]));
+			page->setRotation ((int)(p[0]));
 		}
 	};
 	const string sr::name ("sr");
