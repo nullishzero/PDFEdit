@@ -42,7 +42,7 @@
 				UseUnicodeResponseFiles="true"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				GeneratePreprocessedFile="0"
 				KeepComments="false"
 				StringPooling="false"
@@ -50,16 +50,16 @@
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
-				DisableLanguageExtensions="false"
+				DisableLanguageExtensions="true"
 				TreatWChar_tAsBuiltInType="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="kernel/static.h"
 				BrowseInformation="1"
 				BrowseInformationFile="$(IntDir)\"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4250;4127"
+				DisableSpecificWarnings="4512;4100;4121;4127;4250;4505;4355;4224"
 				ShowIncludes="false"
 			/>
 			<Tool
@@ -118,9 +118,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
-				DisableLanguageExtensions="false"
+				DisableLanguageExtensions="true"
 				TreatWChar_tAsBuiltInType="false"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough=""
@@ -128,6 +128,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
+				DisableSpecificWarnings="4512;4100;4121;4127;4250;4505;4355;4224"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -203,7 +204,7 @@
 				UseUnicodeResponseFiles="true"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				GeneratePreprocessedFile="0"
 				KeepComments="false"
 				StringPooling="false"
@@ -211,16 +212,16 @@
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
-				DisableLanguageExtensions="false"
+				DisableLanguageExtensions="true"
 				TreatWChar_tAsBuiltInType="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="kernel/static.h"
 				BrowseInformation="1"
 				BrowseInformationFile="$(IntDir)\"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4250"
+				DisableSpecificWarnings="4512;4100;4121;4127;4250;4505;4355;4224"
 				ShowIncludes="false"
 			/>
 			<Tool
@@ -236,6 +237,95 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="zlib.lib cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
 				OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
+				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
+				GenerateDebugInformation="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				OutputFile="$(IntDir)\$(ProjectName).bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug-Tools (testing)|Win32"
+			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
+			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				UseUnicodeResponseFiles="true"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
+				GeneratePreprocessedFile="0"
+				KeepComments="false"
+				StringPooling="false"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				SmallerTypeCheck="true"
+				RuntimeLibrary="3"
+				DisableLanguageExtensions="true"
+				TreatWChar_tAsBuiltInType="false"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="kernel/static.h"
+				BrowseInformation="1"
+				BrowseInformationFile="$(IntDir)\"
+				WarningLevel="4"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4512;4100;4121;4127;4250;4505;4355;4224"
+				ShowIncludes="false"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="zlib.lib"
+				OutputFile="$(OutDir)\$(ProjectName)-tool.exe"
 				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"
 			/>
@@ -306,12 +396,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testccontentstream.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -330,12 +436,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testcobjecthelpers.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -354,12 +476,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testcpage.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -378,12 +516,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testcstream.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -402,12 +556,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testparams.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -426,12 +596,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\teststream.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -450,6 +636,14 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testtextoutput.cc"
@@ -462,12 +656,28 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\tests\kernel\testutils.cc"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -802,6 +1012,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\pdfoperators.cc"
@@ -845,6 +1063,15 @@
 							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\pdfwriter.cc"
@@ -875,6 +1102,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug-Tests|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -1001,12 +1236,62 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug-Tools (testing)|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\utils\debug.cc"
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="tools"
+			>
+			<File
+				RelativePath="..\..\src\tests\tools\displaycs.cc"
+				>
+				<FileConfiguration
+					Name="Debug-Tools (testing)|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\tests\tools\pagemetrics.cc"
+				>
+				<FileConfiguration
+					Name="Debug-Tools (testing)|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\tests\tools\parse_object.cc"
+				>
+				<FileConfiguration
+					Name="Debug-Tools (testing)|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

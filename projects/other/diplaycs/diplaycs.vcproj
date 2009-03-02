@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="test_cppunit"
-	ProjectGUID="{54BD1798-9070-4080-939E-7CFCC7AECE12}"
-	RootNamespace="test_cppunit"
+	Name="diplaycs"
+	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-0765181FE3BC}"
+	RootNamespace="diplaycs"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,14 +17,13 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
 			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- testing CPPUNIT availability&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -41,7 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -49,6 +49,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4512;4100;4121;4127;4250;4505;4355;4224"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -58,11 +59,12 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install CPPUNIT properly.&quot;"
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="kernel.lib zlib1d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -90,12 +92,11 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- CPPUNIT available.&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
 			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -103,7 +104,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- testing CPPUNIT availability&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -119,6 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -134,7 +135,6 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install CPPUNIT properly.&quot;"
 			/>
 			<Tool
 				Name="VCLinkerTool"
@@ -168,19 +168,17 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- CPPUNIT available.&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug-Tools (testing)|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
 			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- testing CPPUNIT availability&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -197,7 +195,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -205,6 +204,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4512;4100;4121;4127;4250;4505;4355;4224"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -214,11 +214,12 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install CPPUNIT properly.&quot;"
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="kernel.lib zlib1d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -246,7 +247,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- CPPUNIT available.&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -254,35 +254,8 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\test_cppunit.cpp"
+			RelativePath="..\..\..\src\tests\tools\displaycs.cc"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug-Tools (testing)|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
