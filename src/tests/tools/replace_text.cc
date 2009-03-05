@@ -26,8 +26,16 @@
 #include <kernel/cpdf.h>
 #include <kernel/cpage.h>
 #include <kernel/ccontentstream.h>
+#include <kernel/pdfoperatorsiter.h>
 #include <boost/program_options.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <limits>
+
+#ifdef WIN32
+#include <Windows.h>
+#undef max
+#undef min
+#endif
 
 
 using namespace pdfobjects;
@@ -46,18 +54,47 @@ namespace {
 		~_pdf_lib () {pdfedit_core_dev_destroy();}
 	};
 
-	struct replace {
+	struct _replace {
 		static const string name;
-		void operator () (shared_ptr<CPage> page, const string& str)
+		void operator () (shared_ptr<CPage> page, const string& what, const string& with)
 		{
 			typedef vector<shared_ptr<CContentStream> > CCs;
 			CCs ccs;
 			page->getContentStreams (ccs);
-
+			for (CCs::iterator it = ccs.begin(); it != ccs.end(); ++it)
+			{
+				bool dirty = false;
+				typedef vector<boost::shared_ptr<PdfOperator> > Opers;
+				Opers opers;
+				(*it)->getPdfOperators (opers);
+					if (opers.empty())
+						continue;
+				TextOperatorIterator tit = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
+				while (!tit.isEnd())
+				{
+					// uff
+					boost::shared_ptr<TextSimpleOperator> _cur 
+							= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
+					std::string tmp;
+					_cur->getRawText (tmp);
+					string replaced = boost::replace_all_copy (tmp, what, with);
+					if (tmp != replaced)
+					{
+						dirty = true;
+						boost::shared_ptr<TextSimpleOperator> _cur 
+								= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
+						_cur->setRawText (replaced);
+					}
+					tit.next();
+				}
+				if (dirty)
+					(*it)->_objectChanged();
+			
+			} // for (CCs::iterator it = ccs.begin(); it != ccs.end(); ++it)
 
 		}
 	};
-	const string smb::name ("replace");
+	const string _replace::name ("replace");
 }
 
 int 
@@ -93,6 +130,13 @@ main(int argc, char ** argv)
 		}
 	string file = vm["file"].as<string>(); 
 	size_t from = vm["from"].as<size_t>();
+	vector<string> whats = vm["what"].as<vector<string> >();
+	vector<string> withs = vm["with"].as<vector<string> >();
+		if (whats.size() != withs.size())
+		{
+			cout << desc << endl;
+			return 1;
+		}
 	size_t to = numeric_limits<size_t>::max();
 	if (vm.count("to")) 
 		to = vm["to"].as<size_t>();
@@ -112,11 +156,23 @@ main(int argc, char ** argv)
 		// sane values
 		to = std::min(to, pdf->getPageCount()+1);
 
-		// now the hard stuff comes
-		for (size_t i = from; i < to; ++i)
+		// now the hard stuff comes - do this crazy loops intentionally
+		for (size_t things_to_replace = 0; things_to_replace < withs.size(); ++things_to_replace)
 		{
-			shared_ptr<CPage> page = pdf->getPage(i);
-			replace()(page,p);
+			#ifdef WIN32
+			DWORD time = ::GetTickCount ();
+			#endif
+
+			string what = whats[things_to_replace];
+			string with = withs[things_to_replace];
+			for (size_t i = from; i < to; ++i)
+			{
+				shared_ptr<CPage> page = pdf->getPage(i);
+				_replace()(page, what, with);
+			}
+			#ifdef WIN32
+			cout << "time passed:" << ::GetTickCount()-time << endl;
+			#endif
 		}
 
 		pdf->save ();
