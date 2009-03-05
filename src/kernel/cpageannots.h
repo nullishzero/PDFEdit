@@ -28,8 +28,8 @@
 
 // static includes
 #include "kernel/static.h"
-#include "kernel/iproperty.h"
 #include "kernel/cpagemodule.h"
+#include "kernel/iproperty.h"
 
 
 //==========================================================

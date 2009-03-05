@@ -27,10 +27,10 @@
 #define __CANNOTATION_H__
 
 #include "kernel/static.h"
-#include "kernel/cobject.h"
 
 namespace pdfobjects
 {
+class CDict;
 
 namespace utils
 {

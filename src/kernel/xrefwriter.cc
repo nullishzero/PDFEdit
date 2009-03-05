@@ -24,10 +24,12 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 #include "kernel/static.h"
-#include<errno.h>
 #include "kernel/xrefwriter.h"
 #include "kernel/cpdf.h"
 #include "kernel/cobject.h"
+#include "kernel/cxref.h"
+#include "kernel/streamwriter.h"
+#include "kernel/pdfwriter.h"
 
 using namespace debug;
 
@@ -168,6 +170,14 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 	disableInternalFetch();
 }
 
+XRefWriter::~XRefWriter()
+{
+	kernelPrintDbg(debug::DBG_DBG, "");
+	if(pdfWriter)
+		delete pdfWriter;
+}
+
+
 utils::IPdfWriter * XRefWriter::setPdfWriter(utils::IPdfWriter * writer)
 {
 using namespace utils;
@@ -307,6 +317,13 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 
 	// everything ok
 	return CXref::changeTrailer(name, value);
+}
+
+RefState XRefWriter::knowsRef(IndiRef& ref)
+{
+	::Ref xpdfRef={ref.num, ref.gen};
+	// otherwise use XRef directly
+	return knowsRef(xpdfRef);
 }
 
 ::Ref XRefWriter::reserveRef()

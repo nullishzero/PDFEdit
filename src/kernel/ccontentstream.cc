@@ -35,6 +35,7 @@
 #include "kernel/factories.h"
 #include "kernel/cinlineimage.h"
 #include "kernel/contentschangetag.h"
+#include "kernel/pdfoperatorsiter.h"
 
 //fabs
 #include <math.h>

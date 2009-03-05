@@ -35,6 +35,7 @@
 #include "kernel/textoutput.h"
 #include "kernel/textsearchparams.h"
 #include "kernel/stateupdater.h"
+#include "kernel/cobjectsimple.h"
 
 
 //==========================================================

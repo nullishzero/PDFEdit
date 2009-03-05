@@ -23,10 +23,10 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "kernel/xpdf.h"
 #include "kernel/static.h"
 #include "kernel/pdfwriter.h"
 #include "kernel/cobject.h"
+#include "kernel/streamwriter.h"
 #include <zlib.h>
 
 /** Size of buffer for xref table row.

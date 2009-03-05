@@ -28,21 +28,25 @@
 
 #include "kernel/static.h"
 
-//#include <inttypes.h>
-
-// xpdf
-#include "kernel/xpdf.h"
-
-// mode controller
-#include "kernel/modecontroller.h"
-#include "kernel/cobject.h"
 #include "kernel/xrefwriter.h"
-#include "kernel/cxref.h"
+#include "kernel/modecontroller.h"
+#include "kernel/iproperty.h"
+#include "kernel/cstream.h"
+
+class StreamWriter;
 
 // =============================================================================
 namespace pdfobjects {
 
+class IProperty;
+class CDict;
+template<typename IP> inline boost::shared_ptr<CDict> getCDictFromDict (IP& ip, const std::string& key);
+
 namespace utils {
+
+template<typename Container> void getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont);
+
+class IPdfWriter;
 
 /**
  * Indirect referencies comparator.
@@ -1597,20 +1601,12 @@ public:
 	 * @return true if no credentials have been set yet and they are
 	 * required (setCredentials method has to be called), false otherwise.
 	 */
-	bool needsCredentials()const
-	{
-		return xref->getNeedCredentials();
-	}
+	bool needsCredentials()const;
 
 	/** Sets credentials for encrypted document.
 	 * Delegates to CXref::setCredentials method.
 	 */
-	void setCredentials(const char * ownerPasswd, const char * userPasswd)
-	{
-		kernelPrintDbg(debug::DBG_INFO, "Setting credentions");
-		xref->setCredentials(ownerPasswd, userPasswd);
-		initRevisionSpecific();
-	}
+	void setCredentials(const char * ownerPasswd, const char * userPasswd);
 };
 
 

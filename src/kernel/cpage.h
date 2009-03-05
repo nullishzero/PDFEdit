@@ -36,7 +36,6 @@
 #include "kernel/cpagechanges.h"	// 
 #include "kernel/cpageannots.h"		// 
 #include "kernel/cpagefonts.h"
-//#include "kernel/cpagedisplay.h"
 
 //=====================================================================================
 namespace pdfobjects {

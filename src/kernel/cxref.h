@@ -26,10 +26,9 @@
 #define _CXREF_H_
 
 // xpdf
-#include "kernel/xpdf.h"
+#include "kernel/static.h"
 
-#include "kernel/iproperty.h"
-#include<limits.h>
+#include "kernel/indiref.h"
 
 namespace pdfobjects
 {

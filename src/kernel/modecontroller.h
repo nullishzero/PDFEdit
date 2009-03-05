@@ -27,8 +27,6 @@
 #define _MODECONTROLLER_H_
 
 #include "kernel/static.h"
-#include "utils/rulesmanager.h"
-#include "utils/confparser.h"
 
 //=====================================================================================
 

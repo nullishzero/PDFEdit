@@ -26,11 +26,7 @@
 #ifndef _PDF_WRITER_H_
 #define _PDF_WRITER_H_
 
-#include<vector>
-#include<map>
-#include "kernel/streamwriter.h"
-#include "utils/objectstorage.h"
-#include "utils/observer.h"
+#include "kernel/static.h"
 
 /** Header of pdf file.
  * This string should be appended by pdf version number.
@@ -58,6 +54,8 @@ extern const char * STARTXREF_KEYWORD;
  * This key word marks end of pdf document in the file. 
  */
 extern const char * EOFMARKER;
+
+class StreamWriter;
 
 namespace pdfobjects {
 

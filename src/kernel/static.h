@@ -100,6 +100,9 @@ using std::min;
 #include "utils/debug.h"
 #include "utils/objectstorage.h"
 #include "utils/observer.h"
+#include "utils/confparser.h"
+#include "utils/rulesmanager.h"
+
 
 // types
 #define _JM_NAMESPACE libs	 

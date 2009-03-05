@@ -27,7 +27,6 @@
 #define _COBJECTHELPERS_H_
 
 #include "kernel/cobject.h"
-#include "kernel/iproperty.h"
 
 //=====================================================================================
 namespace pdfobjects {

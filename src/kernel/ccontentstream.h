@@ -29,11 +29,7 @@
 // static includes
 #include "kernel/static.h"
 
-//
-#include "kernel/cobject.h"
-
-// PdfOperator and its iterators
-#include "kernel/pdfoperators.h"
+#include "kernel/pdfoperatorsbase.h"
 #include "kernel/pdfoperatorsiter.h"
 
 //==========================================================
@@ -43,7 +39,8 @@ namespace pdfobjects {
 //
 // Forward declaration
 //
-class CContentStream;	
+class CContentStream;
+class CStream;
 typedef observer::ObserverHandler<CContentStream> CContentStreamObserverSubject;
 
 //==========================================================

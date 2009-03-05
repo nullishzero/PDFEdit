@@ -154,6 +154,11 @@ public:
 	 */
 	virtual void getRawText(std::string& str)const;
 
+	/** 
+	 * Sets raw string.
+	 */
+	void setRawText (std::string& str);
+
 	/** Returns string represented by this text operator converted 
 	 * according the font encoding.
 	 * @param str String to be set.

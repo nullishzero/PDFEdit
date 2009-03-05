@@ -29,9 +29,7 @@
 
 // all basic includes
 #include "kernel/static.h"
-
-// 
-#include "kernel/cobject.h"
+#include "kernel/cstream.h"
 
 
 //=====================================================================================

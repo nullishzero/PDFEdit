@@ -23,9 +23,10 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #include "kernel/static.h" // WIN32 port - precompiled headers - REMOVE IN FUTURE!
-#include <errno.h>
 #include "kernel/delinearizator.h"
+#include "kernel/pdfwriter.h"
 #include "utils/debug.h"
+#include "kernel/cxref.h"
 #include "kernel/xrefwriter.h"
 #include "kernel/streamwriter.h"
 #include "kernel/factories.h"
@@ -84,6 +85,14 @@ using namespace debug;
 
 	return instance;
 
+}
+
+Delinearizator::~Delinearizator()
+{
+	if(pdfWriter)
+		delete pdfWriter;
+	// FILE stream has to be closed - FileStream::close method doesn't do that!
+	fclose(file);
 }
 
 int Delinearizator::delinearize(const char * fileName)

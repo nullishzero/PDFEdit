@@ -26,7 +26,7 @@
 #ifndef _CPAGEMODULE_H
 #define _CPAGEMODULE_H
 
-#include "static.h"
+#include "kernel/static.h"
 
 //=====================================================================================
 namespace pdfobjects {

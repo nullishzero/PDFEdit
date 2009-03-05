@@ -31,6 +31,7 @@
 #include "kernel/cpage.h"
 #include "kernel/ccontentstream.h"
 #include "kernel/cpagedisplay.h"
+#include "kernel/pdfoperatorsiter.h"
 
 //==========================================================
 namespace pdfobjects {

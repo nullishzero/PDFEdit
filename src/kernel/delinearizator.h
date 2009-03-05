@@ -25,10 +25,9 @@
 #ifndef _DELINEARIZATOR_H_
 #define _DELINEARIZATOR_H_
 
-#include "kernel/xpdf.h"
-#include "kernel/exceptions.h"
-#include "kernel/pdfwriter.h"
+#include "kernel/static.h"
 #include "kernel/cxref.h"
+
 
 /** Exception for not linearized pdf documents.
  * This exception is thrown if Delinearizator is used for non linearized
@@ -47,11 +46,14 @@ public:
 	}
 };
 
+class FileStreamWriter;
+
 namespace pdfobjects
 {
 
 namespace utils
 {
+class IPdfWriter;
 
 /** Delinearizator class.
  *
@@ -132,13 +134,7 @@ public:
 	 * Destroys XRefWriter internal data, deallocates pdfWriter and closes file
 	 * handle opened used for FileStream.
 	 */
-	~Delinearizator()
-	{
-		if(pdfWriter)
-			delete pdfWriter;
-		// FILE stream has to be closed - FileStream::close method doesn't do that!
-		fclose(file);
-	}
+	~Delinearizator();
 	
 	/** Factory method for instance creation.
 	 * @param fileName Name of the pdf file.

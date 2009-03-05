@@ -27,6 +27,7 @@
 #include "kernel/static.h"
 //
 #include "kernel/cinlineimage.h"
+#include "kernel/cobject.h"
 
 // =====================================================================================
 namespace pdfobjects {

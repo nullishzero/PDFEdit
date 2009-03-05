@@ -34,13 +34,16 @@
 
 #include "kernel/static.h"
 #include "kernel/cxref.h"
-#include "kernel/streamwriter.h"
-#include "kernel/pdfwriter.h"
 
+class StreamWriter;
 
 namespace pdfobjects
 {
+class CPdf;
+struct IndiRef;
+
 namespace utils {
+class IPdfWriter;
 
 /** Checks whether given stream is linearized.
  * @param stream Pdf stream to read (from the file begin).
@@ -258,12 +261,7 @@ public:
 	 *
 	 * Deallocates pdfWriter field if it is non NULL.
 	 */
-	~XRefWriter()
-	{
-		kernelPrintDbg(debug::DBG_DBG, "");
-		if(pdfWriter)
-			delete pdfWriter;
-	}
+	~XRefWriter();
 	
 	/** Sets new pdf writer implementator.
 	 * @param writer Implementation of IPdfWriter (must be non NULL).
@@ -532,13 +530,8 @@ public:
 	 * @see RefState
 	 * @return Reference state.
 	 */
-	virtual RefState knowsRef(IndiRef ref)
-	{
-		::Ref xpdfRef={ref.num, ref.gen};
-		// otherwise use XRef directly
-		return knowsRef(xpdfRef);
-	}
-
+	virtual RefState knowsRef(IndiRef& ref);
+	
 	/** Registers new reference.
 	 *
 	 * This is just wrapper for CXref::reference method.

@@ -24,8 +24,6 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #include "kernel/static.h"
 
-#include <errno.h>
-
 #include "kernel/cobject.h"
 #include "kernel/cpdf.h"
 #include "kernel/cpage.h"
@@ -33,6 +31,7 @@
 #include "utils/debug.h"
 #include "kernel/cpageattributes.h"
 #include "kernel/pdfedit-core-dev.h"
+#include "kernel/streamwriter.h"
 
 using namespace boost;
 using namespace std;
@@ -3226,5 +3225,18 @@ void CPdf::canChange () const
 	if (ReadOnly == getMode())
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 }
+
+bool CPdf::needsCredentials()const
+{
+	return xref->getNeedCredentials();
+}
+
+void CPdf::setCredentials(const char * ownerPasswd, const char * userPasswd)
+{
+	kernelPrintDbg(debug::DBG_INFO, "Setting credentions");
+	xref->setCredentials(ownerPasswd, userPasswd);
+	initRevisionSpecific();
+}
+
 
 } // end of pdfobjects namespace

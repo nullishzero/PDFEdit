@@ -24,7 +24,7 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 
-#include "kernel/xpdf.h"
+#include "kernel/static.h"
 
 /**
  * @file streamwriter.h

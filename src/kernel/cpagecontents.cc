@@ -32,6 +32,7 @@
 #include "kernel/cpage.h"
 #include "kernel/cpdf.h"
 #include "kernel/cpagedisplay.h"
+#include "kernel/contentschangetag.h"
 
 //==========================================================
 namespace pdfobjects {

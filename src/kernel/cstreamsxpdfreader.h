@@ -27,11 +27,8 @@
 
 // all basic includes
 #include "kernel/static.h"
-#include "kernel/iproperty.h"
-// Filters
 #include "kernel/cstream.h"
 #include "kernel/cobjecthelpers.h"
-#include "kernel/xpdf.h"
 
 /** 
  * Content streams can be separated in crazy

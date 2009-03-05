@@ -28,7 +28,6 @@
 // all basic includes
 #include "kernel/static.h"
 #include "kernel/cdict.h"
-#include "kernel/iproperty.h"
 
 
 //=====================================================================================
