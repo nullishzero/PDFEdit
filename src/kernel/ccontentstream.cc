@@ -536,6 +536,9 @@ CContentStream::OperandObserver::notify (boost::shared_ptr<IProperty> newValue,
 										  boost::shared_ptr<const IProperty::ObserverContext>) const 
 throw ()
 {
+		if (_locked) 
+			return;
+
 	try {
 
 		utilsPrintDbg (debug::DBG_DBG, "");
@@ -638,6 +641,43 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 	if (!operators.empty()) 
 		StateUpdater::updatePdfOperators (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate, BBoxUpdater());
 }
+
+//
+//
+//
+void 
+CContentStream::replaceText (const std::string& what, const std::string& with)
+{
+	bool dirty = false;
+		if (operators.empty())
+			return;
+
+	operandobserver->lock();
+
+	TextOperatorIterator tit = PdfOperator::getIterator<TextOperatorIterator> (operators.front());
+	while (!tit.isEnd())
+	{
+		// uff
+		boost::shared_ptr<TextSimpleOperator> _cur 
+				= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
+		std::string tmp;
+		_cur->getRawText (tmp);
+		string replaced = boost::replace_all_copy (tmp, what, with);
+		if (tmp != replaced)
+		{
+			dirty = true;
+			boost::shared_ptr<TextSimpleOperator> _cur 
+					= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
+			_cur->setRawText (replaced);
+		}
+		tit.next();
+	}
+
+	operandobserver->unlock();
+	if (dirty)
+		_objectChanged();
+}
+
 
 //
 //

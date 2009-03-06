@@ -31,7 +31,11 @@
 //
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
-#define _HAS_ITERATOR_DEBUGGING 0
+#ifdef _HAS_ITERATOR_DEBUGGING
+#undef _HAS_ITERATOR_DEBUGGING
+#endif
+// boost won't work otherwise!
+#define _HAS_ITERATOR_DEBUGGING 1
 
 
 #include <time.h>

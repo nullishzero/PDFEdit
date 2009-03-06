@@ -99,7 +99,7 @@ class IProperty : public IPropertyObserverSubject
 private:
 	IndiRef 		ref;		/**< Objects pdf identification and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
-	boost::weak_ptr<CPdf> 	pdf;		/**< This object belongs to this pdf. */	
+	boost::weak_ptr<CPdf> 	pdf;/**< This object belongs to this pdf. */	
 	bool			wantDispatch;/**< If true changes are dispatched. */
 
 	//

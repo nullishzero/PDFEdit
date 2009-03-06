@@ -25,6 +25,8 @@
 #include <kernel/pdfedit-core-dev.h>
 #include <kernel/cpdf.h>
 #include <kernel/cpage.h>
+#include <kernel/delinearizator.h>
+#include <kernel/pdfwriter.h>
 #include <kernel/ccontentstream.h>
 #include <kernel/pdfoperatorsiter.h>
 #include <boost/program_options.hpp>
@@ -41,6 +43,7 @@
 using namespace pdfobjects;
 using namespace std;
 using namespace boost;
+using namespace utils;
 namespace po = program_options;
 
 namespace {
@@ -58,40 +61,7 @@ namespace {
 		static const string name;
 		void operator () (shared_ptr<CPage> page, const string& what, const string& with)
 		{
-			typedef vector<shared_ptr<CContentStream> > CCs;
-			CCs ccs;
-			page->getContentStreams (ccs);
-			for (CCs::iterator it = ccs.begin(); it != ccs.end(); ++it)
-			{
-				bool dirty = false;
-				typedef vector<boost::shared_ptr<PdfOperator> > Opers;
-				Opers opers;
-				(*it)->getPdfOperators (opers);
-					if (opers.empty())
-						continue;
-				TextOperatorIterator tit = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
-				while (!tit.isEnd())
-				{
-					// uff
-					boost::shared_ptr<TextSimpleOperator> _cur 
-							= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
-					std::string tmp;
-					_cur->getRawText (tmp);
-					string replaced = boost::replace_all_copy (tmp, what, with);
-					if (tmp != replaced)
-					{
-						dirty = true;
-						boost::shared_ptr<TextSimpleOperator> _cur 
-								= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
-						_cur->setRawText (replaced);
-					}
-					tit.next();
-				}
-				if (dirty)
-					(*it)->_objectChanged();
-			
-			} // for (CCs::iterator it = ccs.begin(); it != ccs.end(); ++it)
-
+			page->replaceText (what, with);
 		}
 	};
 	const string _replace::name ("replace");
@@ -152,6 +122,19 @@ main(int argc, char ** argv)
 
 		// open pdf
 		shared_ptr<CPdf> pdf = CPdf::getInstance (file.c_str(), CPdf::ReadWrite);
+
+		if (pdf->isLinearized())
+		{
+			pdf.reset ();
+			string out (file+"-delinearised.pdf");
+			{
+				shared_ptr<Delinearizator> del (Delinearizator::getInstance(file.c_str(), new OldStylePdfWriter));
+					if (!del) return -1;
+				del->delinearize(out.c_str());
+			}
+			pdf = CPdf::getInstance (file.c_str(), CPdf::ReadWrite);
+		}
+
 
 		// sane values
 		to = std::min(to, pdf->getPageCount()+1);

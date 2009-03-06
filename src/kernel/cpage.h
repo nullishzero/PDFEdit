@@ -578,6 +578,21 @@ public:
 		{ _changes->displayChange (out, cs); }
 
 
+	//
+	// 
+	//
+public:
+
+	/**
+	 * Replaces text in the whole page.
+	 */
+	void replaceText (const std::string& what, const std::string& with)
+	{
+			_check_validity();
+		_contents->replaceText (what, with);
+	}
+
+
 	 //
 	 // Helper functions
 	 //

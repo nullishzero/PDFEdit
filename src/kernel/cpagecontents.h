@@ -174,6 +174,10 @@ public:
 					  RectangleContainer& recs, 
 					  const TextSearchParams& params = TextSearchParams()) const;
 
+	/**
+	 * Replaces text in the whole page.
+	 */
+	void replaceText (const std::string& what, const std::string& with);
 
 	/**
 	 * Get text source of a page.

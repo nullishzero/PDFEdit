@@ -40,6 +40,7 @@ namespace pdfobjects {
 using namespace std;
 using namespace boost;
 using namespace debug;
+using namespace utils;
 
 
 //==========================================================
@@ -232,6 +233,53 @@ using namespace utils;
 
 	str = rawStr;
 }
+
+void 
+TextSimpleOperator::setRawText (std::string& str)
+{
+		utilsPrintDbg(debug::DBG_DBG, "");
+	
+	std::string name;
+	getOperatorName(name);
+
+	Operands ops;
+	getParameters(ops);
+	if(name == "'" || name == "Tj")
+	{
+			if(ops.size() != 1 || !isString(ops[0]))
+			{
+				utilsPrintDbg(debug::DBG_WARN, "Bad operands for operator " <<name<<" count="<<ops.size()<<" ops[0] type="<< ops[0]->getType());
+				return;
+			}
+		setValueToSimple<CString, pString>(ops[0], str);
+	}
+	else if (name == "\"")
+	{
+			if(ops.size() != 3 || !isArray(ops[2]))
+			{
+				utilsPrintDbg(debug::DBG_WARN, "Bad operands for operator "<<name<<" count="<<ops.size()<<" ops[2] type="<< ops[2]->getType());
+				return;
+			}
+		setValueToSimple<CString, pString>(ops[2], str);
+	}
+	else if (name == "TJ")
+	{
+		shared_ptr<IProperty> op = ops[0];
+			if (!isArray(op) || ops.size() != 1)
+			{
+				utilsPrintDbg(debug::DBG_WARN, "Bad operands for TJ operator: ops[type="<< op->getType() <<" size="<<ops.size()<<"]");
+				return;
+			}
+		// am to lazy to do it
+		utilsPrintDbg(debug::DBG_WARN, "todo!");
+
+	}else
+	{
+		utilsPrintDbg(debug::DBG_WARN, "Bad operator name="<<name);
+		return;
+	}
+}
+
 
 /** Simple class for font data encapsulation.
  */

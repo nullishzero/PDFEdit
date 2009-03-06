@@ -76,6 +76,7 @@
 //============================================
 #include <boost/smart_ptr.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 //============================================
 // our stuff

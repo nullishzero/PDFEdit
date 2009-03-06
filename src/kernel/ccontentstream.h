@@ -159,7 +159,7 @@ private:
 		//
 		// Constructor
 		//
-		OperandObserver (CContentStream* cc) : contentstream (cc)
+		OperandObserver (CContentStream* cc) : contentstream (cc), _locked(false)
 			{assert (cc);}
 		//
 		// Observer interface
@@ -168,12 +168,21 @@ private:
 							 boost::shared_ptr<const IProperty::ObserverContext>) const throw();
 		virtual priority_t getPriority() const throw ()	{return 0;}
 		//
+		//
+		//
+		/** lock notifying */
+		void lock() { _locked = true; }
+		/** unlock notifying */
+		void unlock() { _locked = false; }
+
+		//
 		// Destructor
 		//
 		virtual ~OperandObserver () throw () {}
 
 	private:
 		CContentStream* contentstream;
+		bool _locked;
 	};
 
 	/** Observer observing underlying cstreams. */
@@ -485,6 +494,11 @@ public:
 	 */
 	void setSmartPointer (boost::shared_ptr<CContentStream> ths)
 		{ assert (smart_this.expired()); smart_this = ths; }
+
+	/**
+	 * Replaces text in this content stream. Simple method implemented so far.
+	 */
+	void replaceText (const std::string& what, const std::string& with);
 
 
 private:
