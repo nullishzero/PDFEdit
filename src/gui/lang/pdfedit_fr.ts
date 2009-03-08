@@ -7,6 +7,11 @@
         <translation>Null</translation>
     </message>
     <message>
+        <source>&amp;pdf to xml</source>
+        <comment>Type name</comment>
+        <translation>&amp;pdf vers xml</translation>
+    </message>
+    <message>
         <source>Bool</source>
         <comment>Type name</comment>
         <translation>Bool</translation>
@@ -77,11 +82,11 @@
     </message>
     <message>
         <source>Fatal Error</source>
-        <translation>Erreur Fatale</translation>
+        <translation>Erreur Fatal</translation>
     </message>
     <message>
         <source>Options: </source>
-        <translation>Options : </translation>
+        <translation>Options:</translation>
     </message>
     <message>
         <source>Print help and exit</source>
@@ -93,11 +98,11 @@
     </message>
     <message>
         <source>Stop processing options</source>
-        <translation>Arrêter le traitement des options</translation>
+        <translation>Arrêter le traitement</translation>
     </message>
     <message>
         <source>Invalid commandline option : </source>
-        <translation>option ligne de commande invalide : </translation>
+        <translation>Option de ligne de commande invalide : </translation>
     </message>
     <message>
         <source>PDF files (*.pdf)</source>
@@ -105,11 +110,11 @@
     </message>
     <message>
         <source>Open file ...</source>
-        <translation>Ouvrir fichier ...</translation>
+        <translation>Ouvrir un fichier ...</translation>
     </message>
     <message>
         <source>Save file as ...</source>
-        <translation>Sauvergarder fichier sous ...</translation>
+        <translation>Enregistrer le fichier sous ...</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
@@ -167,15 +172,15 @@ Date: %3
     </message>
     <message>
         <source>Expected: </source>
-        <translation>Exception: </translation>
+        <translation>Attendu : </translation>
     </message>
     <message>
         <source>Missing item in config</source>
-        <translation>Composant de configuration manquante</translation>
+        <translation>Composant de configuration manquant</translation>
     </message>
     <message>
         <source>menu definition</source>
-        <translation>definition de menu</translation>
+        <translation>définition de menu</translation>
     </message>
     <message>
         <source>menu item</source>
@@ -183,7 +188,7 @@ Date: %3
     </message>
     <message>
         <source>2 or more parameters in item definition</source>
-        <translation>2 parametres ou plus dans la definition des composants</translation>
+        <translation>2 paramètres ou plus dans la définition des composants</translation>
     </message>
     <message>
         <source>toolbar item</source>
@@ -191,11 +196,11 @@ Date: %3
     </message>
     <message>
         <source>4 parameters in item definition</source>
-        <translation>4 parametres ou plus dans la definition des composants</translation>
+        <translation>4 paramètres ou plus dans la définition des composants</translation>
     </message>
     <message>
         <source>toolbar definition</source>
-        <translation>definition de la barre d&apos;outils</translation>
+        <translation>définition de la barre d&apos;outils</translation>
     </message>
     <message>
         <source>Cycle in menu detected</source>
@@ -227,7 +232,7 @@ Date: %3
     </message>
     <message>
         <source>Set debug messages verbosity</source>
-        <translation>Definir verbosité des messages de débogage</translation>
+        <translation>Définir la verbosité des messages de débogage</translation>
     </message>
     <message>
         <source>(n = -1 .. 5)</source>
@@ -235,7 +240,7 @@ Date: %3
     </message>
     <message>
         <source>label item</source>
-        <translation>etiquette de composant</translation>
+        <translation>étiquette de composant</translation>
     </message>
     <message>
         <source>Content Stream</source>
@@ -247,7 +252,7 @@ Date: %3
     </message>
     <message>
         <source>Operator</source>
-        <translation>Operateur</translation>
+        <translation>Opérateur</translation>
     </message>
     <message>
         <source>page</source>
@@ -296,11 +301,11 @@ Date: %3
     </message>
     <message>
         <source>Pick a file ...</source>
-        <translation>Selectionnez un fichier ...</translation>
+        <translation>Sélectionnez un fichier ...</translation>
     </message>
     <message>
         <source>New revision of document created</source>
-        <translation>Nouvelle revision du document créer</translation>
+        <translation>Nouvelle révision du document créé</translation>
     </message>
     <message>
         <source>Error occured while loading file</source>
@@ -309,11 +314,11 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>Image was not saved!</source>
-        <translation>L&apos;image n&apos;a pas pu être sauvé!</translation>
+        <translation>L&apos;image n&apos;a pas été enregistrée !</translation>
     </message>
     <message>
         <source>Changed revision to:</source>
-        <translation>Revision changé vers:</translation>
+        <translation>Révision modifiée pour :</translation>
     </message>
     <message>
         <source>Saving as</source>
@@ -321,11 +326,11 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>Operators</source>
-        <translation>Operateurs</translation>
+        <translation>Opérateurs</translation>
     </message>
     <message>
         <source>Warning: This document is linearized PDF!</source>
-        <translation>Attention: Ce document est un PDF linéaire!</translation>
+        <translation>Attention : ce document est un PDF linéaire!</translation>
     </message>
     <message>
         <source>Show all operators</source>
@@ -343,7 +348,7 @@ Une erreur est survenue lors du chargement du fichier</translation>
     <message>
         <source>Showing text. op.</source>
         <comment>mode</comment>
-        <translation>Montrer texte. op.</translation>
+        <translation>Montrer les op. texte.</translation>
     </message>
     <message>
         <source>Null pointer access in </source>
@@ -351,24 +356,24 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>Show only font operators</source>
-        <translation>Montrer seulement les operateurs de polices</translation>
+        <translation>Montrer seulement les opérateurs de polices</translation>
     </message>
     <message>
         <source>Showing font. op.</source>
         <comment>mode</comment>
-        <translation>Montrer polices. op.</translation>
+        <translation>Montrer les op. polices.</translation>
     </message>
     <message>
         <source>Warning: This document is encrypted!</source>
-        <translation>Attention: Ce document est encrypté!</translation>
+        <translation>Attention : ce document est encrypté!</translation>
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>Filtre d&apos;encryption:</translation>
+        <translation>Filtre d&apos;encryptage :</translation>
     </message>
     <message>
         <source>No page selected!</source>
-        <translation>Aucune page selectionné!</translation>
+        <translation>Aucune page sélectionnée !</translation>
     </message>
     <message>
         <source>Must define color</source>
@@ -376,15 +381,15 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>r,g,b must be number</source>
-        <translation>r,g,b doit être un nombre</translation>
+        <translation>r, g et b doivent être des nombres</translation>
     </message>
     <message>
         <source>r,g,b must be from 0 to 255</source>
-        <translation>r,g,b doit être  de 0 a 255</translation>
+        <translation>r, g et b doivent être  compris entre 0 et 255</translation>
     </message>
     <message>
         <source>Left upper corner</source>
-        <translation>Coin superieur gauche</translation>
+        <translation>Coin supérieur gauche</translation>
     </message>
     <message>
         <source>x position</source>
@@ -396,7 +401,7 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>Right bottom corner</source>
-        <translation>Coin inferieur droit</translation>
+        <translation>Coin inférieur droit</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -404,43 +409,43 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>Set color</source>
-        <translation>Définir couleur</translation>
+        <translation>Définir la couleur</translation>
     </message>
     <message>
         <source>Set font properties</source>
-        <translation>Définir proprieté polices</translation>
+        <translation>Définir les proprietés de police</translation>
     </message>
     <message>
         <source>Set line dash style</source>
-        <translation>Définir style ligne tiret</translation>
+        <translation>Définir le style de ligne Tiret</translation>
     </message>
     <message>
         <source>Set line width</source>
-        <translation>Definir la largeur de ligne</translation>
+        <translation>Définir la largeur de ligne</translation>
     </message>
     <message>
         <source>Add system font</source>
-        <translation>Ajouter police système</translation>
+        <translation>Ajouter une police système</translation>
     </message>
     <message>
         <source>Extract text from page</source>
-        <translation>Extraire texte de la page</translation>
+        <translation>Extraire le texte de la page</translation>
     </message>
     <message>
         <source>Page rotated.</source>
-        <translation>Page retourné.</translation>
+        <translation>Page retournée.</translation>
     </message>
     <message>
         <source>MediaBox changed.</source>
-        <translation>MediaBox changé.</translation>
+        <translation>MediaBox modifié.</translation>
     </message>
     <message>
         <source>No page or operator selected!</source>
-        <translation>Aucune page ou opérateur selectionné!</translation>
+        <translation>Aucune page ou opérateur selectionné !</translation>
     </message>
     <message>
         <source>Selected operator</source>
-        <translation>Selectionné operateur</translation>
+        <translation>Opérateur sélectionné</translation>
     </message>
     <message>
         <source>is not</source>
@@ -452,20 +457,19 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>suitable for line width change.</source>
-        <translation>approprié pour changer la largeur de ligne.</translation>
+        <translation>approprié pour modifier la largeur de ligne.</translation>
     </message>
     <message>
         <source>Line width changed.</source>
-        <translation>Largeur de ligne changé.</translation>
+        <translation>Largeur de ligne modifiée.</translation>
     </message>
     <message>
         <source>suitable for dash style change.</source>
-        <translation><byte value="x9"/>
-tableau de bord pour changer de style.</translation>
+        <translation>destiné à la modification du style de pointillé.</translation>
     </message>
     <message>
         <source>Dash pattern changed.</source>
-        <translation>Tiret changé.</translation>
+        <translation>Motif de pointillé modifié.</translation>
     </message>
     <message>
         <source>text operator</source>
@@ -473,31 +477,31 @@ tableau de bord pour changer de style.</translation>
     </message>
     <message>
         <source>Font changed.</source>
-        <translation>Police changé.</translation>
+        <translation>Police modifiée.</translation>
     </message>
     <message>
         <source>Add font</source>
-        <translation>Ajouter police</translation>
+        <translation>Ajouter une police</translation>
     </message>
     <message>
         <source>Add system fonts</source>
-        <translation>Ajouter polices système</translation>
+        <translation>Ajouter des polices système</translation>
     </message>
     <message>
         <source>Avaliable system fonts</source>
-        <translation>Police système disponible</translation>
+        <translation>Polices système disponibles</translation>
     </message>
     <message>
         <source>Select system Type1 font</source>
-        <translation>Selection police Type1 du systeme</translation>
+        <translation>Sélectionnez une police système de Type1</translation>
     </message>
     <message>
         <source>System font added.</source>
-        <translation>Police système ajouté.</translation>
+        <translation>Police système ajoutée.</translation>
     </message>
     <message>
         <source>Text on page</source>
-        <translation>Texte dans page</translation>
+        <translation>Texte dans la page</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -514,27 +518,27 @@ Page de texte affichée</translation>
     </message>
     <message>
         <source>Operator must be</source>
-        <translation>L&apos;operateur doit être</translation>
+        <translation>L&apos;opérateur doit être</translation>
     </message>
     <message>
         <source>No preceding font operator found...</source>
-        <translation>Aucun operateur de police précédent trouvé...</translation>
+        <translation>Aucun opérateur de police précédent trouvé...</translation>
     </message>
     <message>
         <source>Invalid operand type</source>
-        <translation>type d&apos;operante invalide</translation>
+        <translation>Type d&apos;opérande invalide</translation>
     </message>
     <message>
         <source>This option is not supported.</source>
-        <translation>Cette option n&apos;est pas supporté.</translation>
+        <translation>Cette option n&apos;est pas supportée.</translation>
     </message>
     <message>
         <source>Show only graphical operators</source>
-        <translation>Afficher seulement les operateurs graphique</translation>
+        <translation>Afficher seulement les opérateurs graphiques</translation>
     </message>
     <message>
         <source>Set relative position of a single operator</source>
-        <translation>Définir la position relative d&apos;un seul operateur</translation>
+        <translation>Définir la position relative d&apos;un seul opérateur</translation>
     </message>
     <message>
         <source>Set relative position</source>
@@ -542,7 +546,7 @@ Page de texte affichée</translation>
     </message>
     <message>
         <source>Set page tranformation matrix</source>
-        <translation>Définir matice de transformation de page</translation>
+        <translation>Définir la matice de transformation de la page</translation>
     </message>
     <message>
         <source>Change page rectangle</source>
@@ -550,27 +554,27 @@ Page de texte affichée</translation>
     </message>
     <message>
         <source>Change</source>
-        <translation>Change</translation>
+        <translation>Modifier</translation>
     </message>
     <message>
         <source>Page metrics</source>
-        <translation>Parametres de page</translation>
+        <translation>Paramètres de la page</translation>
     </message>
     <message>
         <source>Change effect</source>
-        <translation>Changer d&apos;effet</translation>
+        <translation>Modifier l&apos;effet</translation>
     </message>
     <message>
         <source>Global change</source>
-        <translation>Changement global</translation>
+        <translation>Modification globale</translation>
     </message>
     <message>
         <source>Change line dash pattern</source>
-        <translation>Changer de modèle ligne tiret</translation>
+        <translation>Modifier le type de pointillé</translation>
     </message>
     <message>
         <source>Line dashing patterns</source>
-        <translation>Patron de ligne tiret</translation>
+        <translation>Types de pointillés</translation>
     </message>
     <message>
         <source>Solid line</source>
@@ -578,31 +582,31 @@ Page de texte affichée</translation>
     </message>
     <message>
         <source>Slightly dashed</source>
-        <translation>Ligne pointillé</translation>
+        <translation>Légèrement pointillé</translation>
     </message>
     <message>
         <source>Dot and dashed</source>
-        <translation>Tiret et dot</translation>
+        <translation>Tiret et point</translation>
     </message>
     <message>
         <source>Not valid</source>
-        <translation>invalide</translation>
+        <translation>Invalide</translation>
     </message>
     <message>
         <source>Only text operators allowed!</source>
-        <translation>Seul l&apos;operateur texte est permis!</translation>
+        <translation>Seul les opérateurs texte sont autorisés !</translation>
     </message>
     <message>
         <source>Add page transformation matrix</source>
-        <translation>Ajouter matrice de transformation de page</translation>
+        <translation>Ajouter une matrice de transformation de page</translation>
     </message>
     <message>
         <source>Change page transformation matrix</source>
-        <translation>Changer la matrice de transformation de page</translation>
+        <translation>Modifier la matrice de transformation de page</translation>
     </message>
     <message>
         <source>Page transformation matrix description</source>
-        <translation>Description de matrice de transformation</translation>
+        <translation>Description de la matrice de transformation</translation>
     </message>
     <message>
         <source>Page transformation description</source>
@@ -615,11 +619,11 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Translate (shift) page</source>
-        <translation>Traduire (deplacement) page</translation>
+        <translation>Transférer (décaler) la page</translation>
     </message>
     <message>
         <source>Scale page</source>
-        <translation>Echelle de la page</translation>
+        <translation>Échelle de la page</translation>
     </message>
     <message>
         <source>Skew page</source>
@@ -631,19 +635,19 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Page scaling</source>
-        <translation>Echelle de la page</translation>
+        <translation>Dimensionnement de la page</translation>
     </message>
     <message>
         <source>Page skewing</source>
-        <translation>Mettre la page de biais</translation>
+        <translation>Inclinaison de la page</translation>
     </message>
     <message>
         <source>Invalid number supplied.</source>
-        <translation>Nombre invalide fournie.</translation>
+        <translation>Nombre invalide fourni.</translation>
     </message>
     <message>
         <source>Page transformation matrix changed to </source>
-        <translation>la matrice de transformation de page a changé</translation>
+        <translation>La matrice de transformation de page a été modifiée</translation>
     </message>
     <message>
         <source>Could not find text positioning.</source>
@@ -651,35 +655,35 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Change relative text operator position</source>
-        <translation>Changer la position relative de l&apos;operateur texte</translation>
+        <translation>Modifier la position relative de l&apos;opérateur texte</translation>
     </message>
     <message>
         <source>Change relative text position</source>
-        <translation>Changer la posistion relative du texte</translation>
+        <translation>Modifier la position relative du texte</translation>
     </message>
     <message>
         <source>Operator position changed.</source>
-        <translation>Position d&apos;operateur modifié.</translation>
+        <translation>Position d&apos;opérateur modifiée.</translation>
     </message>
     <message>
         <source>Showing graphic. op.</source>
         <comment>mode</comment>
-        <translation>Montré op. graph.</translation>
+        <translation>Montrer les op. graphiques.</translation>
     </message>
     <message>
         <source>element</source>
         <comment>1</comment>
-        <translation>element</translation>
+        <translation>élément</translation>
     </message>
     <message>
         <source>elements</source>
         <comment>2-4</comment>
-        <translation>elements</translation>
+        <translation>éléments</translation>
     </message>
     <message>
         <source>elements</source>
         <comment>5+</comment>
-        <translation>elements</translation>
+        <translation>éléments</translation>
     </message>
     <message>
         <source>item</source>
@@ -698,19 +702,19 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Add item to dictionary</source>
-        <translation>Ajouter composant au dictionnaire</translation>
+        <translation>Ajouter le composant au dictionnaire</translation>
     </message>
     <message>
         <source>Add element to array</source>
-        <translation>Ajouté un element de tableau</translation>
+        <translation>Ajouter un élément au tableau</translation>
     </message>
     <message>
         <source>Save page as image</source>
-        <translation>Sauvé page en tant qu&apos;image</translation>
+        <translation>Enregistrer la page en tant qu&apos;image</translation>
     </message>
     <message>
         <source>Save selected area as image</source>
-        <translation>Sauvegarder la zone selectionné en tant qu&apos;image</translation>
+        <translation>Enregistrer la zone selectionnée en tant qu&apos;image</translation>
     </message>
     <message>
         <source>Annotation</source>
@@ -718,23 +722,23 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Draw line</source>
-        <translation>Déssiner ligne</translation>
+        <translation>Tracer une ligne</translation>
     </message>
     <message>
         <source>Line was drawn.</source>
-        <translation>Ligne a été appelée.</translation>
+        <translation>Une ligne a été tracée.</translation>
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>Le contenu crypté sera affiché comme des residus et de nombreuses opérations seront impossible</translation>
+        <translation>Le contenu crypté sera affiché n&apos;importe comment et de nombreuses opérations seront impossibles</translation>
     </message>
     <message>
         <source>Rect was drawn.</source>
-        <translation>Rect a été appelée.</translation>
+        <translation>Un rectangle a été tracé.</translation>
     </message>
     <message>
         <source>Draw rect</source>
-        <translation>Déssiner rectangle</translation>
+        <translation>Tracer un rectangle</translation>
     </message>
     <message>
         <source>Add text</source>
@@ -750,15 +754,15 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Relative operator position (this is not absolute position)</source>
-        <translation>Position relative d&apos;operateur (ce n&apos;est pas la position absolue) </translation>
+        <translation>Position relative de l&apos;opérateur (ce n&apos;est pas la position absolue) </translation>
     </message>
     <message>
         <source>Relative operator position</source>
-        <translation>Position relative d&apos;operateur</translation>
+        <translation>Position relative de l&apos;opérateur</translation>
     </message>
     <message>
         <source>Remove page</source>
-        <translation>Supprimé la page</translation>
+        <translation>Supprimer la page</translation>
     </message>
     <message>
         <source>View page</source>
@@ -770,11 +774,11 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Usage:</source>
-        <translation>Usage:</translation>
+        <translation>Usage :</translation>
     </message>
     <message>
         <source>input file</source>
-        <translation>fichier d&apos;entré</translation>
+        <translation>fichier d&apos;entrée</translation>
     </message>
     <message>
         <source>output file</source>
@@ -782,11 +786,11 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Input file must exist</source>
-        <translation>Le fichier d&apos;entré doit existé</translation>
+        <translation>Le fichier d&apos;entrée doit exister</translation>
     </message>
     <message>
         <source>Output file must not exist</source>
-        <translation>le fichier de sortie ne doit pas existé</translation>
+        <translation>Le fichier de sortie ne doit pas exister</translation>
     </message>
     <message>
         <source>is expecting two parameters</source>
@@ -794,19 +798,19 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Input file &apos;%1&apos; does not exist</source>
-        <translation>Le fichier en entré &apos;%1&apos; n&apos;existe pas</translation>
+        <translation>Le fichier d&apos;entrée &apos;%1&apos; n&apos;existe pas</translation>
     </message>
     <message>
         <source>Output file &apos;%1&apos; already exist</source>
-        <translation>Le fichier de sortie &apos;%1&apos; existe déja</translation>
+        <translation>Le fichier de sortie &apos;%1&apos; existe déjà</translation>
     </message>
     <message>
         <source>Delinearized</source>
-        <translation>Delinearisé</translation>
+        <translation>Délinéarisé</translation>
     </message>
     <message>
         <source>Available functions:</source>
-        <translation>Fonctions disponibles:</translation>
+        <translation>Fonctions disponibles :</translation>
     </message>
     <message>
         <source>Description</source>
@@ -822,31 +826,31 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>No function found matching &apos;%1&apos;</source>
-        <translation>Aucune fonction correspondante trouvé &apos;%1&apos;</translation>
+        <translation>Aucune fonction correspondante trouvée &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Too many function found matching &apos;%1&apos;</source>
-        <translation>Plusieurs fonctions correspondante trouvé &apos;%1&apos;</translation>
+        <translation>Trop de fonctions trouvées correspondant &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Matching functions</source>
-        <translation>Fonctions coincidentes</translation>
+        <translation>Fonctions de correspondance</translation>
     </message>
     <message>
         <source>Running</source>
-        <translation>Execution</translation>
+        <translation>Exécution</translation>
     </message>
     <message>
         <source>First parameter is name of function to invoke (case insensitive) or its unambiguous part.</source>
-        <translation>Le premier paramètre est le nom de la fonction à invoquer (insensible à la casse) ou sa partie sans ambiguïté.</translation>
+        <translation>Le premier paramètre est le nom de la fonction à invoquer (insensible à la casse) ou sa partie non ambigüe.</translation>
     </message>
     <message>
         <source>Rest of parameters are passed to invoked function.</source>
-        <translation>Le reste des paramètres sont passé à la fonction invoqué.</translation>
+        <translation>Le reste des paramètres est passé à la fonction invoquée.</translation>
     </message>
     <message>
         <source>Run in commandline mode</source>
-        <translation>Executer en mode ligne de commande</translation>
+        <translation>Exécuter en mode ligne de commande</translation>
     </message>
     <message>
         <source>file</source>
@@ -854,11 +858,11 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Run script from script path or current directory if not found</source>
-        <translation>Executer le script du chemin des scripts or du repertoire courant si non trouvé</translation>
+        <translation>Exécuter le script depuis le chemin du script ou du répertoire courant si non trouvé</translation>
     </message>
     <message>
         <source>Run script from current directory</source>
-        <translation>Exécuter le script du répertoire courant</translation>
+        <translation>Exécuter le script depuis le répertoire courant</translation>
     </message>
     <message>
         <source>code</source>
@@ -866,7 +870,7 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Evaluate script code</source>
-        <translation>Evaluation du code du script</translation>
+        <translation>Évaluer le code du script</translation>
     </message>
     <message>
         <source>function name</source>
@@ -874,7 +878,7 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>function parameter(s)</source>
-        <translation>parametre(s) de fonction</translation>
+        <translation>paramètre(s) de fonction</translation>
     </message>
     <message>
         <source>option(s)</source>
@@ -887,7 +891,7 @@ Sélectionnez les transformations à utiliser</translation>
     <message>
         <source>Please see the pdf specification for details.</source>
         <translation><byte value="x9"/>
-S’il vous plaît regardez les spécifications du pdf pour plus de détails.</translation>
+Veuillez consulter les spécifications du pdf pour plus de détails.</translation>
     </message>
     <message>
         <source>Text on a page.</source>
@@ -905,12 +909,12 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     <message>
         <source>complex items are not shown</source>
         <comment>2-4</comment>
-        <translation>les éléments complexe ne sont pas affiché</translation>
+        <translation>les éléments complexes ne sont pas affichés</translation>
     </message>
     <message>
         <source>complex items are not shown</source>
         <comment>5+</comment>
-        <translation>les éléments complexe ne sont pas affiché</translation>
+        <translation>les éléments complexes ne sont pas affichés</translation>
     </message>
     <message>
         <source>out of range</source>
@@ -918,7 +922,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Search text</source>
-        <translation>Recherche texte</translation>
+        <translation>Recherche de texte</translation>
     </message>
     <message>
         <source>Find</source>
@@ -934,15 +938,15 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>On currently viewed page only</source>
-        <translation>Actuellement consulté sur la page uniquement</translation>
+        <translation>Uniquement sur la page courante</translation>
     </message>
     <message>
         <source>Nothing was found.</source>
-        <translation>Rien n&apos;a été trouvée.</translation>
+        <translation>Rien n&apos;a été trouvé.</translation>
     </message>
     <message>
         <source>Overwrite?</source>
-        <translation>Remplacé?</translation>
+        <translation>Remplacer ?</translation>
     </message>
     <message>
         <source>&amp;Open</source>
@@ -958,15 +962,15 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>File called &quot;%1&quot; already exists. Do you want to overwrite it?</source>
-        <translation>Le fichier nommé &quot;%1&quot; existe deja. Voulez vous le remplacé?</translation>
+        <translation>Le fichier nommé &quot;%1&quot; existe déjà. Voulez-vous le remplacer ?</translation>
     </message>
     <message>
         <source>Delinearization failed!</source>
-        <translation>La delinearisation a echoué!</translation>
+        <translation>La délinéarisation a échoué !</translation>
     </message>
     <message>
         <source>Colour changed</source>
-        <translation>Changé la couleur</translation>
+        <translation>Couleur modifiée</translation>
     </message>
     <message>
         <source>for</source>
@@ -974,7 +978,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>operators</source>
-        <translation>operateurs</translation>
+        <translation>opérateurs</translation>
     </message>
     <message>
         <source>Annotations</source>
@@ -982,7 +986,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Input and output files must be different</source>
-        <translation>Les fichiers d&apos;entré et de sortie doivent être different</translation>
+        <translation>Les fichiers d&apos;entrée et de sortie doivent être differents</translation>
     </message>
     <message>
         <source>changeable</source>
@@ -990,7 +994,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Delinearize</source>
-        <translation>Delinearisé</translation>
+        <translation>Délinéariser</translation>
     </message>
     <message>
         <source>%1 added to page</source>
@@ -998,23 +1002,23 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Operator %1 is not changeable</source>
-        <translation>L&apos;operateur %1 n&apos;es pas variable</translation>
+        <translation>L&apos;opérateur %1 n&apos;es pas modifiable</translation>
     </message>
     <message>
         <source>Operator cm must have array with 6 numbers as parameter!</source>
-        <translation>L&apos;operateur cm ne peut contenir que  6 nombres en paramètres!</translation>
+        <translation>L&apos;opérateur cm ne peut contenir que  6 nombres en paramètres !</translation>
     </message>
     <message>
         <source>X and Y position must be a number</source>
-        <translation>position X et Y doit être un nombre</translation>
+        <translation>Les positions X et Y doivent être des nombres</translation>
     </message>
     <message>
         <source>Dictionary has no type!</source>
-        <translation>Le dictionnaire ne comporte aucun type!</translation>
+        <translation>Le dictionnaire ne comporte aucun type !</translation>
     </message>
     <message>
         <source>Maybe bad stream!</source>
-        <translation>Peut être un mauvais flux!</translation>
+        <translation>Peut-être un mauvais flux !</translation>
     </message>
     <message>
         <source>%1 is requirement for %2, but not found for it !</source>
@@ -1022,27 +1026,27 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>For child %1 of %2 is requirement %3 subchild, but has %4</source>
-        <translation>Pour l&apos;enfant %1 de %2 est requis %3 sous-enfant, mais en à %4</translation>
+        <translation>Pour l&apos;enfant %1 de %2 est requis %3 sous-enfant, mais en a %4</translation>
     </message>
     <message>
         <source>Operator &apos;%1&apos; should have 1 parameter, but has %2 !</source>
-        <translation>Operateur &apos;%1&apos; devrait avoir 1 paramètre, mais en à %2 !</translation>
+        <translation>L&apos;opérateur &apos;%1&apos; devrait avoir 1 paramètre, mais en a %2 !</translation>
     </message>
     <message>
         <source>Operator &apos;%1&apos; should have %2 parameters, but has %3 !</source>
-        <translation>Operateur &apos;%1&apos; devrait avoir %2 paramètres, mais en %3 !</translation>
+        <translation>L&apos;opérateur &apos;%1&apos; devrait avoir %2 paramètres, mais en a %3 !</translation>
     </message>
     <message>
         <source>Page parameter must be defined!</source>
-        <translation>Le parametre de page doit être défini!</translation>
+        <translation>Le paramètre de page doit être défini !</translation>
     </message>
     <message>
         <source>Matrix is in bad state !</source>
-        <translation>La matrice est en mauvaise état !</translation>
+        <translation>La matrice est en mauvais état !</translation>
     </message>
     <message>
         <source>Document is read-only</source>
-        <translation>Document en lecture seul</translation>
+        <translation>Document en lecture seule</translation>
     </message>
     <message>
         <source>Move one level up</source>
@@ -1062,19 +1066,19 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Save as text file</source>
-        <translation>Sauvé en fichier texte</translation>
+        <translation>Enregistrer comme fichier texte</translation>
     </message>
     <message>
         <source>Text saved to %1</source>
-        <translation>Sauvé texte vers %1 </translation>
+        <translation>Enregistrer le texte vers %1 </translation>
     </message>
     <message>
         <source>Font face</source>
-        <translation>polices</translation>
+        <translation>Polices</translation>
     </message>
     <message>
         <source>Font size (in points)</source>
-        <translation>Taille police (en points)</translation>
+        <translation>Taille de police (en points)</translation>
     </message>
     <message>
         <source>Line width (in points)</source>
@@ -1082,7 +1086,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
-        <translation>Utilise &apos;%1 --help&apos; pour afficher la liste des options de commande et leurs paramètres</translation>
+        <translation>Utilisez &apos;%1 --help&apos; pour afficher la liste des options de commande et leurs paramètres</translation>
     </message>
     <message>
         <source>Saved as</source>
@@ -1090,23 +1094,15 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Unable to open file: %1</source>
-        <translation>Impossible d&apos;ouvrir le fichier: %1</translation>
+        <translation>Impossible d&apos;ouvrir le fichier : %1</translation>
     </message>
     <message>
         <source>Not implemented: %1</source>
-        <translation>Non traité: %1</translation>
+        <translation>Non traité : %1</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation>Erreur inconnu</translation>
-    </message>
-    <message>
-        <source>Apply from page</source>
-        <translation>Appliquer depuis la page</translation>
-    </message>
-    <message>
-        <source>How many pages</source>
-        <translation>Combien de pages</translation>
+        <translation>Erreur inconnue</translation>
     </message>
 </context>
 <context>
@@ -1121,7 +1117,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>FreeText</source>
-        <translation>TexteLibre</translation>
+        <translation>Texte Libre</translation>
     </message>
     <message>
         <source>Line</source>
@@ -1141,27 +1137,27 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>PolyLine</source>
-        <translation>PolyLigne</translation>
+        <translation>Poly Ligne</translation>
     </message>
     <message>
         <source>Highlight</source>
-        <translation>Mettre en évidence</translation>
+        <translation>Surbrillance</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Souligner</translation>
+        <translation>Souligné</translation>
     </message>
     <message>
         <source>Squiggly</source>
-        <translation>Deformé</translation>
+        <translation>Déformé</translation>
     </message>
     <message>
         <source>StrikeOut</source>
-        <translation>Barrer</translation>
+        <translation>Barré</translation>
     </message>
     <message>
         <source>Stamp</source>
-        <translation>Timbrer</translation>
+        <translation>Timbre</translation>
     </message>
     <message>
         <source>Caret</source>
@@ -1169,15 +1165,15 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Ink</source>
-        <translation>Encre</translation>
+        <translation>Ancre</translation>
     </message>
     <message>
         <source>Popup</source>
-        <translation>Popup</translation>
+        <translation>Pop up</translation>
     </message>
     <message>
         <source>Fileattachement</source>
-        <translation>FichierJoint</translation>
+        <translation>Fichier joint</translation>
     </message>
     <message>
         <source>Sound</source>
@@ -1205,7 +1201,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Watermark</source>
-        <translation>Marque d&apos;eau</translation>
+        <translation>Filigrane</translation>
     </message>
     <message>
         <source>3D</source>
@@ -1236,7 +1232,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Compiled</source>
-        <translation>Compilé</translation>
+        <translation>Compilé </translation>
     </message>
     <message>
         <source>This program is distributed under terms of GNU GPL</source>
@@ -1248,7 +1244,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Free program for PDF document manipulation</source>
-        <translation>Programme libre pour la manipulation de documents PDF</translation>
+        <translation>Programme libre pour la manipulation de document PDF</translation>
     </message>
     <message>
         <source>Project page</source>
@@ -1275,43 +1271,43 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>New empty Dictionary</source>
-        <translation>Nouveau dictonnaire vide</translation>
+        <translation>Nouveau dictonnaire</translation>
     </message>
     <message>
         <source>New empty Array</source>
-        <translation>Nouveau tableau vide</translation>
+        <translation>Nouveau tableau</translation>
     </message>
     <message>
         <source>Property name</source>
-        <translation>Nom de la propriété</translation>
+        <translation>Propriété nom</translation>
     </message>
     <message>
         <source>No object type selected</source>
-        <translation>Pas de type d&apos;objet selectionné</translation>
+        <translation>Pas d&apos;objet type sélectionné</translation>
     </message>
     <message>
         <source>Entered property is not valid</source>
-        <translation>La proprieté insérée n&apos;est pas valide</translation>
+        <translation>La propriété entrée est invalide</translation>
     </message>
     <message>
         <source>Name of new property must be specified</source>
-        <translation>Le nom de la nouvelle proprieté doit être spécifié</translation>
+        <translation>Le nom de la nouvelle propriété doit être spécifié</translation>
     </message>
     <message>
         <source>Property &apos;%1&apos; added to dictionary</source>
-        <translation>La proprieté &apos;%1&apos; a été ajoutée au dictionnaire</translation>
+        <translation>Propriété &apos;%1&apos; ajoutée au dictionnaire</translation>
     </message>
     <message>
         <source>Property added to end of array</source>
-        <translation>La proprieté a été ajoutée en fin de tableau</translation>
+        <translation>Propiété ajoutée en fin de tableau</translation>
     </message>
     <message>
         <source>Property &apos;%1&apos; already exist as %2</source>
-        <translation>La proprieté &apos;%1&apos; existe déja en tant que %2</translation>
+        <translation> La propriété &apos;%1&apos; existe déjà en tant que %2</translation>
     </message>
     <message>
         <source>Reference target does not exist!</source>
-        <translation>La référence cible n&apos;existe pas !</translation>
+        <translation>La référence cible n&apos;existe pas !</translation>
     </message>
     <message>
         <source>Add to position</source>
@@ -1319,15 +1315,15 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Append to end</source>
-        <translation>Ajouter à la fin</translation>
+        <translation>Joindre à la fin</translation>
     </message>
     <message>
         <source>Property added to position %1 in array</source>
-        <translation>La proprieté a été ajoutée à la position %1 du tableau</translation>
+        <translation>Propriété ajoutée à la postion %1 du tableau</translation>
     </message>
     <message>
         <source>Array index %1 out of range</source>
-        <translation>L&apos;index %1 du tableau est inaccessible</translation>
+        <translation>Index %1 du tableau inaccessible</translation>
     </message>
 </context>
 <context>
@@ -1366,7 +1362,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>NewParagraph</source>
-        <translation>NouveauParagraphe</translation>
+        <translation>Nouveau paragraphe</translation>
     </message>
     <message>
         <source>Note</source>
@@ -1386,11 +1382,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Unmarked</source>
-        <translation>Démarqué</translation>
+        <translation>Non marqué</translation>
     </message>
     <message>
         <source>State &amp;Model</source>
-        <translation>&amp;Modèle d&apos;États</translation>
+        <translation>État du &amp;Modèle</translation>
     </message>
     <message>
         <source>Review</source>
@@ -1414,23 +1410,23 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>I - Invert</source>
-        <translation>I - Inverser</translation>
+        <translation>I - Inversé</translation>
     </message>
     <message>
         <source>O - Outline</source>
-        <translation>O - Entourer</translation>
+        <translation>O - Contour</translation>
     </message>
     <message>
         <source>P - Push</source>
-        <translation>P - Appuyer</translation>
+        <translation>P - Appuyé</translation>
     </message>
     <message>
         <source>&amp;Link Annotation</source>
-        <translation>&amp;Annotation de Lien</translation>
+        <translation>&amp;Annotation de lien</translation>
     </message>
     <message>
         <source>Add new annotation</source>
-        <translation>Ajouter une nouelle annotation</translation>
+        <translation>Ajouter une nouvelle annotation</translation>
     </message>
 </context>
 <context>
@@ -1441,7 +1437,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>No init script found - check your configuration</source>
-        <translation>Pas de script d&apos;initialisations - vérifiez votre configuration</translation>
+        <translation>Aucun script d&apos;initialisation trouvé - vérifiez votre configuration</translation>
     </message>
     <message>
         <source>Looked for</source>
@@ -1461,23 +1457,24 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     <name>gui::BaseCore</name>
     <message>
         <source>Error in callback handler: </source>
-        <translation>Erreur dans le gestionnaire de rappel : </translation>
+        <translation>Erreur dans le gestionnaire de rappel :</translation>
     </message>
     <message>
         <source>Exception in callback handler: </source>
-        <translation>Exception dans le gestionnaire de rappel : </translation>
+        <translation>Exception dans le gestionnaire de rappel :</translation>
     </message>
     <message>
         <source>Unknown exception in script occured</source>
-        <translation>Une exception inconnue s&apos;est produite dans le script</translation>
+        <translation><byte value="x9"/>
+Une exception inconnue s&apos;est produite dans le script</translation>
     </message>
     <message>
         <source>Null pointer access in </source>
-        <translation>Accès à un pointeru nul dans </translation>
+        <translation>Pointeur null dans l&apos;accès</translation>
     </message>
     <message>
         <source>Invalid object given for parameter %1 in </source>
-        <translation>Objet invalide pour le paramètre %1 dans</translation>
+        <translation>Objet invalide indiqué pour le paramètre %1 dans</translation>
     </message>
     <message>
         <source>Expected</source>
@@ -1487,7 +1484,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     <message>
         <source>Got</source>
         <comment>object type</comment>
-        <translation>Eu</translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>In script</source>
@@ -1507,36 +1504,36 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     <name>gui::BaseGUI</name>
     <message>
         <source>No document opened</source>
-        <translation>Pas de document ouvert</translation>
+        <translation>Aucun document ouvert</translation>
     </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
     <message>
         <source>Choose color</source>
-        <translation>Choisir la couleur</translation>
+        <translation>Choisir la couleur </translation>
     </message>
     <message>
         <source>Foreground</source>
-        <translation>Avant plan</translation>
+        <translation>Premier plan</translation>
     </message>
     <message>
         <source>Background</source>
-        <translation>Arrière plan</translation>
+        <translation>Arrière-plan</translation>
     </message>
 </context>
 <context>
     <name>gui::HelpWindow</name>
     <message>
         <source>help</source>
-        <translation>aide</translation>
+        <translation>Aide</translation>
     </message>
 </context>
 <context>
     <name>gui::MergeDialog</name>
     <message>
         <source>Insert pages from another document</source>
-        <translation>Insérer pages d&apos;un autre document</translation>
+        <translation>Insérer des pages d&apos;un autre document</translation>
     </message>
     <message>
         <source>&amp;Filename</source>
@@ -1544,7 +1541,8 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Open file with pages to be inserted</source>
-        <translation>Ouvrir le fichier avec les pages à insérer</translation>
+        <translation><byte value="x9"/> <byte value="x9"/>
+Ouvrir le fichier avec les pages à insérer</translation>
     </message>
 </context>
 <context>
@@ -1586,7 +1584,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Object tree</source>
-        <translation>Arborescence des objets</translation>
+        <translation>Arborescence d&apos;objet</translation>
     </message>
     <message>
         <source>Document dictionary</source>
@@ -1594,7 +1592,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Object dictionaries</source>
-        <translation>Dictionnaires des objets</translation>
+        <translation>Dictionnaires d&apos;objets</translation>
     </message>
     <message>
         <source>Outlines</source>
@@ -1614,11 +1612,12 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Simple Objects</source>
-        <translation>Objets simples</translation>
+        <translation>Objet simple</translation>
     </message>
     <message>
         <source>Show return value of executed scripts in console</source>
-        <translation>Voir la valeur de retour de l&apos;exécution des scripts dans la console</translation>
+        <translation><byte value="x9"/>
+Voir la valeur de retour de l&apos;exécution des scripts dans la console</translation>
     </message>
     <message>
         <source>Toolbars</source>
@@ -1626,11 +1625,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>History file</source>
-        <translation>Historique des fichiers</translation>
+        <translation>Historisque des fichiers</translation>
     </message>
     <message>
         <source>Max. lines in history</source>
-        <translation>Nombre max. de lignes dans l&apos;historique</translation>
+        <translation>Max. de lignes dans l&apos;historique</translation>
     </message>
     <message>
         <source>Look and Feel</source>
@@ -1646,15 +1645,15 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Remember path of last opened/saved file</source>
-        <translation>Retenir le chemin des derniers fichier ouverts/sauvegardés</translation>
+        <translation>Mémoriser le chemin du dernier fichier ouvert/enregistré</translation>
     </message>
     <message>
         <source>Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document.</source>
-        <translation>Activer le mode avancé qui permet des changements plus puissant (mais aussi plus dangereux) du document édité.</translation>
+        <translation>Activer le mode avancé permet des modifications plus poussées (mais aussi plus dangereuses) du document édité.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing Advanced mode will affect only newly opened files</source>
-        <translation>&lt;b&gt;Note&lt;/b&gt; : Changer pour le mode Avancé n&apos;affectera que les fichiers qui seront ouverts</translation>
+        <translation>&lt;b&gt;Note&lt;/b&gt; : modifier le Mode avancé affectera seulement les fichiers nouvellement ouverts</translation>
     </message>
     <message>
         <source>Paths</source>
@@ -1666,7 +1665,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing Icon Path will take effect on next program start</source>
-        <translation>&lt;b&gt;Note&lt;/b&gt; : le changement du répertoire d&apos;icônes prendra effet au prochain lancement du programme</translation>
+        <translation>&lt;b&gt;Note&lt;/b&gt; : la modification du répertoire des icônes prendra effet au prochain lancement du programme</translation>
     </message>
     <message>
         <source>Console log file</source>
@@ -1674,11 +1673,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>These objects will be shown in the object tree</source>
-        <translation>Ces objets seront affichés dans l&apos;arborescence des objets</translation>
+        <translation>Ces objets seront indiqués dans l&apos;arborescence d&apos;objets</translation>
     </message>
     <message>
         <source>These toolbars will be shown:</source>
-        <translation>Ces barres d&apos;outils seront affichées :</translation>
+        <translation>Ces barres d&apos;outils seront affichées :</translation>
     </message>
     <message>
         <source>Show errors from event handlers</source>
@@ -1686,11 +1685,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Content Streams</source>
-        <translation>Flux de contenu</translation>
+        <translation>Flux contenu</translation>
     </message>
     <message>
         <source>Show command editor</source>
-        <translation>Afficher l&apos;éditeur de commandes</translation>
+        <translation>Afficher l&apos;éditeur de commande</translation>
     </message>
     <message>
         <source>Show command line</source>
@@ -1698,7 +1697,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Editable command line</source>
-        <translation>Ligne de comande éditable</translation>
+        <translation>Ligne de commande éditable</translation>
     </message>
     <message>
         <source>Script Path</source>
@@ -1706,7 +1705,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Scripts to run on start</source>
-        <translation>Scripts à éxécuter au demarrage</translation>
+        <translation>Scripts à exécuter au démarrage</translation>
     </message>
     <message>
         <source>You can set fonts used in application</source>
@@ -1714,11 +1713,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Application font</source>
-        <translation>Polices de l&apos;applicatiion</translation>
+        <translation>Police de l&apos;application</translation>
     </message>
     <message>
         <source>Console font</source>
-        <translation>Polices de la console</translation>
+        <translation>Police de la console</translation>
     </message>
     <message>
         <source>Icon theme</source>
@@ -1726,7 +1725,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Use big icons</source>
-        <translation>Utiliser des grosses icônes</translation>
+        <translation>Utiliser des grandes icones</translation>
     </message>
     <message>
         <source>Show hidden properties</source>
@@ -1746,11 +1745,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Options affecting object tree and property editor</source>
-        <translation>Options affectant l&apos;aborescence des objets et l&apos;éditeur de propriétés</translation>
+        <translation>Options affectant l&apos;arborescence d&apos;objets et l&apos;éditeur de propriétés</translation>
     </message>
     <message>
         <source>Sort dictionary items alphabetically</source>
-        <translation>Trier le dictionnaire des objets alphabétiquement</translation>
+        <translation>Ordonner le dictionnaire alphabétiquement</translation>
     </message>
     <message>
         <source>History options</source>
@@ -1758,17 +1757,17 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Statusbar font</source>
-        <translation>Barre d&apos;état des polices</translation>
+        <translation>Police de la barre d&apos;état</translation>
     </message>
     <message>
         <source>Show return value also for complex types
 (possibly long output)</source>
-        <translation>Voir la valeur de retour également pour des types complexes
-(la sortie peut être longue)</translation>
+        <translation>Voir la valeur de retour aussi pour des types complexes
+(la génération peut être longue)</translation>
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing icon theme will take effect on next program start</source>
-        <translation>&lt;b&gt;Note&lt;/b&gt; : les changements de thème d&apos;icônes prendront effet au prochain lancement du programme</translation>
+        <translation>&lt;b&gt;Note&lt;/b&gt; : la modification du thème d&apos;icônes prendra effet au prochain lancement du programme</translation>
     </message>
     <message>
         <source>Character encoding</source>
@@ -1780,7 +1779,7 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Page view</source>
-        <translation>vue de la page</translation>
+        <translation>Affichage Page</translation>
     </message>
     <message>
         <source>Command Line</source>
@@ -1788,12 +1787,12 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     </message>
     <message>
         <source>Initial focus</source>
-        <translation>focus initial</translation>
+        <translation>Focus initial</translation>
     </message>
     <message>
         <source>This will specify which part of editor window will receive keyboard focus when new window is opened</source>
         <translation><byte value="x9"/>
-Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur recevra le focus clavier lorsque une nouvelle fenêtre est ouverte</translation>
+Ceci précisera quelle partie de la fenêtre de l&apos;éditeur recevra le focus clavier lorsqu&apos;une nouvelle fenêtre est ouverte</translation>
     </message>
 </context>
 <context>
@@ -1819,23 +1818,25 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>Current file is not saved. Do you want to save it?</source>
-        <translation>Le fichier courant n&apos;a pas été enregistré. Voulez vous l&apos;enregistrer ?</translation>
+        <translation>Le fichier courant n&apos;est pas enregistré. Voulez-vous l&apos;enregistrer ?</translation>
     </message>
     <message>
         <source>Error while loading document </source>
-        <translation>Erreur pendant le chargement du document </translation>
+        <translation>Erreur pendant le chargement du document</translation>
     </message>
     <message>
         <source>Unknown error while loading document </source>
-        <translation>Erreur inconnue lors du chargement du document </translation>
+        <translation><byte value="x9"/>
+Erreur inconnue lors du chargement du document</translation>
     </message>
     <message>
         <source>No document to save</source>
-        <translation>Pas de document à sauvegarder</translation>
+        <translation>Aucun document à enregistrer</translation>
     </message>
     <message>
         <source>viewing revision</source>
-        <translation>révision affichée</translation>
+        <translation><byte value="x9"/>
+révision affichée</translation>
     </message>
     <message>
         <source>Name is empty</source>
@@ -1843,11 +1844,11 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>Document is in read-only mode</source>
-        <translation>Le document en mode lecture seule</translation>
+        <translation>Le document est en mode lecture seule</translation>
     </message>
     <message>
         <source>Unknown error occured while saving document</source>
-        <translation>Une erreur inconnue a survenu pendant la sauvegarde du document</translation>
+        <translation>Une erreur inconnue s&apos;est produite pendant l&apos;enregistrement du document</translation>
     </message>
     <message>
         <source>Error occured while saving copy</source>
@@ -1855,11 +1856,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>Linearized PDF</source>
-        <translation>PDF Linéarisé</translation>
+        <translation><byte value="x9"/>
+PDF linéraisé</translation>
     </message>
     <message>
         <source>Encrypted</source>
-        <translation>Crypté</translation>
+        <translation>Encrypté</translation>
     </message>
     <message>
         <source>Selection</source>
@@ -1867,23 +1869,21 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>Selected operators</source>
-        <translation>Opérateurs sélectionnés</translation>
+        <translation>Opérateur sélectionné</translation>
     </message>
     <message>
         <source>Selected annotations</source>
-        <translation>Annotations selectionnées</translation>
+        <translation>Annotations sélectionnées</translation>
     </message>
     <message>
         <source>Saving not implemented:
 %1</source>
-        <translation>L&apos;enregirstrement n&apos;est pas implémenté :
-%1</translation>
+        <translation>Enregistrement non traité : %1</translation>
     </message>
     <message>
         <source>Error occured while saving copy:
 %1</source>
-        <translation>Une erreur est survenue lors de l&apos;enregistrement de la copie :
-%1</translation>
+        <translation>Une erreur est survenue lors de l&apos;enregistrement de la copie : %1</translation>
     </message>
 </context>
 <context>
@@ -1898,7 +1898,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>Hidden</source>
-        <translation>Caché</translation>
+        <translation>Cacher</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -1913,15 +1913,15 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <name>gui::PropertyEditor</name>
     <message>
         <source>No object selected</source>
-        <translation>Pas d&apos;objet sélectionné</translation>
+        <translation>Aucun objet sélectionné</translation>
     </message>
     <message>
         <source>This type of object does not have any properties</source>
-        <translation>Ce type d&apos;objet n&apos;a aucune proprietés</translation>
+        <translation>Ce type d&apos;objet n&apos;a aucune propriété</translation>
     </message>
     <message>
         <source>This operator does not have any directly editable parameters</source>
-        <translation>Cet opérateur n&apos;a pas de paramètres directement éditables</translation>
+        <translation>Cet opérateur ne possède aucun paramètre directement éditable</translation>
     </message>
     <message>
         <source>This %1 is empty</source>
@@ -1934,7 +1934,8 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>This %1 does not have any directly editable properties</source>
-        <translation>Ce 1% n&apos; a pas de propriétés directement éditables</translation>
+        <translation><byte value="x9"/>
+Ce 1% ne possède aucune propriété directement éditable</translation>
     </message>
     <message>
         <source>stream</source>
@@ -1947,11 +1948,11 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>This array does not have any directly editable elements</source>
-        <translation>Ce tableau n&apos;a pas d&apos;éléments directement éditables</translation>
+        <translation>Ce tableau ne possède aucun élément directement éditable</translation>
     </message>
     <message>
         <source>This operator does not have any parameters</source>
-        <translation>Cet opérateur n&apos;a aucun paramètre</translation>
+        <translation>Cet opérateur ne possède aucun paramètres</translation>
     </message>
 </context>
 <context>
@@ -1973,36 +1974,35 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <name>gui::QSPdf</name>
     <message>
         <source>Page not found</source>
-        <translation>Page introuvable</translation>
+        <translation>Page non trouvée</translation>
     </message>
     <message>
         <source>Document is in read-only mode</source>
-        <translation>Le document en mode lecture seule</translation>
+        <translation>Le document est en mode lecture seule</translation>
     </message>
     <message>
         <source>Unknown error occured while saving document</source>
-        <translation>Une erreur inconnue est survenue pendant la sauvegarde du document</translation>
+        <translation>Une erreur inconnue s&apos;est produite pendant l&apos;enregistrement du document</translation>
     </message>
     <message>
         <source>Unable to save:
 %1</source>
-        <translation>Impossible d&apos;enregistrer :
-%1</translation>
+        <translation>Impossible d&apos;enregistrer : %1</translation>
     </message>
 </context>
 <context>
     <name>gui::RefPropertyDialog</name>
     <message>
         <source>Reference target</source>
-        <translation>Cible de reference</translation>
+        <translation>Cible de référence</translation>
     </message>
     <message>
         <source>Choose target for indirect reference</source>
-        <translation>Choisir la cible pour la référence indirecte</translation>
+        <translation>Choisir la cible pour référence indirecte</translation>
     </message>
     <message>
         <source>Object number</source>
-        <translation>Numéro d&apos;objet</translation>
+        <translation>Nombre objet</translation>
     </message>
     <message>
         <source>Generation number</source>
@@ -2021,22 +2021,22 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>Revision: </source>
-        <translation>Révision : </translation>
+        <translation>Révision :</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation>octets</translation>
+        <translation>bytes</translation>
     </message>
     <message>
         <source>Linearized PDF</source>
-        <translation>PDF Linéarisé</translation>
+        <translation>PDF linéarisé</translation>
     </message>
 </context>
 <context>
     <name>gui::SelectPagesDialog</name>
     <message>
         <source>Convert pdf to xml</source>
-        <translation>Convertir pdf en xml</translation>
+        <translation>Convertir un fichier pdf en xml</translation>
     </message>
 </context>
 <context>
@@ -2044,7 +2044,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Main Toolbar</source>
         <comment>MainToolbar</comment>
-        <translation>Barre d&apos;outils Principale</translation>
+        <translation>Barre d&apos;outils principale</translation>
     </message>
     <message>
         <source>&amp;Options</source>
@@ -2074,7 +2074,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>New &amp;Window</source>
         <comment>neww</comment>
-        <translation>Nouvelle &amp;fenêtre</translation>
+        <translation>&amp;Nouvelle fenêtre</translation>
     </message>
     <message>
         <source>Page Toolbar</source>
@@ -2089,12 +2089,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Add object</source>
         <comment>treeAdditem</comment>
-        <translation>Ajouter un objet</translation>
+        <translation>Ajouter objet</translation>
     </message>
     <message>
         <source>Delete object</source>
         <comment>treeDelitem</comment>
-        <translation>Supprimer un objet</translation>
+        <translation>Supprimer objet</translation>
     </message>
     <message>
         <source>&amp;Help</source>
@@ -2104,7 +2104,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>&amp;About</source>
         <comment>help_about</comment>
-        <translation>&amp;À propos de</translation>
+        <translation>À &amp;propos</translation>
     </message>
     <message>
         <source>First Page</source>
@@ -2134,7 +2134,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Revisions</source>
         <comment>revlabel</comment>
-        <translation>Révisions</translation>
+        <translation>Révision</translation>
     </message>
     <message>
         <source>Rotate page 270 degrees</source>
@@ -2159,32 +2159,32 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Save page as image...</source>
         <comment>savepage</comment>
-        <translation>Enregistrer la page comme image...</translation>
+        <translation>Enregistrer la page en tant qu&apos;image...</translation>
     </message>
     <message>
         <source>Show all operators in stream</source>
         <comment>streamAll</comment>
-        <translation>Montrer tous les operateurs dans le flux</translation>
+        <translation>Montrer tout les opérateurs dans le flux</translation>
     </message>
     <message>
         <source>Show only text operators in stream</source>
         <comment>streamText</comment>
-        <translation>Montrer uniquement les opérateurs texte dans le flux</translation>
+        <translation>Montrer uniquement les opérateurs de texte dans le flux</translation>
     </message>
     <message>
         <source>Show only font operators in stream</source>
         <comment>streamFont</comment>
-        <translation>Montrer uniquement les opérateurs de police dans le flux</translation>
+        <translation>Montrer uniquement les opérateurs de polices dans le flux</translation>
     </message>
     <message>
         <source>Operator Toolbar</source>
         <comment>OperatorToolbar</comment>
-        <translation>Barre d&apos;outils des Opérateurs</translation>
+        <translation>Barre d&apos;outils des opérateurs</translation>
     </message>
     <message>
         <source>Edit page metrics</source>
         <comment>editPageMediaBox</comment>
-        <translation>Editer les mesures de la page</translation>
+        <translation>Éditer les paramètres de page</translation>
     </message>
     <message>
         <source>Close Window</source>
@@ -2194,12 +2194,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Show/Hide &amp;commandline</source>
         <comment>hideCmd</comment>
-        <translation>Afficher/Masquer la &amp;ligne de commande</translation>
+        <translation>Afficher/Cacher la ligne de &amp;commande</translation>
     </message>
     <message>
         <source>Add system font to page</source>
         <comment>addSystemFont</comment>
-        <translation>Ajouter les polices système dans la page</translation>
+        <translation>Ajouter la police système dans la page</translation>
     </message>
     <message>
         <source>Extract text from page</source>
@@ -2209,12 +2209,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Zoom &amp;out</source>
         <comment>zoom_out</comment>
-        <translation>Dézo&amp;omer</translation>
+        <translation>Z&amp;oom arrière</translation>
     </message>
     <message>
         <source>Zoom &amp;in</source>
         <comment>zoom_in</comment>
-        <translation>&amp;Zoomer</translation>
+        <translation>Zoom avant</translation>
     </message>
     <message>
         <source>Show only graphical operators in stream</source>
@@ -2224,7 +2224,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Selection mode Toolbar</source>
         <comment>SelectionModeToolbar</comment>
-        <translation>Barre d&apos;outils Mode de Sélection</translation>
+        <translation>Barre d&apos;outils Mode sélection</translation>
     </message>
     <message>
         <source>Select all objects</source>
@@ -2244,22 +2244,22 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Save new &amp;revision</source>
         <comment>fsaverev</comment>
-        <translation>Sauvegarder la nouvelle &amp;révision</translation>
+        <translation>Enregistrer la nouvelle &amp;révision</translation>
     </message>
     <message>
         <source>&amp;View</source>
         <comment>showmenu</comment>
-        <translation>&amp;Vue</translation>
+        <translation>&amp;Affichage</translation>
     </message>
     <message>
         <source>Show/Hide &amp;property editor</source>
         <comment>hideProp</comment>
-        <translation>Afficher/Masquer l&apos;éditeur de &amp;proprietés</translation>
+        <translation>Afficher/Cacher l&apos;éditeur de &amp;propriétés</translation>
     </message>
     <message>
         <source>Show/Hide object &amp;tree</source>
         <comment>hideTree</comment>
-        <translation>Afficher/Masquer l&apos;arborescence des obje&amp;ts</translation>
+        <translation>Afficher/Cacher l&apos;arborescence des obje&amp;ts</translation>
     </message>
     <message>
         <source>&amp;Tools</source>
@@ -2269,7 +2269,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>&amp;Edit</source>
         <comment>editopersmenu</comment>
-        <translation>&amp;Éditer</translation>
+        <translation>É&amp;dition</translation>
     </message>
     <message>
         <source>Set color</source>
@@ -2284,17 +2284,17 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Set line dash style</source>
         <comment>opsetdash</comment>
-        <translation>Définir style ligne tiret</translation>
+        <translation>Définir le style de pointillés</translation>
     </message>
     <message>
         <source>Set line width</source>
         <comment>opsetlinewidth</comment>
-        <translation>Definir la largeur de ligne</translation>
+        <translation>Définir la largeur de ligne</translation>
     </message>
     <message>
         <source>&amp;Help</source>
         <comment>helpmenu</comment>
-        <translation>&amp;Aide</translation>
+        <translation>Aid&amp;e</translation>
     </message>
     <message>
         <source>Set page transformation matrix</source>
@@ -2309,12 +2309,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Change relative position</source>
         <comment>opsetpos</comment>
-        <translation>Changer la position relative</translation>
+        <translation>Modifier la position relative</translation>
     </message>
     <message>
         <source>Show/Hide &amp;status bar</source>
         <comment>hideStatus</comment>
-        <translation>Afficher/Masquer la &amp;barre d&apos;état</translation>
+        <translation>Afficher/Cacher la &amp;barre d&apos;état</translation>
     </message>
     <message>
         <source>Add text</source>
@@ -2324,12 +2324,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Draw line</source>
         <comment>drawlinee</comment>
-        <translation>Dessiner une ligne</translation>
+        <translation>Tracer une ligne</translation>
     </message>
     <message>
         <source>Draw rectangle</source>
         <comment>drawrecte</comment>
-        <translation>Dessiner un rectangle</translation>
+        <translation>Tracer un rectangle</translation>
     </message>
     <message>
         <source>Select annotations</source>
@@ -2344,7 +2344,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>&amp;Find text</source>
         <comment>searchText</comment>
-        <translation>&amp;Rechercher texte</translation>
+        <translation>&amp;Rechercher du texte</translation>
     </message>
     <message>
         <source>&amp;Insert Pages from other document</source>
@@ -2374,7 +2374,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Highlighting text</source>
         <comment>highlightingtext</comment>
-        <translation>Surligner le texte</translation>
+        <translation>Texte surligné</translation>
     </message>
     <message>
         <source>Select graphical operators</source>
@@ -2399,12 +2399,12 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Draw arrow</source>
         <comment>drawarrowe</comment>
-        <translation>Déssiner une fleche</translation>
+        <translation>Tracer une flèche</translation>
     </message>
     <message>
         <source>PageRider Toolbar</source>
         <comment>PageRiderToolbar</comment>
-        <translation>Barre d&apos;outils PageRider</translation>
+        <translation>Barre d&apos;outils Page</translation>
     </message>
     <message>
         <source>Save as text...</source>
@@ -2414,7 +2414,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Reload Page (show changes)</source>
         <comment>reloadpage</comment>
-        <translation>Recharger la Page (afficher les changements)</translation>
+        <translation>Recharger la page (afficher les modifications)</translation>
     </message>
 </context>
 <context>
@@ -2515,11 +2515,11 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>fathom</source>
-        <translation>fathom</translation>
+        <translation>brasse</translation>
     </message>
     <message>
         <source>fathoms</source>
-        <translation>fathoms</translation>
+        <translation>brasses</translation>
     </message>
     <message>
         <source>chain</source>
@@ -2543,7 +2543,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>mile</source>
-        <translation>mille</translation>
+        <translation>mile</translation>
     </message>
     <message>
         <source>miles</source>
@@ -2559,11 +2559,11 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>league</source>
-        <translation>league</translation>
+        <translation>lieue</translation>
     </message>
     <message>
         <source>leagues</source>
-        <translation>leagues</translation>
+        <translation>lieues</translation>
     </message>
     <message>
         <source>nautical mile</source>
@@ -2579,15 +2579,15 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>in : inch</source>
-        <translation>in : inch</translation>
+        <translation>in : inch (pouce)</translation>
     </message>
     <message>
         <source>hand : hand</source>
-        <translation>hand : pouce</translation>
+        <translation>hand : main</translation>
     </message>
     <message>
         <source>ft : foot</source>
-        <translation>ft : pied</translation>
+        <translation>ft : foot (pied)</translation>
     </message>
     <message>
         <source>li : link</source>
@@ -2611,95 +2611,95 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>land : land (league)</source>
-        <translation>land : league</translation>
+        <translation>land : lieue</translation>
     </message>
     <message>
         <source>m : meter</source>
-        <translation>m : metre</translation>
+        <translation>m : mètre</translation>
     </message>
     <message>
         <source>Ym : yottameter</source>
-        <translation>Ym : yottametre</translation>
+        <translation>Ym : yottamètre</translation>
     </message>
     <message>
         <source>Zm : zettameter</source>
-        <translation>Zm : zettametre</translation>
+        <translation>Zm : zettamètre</translation>
     </message>
     <message>
         <source>Em : exameter</source>
-        <translation>Em : exametre</translation>
+        <translation>Em : examètre</translation>
     </message>
     <message>
         <source>Pm : petameter</source>
-        <translation>Pm : petametre</translation>
+        <translation>Pm : petamètre</translation>
     </message>
     <message>
         <source>Tm : terameter</source>
-        <translation>Tm : terametre</translation>
+        <translation>Tm : teramètre</translation>
     </message>
     <message>
         <source>Gm : gigameter</source>
-        <translation>Gm : gigametre</translation>
+        <translation>Gm : gigamètre</translation>
     </message>
     <message>
         <source>Mm : megameter</source>
-        <translation>Mm : megametre</translation>
+        <translation>Mm : mégamètre</translation>
     </message>
     <message>
         <source>km : kilometer</source>
-        <translation>km : kilometre</translation>
+        <translation>km : kilomètre</translation>
     </message>
     <message>
         <source>hm : hectometer</source>
-        <translation>hm : hectometre</translation>
+        <translation>hm : hectomètre</translation>
     </message>
     <message>
         <source>dam : decameter</source>
-        <translation>dam : decametre</translation>
+        <translation>dam : décamètre</translation>
     </message>
     <message>
         <source>dm : decimeter</source>
-        <translation>dm : decimetre</translation>
+        <translation>dm : décimètre</translation>
     </message>
     <message>
         <source>cm : centimeter</source>
-        <translation>cm : centimetre</translation>
+        <translation>cm : centimètre</translation>
     </message>
     <message>
         <source>mm : millimeter</source>
-        <translation>mm : millimetre</translation>
+        <translation>mm : millimètre</translation>
     </message>
     <message>
         <source>um : micrometer</source>
-        <translation>um : micrometre</translation>
+        <translation>um : micromètre</translation>
     </message>
     <message>
         <source>nm : nanometer</source>
-        <translation>nm : nanometre</translation>
+        <translation>nm : nanomètre</translation>
     </message>
     <message>
         <source>pm : picometer</source>
-        <translation>pm : picometre</translation>
+        <translation>pm : picomètre</translation>
     </message>
     <message>
         <source>fm : femtometer</source>
-        <translation>fm : femtometre</translation>
+        <translation>fm : femtomètre</translation>
     </message>
     <message>
         <source>am : attometer</source>
-        <translation>am : attometre</translation>
+        <translation>am : attomètre</translation>
     </message>
     <message>
         <source>zm : zeptometer</source>
-        <translation>zm : zeptometre</translation>
+        <translation>zm : zeptomètre</translation>
     </message>
     <message>
         <source>ym : yoctometer</source>
-        <translation>ym : yoctometre</translation>
+        <translation>ym : yoctomètre</translation>
     </message>
     <message>
         <source>A : angstrom</source>
-        <translation>A : angstrom</translation>
+        <translation>A : angström</translation>
     </message>
     <message>
         <source>astronomical unit</source>
@@ -2707,7 +2707,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>astronomical units</source>
-        <translation>Unités astronomique</translation>
+        <translation>Unités astronomiques</translation>
     </message>
     <message>
         <source>AU : astronomical unit</source>
@@ -2719,7 +2719,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>light years</source>
-        <translation>années lumère</translation>
+        <translation>années lumière</translation>
     </message>
     <message>
         <source>ly : light year</source>
@@ -2735,7 +2735,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>mil : milli-inch</source>
-        <translation>mil : mili-inch</translation>
+        <translation>mil : milli-pouce</translation>
     </message>
     <message>
         <source>fm. : fathom</source>
@@ -2747,7 +2747,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
     <message>
         <source>cable : cable</source>
-        <translation>cable : kabel</translation>
+        <translation>cable : encablure</translation>
     </message>
     <message>
         <source>n.m. : nautical mile</source>
