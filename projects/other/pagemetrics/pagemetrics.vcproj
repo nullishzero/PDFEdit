@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel.lib zlib1d.lib"
+				AdditionalDependencies="kernel.lib xpdf.lib zlib1d.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"
@@ -138,6 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="kernel.lib xpdf.lib zlib1.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -217,7 +218,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel.lib zlib1d.lib"
+				AdditionalDependencies="kernel.lib xpdf.lib zlib1d.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 				GenerateDebugInformation="true"

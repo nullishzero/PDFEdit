@@ -1258,6 +1258,14 @@
 				RelativePath="..\..\src\tests\tools\displaycs.cc"
 				>
 				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug-Tools (testing)|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -1271,6 +1279,14 @@
 				RelativePath="..\..\src\tests\tools\pagemetrics.cc"
 				>
 				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug-Tools (testing)|Win32"
 					>
 					<Tool
@@ -1282,6 +1298,14 @@
 			<File
 				RelativePath="..\..\src\tests\tools\parse_object.cc"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug-Tools (testing)|Win32"
 					ExcludedFromBuild="true"
