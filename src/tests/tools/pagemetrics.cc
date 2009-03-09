@@ -46,18 +46,35 @@ namespace {
 		~_pdf_lib () {pdfedit_core_dev_destroy();}
 	};
 
-	struct replace {
+	struct stm {
 		static const string name;
-		void operator () (shared_ptr<CPage> page, const string& str)
+		void operator () (shared_ptr<CPage> page, P& p)
 		{
-			typedef vector<shared_ptr<CContentStream> > CCs;
-			CCs ccs;
-			page->getContentStreams (ccs);
-
-
+				if (p.size() < 6) throw std::runtime_error ("too few p params");
+			page->setTransformMatrix (&p[0]);
 		}
 	};
-	const string smb::name ("replace");
+	const string stm::name ("stm");
+	
+	struct sr {
+		static const string name;
+		void operator () (shared_ptr<CPage> page, P& p)
+		{
+				if (p.size() < 1) throw std::runtime_error ("too few p params");
+			page->setRotation ((int)(p[0]));
+		}
+	};
+	const string sr::name ("sr");
+
+	struct smb {
+		static const string name;
+		void operator () (shared_ptr<CPage> page, const P& p)
+		{
+				if (p.size() < 4) throw std::runtime_error ("too few p params");
+			page->setMediabox (libs::Rectangle (p[0], p[1], p[2], p[3]));
+		}
+	};
+	const string smb::name ("smb");
 }
 
 int 
@@ -70,10 +87,15 @@ main(int argc, char ** argv)
 	desc.add_options()
 		("help", "produce help message")
 		("file", po::value<string>(), "file")
+		("alg", po::value<string>()->default_value(stm::name), 
+										 "set algorithm ["
+										 "stm - transformation matrix (default), "
+										 "sr - rotation, "
+										 "smb - media box"
+										 "]")
+		("p", po::value<P>(), "parameters (e.g. for transformation matrix :) --p 1 --p 1 --p 1 --p 1 --p 1 --p 1)")
 		("from", po::value<size_t>()->default_value(1), "start page (default 0)")
 		("to", po::value<size_t>(), "end page (default till the end of file)")
-		("what", po::value<vector<string> >(), "what to replace")
-		("with", po::value<vector<string> >(), "with what")
 	;
 
 	po::variables_map vm;
@@ -86,13 +108,15 @@ main(int argc, char ** argv)
 		return 1;
 	}
 
-		if (!vm.count("file") || !vm.count("what")|| !vm.count("with")) 
+		if (!vm.count("file") || !vm.count("p")) 
 		{
 			cout << desc << endl;
 			return 1;
 		}
 	string file = vm["file"].as<string>(); 
 	size_t from = vm["from"].as<size_t>();
+	string alg = vm["alg"].as<string>();
+	P p = vm["p"].as<P>();
 	size_t to = numeric_limits<size_t>::max();
 	if (vm.count("to")) 
 		to = vm["to"].as<size_t>();
@@ -116,7 +140,12 @@ main(int argc, char ** argv)
 		for (size_t i = from; i < to; ++i)
 		{
 			shared_ptr<CPage> page = pdf->getPage(i);
-			replace()(page,p);
+			if (alg == stm::name)
+				stm()(page,p);
+			else if (alg == sr::name)
+				sr()(page,p);
+			else if (alg == smb::name)
+				smb()(page,p);
 		}
 
 		pdf->save ();
