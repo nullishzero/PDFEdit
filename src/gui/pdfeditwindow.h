@@ -28,6 +28,7 @@
 #include <kernel/cpdf.h>
 #include <kernel/cannotation.h>
 #include <kernel/pdfoperators.h>
+#include <kernel/pdfwriter.h>
 #include <qmainwindow.h>
 #include <qprogressbar.h>
 

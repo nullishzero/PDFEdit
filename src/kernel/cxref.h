@@ -25,6 +25,8 @@
 #ifndef _CXREF_H_
 #define _CXREF_H_
 
+#include <limits.h>
+
 // xpdf
 #include "kernel/static.h"
 
