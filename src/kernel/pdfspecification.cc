@@ -78,6 +78,7 @@ namespace pdfobjects {
 	const std::string Specification::Page::RESOURCES("Resources");
 	const std::string Specification::Page::MEDIABOX ("MediaBox");
 	const std::string Specification::Page::CROPBOX  ("CropBox");
+	const std::string Specification::Page::TRIMBOX  ("TrimBox");
 	const std::string Specification::Page::ROTATE   ("Rotate");
 	const std::string Specification::Page::ANNOTS   ("Annots");
 

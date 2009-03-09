@@ -221,7 +221,6 @@ CPageDisplay::getPageRect () const
 	return _params.pageRect;
 }
 
-
 //
 //
 //
@@ -240,7 +239,18 @@ CPageDisplay::setMediabox (const libs::Rectangle& rc)
 	r.setValue (rc.yright);
 	mb.addProperty (r);
 		
-	_page->getDictionary()->setProperty (Specification::Page::MEDIABOX,mb);
+	boost::shared_ptr<CDict> dict = _page->getDictionary();
+	dict->setProperty (Specification::Page::MEDIABOX,mb);
+
+	// We should sync all generally used Boxes (CropBox and TrimBox) 
+	// to the default one (MediaBox)
+	// This is not perfect because someone could set it to different 
+	// value intentionaly, but this is smaller problem than bad printing
+	// size when MediaBox is enlarged [see bt#290]
+	if (dict->containsProperty (Specification::Page::CROPBOX))
+		dict->setProperty (Specification::Page::CROPBOX, mb);
+	if (dict->containsProperty (Specification::Page::TRIMBOX))
+		dict->setProperty (Specification::Page::TRIMBOX, mb);
 }
 
 //

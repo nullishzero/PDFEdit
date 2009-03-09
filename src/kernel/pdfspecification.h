@@ -118,6 +118,8 @@ namespace pdfobjects {
 			static const std::string MEDIABOX;
 			/** Page Cropbox entry. */
 			static const std::string CROPBOX;
+			/** Page Trimbox entry. */
+			static const std::string TRIMBOX;
 			/** Page Rotate entry. */
 			static const std::string ROTATE;
 			/** Page Annotation entry. */

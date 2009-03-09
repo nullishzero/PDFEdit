@@ -91,6 +91,10 @@ public:
 	
 	/** 
 	 * Sets media box of this page. 
+	 * @param rc Rectangle for the media box.
+	 *
+	 * As a side effect it changes also CropBox and TrimBox if they are
+	 * set.
 	 */
 	void setMediabox (const libs::Rectangle& rc);
 
