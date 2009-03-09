@@ -26,7 +26,6 @@
 #include "kernel/static.h"
 #include "kernel/xrefwriter.h"
 #include "kernel/cpdf.h"
-#include "kernel/cobject.h"
 #include "kernel/cxref.h"
 #include "kernel/streamwriter.h"
 #include "kernel/pdfwriter.h"

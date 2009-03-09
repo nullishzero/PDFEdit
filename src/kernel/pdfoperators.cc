@@ -27,11 +27,11 @@
 #include "kernel/static.h"
 #include "kernel/pdfoperators.h"
 //
-#include "kernel/pdfoperatorsiter.h"
 #include "kernel/iproperty.h"
 #include "kernel/cinlineimage.h"
 
 #include "kernel/ccontentstream.h"
+#include "kernel/stateupdater.h"
 
 //==========================================================
 namespace pdfobjects {

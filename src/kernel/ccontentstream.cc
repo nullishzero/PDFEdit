@@ -32,7 +32,6 @@
 #include "kernel/pdfoperators.h"
 #include "kernel/stateupdater.h"
 #include "kernel/cobject.h"
-#include "kernel/factories.h"
 #include "kernel/cinlineimage.h"
 #include "kernel/contentschangetag.h"
 #include "kernel/pdfoperatorsiter.h"

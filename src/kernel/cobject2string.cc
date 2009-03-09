@@ -30,8 +30,6 @@
 //
 #include "kernel/pdfspecification.h"
 #include "kernel/cobject.h"
-#include "kernel/cpdf.h"
-#include "kernel/cxref.h"
 
 
 using namespace std;

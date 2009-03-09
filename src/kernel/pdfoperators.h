@@ -28,7 +28,6 @@
 
 // static includes
 #include "kernel/pdfoperatorsbase.h"
-#include "kernel/stateupdater.h"
 
 //==========================================================
 namespace pdfobjects {

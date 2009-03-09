@@ -31,8 +31,6 @@
 #include "kernel/pdfspecification.h"
 #include "kernel/factories.h"
 #include "kernel/cobject.h"
-#include "kernel/cpdf.h"
-#include "kernel/cxref.h"
 
 
 // =====================================================================================
