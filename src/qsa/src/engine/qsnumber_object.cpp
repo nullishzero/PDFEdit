@@ -82,7 +82,7 @@ QVariant QSNumberClass::toVariant( const QSObject *obj, QVariant::Type ) const
 
 QSObject QSNumberClass::construct( const QSList &args ) const
 {
-    double n = args.isEmpty() ? n = 0.0 : args[0].toNumber();
+    double n = args.isEmpty() ? 0.0 : args[0].toNumber();
 
     return createNumber( n );
 }
