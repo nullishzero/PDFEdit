@@ -33,31 +33,59 @@
 #include "kernel/pdfedit-core-dev.h"
 
 
-using namespace pdfobjects;
-using namespace utils;
+namespace pdfobjects {
+namespace utils {
 
-Delinearizator::Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter * writer)
+Delinearizator::Delinearizator(FileStreamWriter * stream, IPdfWriter * writer)
 	:CXref(stream),
-	pdfWriter(writer),
-	file(f)
+	pdfWriter(writer)
 {
 	if(!checkLinearized(*stream, this, &linearizedRef))
 		throw NotLinearizedException();
 }
 
-Delinearizator * Delinearizator::getInstance(const char * fileName, IPdfWriter * pdfWriter)
+/** Class to deallocate Delinearizator and close associated file
+ * handle from smart pointer.
+ */
+class DelinearizatorDeleter
 {
-using namespace debug;
+	FILE * file;
+public:
+	DelinearizatorDeleter(FILE * f): file(f) {};
+
+	void operator ()(Delinearizator * delinearizator)
+	{
+		assert(delinearizator);
+		delete delinearizator;
+
+		// Note that file handle cannot be closed in the destructor 
+		// because CXref (parent type) will destroy stream (XRef::str) 
+		// which is based on FileStream which in turn may access file 
+		// handle which could cause memory corruptions
+		if(fclose(file))
+		{
+			int err = errno;
+			kernelPrintDbg(debug::DBG_ERR, "Unable to close file handle (cause=\""
+					<<strerror(err) << "\"");
+		}
+
+		kernelPrintDbg(debug::DBG_DBG, "Instance deleted.");
+	}
+};
+
+boost::shared_ptr<Delinearizator> Delinearizator::getInstance(
+		const char * fileName, IPdfWriter * pdfWriter)
+{
 	
-	utilsPrintDbg(DBG_DBG, "fileName="<<fileName);
+	utilsPrintDbg(debug::DBG_DBG, "fileName="<<fileName);
 
 	// opens file handle and creates FileStreamWriter instance
 	FILE * file=fopen(fileName, "r");
 	if(!file)
 	{
 		int err=errno;
-		utilsPrintDbg(DBG_ERR, "Unable to open file. Error message="<<strerror(err));
-		return NULL;
+		utilsPrintDbg(debug::DBG_ERR, "Unable to open file. Error message="<<strerror(err));
+		return boost::shared_ptr<Delinearizator>();
 	}
 	Object dict;
 	FileStreamWriter * inputStream=new FileStreamWriter(file, 0, false, 0, &dict);
@@ -66,33 +94,30 @@ using namespace debug;
 	Delinearizator * instance;
 	try
 	{
-		instance=new Delinearizator(file, inputStream, pdfWriter);
+		instance=new Delinearizator(inputStream, pdfWriter);
 	}catch(NotLinearizedException &e)
 	{
-		utilsPrintDbg(DBG_ERR, "Document is not linearized.");
+		utilsPrintDbg(debug::DBG_ERR, "Document is not linearized.");
 		// exception from Delinearizator (~CXref deallocates stream
 		// and we have to close file handle
 		fclose(file);
-		return NULL;
+		return boost::shared_ptr<Delinearizator>();
 	}catch(std::exception & e)
 	{
 		// exception thrown from CXref so we have to do a cleanup
-		utilsPrintDbg(DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
+		utilsPrintDbg(debug::DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
 		fclose(file);
 		delete inputStream;
-		return NULL;
+		return boost::shared_ptr<Delinearizator>();
 	}
 
-	return instance;
-
+	return boost::shared_ptr<Delinearizator> (instance, DelinearizatorDeleter(file));
 }
 
 Delinearizator::~Delinearizator()
 {
 	if(pdfWriter)
 		delete pdfWriter;
-	// FILE stream has to be closed - FileStream::close method doesn't do that!
-	fclose(file);
 }
 
 int Delinearizator::delinearize(const char * fileName)
@@ -244,4 +269,5 @@ using namespace debug;
 
 	return 0;
 }
-
+} //namespace utils
+} //namespace pdfobjects

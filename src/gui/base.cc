@@ -456,7 +456,7 @@ QSPdfOperatorStack* Base::createPdfOperatorStack() {
  @param outFile output file
 */
 bool Base::delinearize(const QString &inFile,const QString &outFile) {
- utils::Delinearizator* delin=NULL;
+ boost::shared_ptr<utils::Delinearizator> delin;
  utils::OldStylePdfWriter* wr=NULL;
  try {
   guiPrintDbg(debug::DBG_DBG,"Delinearizator started");
@@ -473,7 +473,6 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
 
     //Dialog aborted -> exit
     if (pwd.isNull()) { 
-      delete delin;
       guiPrintDbg(debug::DBG_ERR, "No password available");
       return false;
     }
@@ -497,17 +496,14 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
 //  guiPrintDbg(debug::DBG_DBG,"deleting pdf writer");
 //  if (wr) delete wr;
   guiPrintDbg(debug::DBG_DBG,"deleting delinearizator");
-  if (delin) delete delin;
   guiPrintDbg(debug::DBG_DBG,"Delinearizator exit");
   return (ret==0);
  } catch (NotImplementedException &e) {
   lastErrorMessage=tr("Delinearization of encrypted documents is not supported");
-  if (delin) delete delin;
   return false;
  } catch (...) {
   //This is the case of failure ..
   lastErrorMessage=tr("Unknown error occured");
-  if (delin) delete delin;
   return false;
  }
 }

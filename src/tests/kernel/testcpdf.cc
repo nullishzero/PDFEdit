@@ -1110,7 +1110,7 @@ public:
 		IPdfWriter * writer=new OldStylePdfWriter();
 		ProgressBar * progressBar=new ProgressBar(cout);
 		writer->registerObserver(shared_ptr<PdfWriterObserver>(new ProgressObserver(progressBar)));
-		Delinearizator *delinearizator=Delinearizator::getInstance(fileName.c_str(), writer);
+		boost::shared_ptr<Delinearizator> delinearizator=Delinearizator::getInstance(fileName.c_str(), writer);
 		if(!delinearizator)
 		{
 			printf("\t%s is not suitable because it is not linearized.\n", fileName.c_str());
@@ -1120,7 +1120,6 @@ public:
 		string outputFile=fileName+"-delinearizator.pdf";
 		printf("\tDelinearized output is in %s file\n", outputFile.c_str());
 		delinearizator->delinearize(outputFile.c_str());
-		delete delinearizator;
 	}
 
 	void setUp()

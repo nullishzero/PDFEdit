@@ -107,34 +107,29 @@ class Delinearizator: public pdfobjects::CXref
 	 */
 	::Ref linearizedRef;
 
-	/** File handle for the file stream.
-	 * It is initialized in constructor and closed in destructor. This has to be
-	 * done, because stream used for XRef doesn't allow to access its file
-	 * handle from outside and also doesn't provide proper close functionality.
-	 */
-	FILE * file;
-protected:
 	/** Initialization constructor.
-	 * @param f File handle for stream.
 	 * @param stream FileStreamWriter instance.
 	 * @param writer Pdf content writer.
 	 *
-	 * Uses XRef(BaseStream *) constructor and initializes file handle and 
-	 * pdfWriter with given one (pdfWriter has to be allocated by new operator,
-	 * because it is deallocated by delete in destructor - if NULL is provided,
-	 * delinearize methods do nothing). 
+	 * Uses CXref(BaseStream *) constructor and pdfWriter with given one 
+	 * (pdfWriter has to be allocated by new operator, because it is 
+	 * deallocated by delete in destructor - if NULL is provided, delinearize 
+	 * methods do nothing). 
 	 * 
 	 * @throw MalformedFormatExeption if file content is not valid pdf document.
 	 * @throw NotLinearizedException if file content is not linearized.
 	 */
-	Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter * writer);
-public:
+	Delinearizator(FileStreamWriter * stream, IPdfWriter * writer);
+
 	/** Destructor.
 	 *
-	 * Destroys XRefWriter internal data, deallocates pdfWriter and closes file
-	 * handle opened used for FileStream.
+	 * Deallocates pdfWriter and delegates the rest to ~CXref.
 	 */
-	~Delinearizator();
+	virtual ~Delinearizator();
+
+	friend class DelinearizatorDeleter;
+
+public:
 	
 	/** Factory method for instance creation.
 	 * @param fileName Name of the pdf file.
@@ -143,12 +138,16 @@ public:
 	 * Creates FileStream from given fileName (file is open with `r' mode) and 
 	 * creates Delinearizator instance. Finally checks whether file is 
 	 * linearized and if not, prints error message and returns with NULL.
+	 * <br>
+	 * Smart pointer returned by this method contains a proper deleter which
+	 * closes file handle created from given fileName.
 	 *
 	 * @throw MalformedFormatExeption if file content is not valid pdf document.
 	 * @return Delinearizator instance ready to be used or NULL, if given file
 	 * is not linearized.
 	 */
-	static Delinearizator * getInstance(const char * fileName, IPdfWriter * pdfWriter);
+	static boost::shared_ptr<Delinearizator> getInstance(const char * fileName, 
+			IPdfWriter * pdfWriter);
 
 	/** Sets new pdf content writer.
 	 * @param pdfWriter IPdfWriter interface implementator.
