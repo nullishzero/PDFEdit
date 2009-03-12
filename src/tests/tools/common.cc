@@ -1,6 +1,19 @@
 #include "common.h"
 using namespace pdfobjects;
 
+boost::shared_ptr<pdfobjects::CPdf> openDocument(const char *fname, pdfobjects::CPdf::OpenMode mode)
+{
+	boost::shared_ptr<pdfobjects::CPdf> pdf;
+	try
+	{
+		pdf = pdfobjects::CPdf::getInstance(fname, mode);
+	}catch(...)
+	{
+		std::cerr << fname << " is not a valid pdf document" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return pdf;
+}
 int add_ref(RefContainer &refs, const char *refStr)
 {
 	std::string str = refStr;

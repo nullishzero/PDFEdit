@@ -6,6 +6,7 @@
 #include <kernel/cpdf.h>
 #include <string>
 
+boost::shared_ptr<pdfobjects::CPdf> openDocument(const char *fname, pdfobjects::CPdf::OpenMode);
 typedef std::vector<pdfobjects::IndiRef> RefContainer;
 typedef std::vector<int> PagePosList;
 int add_ref(RefContainer &refs, const char *refStr);

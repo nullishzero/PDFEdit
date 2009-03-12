@@ -20,15 +20,7 @@ void getStringRepresentation(boost::shared_ptr<IProperty> &prop, std::string &st
 
 void print_objects(const char *fname, RefContainer &refs)
 {
-	boost::shared_ptr<CPdf> pdf;
-	try
-	{
-		pdf = CPdf::getInstance(fname, CPdf::ReadOnly);
-	}catch(...)
-	{
-		std::cerr << fname << " is not a valid pdf document" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	boost::shared_ptr<CPdf> pdf = openDocument(fname, CPdf::ReadOnly);
 
 	std::cout << "Document: \"" << fname << "\"" << std::endl;
 	RefContainer::const_iterator i;
