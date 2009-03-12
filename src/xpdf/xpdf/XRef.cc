@@ -202,7 +202,7 @@ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
 // XRef
 //------------------------------------------------------------------------
 
-XRef::XRef(BaseStream *strA) {
+XRef::XRef(BaseStream *strA):entries(NULL) {
   // inits stream and initializes internals
   str = strA;
   // gets position of last xref section
@@ -286,8 +286,11 @@ void XRef::initInternals(Guint pos)
 
 void XRef::destroyInternals()
 {
-  gfree(entries);
-  entries=NULL;
+  if(entries)
+  {
+    gfree(entries);
+    entries=NULL;
+  }
   trailerDict.free();
   if (streamEnds) {
     gfree(streamEnds);
