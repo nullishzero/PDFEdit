@@ -204,6 +204,7 @@ using namespace debug;
 	}
 	char * key=copyString(name);
 	::Object * prev = trailer->update(key, clonedObject);
+	gfree(clonedObject);
 
 	// update doesn't store key if key, value has been already in the 
 	// dictionary
