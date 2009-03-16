@@ -174,6 +174,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objStr.free();
   return;
  malformedErr:
+  gfree(offsets);
   if(parser)
     delete parser;
   // TODO getObj how to hande ObjectStream constructor
