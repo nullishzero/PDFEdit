@@ -1725,7 +1725,6 @@ void FoFiTrueType::cvtSfnts(FoFiOutputFunc outputFunc,
 	  dumpString(vheaTab, length, outputFunc, outputStream);
 	} else if (needVerticalMetrics && i == t42VmtxTable) {
 	  dumpString(vmtxTab, length, outputFunc, outputStream);
-	  gfree(vmtxTab);
 	}
       }
     }
@@ -1734,6 +1733,8 @@ void FoFiTrueType::cvtSfnts(FoFiOutputFunc outputFunc,
   // end the sfnts array
   (*outputFunc)(outputStream, "] def\n", 6);
 
+  if(vmtxTab)
+    gfree(vmtxTab);
   gfree(locaData);
   gfree(locaTable);
 }
