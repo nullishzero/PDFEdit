@@ -14,16 +14,22 @@ SecurityHandler * checkEncryptionCred(XRef * xref, GString *ownerPassword, GStri
       } else {
 	// authorization failed
 	result = gFalse;
-	delete secHdlr;
-	secHdlr = NULL;
       }
     } else {
       // couldn't find the matching security handler
       result = gFalse;
+      if(ownerPassword)
+        gfree(ownerPassword);
+      if(userPassword)
+        gfree(userPassword);
     }
   } else {
     // document is not encrypted
     result = gTrue;
+    if(ownerPassword)
+      gfree(ownerPassword);
+    if(userPassword)
+      gfree(userPassword);
   }
   encrypt.free();
   return secHdlr;

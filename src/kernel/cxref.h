@@ -345,6 +345,7 @@ public:
 	 * <br>
 	 * If credentials are correct, sets needs_credentials to false, thus enables
 	 * encrypted content returning.
+	 * @throw NotImplementedException if document uses unsupported security handler.
 	 */
 	virtual void setCredentials(const char * ownerPasswd, const char * userPasswd);
 

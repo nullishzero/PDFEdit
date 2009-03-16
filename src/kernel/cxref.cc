@@ -714,9 +714,18 @@ void CXref::setCredentials(const char * ownerPasswd, const char * userPasswd)
 	SecurityHandler * handler = ::checkEncryptionCred(this, op, up, result);
 	disableInternalFetch();
 
-	if(!result)
+	// we are not able to find a security handler
+	if(!result && !handler)
+	{
+		kernelPrintDbg(debug::DBG_ERR, "Unable to find proper security handler");
+		throw NotImplementedException("security handler");
+	}
+
+	// authorization failed
+	if(!result && handler)
 	{
 		kernelPrintDbg(debug::DBG_ERR, "Bad credentials");
+		delete handler;
 		throw PermissionException("Bad credentials");
 	}
 
