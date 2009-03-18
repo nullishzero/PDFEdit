@@ -1036,13 +1036,20 @@ private:
 	
 	/** Destructor.
 	 * 
-	 * It is no available outside class, because we whant to prevent
-	 * deleting instances without control.
-	 * <br>
-	 * Instance can be destryed by close method (which destroyes it
-	 * using this destructor).
+	 * It is not available outside the class, because we want to keep
+	 * absolute control over instance deleting. The instance is destroyed
+	 * after the its last reference to the smart pointer is released.
 	 */
 	~CPdf();
+
+	/** Helper method to cleanup all data structure before CPdf destroying.
+	 * This includes invalidating all pages from pageList (those returned 
+	 * by getPage), unregistering all observers, clearing all cached
+	 * indirect objects and cleaning up resolvedRefMapping.
+	 * <br>
+	 * Method has to be called before the object itself is deleted.
+	 */
+	void invalidate();
 
  	friend class PdfFileDeleter;
 public:

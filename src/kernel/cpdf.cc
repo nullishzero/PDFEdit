@@ -1805,7 +1805,7 @@ void CPdf::releasePdfId()
 	}
 }
 
-CPdf::~CPdf()
+void CPdf::invalidate()
 {
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -1848,12 +1848,17 @@ CPdf::~CPdf()
 
 	// TODO handle outlines when ready
 	
+}
+
+CPdf::~CPdf()
+{
+	kernelPrintDbg(DBG_DBG, "");
+
 	// deallocates XRefWriter
 	delete xref;
 
 	releasePdfId();
 }
-
 
 //
 // 
@@ -2316,6 +2321,7 @@ public:
 	void operator ()(CPdf * pdf)
 	{
 		assert(pdf);
+		pdf->invalidate();
 		delete pdf;
 		if(fclose(file))
 		{
