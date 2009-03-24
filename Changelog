@@ -1,7 +1,7 @@
 XXXX-XX-XX PDF Editor 0.4.X
 	* French translation update (bug 275)
 	* Fix for [33853] Secunia advisory backported from poppler
-	* Bugs 285, 290, 291, 295, 306, 307 fixed
+	* Bugs 256, 285, 290, 291, 295, 306, 307 fixed
 
 2008-12-15 PDF Editor 0.4.2
 	* dependency to boost-iostreams dropped
