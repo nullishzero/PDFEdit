@@ -1,9 +1,22 @@
 <part id="general_part">
 	<title>PDFEdit general overview</title>
+	<footnote id='note_increasing_size'>
 	<para>
-			Pdf Editor is primary created for simple editation and manipulation with objects of documents in PDF format
-			and storing them as new version of document.
-			Editation and manipulation with objets is by graphical and by commandline interface too.
-			For simple use command line is using script language, which is usefull in graphical interface too.
+		This means that if you delete something from a document it can still
+		be seen in the previous revision, and the file will not get smaller.
+	</para>
+	</footnote>
+	<para>
+		Pdf Editor allows simple manipulation of objects within the PDF
+		structure, using a graphical and command-line interface and a
+		powerful scripting language.  
+	</para>
+	<para>
+		Changes to a document are added to it as a new revision so that
+		old revisions can be viewed or saved as a new file 
+		<footnoteref linkend='note_increasing_size'/>. All PDF viewers 
+		have to display the content of the most recent revision. Though 
+		we don't know of any PDF viewer (except for PDFedit) which would 
+		enable also revision browsing.
 	</para>
 </part>
