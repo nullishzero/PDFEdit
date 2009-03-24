@@ -151,6 +151,10 @@ function zoom(x) {
 
 /** Go to page with number x in document. If parameter is empty, current page is reloaded */
 function go(x) {
+ if (document.getPageCount()==0) {
+    print(tr("No pages in document"));
+    return;
+ }
  if (x == undefined) {
     tpage=page();
  } else {
