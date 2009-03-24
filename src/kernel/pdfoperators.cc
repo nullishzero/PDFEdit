@@ -157,7 +157,7 @@ SimpleGenericOperator::init_operands (shared_ptr<observer::IObserver<IProperty> 
 		{ // We do not support adding operators from another stream
 			if ( ((*oper)->getPdf().lock() != pdf.lock()) || !((*oper)->getIndiRef() == *rf) )
 			{
-				kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << *rf <<  " op has" <<(*oper)->getIndiRef());
+				kernelPrintDbg (debug::DBG_ERR, "Pdf or indiref do not match: want " << *rf <<  " op has" <<(*oper)->getIndiRef());
 				throw CObjInvalidObject ();
 			}
 			

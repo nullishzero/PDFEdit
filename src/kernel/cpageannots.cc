@@ -445,7 +445,7 @@ CPageAnnots::del(boost::shared_ptr<CAnnotation> annot)
 			return true;
 		}catch(CObjectException &)
 		{
-			kernelPrintDbg(debug::DBG_CRIT, "Unexpected Annots array missing.");
+			kernelPrintDbg(debug::DBG_ERR, "Unexpected Annots array missing.");
 			return false;
 		}
 	}

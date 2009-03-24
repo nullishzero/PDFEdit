@@ -523,7 +523,7 @@ namespace {
 			
 			}else // Neither stream nor array
 			{
-				kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << realcontent->getType());
+				kernelPrintDbg (debug::DBG_ERR, "Content stream type: " << realcontent->getType());
 				throw ElementBadTypeException ("Bad content stream type.");
 			}
 		}
@@ -667,7 +667,7 @@ CPageContents::remove (const IndiRef& rf)
 	
 	}else // Neither stream nor array
 	{
-		kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << realcontent->getType());
+		kernelPrintDbg (debug::DBG_ERR, "Content stream type: " << realcontent->getType());
 		throw ElementBadTypeException ("Bad content stream type.");
 	}
 }
@@ -741,7 +741,7 @@ CPageContents::parse ()
 		
 	}else // Neither stream nor array
 	{
-		kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << contents->getType());
+		kernelPrintDbg (debug::DBG_ERR, "Content stream type: " << contents->getType());
 		throw ElementBadTypeException ("Bad content stream type.");
 	}
 

@@ -1669,7 +1669,7 @@ void CPdf::initRevisionSpecific()
 	shared_ptr<IProperty> prop_ptr=getIndirectProperty(rootRef);
 	if(prop_ptr->getType()!=pDict)
 	{
-		kernelPrintDbg(debug::DBG_CRIT, "Trailer dictionary doesn't point to correct document catalog "
+		kernelPrintDbg(debug::DBG_ERR, "Trailer dictionary doesn't point to correct document catalog "
 				<<"(type="<<prop_ptr->getType()<<")");
 		throw ElementBadTypeException("Root");
 	}
@@ -2740,7 +2740,7 @@ using namespace utils;
 				i->second->invalidate();
 			}catch(std::exception & e)
 			{
-				kernelPrintDbg(DBG_CRIT, "Unexpected error. cause="<<e.what());
+				kernelPrintDbg(DBG_CRIT, "Unexpected error. cause="<<e.what()<<" Possibly BUG");
 				assert(!"Possibly bug.");
 			}
 		}
@@ -3012,7 +3012,7 @@ using namespace utils;
 	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
 	if(kidsProp_ptr->getType()!=pArray)
 	{
-		kernelPrintDbg(DBG_CRIT, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
+		kernelPrintDbg(DBG_ERR, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
 		// Kids is not array - malformed intermediate node
 		throw MalformedFormatExeption("Intermediate node Kids field is not an array.");
 	}
@@ -3130,7 +3130,7 @@ using namespace utils;
 	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
 	if(kidsProp_ptr->getType()!=pArray)
 	{
-		kernelPrintDbg(DBG_CRIT, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
+		kernelPrintDbg(DBG_ERR, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
 		// Kids is not array - malformed intermediate node
 		throw MalformedFormatExeption("Intermediate node Kids field is not an array.");
 	}

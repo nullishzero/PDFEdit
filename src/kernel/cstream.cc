@@ -255,7 +255,7 @@ CStream::_makeXpdfObject () const
 	// object
 	// 
 	if (getLength() != buffer.size())
-		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
+		kernelPrintDbg (debug::DBG_WARN, "Length attribute of a stream is not valid. Changing it to buffer size.");
 
 	// Dictionary will be deallocated in ~BaseStream
 	::Object* obj = utils::xpdfStreamObjFromBuffer (buffer, dictionary);
@@ -354,7 +354,7 @@ CStream::_objectChanged (shared_ptr<const ObserverContext> context)
 	// Set correct length
 	if (getLength() != buffer.size())
 	{
-		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
+		kernelPrintDbg (debug::DBG_WARN, "Length attribute of a stream is not valid. Changing it to buffer size.");
 		setLength (buffer.size());
 	}
 	

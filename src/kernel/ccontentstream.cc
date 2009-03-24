@@ -142,7 +142,7 @@ namespace {
 		// Bad content stream
 		if (streamreader.eof())
 		{
-			utilsPrintDbg (debug::DBG_CRIT, "Content stream is damaged...");
+			utilsPrintDbg (debug::DBG_ERR, "Content stream is damaged...");
 			return NULL;
 		}
 	
