@@ -19,6 +19,7 @@
 //              - setErrCode method added
 //              - maxObj field added which contains the maximum present 
 //                indirect object number
+//              - pdfVersion and getPDFVersion added
 //
 //========================================================================
 
@@ -173,6 +174,7 @@ public:
   virtual XRefEntry *getEntry(int i) { return &entries[i]; }
   virtual Object *getTrailerDict() { return &trailerDict; }
 
+  virtual const char *getPDFVersion()const {return pdfVersion.getCString(); }
 protected:
 
   BaseStream *str;		// input stream
@@ -189,6 +191,7 @@ protected:
                                 //   store new data 
   Guint maxObj;                 // Maximum present indirect object number (for
                                 //   all previous revisions)
+  mutable GString pdfVersion;	// PDF version used for document
   Guint *streamEnds;		// 'endstream' positions - only used in
 				//   damaged files
   int streamEndsLen;		// number of valid entries in streamEnds

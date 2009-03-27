@@ -203,11 +203,27 @@ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
 // XRef
 //------------------------------------------------------------------------
 
+static const char * PDFHEADER="%PDF-";
 XRef::XRef(BaseStream *strA):entries(NULL) {
   // inits stream and initializes internals
   str = strA;
-  // gets position of last xref section
+
   setErrCode(errNone);
+  // get PDF specification version from file
+  char buffer[1024];
+  char * header;
+  do {
+    if(!str->getLine(buffer, sizeof(buffer)))
+    {
+      setErrCode(errBadHeader);
+      error(-1, "PDF file doesn't contain proper header");
+      return;
+    }
+  }while (!(header = strstr(buffer, PDFHEADER)));
+  header+=strlen(PDFHEADER);
+  pdfVersion.append(header);
+
+  // gets position of last xref section
   Guint pos = getStartXref();
   if(isOk())
     initInternals(pos);

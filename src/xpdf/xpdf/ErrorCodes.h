@@ -4,6 +4,9 @@
 //
 // Copyright 2002-2003 Glyph & Cog, LLC
 //
+// Changes:
+// Michal Hocko - errBadHeader added
+//
 //========================================================================
 
 #ifndef ERRORCODES_H
@@ -33,4 +36,5 @@
 
 #define errFileIO          10   // file I/O error
 
+#define errBadHeader       11   // Document doesn't have a valid header
 #endif
