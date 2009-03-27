@@ -781,6 +781,129 @@ void OldStylePdfWriter::reset()
 	maxObjNum=0;
 }
 
+FileStreamData* PdfDocumentWriter::getStreamData(const char *fileName)
+{
+using namespace debug;
+	
+	utilsPrintDbg(DBG_DBG, "fileName="<<fileName);
+
+	// opens file handle and creates FileStreamWriter instance
+	FILE * file=fopen(fileName, "r");
+	if(!file)
+	{
+		int err=errno;
+		utilsPrintDbg(DBG_ERR, "Unable to open file. Error message="<<strerror(err));
+		return NULL;
+	}
+	Object dict;
+	FileStreamData *streamData = new FileStreamData;
+	streamData->stream = new FileStreamWriter(file, 0, false, 0, &dict);
+	streamData->file = file;
+	return streamData;
+}
+
+PdfDocumentWriter::PdfDocumentWriter(FileStreamData &data, IPdfWriter *_pdfWriter):
+	CXref(data.stream), pdfWriter(_pdfWriter) 
+{
+	assert(data.stream);
+	assert(data.file);
+
+	// Note that file handle cannot be closed in destructor because CXref
+	// (parent type) will destroy stream (XRef::str) which is based on
+	// FileStream which in turn may access file handle which could cause
+	// memory corruptions (use after free)
+}
+
+PdfDocumentWriter::~PdfDocumentWriter()
+{
+	if(pdfWriter)
+		delete pdfWriter;
+}
+
+int PdfDocumentWriter::writeDocument(const char *fileName)
+{
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "fileName="<<fileName);
+
+	FILE * f=fopen(fileName, "w");
+	int err=0;
+	if(!f)
+	{
+		err=errno;
+		utilsPrintDbg(DBG_ERR, "Unable to open file. Error message="<<strerror(err));
+		return err;
+	}
+	
+	// delegates and closes f
+	err=writeDocument(f);
+	fclose(f);
+	return err;
+}
+
+int PdfDocumentWriter::writeDocument(FILE *file)
+{
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "");
+	if(!file)
+	{
+		utilsPrintDbg(DBG_ERR, "Bad file handle");
+		return EINVAL;
+	}
+	if(!pdfWriter)
+	{
+		utilsPrintDbg(DBG_ERR, "No pdfWriter specified. Aborting");
+		return EINVAL;
+	}
+
+	// don't use check_need_credentials here, because we don't want to throw
+	// exception in negative case
+	if(getNeedCredentials())
+	{
+		utilsPrintDbg(DBG_ERR, "No credentials available for encrypted document.");
+		return EPERM;
+	}
+	if(isEncrypted())
+	{
+		utilsPrintDbg(DBG_ERR, "Encrypted documents writing is not implemented");
+		throw NotImplementedException("Encrypted document");
+	}
+	
+	// creates outputStream writer from given file
+	Object dict;
+	boost::shared_ptr<StreamWriter> outputStream(
+			new FileStreamWriter(file, 0, false, 0, &dict));
+
+	// Writes header with the same PDF version
+	pdfWriter->writeHeader(getPDFVersion(), *outputStream);
+	
+	IPdfWriter::ObjectList objectList;
+	while (fillObjectList(objectList, writeBatchCount)>0)
+	{
+		// writes collected objects and xref & trailer section
+		utilsPrintDbg(DBG_INFO, "Writing "<<objectList.size()
+				<<" objects to the output outputStream.");
+		pdfWriter->writeContent(objectList, *outputStream);
+		// clean up
+		utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects("
+				<<objectList.size()<<").");
+		IPdfWriter::ObjectList::iterator i;
+		for(i=objectList.begin(); i!=objectList.end(); i++)
+		{
+			xpdf::freeXpdfObject(i->second);
+			i->second=NULL;
+		}
+	}
+	utilsPrintDbg(DBG_INFO, "Writing xref and trailer section");
+	// no previous section information and all objects are going to be written
+	IPdfWriter::PrevSecInfo prevInfo={0, 0};
+	pdfWriter->writeTrailer(*getTrailerDict(), prevInfo, *outputStream);
+	outputStream->flush();
+
+	return 0;
+}
+
 } // utils namespace
 
 } // pdfobjects namespace

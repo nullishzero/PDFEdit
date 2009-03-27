@@ -27,6 +27,7 @@
 #define _PDF_WRITER_H_
 
 #include "kernel/static.h"
+#include "kernel/cxref.h"
 
 /** Header of pdf file.
  * This string should be appended by pdf version number.
@@ -628,6 +629,193 @@ public:
 	 * revision.
 	 */
 	virtual void reset();
+};
+
+/** Helper data structure which keeps all file stream related data.
+ */
+struct FileStreamData 
+{
+	/** Stream writer.
+	 * Provides interface to write data to the stream.
+	 */
+	StreamWriter *stream;
+
+	/** File handle.
+	 *
+	 * We have to keep file handle separately from the stream
+	 * because the stream used for XRef doesn't allow to access its
+	 * file handle from outside and also doesn't provide proper
+	 * close functionality.
+	 */
+	FILE *file;
+};
+
+/** Helper class to deallocate a type which holds FileStreamData and
+ * needs to destroy it after its holder is destroyed.
+ *
+ * This object should be used as a destroyer for smart_ptr shared 
+ * pointer to accomplish after-destroy cleanup.
+ * <br>
+ * Currently only the file from FileStreamData structure is
+ * considered (closed by functor) because stream is handled by others.
+ * <br>
+ * Note that you have to make this class as a friend if the destructor
+ * is not available.
+ */
+template<typename T> class FileStreamDataDeleter
+{
+	FILE * file;
+public:
+	FileStreamDataDeleter(FileStreamData &data):file(data.file) {};
+
+	/** Deallocates given instance and cleans-up necessary 
+	 * FileStreamData fields.
+	 * @param instance Instance to be destroyed.
+	 */
+	void operator()(T *instance)
+	{
+		assert(instance);
+		delete instance;
+
+		if(fclose(file))
+		{
+			int err = errno;
+			kernelPrintDbg(debug::DBG_ERR, "Unable to close file handle (cause=\""
+					<<strerror(err) << "\"");
+		}
+	}
+};
+
+/** Generic class to PDF document writing.
+ * The main responsibility of this class is to provide unified interface
+ * for arbitrary PDF document writing (note that this limits to complete
+ * documents - so it doesn't include incremental update document writing).
+ * <br>
+ * Class is meant to be base type for other specialized document writers
+ * which are supposed to implement fillObjectList abstract class. All 
+ * other document structure related issues are already implemented in this
+ * class.
+ * <br>
+ * Note that the class doesn't write content of the file direct but it
+ * uses IPdfWriter provided in construtor or by setPdfWriter instead.
+ */
+class PdfDocumentWriter: public pdfobjects::CXref
+{
+	/** Number of objects that should be written in one batch.
+	 * This constant is used as the maxObjectCount parameter to 
+	 * fillObjectList method.
+	 */
+	static const int writeBatchCount = 1000;
+
+protected:
+	/** Pdf content writer implementator.
+	 *
+	 * All writing of pdf content is delegated to this object.
+	 */
+	IPdfWriter * pdfWriter;
+
+	/** Abstract method to provide objects to be written.
+	 * @param objectList List of objects to be filled.
+	 * @param maxObjectCount Maximum number of objects to be filled.
+	 *
+	 * This method is called by writeDocument until it returns no objects.
+	 * Implementation may clear the list before it adds new elements but
+	 * is must provide up to given maxObjectCount. Use maxObjectCount=0 
+	 * for unlimited number of objects.
+	 *
+	 * @return Number of objects added to given objectList.
+	 * @throw MalformedFormatExeption if the document content is not valid.
+	 */
+	virtual int fillObjectList(IPdfWriter::ObjectList &objectList, int maxObjectCount)=0;
+	
+	/** Opens output file and writes a new document to it.
+	 * @param fileName File to be opened.
+	 * 
+	 * Opens given file (in trucate mode) and delegates the rest to 
+	 * delinearize(FILE *) method. If given file doesn't exist, it will be
+	 * created. Finally closes file.
+	 * @return 0 on success, errno otherwise.
+	 * @throw NotImplementedException if document is encrypted.
+	 */
+	virtual int writeDocument(const char *fileName);
+
+	/** Writes a new document to the given file.
+	 * @param file Opened file handle where to write.
+	 *
+	 * Sets position to the file beginning and writes the same pdf header as in
+	 * the original stream. Then writes all objects provided by fillObjectList 
+	 * (calls this method repeatedly unless 0 objects are returned).
+	 * Finally stores xref and trailer section.
+	 * <br>
+	 * Caller is responsible for file handle closing.
+	 * <br>
+	 * NOTE that method doesn't check whether given file is same as the 
+	 * one used for input data. If it refers to same file, result is 
+	 * unpredictable.
+	 * <br>
+	 * Returns with erro (EINVAL) if no pdfWriter is specified (it is NULL).
+	 *
+	 * @return 0 if everything ok, otherwise value of error of the error.
+	 * @throw NotImplementedException if document is encrypted.
+	 * @throw MalformedFormatExeption if the input file is currupted.
+	 * 
+	 * @return 0 on success, errno otherwise.
+	 */
+	virtual int writeDocument(FILE *file);
+
+	/** Initialization constructor.
+	 * @param streamData Input stream data.
+	 * @param writer Pdf content writer.
+	 *
+	 * Uses CXref(BaseStream *) constructor and initializes file handle and 
+	 * pdfWriter with given one (pdfWriter has to be allocated by new operator,
+	 * because it is deallocated by delete in destructor - if NULL is provided,
+	 * writeDocument methods do nothing).
+	 *
+	 * @throw MalformedFormatExeption if file content is not valid pdf document.
+	 */
+	PdfDocumentWriter(FileStreamData &data, IPdfWriter *pdfWriter);
+
+public:
+	/** Opens file and creates StreamData.
+	 * @param fileName Name of the file to open.
+	 * 
+	 * This method should be preferred way to provide constructor
+	 * data parameter.
+	 * @return StreamData which contains opened stream and file handle or
+	 * NULL if not able to open file for reading.
+	 */
+	static FileStreamData* getStreamData(const char * fileName);
+
+	/** Destructor.
+	 *
+	 * Destroys CXref internal data and deallocates pdfWriter.  Note that
+	 * file handle provided to the constructor has to be closed by
+	 * descendants and it has to be closed after the instance is destroyed.
+	 * FileStreamDataDeleter is the preferred way to do that.
+	 */
+	virtual ~PdfDocumentWriter();
+
+	/** Sets new pdf content writer.
+	 * @param pdfWriter IPdfWriter interface implementator.
+	 *
+	 * If given parameter is not NULL, sets new value of pdfWriter field and
+	 * returns an old one. Otherwise just returns current one.
+	 * <br>
+	 * NOTE that caller is responsible for deallocation if provides new one.
+	 *
+	 * @return Currently set implementator or old value if parameter is non NULL.
+	 */
+	IPdfWriter * setPdfWriter(IPdfWriter * pdfWriter)
+	{
+		IPdfWriter *current=pdfWriter;
+		
+		if(pdfWriter)
+			this->pdfWriter=pdfWriter;
+
+		return current;
+	}
+	
 };
 
 } // namespace utils
