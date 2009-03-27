@@ -19,7 +19,7 @@ HEADERS = static.h\
 	  cpdf.h streamwriter.h cinlineimage.h coutline.h \
 	  stateupdater.h cannotation.h textoutput.h textoutputbuilder.h \
 	  textoutputentities.h textoutputengines.h	\
-	  delinearizator.h pdfspecification.h operatorhinter.h \
+	  delinearizator.h flattener.h pdfspecification.h operatorhinter.h \
 	  pdfedit-core-dev.h
 
 SOURCES = static.cc xpdf.cc modecontroller.cc factories.cc cannotation.cc \
@@ -30,8 +30,8 @@ SOURCES = static.cc xpdf.cc modecontroller.cc factories.cc cannotation.cc \
 	  cpage.cc cpageattributes.cc cpagechanges.cc cpagefonts.cc cpagedisplay.cc cpagecontents.cc contentschangetag.cc cpageannots.cc \
 	  cpdf.cc textoutputengines.cc textoutputentities.cc \
 	  textoutputbuilder.cc pdfspecification.cc \
-	  delinearizator.cc \
-	  pdfedit-core-dev.cc
+	  delinearizator.cc flattener.cc \
+	  pdfedit-core-dev.cc 
 
 OBJECTS = $(SOURCES:.cc=.o)
 # FIXME use LIBPREFIX
