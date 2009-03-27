@@ -10,12 +10,12 @@ UTILS_OBJS = $(UTILS_SRCS:.cc=.o)
 
 # sources for benchmark modules
 TARGET_SRCS = displaycs.cc pagemetrics.cc parse_object.cc pdf_object_printer.cc \
-	      pdf_page_from_ref.cc pdf_page_to_ref.cc delinearizator.cc \
+	      pdf_page_from_ref.cc pdf_page_to_ref.cc flattener.cc delinearizator.cc \
 	      pdf_object_comparer.cc
 SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
 TARGET = displaycs pagemetrics parse_object pdf_object_printer \
-	 pdf_page_from_ref pdf_page_to_ref pdf_object_comparer
+	 pdf_page_from_ref pdf_page_to_ref flattener pdf_object_comparer
 .PHONY: all clean
 all: $(TARGET)
 
@@ -36,6 +36,9 @@ pdf_page_to_ref: pdf_page_to_ref.o common.o
 
 delinearizator: delinearizator.o
 	$(LINK) $(LDFLAGS) -o delinearizator delinearizator.o $(MANDATORY_LIBS)
+
+flattener: flattener.o
+	$(LINK) $(LDFLAGS) -o flattener flattener.o $(MANDATORY_LIBS)
 
 pdf_object_comparer: pdf_object_comparer.o common.o
 	$(LINK) $(LDFLAGS) -o pdf_object_comparer pdf_object_comparer.o common.o $(MANDATORY_LIBS)
