@@ -458,6 +458,29 @@ using namespace std;
 	}
 }
 
+void IPdfWriter::writeHeader(const char* version, StreamWriter &stream)
+{
+	// move to the beggining
+	stream.reset();
+	stream.setPos(stream.getStart());
+
+	std::string header=PDFHEADER;
+	header+=version;
+	stream.putLine(header.c_str(), header.size());
+
+	// PDF specification suggests that header line should be followed by comment
+	// line with some binary (with codes bigger than 128) - so application
+	// transfering such files will copy them as binary data not as ASCII files
+	char buffer[10];
+	buffer[0]='%';
+	buffer[1]=(char )129;
+	buffer[2]=(char )130;
+	buffer[3]=(char )253;
+	buffer[4]=(char )254;
+	buffer[5]='\0';
+	stream.putLine(buffer, strlen(buffer));
+}
+
 const std::string OldStylePdfWriter::CONTENT = "Content phase"; 
 const std::string OldStylePdfWriter::TRAILER = "XREF/TRAILER phase";
 

@@ -367,12 +367,13 @@ public:
  * Implementator knows how to put data to the file to create correct pdf
  * content.
  * <br>
- * Pdf content is written in 2 phases:
+ * Pdf content is written in 2 or 3 phases:
  * <ul>
- * <li>objects writing - when writeContent method is called (one or more times).
- * This data forms revision.
- * <li>cross reference & trailer writing - when all collected data are used for
- * cross reference and trailer to finish PDF revision.
+ * <li>header writing - only if you are writing complete document (writeHeader).
+ * <li>objects writing - writes given set of objects (can be called several times, 
+ * each time with the batch of objects). All this data form single revision.
+ * <li>cross reference & trailer writing - writes cross reference data and trailer 
+ * which ends current revision. 
  * </ul>
  *
  * So each sequence of writeContent [, writeContent]* , writeTrailer forms new 
@@ -440,6 +441,15 @@ public:
 		std::cerr << std::endl;
 #endif
 	}
+
+	/** Writes PDF header to the given stream.
+	 * @param version Version of the PDF standard used for this document.
+	 * @param stream Stream writer where to write.
+	 *
+	 * Moves the current position in the stream at the begginning before
+	 * writing.
+	 */
+	virtual void writeHeader(const char* version, StreamWriter &stream);
 
 	/** Puts all objects to given stream.
 	 * @param objectList List of objects to store.
