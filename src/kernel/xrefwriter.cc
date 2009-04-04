@@ -826,6 +826,13 @@ using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "rev="<<rev<<" includeXref="<<includeXref);
 
+	// constrains check
+	if(rev>revisions.size()-1)
+	{
+		kernelPrintDbg(DBG_ERR, "unkown revision with number="<<rev);
+		throw OutOfRange();
+	}
+	
 	// gets starting position of current rev
 	size_t revStart=revisions[rev];
 	size_t prevEnd=0;
