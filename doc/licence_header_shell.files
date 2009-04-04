@@ -1,0 +1,16 @@
+./getversion
+./makedist
+./src/gui/make-lang
+./src/gui/trans-qs.pl
+./src/kernel/pdfedit-core-dev-config.tmpl
+./tools/bench.sh
+./tools/check_files.sh
+./tools/cygwinbuild
+./tools/fake_install_tools.sh
+./tools/generate_lang.sh
+./tools/generate_online_help.sh
+./tools/headergen
+./tools/make_release
+./tools/mass_patch.sh
+./tools/release_check
+./tools/rmdir.sh

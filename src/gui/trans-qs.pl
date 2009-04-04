@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 # PDFedit - free program for PDF document manipulation.
 # Copyright (C) 2006, 2007, 2008  PDFedit team: Michal Hocko,
 #                                              Miroslav Jahoda,
@@ -20,6 +19,7 @@
 # MA  02111-1307  USA
 #
 # Project is hosted on http://sourceforge.net/projects/pdfedit
+#!/usr/bin/perl
 
 while (<>) {
  while (s/tr\("([^"]+)"\)//) {
