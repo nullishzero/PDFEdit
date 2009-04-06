@@ -3,10 +3,10 @@
 // Parameters: [input file] [output file]
 /*
  * PDFedit - free program for PDF document manipulation.
- * Copyright (C) 2006, 2007, 2008  PDFedit team: Michal Hocko,
- *                                              Miroslav Jahoda,
- *                                              Jozef Misutka,
- *                                              Martin Petricek
+ * Copyright (C) 2006-2009  PDFedit team: Michal Hocko,
+ *                                        Jozef Misutka,
+ *                                        Martin Petricek
+ *                   Former team members: Miroslav Jahoda
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
