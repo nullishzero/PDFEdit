@@ -287,6 +287,8 @@
 ./src/kernel/exceptions.h
 ./src/kernel/factories.cc
 ./src/kernel/factories.h
+./src/kernel/flattener.cc
+./src/kernel/flattener.h
 ./src/kernel/indiref.h
 ./src/kernel/iproperty.cc
 ./src/kernel/iproperty.h
