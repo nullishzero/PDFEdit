@@ -357,6 +357,7 @@
 ./src/tests/tools/common.h
 ./src/tests/tools/delinearizator.cc
 ./src/tests/tools/displaycs.cc
+./src/tests/tools/flattener.cc
 ./src/tests/tools/pagemetrics.cc
 ./src/tests/tools/parse_object.cc
 ./src/tests/tools/pdf_object_comparer.cc
