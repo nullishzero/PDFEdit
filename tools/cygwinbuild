@@ -1,3 +1,4 @@
+#!/bin/sh
 # PDFedit - free program for PDF document manipulation.
 # Copyright (C) 2006-2009  PDFedit team: Michal Hocko,
 #                                        Jozef Misutka,
@@ -19,7 +20,6 @@
 # MA  02111-1307  USA
 #
 # Project is hosted on http://sourceforge.net/projects/pdfedit
-#!/bin/sh
 
 autoconf
 export INSTALL_ROOT=/tmp/pdfedit-package

@@ -47,6 +47,7 @@
 ./src/gui/edittool.h
 ./src/gui/fileoption.cc
 ./src/gui/fileoption.h
+./src/gui/flatten.qs
 ./src/gui/fontoption.cc
 ./src/gui/fontoption.h
 ./src/gui/helpwindow.cc
@@ -166,6 +167,7 @@
 ./src/gui/scripts/_crash.qs
 ./src/gui/scripts/_miro.qs
 ./src/gui/scripts/delinearize.qs
+./src/gui/scripts/flatten.qs
 ./src/gui/scripts/pdftoxml.qs
 ./src/gui/scripts/update.qs
 ./src/gui/selectpagesdialog.cc

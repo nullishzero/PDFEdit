@@ -50,6 +50,7 @@
 #include <kernel/cpdf.h>
 #include <kernel/cannotation.h>
 #include <kernel/delinearizator.h>
+#include <kernel/flattener.h>
 #include <kernel/factories.h>
 #include <kernel/pdfwriter.h>
 #include <qdir.h>
@@ -447,6 +448,77 @@ QSPdfOperatorStack* Base::createPdfOperatorStack() {
 }
 
 /**
+ Common code to flattener and delinearizator
+ Ask for password for opening the PDF file if one is needed
+ @param inFile name of input file
+ @param wr PdfDocumentWriter
+ @return true if either valid password is entered or no password is needed
+*/
+bool pdfWriterAskPassword(const QString &inFile,boost::shared_ptr<utils::PdfDocumentWriter> wr) {
+ for(;wr->getNeedCredentials();) {
+  //Ask for password until we either get the right one or user gets bored with retrying
+  // FIXME is the first NULL parameter OK?
+  QString pwd=gui::PasswordDialog::ask(NULL, QObject::tr("Enter password for %1:").arg(inFile));
+
+  //Dialog aborted -> exit
+  if (pwd.isNull()) { 
+   guiPrintDbg(debug::DBG_ERR, "No password available");
+   return false;
+  }
+
+  //We succedded with passwod -> exit
+  string passwd;
+  passwd = pwd.utf8();
+  try {
+    wr->setCredentials(passwd.c_str(), passwd.c_str());
+  } catch(PermissionException &e) {
+   guiPrintDbg(debug::DBG_ERR, "Bad password");
+  }
+ }
+ return true;
+}
+
+/**
+ Try to flatten PDF, reading from input file and writing flattened result to output file.
+ Does not check for overwriting output.
+ Return true if flattening was successful, false in case of failure.<br>
+ In case of failure the error mesage is available via error()
+ \see error
+ @param inFile input file
+ @param outFile output file
+*/
+bool Base::flatten(const QString &inFile,const QString &outFile) {
+ boost::shared_ptr<utils::Flattener> flat;
+ utils::OldStylePdfWriter* wr=NULL;
+ try {
+  guiPrintDbg(debug::DBG_DBG,"Flattener started");
+  wr=new utils::OldStylePdfWriter();
+  //TODO: nekde tady zaregistrovat progress observer
+  flat=utils::Flattener::getInstance(inFile,wr);
+  if (!flat) return false;//No delinearizator instance?
+  guiPrintDbg(debug::DBG_DBG,"Flattener created");
+
+  if (!pdfWriterAskPassword(inFile,flat)) return false;
+
+  int ret=flat->flatten(outFile);
+  guiPrintDbg(debug::DBG_DBG,"Flattener finished");
+  if (ret) {
+   const char *whatWasWrong=strerror(ret);
+   lastErrorMessage=whatWasWrong;
+  }
+  guiPrintDbg(debug::DBG_DBG,"Flattener exit");
+  return (ret==0);
+ } catch (NotImplementedException &e) {
+  lastErrorMessage=tr("Flattening of encrypted documents is not supported");
+  return false;
+ } catch (...) {
+  //This is the case of failure ..
+  lastErrorMessage=tr("Unknown error occured");
+  return false;
+ }
+}
+
+/**
  Try to delinearize PDF, reading from input file and writing delinearized result to output file.
  Does not check for overwriting output.
  Return true if delinearization was successful, false in case of failure.<br>
@@ -466,36 +538,14 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   if (!delin) return false;//No delinearizator instance?
   guiPrintDbg(debug::DBG_DBG,"Delinearizator created");
 
-  for(;delin->getNeedCredentials();) {
-    //Ask for password until we either get the right one or user gets bored with retrying
-    // FIXME is the first NULL parameter OK?
-    QString pwd=gui::PasswordDialog::ask(NULL, QObject::tr("Enter password for %1:").arg(inFile));
+  if (!pdfWriterAskPassword(inFile,delin)) return false;
 
-    //Dialog aborted -> exit
-    if (pwd.isNull()) { 
-      guiPrintDbg(debug::DBG_ERR, "No password available");
-      return false;
-    }
-
-    //We succedded with passwod -> exit
-    string passwd;
-    passwd = pwd.utf8();
-    try {
-      delin->setCredentials(passwd.c_str(), passwd.c_str());
-    }catch(PermissionException &e)
-    {
-	    guiPrintDbg(debug::DBG_ERR, "Bad password");
-    }
-  }
   int ret=delin->delinearize(outFile);
   guiPrintDbg(debug::DBG_DBG,"Delinearizator finished");
   if (ret) {
    const char *whatWasWrong=strerror(ret);
    lastErrorMessage=whatWasWrong;
   }
-//  guiPrintDbg(debug::DBG_DBG,"deleting pdf writer");
-//  if (wr) delete wr;
-  guiPrintDbg(debug::DBG_DBG,"deleting delinearizator");
   guiPrintDbg(debug::DBG_DBG,"Delinearizator exit");
   return (ret==0);
  } catch (NotImplementedException &e) {

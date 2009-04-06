@@ -102,7 +102,7 @@ public slots: //This will be all exported to scripting
  /*- Creates and returns new IProperty of type String */
  QSIProperty* createString(const QString &value);
  /*-
-  Tries to delinearize PDF, reading from input file and writing delinearized result to output file.
+  Tries to delinearize the PDF, reading from input file and writing delinearized result to output file.
   Does not check for overwriting output.
   Returns true if delinearization was successful, false in case of failure.
   In case of failure the error mesage is available via error() function.
@@ -115,6 +115,13 @@ public slots: //This will be all exported to scripting
  QString error();
  /*- Returns true if given file exists on disk, false otherwise */
  bool exists(const QString &chkFileName);
+ /*-
+  Tries to flatten the PDF, reading from input file and writing flattened result to output file.
+  Does not check for overwriting output.
+  Returns true if flattening was successful, false in case of failure.
+  In case of failure the error mesage is available via error() function.
+ */
+ bool flatten(const QString &inFile,const QString &outFile);
  /*-
   Debugging function usable by script developers.
   Returns list of all functions that are present in current script interpreter.
