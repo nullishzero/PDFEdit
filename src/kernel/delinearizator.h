@@ -26,7 +26,7 @@
 #define _DELINEARIZATOR_H_
 
 #include "kernel/static.h"
-#include "kernel/cxref.h"
+#include "kernel/pdfwriter.h"
 
 
 /** Exception for not linearized pdf documents.
@@ -80,7 +80,7 @@ class IPdfWriter;
  * <pre>
  * // we will use OldStylePdfWriter IPdfWriter implementator
  * IPdfWriter * contentWriter=new OldStylePdfWriter();
- * Delinearizator * delinearizator=Delinearizator::getInstance(fileName, contentWriter);
+ * boost::shared_ptr<Delinearizator> delinearizator=Delinearizator::getInstance(fileName, contentWriter);
  *
  * // check for encryption and set credentials if necessary
  * if (delinearizator->isEncrypted())
@@ -91,44 +91,54 @@ class IPdfWriter;
  * 
  * ...
  * 
- * // destroys delinearizator with conentWriter
- * delete delinearizator;
+ * // instance is wrapped by the smart pointer so you don't
+ * // have bother with deallocation
  * </pre>
  */
-class Delinearizator: public pdfobjects::CXref
+class Delinearizator: public PdfDocumentWriter
 {
-	/** Pdf content writer implementator.
-	 *
-	 * All writing of pdf content is delegated to this object.
-	 */
-	IPdfWriter * pdfWriter;
-
 	/** Reference of linearized dictionary.
 	 */
 	::Ref linearizedRef;
 
+ 	/** Marker of the last object returned by fillObjectList.
+	 * Zeroed in writeDocument method.
+	 */
+ 	int lastObj;
+
 	/** Initialization constructor.
-	 * @param stream FileStreamWriter instance.
+	 * @param streamData Outpu stream data.
 	 * @param writer Pdf content writer.
 	 *
-	 * Uses CXref(BaseStream *) constructor and pdfWriter with given one 
-	 * (pdfWriter has to be allocated by new operator, because it is 
-	 * deallocated by delete in destructor - if NULL is provided, delinearize 
-	 * methods do nothing). 
+	 * Delegates all the work to the PdfDocumentWriter constructor and 
+	 * additionaly checks whether document is linearized.
 	 * 
 	 * @throw MalformedFormatExeption if file content is not valid pdf document.
 	 * @throw NotLinearizedException if file content is not linearized.
 	 */
-	Delinearizator(FileStreamWriter * stream, IPdfWriter * writer);
+	Delinearizator(FileStreamData &streamData, IPdfWriter * writer);
 
 	/** Destructor.
 	 *
 	 * Deallocates pdfWriter and delegates the rest to ~CXref.
 	 */
-	virtual ~Delinearizator();
+	virtual ~Delinearizator() {}
 
-	friend class DelinearizatorDeleter;
+	friend class FileStreamDataDeleter<Delinearizator>;
 
+
+	/** Provides all objects for delinearized document.
+	 * @param objectList Container for objects.
+	 * @param maxObjectCount Maximum objects count to be filled 
+	 * 	into the objectList.
+	 *
+	 * Provides a deep copy of all objects availble in XRef::etries 
+	 * array except for Linearization dictionary. Consequential calls
+	 * will continue from the last seen provided object.
+  	 *
+	 * @return number of objects filled to the objectList.
+  	 */
+	virtual int fillObjectList(IPdfWriter::ObjectList &objectList, int maxObjectCount);
 public:
 	
 	/** Factory method for instance creation.
@@ -149,57 +159,21 @@ public:
 	static boost::shared_ptr<Delinearizator> getInstance(const char * fileName, 
 			IPdfWriter * pdfWriter);
 
-	/** Sets new pdf content writer.
-	 * @param pdfWriter IPdfWriter interface implementator.
+	/** Delinearizes pdf content to the given file.
+	 * @param fileName Output file name.
 	 *
-	 * If given parameter is not NULL, sets new value of pdfWriter field and
-	 * returns an old one. Otherwise just returns current one.
-	 * <br>
-	 * NOTE that caller is responsible for deallocation if provides new one.
+	 * Delegates to PdfDocumentWriter::writeDocument(const char*).
 	 *
-	 * @return Currently set implementator or old value if parameter is non NULL.
-	 */
-	IPdfWriter * setPdfWriter(IPdfWriter * pdfWriter)
-	{
-		IPdfWriter *current=pdfWriter;
-		
-		if(pdfWriter)
-			this->pdfWriter=pdfWriter;
-
-		return current;
-	}
-	
-	/** Delinearizes pdf content.
-	 * @param fileName Name of the output file.
-	 *
-	 * Opens given file (in trucate mode) and delegates the rest to 
-	 * delinearize(FILE *) method. If given file doesn't exist, it will be
-	 * created. Finally closes file.
-	 *
-	 * @see delinearize(FILE *)
-	 *
-	 * @return 0 if everything ok, otherwise value of errno of the error.
+	 * @return 0 on success, errno otherwise.
 	 * @throw NotImplementedException if document is encrypted.
+	 * @throw MalformedFormatExeption if the input file is currupted.
 	 */
 	int delinearize(const char * fileName);
 	
-	/** Delinearizes pdf content.
+	/** Delinearizes pdf content to the given file.
 	 * @param file File handle where to put data.
 	 *
-	 * Sets position to the file beginning and writes same pdf header as in
-	 * original stream. Then starts copying of all objects - except Linearization
-	 * dictionary - which are available in XRef::entries array.
-	 * Finally stores xref and trailer section.
-	 * <br>
-	 * Caller is responsible for file handle closing.
-	 * <br>
-	 * NOTE that method doesn't check whether given file is same as one used for
-	 * input data. If it refers to same file, result is unpredictable.
-	 * <br>
-	 * If no pdfWriter is specified (it is NULL), does nothing and immediatelly
-	 * returns.
-	 *
-	 * @return 0 if everything ok, otherwise value of error of the error.
+	 * Delegates to PdfDocumentWriter::writeDocument(FILE*).
 	 * @throw NotImplementedException if document is encrypted.
 	 * @throw MalformedFormatExeption if the input file is currupted.
 	 */

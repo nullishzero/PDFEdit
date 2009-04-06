@@ -36,238 +36,105 @@
 namespace pdfobjects {
 namespace utils {
 
-Delinearizator::Delinearizator(FileStreamWriter * stream, IPdfWriter * writer)
-	:CXref(stream),
-	pdfWriter(writer)
+Delinearizator::Delinearizator(FileStreamData &streamData, IPdfWriter * writer)
+	:PdfDocumentWriter(streamData, writer)
 {
-	if(!checkLinearized(*stream, this, &linearizedRef))
+	if(!checkLinearized(*streamData.stream, this, &linearizedRef))
 		throw NotLinearizedException();
 }
-
-/** Class to deallocate Delinearizator and close associated file
- * handle from smart pointer.
- */
-class DelinearizatorDeleter
-{
-	FILE * file;
-public:
-	DelinearizatorDeleter(FILE * f): file(f) {};
-
-	void operator ()(Delinearizator * delinearizator)
-	{
-		assert(delinearizator);
-		delete delinearizator;
-
-		// Note that file handle cannot be closed in the destructor 
-		// because CXref (parent type) will destroy stream (XRef::str) 
-		// which is based on FileStream which in turn may access file 
-		// handle which could cause memory corruptions
-		if(fclose(file))
-		{
-			int err = errno;
-			kernelPrintDbg(debug::DBG_ERR, "Unable to close file handle (cause=\""
-					<<strerror(err) << "\"");
-		}
-
-		kernelPrintDbg(debug::DBG_DBG, "Instance deleted.");
-	}
-};
 
 boost::shared_ptr<Delinearizator> Delinearizator::getInstance(
 		const char * fileName, IPdfWriter * pdfWriter)
 {
-	
-	utilsPrintDbg(debug::DBG_DBG, "fileName="<<fileName);
-
-	// opens file handle and creates FileStreamWriter instance
-	FILE * file=fopen(fileName, "r");
-	if(!file)
-	{
-		int err=errno;
-		utilsPrintDbg(debug::DBG_ERR, "Unable to open file. Error message="<<strerror(err));
-		return boost::shared_ptr<Delinearizator>();
-	}
-	Object dict;
-	FileStreamWriter * inputStream=new FileStreamWriter(file, 0, false, 0, &dict);
-
 	// creates instance
 	Delinearizator * instance;
+ 	boost::shared_ptr<FileStreamData> streamData;
 	try
 	{
-		instance=new Delinearizator(inputStream, pdfWriter);
+		streamData = boost::shared_ptr<FileStreamData>(PdfDocumentWriter::getStreamData(fileName));
+		if (!streamData)
+			return boost::shared_ptr<Delinearizator>();
+		instance=new Delinearizator(*streamData, pdfWriter);
 	}catch(NotLinearizedException &e)
 	{
 		utilsPrintDbg(debug::DBG_ERR, "Document is not linearized.");
 		// exception from Delinearizator (~CXref deallocates stream
 		// and we have to close file handle
-		fclose(file);
+		if (streamData->file)
+			fclose(streamData->file);
 		return boost::shared_ptr<Delinearizator>();
 	}catch(std::exception & e)
 	{
 		// exception thrown from CXref so we have to do a cleanup
 		utilsPrintDbg(debug::DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
-		fclose(file);
-		delete inputStream;
-		return boost::shared_ptr<Delinearizator>();
+		if (streamData->file)
+			fclose(streamData->file);
+		if (streamData->stream)
+			delete streamData->stream;
+		throw e;
 	}
 
-	return boost::shared_ptr<Delinearizator> (instance, DelinearizatorDeleter(file));
-}
-
-Delinearizator::~Delinearizator()
-{
-	if(pdfWriter)
-		delete pdfWriter;
+	// Uses FileStreamDataDeleter to correctly delete delinearizator
+	// with proper FileStreamData cleanup
+	return boost::shared_ptr<Delinearizator> (instance, 
+			FileStreamDataDeleter<Delinearizator>(*streamData));
 }
 
 int Delinearizator::delinearize(const char * fileName)
 {
-using namespace debug;
-
-	utilsPrintDbg(DBG_DBG, "fileName="<<fileName);
-
-	FILE * file=fopen(fileName, "w");
-	int err=0;
-	if(!file)
-	{
-		err=errno;
-		utilsPrintDbg(DBG_ERR, "Unable to open file. Error message="<<strerror(err));
-		return err;
-	}
-	
-	// delegates and closes file
-	err=delinearize(file);
-	fclose(file);
-	return err;
+	lastObj=0;
+	return writeDocument(fileName);
 }
 
 int Delinearizator::delinearize(FILE * file)
 {
-using namespace debug;
+	lastObj=0;
+	return writeDocument(file);
+}
 
-	utilsPrintDbg(DBG_DBG, "");
-	if(!file)
-	{
-		utilsPrintDbg(DBG_ERR, "Bad file handle");
-		return EINVAL;
-	}
-	if(!pdfWriter)
-	{
-		utilsPrintDbg(DBG_ERR, "No pdfWriter specified. Aborting");
-		return EINVAL;
-	}
+int Delinearizator::fillObjectList(IPdfWriter::ObjectList &objectList, int maxObjectCount)
+{
+  	// collects (fetches) all objects from XRef::entries array, which are not 
+  	// free, to the objectList. Skips also Linearized dictionary
+	utilsPrintDbg(debug::DBG_DBG, "Collecting objects starting from "<<lastObj);
+	objectList.clear();
+	for(; lastObj < ::XRef::size; )
+  	{
+		// stop if we reach the maximum objects
+		if(maxObjectCount>0 && (int)objectList.size()>=maxObjectCount)
+			break;
 
-	// don't use check_need_credentials here, because we don't want to throw
-	// exception in negative case
-	if(getNeedCredentials())
-	{
-		utilsPrintDbg(DBG_ERR, "No credentials available for encrypted document.");
-		return EPERM;
-	}
-	if(isEncrypted())
-	{
-		utilsPrintDbg(DBG_ERR, "Delinearization of encrypted documents is not implemented");
-		throw NotImplementedException("Encrypted document");
-	}
-	
-	// stream from input file
-	StreamWriter * inputStream=dynamic_cast<StreamWriter *>(::XRef::str);
+  		// gets object and generation number
+		int num=lastObj++;
+		::XRefEntry entry=::XRef::entries[num];
+  		if(entry.type==xrefEntryFree)
+  			continue;
 
-	// creates outputStream writer from given file
-	Object dict;
-	StreamWriter * outputStream=new FileStreamWriter(file, 0, false, 0, &dict);
-	
-	// buffer for data
-	char buffer[1024];
-	memset(buffer, '\0', sizeof(buffer));
-	
-	// resets outputStream and sets position by Stream::getStart method to copies all 
-	// data until end of the line (first of CR or LF characters)
-	inputStream->reset();
-	inputStream->setPos(inputStream->getStart());
-	do
-	{
-		if(!inputStream->getLine(buffer, sizeof(buffer)-1))
-		{
-			// this should never happen
-			utilsPrintDbg(DBG_ERR, "File is corrupted because, doesn't contain proper PDF header.");
-			throw MalformedFormatExeption("pdf header missing");
-		}
-	}while(!strstr(buffer, PDFHEADER));
-
-	// prints header to the file
-	outputStream->putLine(buffer, strlen(buffer));
-
-	// PDF specification suggests that header line should be followed by comment
-	// line with some binary (with codes bigger than 128) - so application
-	// transfering such files will copy them as binary data not as ASCII files
-	buffer[0]='%';
-	buffer[1]=(char )129;
-	buffer[2]=(char )130;
-	buffer[3]=(char )253;
-	buffer[4]=(char )254;
-	buffer[5]='\0';
-	outputStream->putLine(buffer, strlen(buffer));
-
-	// collects (fetches) all objects from XRef::entries array, which are not 
-	// free, to the objectList. Skips also Linearized dictionary
-	utilsPrintDbg(DBG_DBG, "Collecting all objects");
-	IPdfWriter::ObjectList objectList;
-	for(size_t i=0; i < (size_t)::XRef::size; i++)
-	{
-		::XRefEntry entry=::XRef::entries[i];
-		if(entry.type==xrefEntryFree)
-			continue;
-
-		// gets object and generation number
-		int num=i, gen=entry.gen;
-		
 		// if entry is compressed (from object stream, gen is allways 0 but xpdf
 		// uses this number for object order in stream)
+		int gen=entry.gen;
 		if(entry.type==xrefEntryCompressed)
 			gen=0;
-
-		// linearized dictionary is skipped and all other streams used for such
-		// purposes are not in xref table
-		if(num==linearizedRef.num && gen==linearizedRef.gen)
-			continue;
-
-		::Object * obj=XPdfObjectFactory::getInstance();
-		::Ref ref={num, gen};
-		XRef::fetch(num, gen, obj);
-		if(!isOk())
-		{
-			// TODO how to handle cleanly - with outpustream cleanup
-			kernelPrintDbg(DBG_ERR, ref<<" object fetching failed with code="
+  		
+  		// if entry is compressed (from object stream, gen is allways 0 but xpdf
+  		// uses this number for object order in stream)
+  		if(num==linearizedRef.num && gen==linearizedRef.gen)
+  			continue;
+  
+  		::Object * obj=XPdfObjectFactory::getInstance();
+  		::Ref ref={num, gen};
+  		XRef::fetch(num, gen, obj);
+  		if(!isOk())
+  		{
+			kernelPrintDbg(debug::DBG_ERR, ref<<" object fetching failed with code="
 					<<errCode);
-			xpdf::freeXpdfObject(obj);
-			delete outputStream;
-			throw MalformedFormatExeption("bad data stream");
-		}
-		objectList.push_back(IPdfWriter::ObjectElement(ref, obj));
-	}
-
-	// writes collected objects and xref & trailer section
-	utilsPrintDbg(DBG_INFO, "Writing "<<objectList.size()<<" objects to the output outputStream.");
-	pdfWriter->writeContent(objectList, *outputStream);
-	utilsPrintDbg(DBG_INFO, "Writing xref and trailer section");
-	// no previous section information and all objects are going to be written
-	IPdfWriter::PrevSecInfo prevInfo={0, 0};
-	pdfWriter->writeTrailer(*getTrailerDict(), prevInfo, *outputStream);
-
-	// clean up
-	utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects("<<objectList.size()<<").");
-	for(IPdfWriter::ObjectList::iterator i=objectList.begin(); i!=objectList.end(); i++)
-	{
-		xpdf::freeXpdfObject(i->second);
-		i->second=NULL;
-	}
-
-	outputStream->flush();
-	// deallocates outputStream
-	delete outputStream;
-
-	return 0;
-}
+  			xpdf::freeXpdfObject(obj);
+  			throw MalformedFormatExeption("bad data stream");
+  		}
+  		objectList.push_back(IPdfWriter::ObjectElement(ref, obj));
+  	}
+	utilsPrintDbg(debug::DBG_DBG, "Returned "<<objectList.size()<<" objects");
+	return objectList.size();
+  }
 } //namespace utils
 } //namespace pdfobjects
