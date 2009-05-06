@@ -46,15 +46,20 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Save copy...</term>
+			<term>Copy revision</term>
 			<listitem>
 				<para>
-					Saves copy of current document in selected revision (TODO link). This
+					Saves copy of the current document in the selected revision (TODO link). This
 					feature is very usefull if you want to make changes for older revisions. This
 					is normally not possible, because pdf documents doesn't support revision
 					branching. So you can select desired revision and then use Save copy to create
 					new pdf file, which contains everything up to selected revision. This file can
 					be then opened and manipulated as usual.
+				</para>
+				<para>
+					Please note that this function doesn't save any changes made on top of the
+					latest revision as they are not technically a part of this revision (changes 
+					will form a new revision after they are saved by save new revision).
 				</para>
 				<para>
 						Script equivalent: <emphasis>func_savecopy()</emphasis>

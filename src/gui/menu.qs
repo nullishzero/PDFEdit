@@ -52,8 +52,8 @@ function showHide(win,item) {
  toggleVisItem(win,item);
 }
 
-/** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
-function func_savecopy() {
+/** Save a copy of the curent revision (action from menu/toolbar). Asks for name, then saves under new name */
+function func_clonerevision() {
  var name=fileSaveDialog(filename());
  if (!name) return false;
  if (!saveCopy(name)) {
