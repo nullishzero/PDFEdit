@@ -63,7 +63,7 @@
         </footnote>
         
         XRefWriter keeps an array of all available revisions. Index stands
-        for revision number (0 is the newest one) and value is stream offset
+        for revision number (0 is the oldest one) and value is stream offset
         of associated cross reference section start for revision. This is used
         to get information about revision - for example to get revision size
 		(see <classname>XRefWriter::getRevisionSize</classname> method) - and to enable revision 

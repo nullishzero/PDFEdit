@@ -134,6 +134,13 @@ malformedErr:
 	throw MalformedFormatExeption("bad data stream");
 }
 
+
+bool isLatestRevision(const XRefWriter &xref)
+{
+	// The most recent revision has the highest number
+	return xref.getActualRevision() == xref.getRevisionCount()-1;
+}
+
 } // end of utils namespace
 
 XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
@@ -163,6 +170,7 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 	// revisions can be collected also for encrypted documents, because
 	// we are parsing only trailer which doesn't contain any directly
 	// encrypted data - strings
+	// revision is initialized to the most recent one
 	collectRevisions();
 
 	// sets internal fetch back to normal
@@ -236,7 +244,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 
 	check_need_credentials(this);
 
-	if(revision)
+	if(!utils::isLatestRevision(*this))
 	{
 		// we are in later revision, so no changes can be
 		// done
@@ -281,7 +289,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		throw NotImplementedException("changeObject is not implemented for encryted document");
 	}
 
-	if(revision)
+	if(!utils::isLatestRevision(*this))
 	{
 		// we are in later revision, so no changes can be
 		// done
@@ -333,7 +341,7 @@ RefState XRefWriter::knowsRef(IndiRef& ref)
 
 	// checks read-only mode
 	
-	if(revision)
+	if(!utils::isLatestRevision(*this))
 	{
 		// we are in later revision, so no changes can be
 		// done
@@ -361,7 +369,7 @@ RefState XRefWriter::knowsRef(IndiRef& ref)
 
 	// checks read-only mode
 	
-	if(revision)
+	if(!utils::isLatestRevision(*this))
 	{
 		// we are in later revision, so no changes can be
 		// done
@@ -455,9 +463,10 @@ using namespace utils;
 		// last xref position
 		CXref::reopen(xrefPos);
 
-		// new revision number is added - we insert the newest revision so
-		// xrefPos value is stored
-		revisions.insert(revisions.begin(), xrefPos);
+		// new revision number is added and current revision is updated - 
+		// we insert the newest revision so xrefPos value is stored
+		revisions.push_back(xrefPos);
+		revision = revisions.size()-1;
 	}
 
 	kernelPrintDbg(DBG_DBG, "finished");
@@ -655,7 +664,7 @@ void XRefWriter::collectRevisions()
 		// above
 		kernelPrintDbg(DBG_DBG, "XRef offset for "<<
 				revisions.size()<<" revision is "<<off);
-		revisions.push_back(off);
+		revisions.insert(revisions.begin(), off);
 		off = getPrevFromTrailer(trailer);
 		if(isERR_OFFSET(off))
 			// no more previous trailers
@@ -713,6 +722,8 @@ void XRefWriter::collectRevisions()
 	trailer->free();
 	gfree(trailer);
 
+	// initiailizes the current revision to the most recent one.
+	revision = revisions.size()-1;
 	kernelPrintDbg(DBG_INFO, "This document contains "<<revisions.size()<<" revisions.");
 }
 
@@ -837,11 +848,11 @@ using namespace debug;
 	size_t revStart=revisions[rev];
 	size_t prevEnd=0;
 
-	// gets end of previous rev - if no exists keeps default value 0 (from
-	// the stream beginning)
-	if(rev+1<getRevisionCount())
+	// gets the end of the previous rev - keeps default value 0 (from
+	// the stream beginning) if there is no other revision
+	if(rev>0)
 	{
-		prevEnd=getRevisionEnd(revisions[rev+1]);
+		prevEnd=getRevisionEnd(revisions[rev-1]);
 		kernelPrintDbg(DBG_DBG, "Previous revision ends at "<<prevEnd);
 	}else
 		kernelPrintDbg(DBG_DBG, "No previous rev.");

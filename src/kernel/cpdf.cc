@@ -3172,7 +3172,7 @@ void CPdf::save(bool newRevision)const
 	}
 	
 	// checks actual revision
-	if(xref->getActualRevision())
+	if(!utils::isLatestRevision(*xref))
 	{
 		kernelPrintDbg(DBG_ERR, "Document is not in latest revision");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
@@ -3225,7 +3225,7 @@ void CPdf::canChange () const
 		throw ReadOnlyDocumentException("Document is linearized");
 
 	// Not in lates revision
-	if (xref->getActualRevision())
+	if (!utils::isLatestRevision(*xref))
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	// In read only mode
 	if (ReadOnly == getMode())

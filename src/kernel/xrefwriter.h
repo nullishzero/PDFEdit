@@ -41,6 +41,7 @@ namespace pdfobjects
 {
 class CPdf;
 struct IndiRef;
+class XRefWriter;
 
 namespace utils {
 class IPdfWriter;
@@ -63,6 +64,12 @@ class IPdfWriter;
  */
 bool checkLinearized(StreamWriter & stream, CXref * xref, Ref * ref);
 
+/** Checks whether the current revision is the most recent one.
+ * @param xref Xref.
+ * @return true if the current revision is the latest one, false otherwise.
+ */
+bool isLatestRevision(const XRefWriter &xref);
+
 } // end of namespace utils
 
 	
@@ -75,7 +82,8 @@ bool checkLinearized(StreamWriter & stream, CXref * xref, Ref * ref);
  * <li> controling checking routines - mode field controls level of checking.
  *	(getMode, setMode methods).
  * <li> manipulating revisions of document. Revisions are available through
- *	their numbers (0 for newest and getRevisionCount-1 for latest). 
+ *	their numbers (0 for the oldest and getRevisionCount-1 for the most recent 
+ *	one - use isLatestRevision helper function for testing). 
  *	Changes can be made only in newest revision. Older revisions are only 
  *	read-only. (getRevisionCount, getActualRevision, changeRevision 
  *	methods).
@@ -218,6 +226,8 @@ protected:
 	 * Parses Trailer dictionary and gets Prev field value. If not present,
 	 * assumes no more revisions are available. Otherwise stores that position
 	 * to revisions storage as later revision and continues same way.
+	 * <br>
+	 * Sets revision field to the most recent one as a side effect.
 	 */
 	void collectRevisions();
 
@@ -404,12 +414,11 @@ public:
 	/** Changes revision of document.
 	 * @param revNumber Number of the revision.
 	 *
-	 * Jumps to the given revision. 0 stands for newest revision, older 
-	 * have higher number. The oldest revision has getRevisionCount()-1
-	 * number.
+	 * Jumps to the given revision. 0 stands for the oldest revision while
+	 * newer revisions have higher number. 
 	 * <p>
-	 * XRefWriter doesn't enable to make changes if revision is not 0 (most
-	 * actual). This means that all methods producing changes are invalid 
+	 * XRefWriter doesn't enable to make changes if revision is not the most
+	 * recent one. This means that all methods producing changes are invalid 
 	 * and produces error when called.
 	 * <br>
 	 * This is because branching is not implementable in PDF structure.
@@ -491,12 +500,12 @@ public:
 	 */ 
 	virtual ::Object * fetch(int num, int gen, ::Object * obj)
 	{
-		// newest revision may contain changes, so uses
+		// the newest revision may contain changes, so uses
 		// CXref implementation
-		if(!revision)
+		if(utils::isLatestRevision(*this))
 			return CXref::fetch(num, gen, obj);
 
-		// we are in later revision, we have to use only XRef
+		// we are in an older revision, we have to use only XRef
 		// implementation
 		return XRef::fetch(num, gen, obj);
 	}
@@ -504,8 +513,9 @@ public:
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.
 	 *
-	 * Checks if revision is 0 (the newest one) delegates to CXref
-	 * implementation, because there can be also new referencies.
+	 * Checks if the current revision is the newest one and 
+	 * delegates to CXref implementation if this is true, because 
+	 * there can be also new referencies.
 	 * Otherwise searches only in XRef::entries (only referencies
 	 * from document).
 	 *
@@ -515,7 +525,7 @@ public:
 	virtual RefState knowsRef(::Ref& ref)
 	{
 		// if we are in newest revision, delegates to CXref
-		if(!revision)
+		if(utils::isLatestRevision(*this))
 			return CXref::knowsRef(ref);
 				
 		// otherwise use XRef directly
@@ -536,9 +546,11 @@ public:
 	 *
 	 * This is just wrapper for CXref::reference method.
 	 * Only thing which is done here is that revision field
-	 * is checked and if revision is 0 (most recent), delegates 
-	 * to the to the CXref::reserveRef. Otherwise deny to create, 
-	 * because it is not possible to do changes to a older release.
+	 * is checked and if the current revision is the most recent one, 
+	 * delegates to the to the CXref::reserveRef. 
+	 *
+	 * Otherwise deny to create, because it is not possible to do changes 
+	 * to a older release.
 	 *
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
@@ -551,7 +563,7 @@ public:
 	 *
 	 * This is just wrapper for CXref::createObject method.
 	 * Only thing which is done here is that revision field
-	 * is checked and if revision is 0 (most recent), delegates 
+	 * is checked and if the current revision is the most recent one, delegates 
 	 * to the to the CXref::createObject. Otherwise deny to make create, 
 	 * because it is not possible to do changes to a older release.
 	 *

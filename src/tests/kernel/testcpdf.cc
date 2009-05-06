@@ -113,7 +113,9 @@ public:
 		#endif
 		
 		printf("TC02:\tCloning of later revisions.\n");
-		for(CPdf::revision_t rev=1; rev<pdf->getRevisionsCount(); rev++)
+		int count;
+		for(CPdf::revision_t rev=pdf->getRevisionsCount()-1, count=pdf->getRevisionsCount(); 
+				count>0; rev--,count--)
 		{
 			try
 			{
@@ -134,7 +136,7 @@ public:
 			}
 		}
 		// gets back to the newest revision
-		pdf->changeRevision(0);
+		pdf->changeRevision(pdf->getRevisionsCount()-1);
 
 		printf("TC03:\t cloning doesn't change content test\n");
 		CPPUNIT_ASSERT(!pdf->isChanged());
@@ -793,15 +795,13 @@ public:
 		}
 
 		printf("TC03:\tgetPageCount for revision test\n");
-		// starts from the oldest one - each revision has number of pages one
-		// more than revision number
-		for(CPdf::revision_t i=pdf->getRevisionsCount()-1; ; i--)
+		// starts from the oldest one - each newer revision has one less
+		// page count
+		size_t page_count = pdf->getRevisionsCount();
+		for(CPdf::revision_t i=0; i<pdf->getRevisionsCount(); i++, page_count--)
 		{
 			pdf->changeRevision(i);
-			CPPUNIT_ASSERT(pdf->getPageCount()==i+1);
-			if(i==0)
-				break;
-			
+			CPPUNIT_ASSERT(pdf->getPageCount()==page_count);
 		}
 
 		printf("TC04:\tgetCXref::getNumObjects is same for all revisions\n");
@@ -821,21 +821,24 @@ public:
 		}
 
 		printf("TC05:\tolder revisions has to be readOnly\n");
-		for(CPdf::revision_t i=1; i<pdf->getRevisionsCount(); i++)
+		for(CPdf::revision_t i=0; i<pdf->getRevisionsCount()-1; i++)
 		{
 			pdf->changeRevision(i);
 			CPPUNIT_ASSERT(pdf->getMode()==CPdf::ReadOnly);
 		}
 
 		printf("TC06:\tThe newest revision has mode same as set in getInstace\n");
-		pdf->changeRevision(0);
+		pdf->changeRevision(pdf->getRevisionsCount()-1);
 		CPPUNIT_ASSERT(pdf->getMode()==mode);
 		
 		printf("TC07:\tno changes can be done in older revisions\n");
-		for(CPdf::revision_t i=1; i<pdf->getRevisionsCount(); i++)
+		for(CPdf::revision_t i=0; i<pdf->getRevisionsCount()-1; i++)
 		{
 			printf("\trevision=%d\n", i);
 			pdf->changeRevision(i);
+			XRefWriter* xref = dynamic_cast<XRefWriter *>(pdf->getCXref());
+			CPPUNIT_ASSERT(xref);
+			CPPUNIT_ASSERT(!utils::isLatestRevision(*xref));
 			
 			// addIndirectProperty
 			printf("\t\taddIndirectProperty\n");
@@ -861,6 +864,14 @@ public:
 		// isModified returns always false
 		printf("TC08:\tisChanged is allways false on unchanged document\n");
 		CPPUNIT_ASSERT(!pdf->isChanged());
+
+		printf("TC09:\tLatest revision allows changes\n");
+		pdf->changeRevision(pdf->getRevisionsCount()-1);
+		shared_ptr<IProperty> newProp(CIntFactory::getInstance(1));
+		IndiRef ref = pdf->addIndirectProperty(newProp);
+		shared_ptr<IProperty> prop = pdf->getIndirectProperty(ref);
+		CPPUNIT_ASSERT(prop->getType()==pInt);
+		CPPUNIT_ASSERT(utils::getValueFromSimple<CInt>(prop)==1);
 	}
 #undef TRY_READONLY_OP
 	

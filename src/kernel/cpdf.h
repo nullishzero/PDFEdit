@@ -219,17 +219,16 @@ typedef std::map<cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
  * Pages are counted from 1 (first page) up to getPageCount return value. Note
  * that this may not represent values used for inner page counting writen on the
  * page. CPdf doesn't handle any kind of special document numbering.
- *
  * <p>
  * <b>Revision manipulation</b><br>
  * CPdf provides interface also for document revision handling done in XRefWriter
- * class. Actual revision number (the newest revision has 0 number and grows to
- * older revisions) can be obtained by getActualRevision method. Current
- * revision can be changed by changeRevision method. As a result, just object
- * included until current revisions are available. Also no changes can be done
- * if revision is not the newest one, because PDF document doesn't support
- * revision branching. All these operations are just delegated (after som 
- * checks) to XRefWriter.
+ * class. Actual revision number (the newest revision has the highest number and 
+ * gets smaller towards the older revisions with the 0 used for the oldest one) 
+ * can be obtained by getActualRevision method. Current revision can be changed 
+ * by changeRevision method. As a result, just objects included until the current 
+ * revisions are available. Also no changes can be done if revision is not the 
+ * newest one, because PDF document doesn't support revision branching. 
+ * All these operations are just delegated (after som checks) to XRefWriter.
  * <br>
  * All internal data structures which may depend on current revision are
  * intialized and cleaned up in initRevisionSpecific method.
@@ -250,8 +249,8 @@ typedef std::map<cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
  * @see save(bool).
  * 
  * Different way of page content storing is so called document clonig done by
- * clone method. This method stores document content of current revision. This
- * enables to nake snapshot of document of arbitrary revision to separate
+ * clone method. This method stores document content up to current revision. This
+ * enables to make snapshot of document of arbitrary revision to separate
  * document and this document (as it has that revision as the newest one)
  * enables making changes.
  * 
@@ -958,8 +957,7 @@ private:
 
 	/** Intializes revision specific stuff.
 	 * 
-	 * Cleans up all internal structures which may depend on current discourage 
-	 * revision.
+	 * Cleans up all internal structures which may depend on the current revision.
 	 * This includes indirect mapping and pageList (all pages are invalidated).
 	 * After clean up is ready, initializes trailer field from Xref trailer xpdf
 	 * Object. docCatalog field is initialized same way.
@@ -1229,7 +1227,7 @@ public:
 	 * For more implementation information @see XRefWriter
 	 *
 	 * <br>
-	 * Method will fail if actual revision is greater than 0.
+	 * Method will fail if the current revision is not the most recent one.
 	 * <p>
 	 * <b>Usage</b>
 	 * <ul>
@@ -1262,9 +1260,10 @@ public:
 	 * Stores actual document state to the given file.
 	 * Actual document state stands for all objects from all revistions until 
 	 * current one. This means that kind of fork of document is done. Be
-	 * careful, because actual changes are not considered (in revision 0),
-	 * because they are not really part of document (you have to save them as
-	 * new revision at first and than clone will contain also actual changes).
+	 * careful, because actual changes are not considered (in the most recent 
+	 * revision), because they are not really part of document (you have to 
+	 * save them as new revision at first and than clone will contain also 
+	 * actual changes).
 	 * <p>
 	 * <b>Usage</b>
 	 * <pre>
@@ -1489,7 +1488,7 @@ public:
 	{
 		// mode is used only if we are in the newest revision, otherwise we are
 		// in ReadOnly
-		return (!xref->getActualRevision())?mode:ReadOnly;
+		return (utils::isLatestRevision(*xref))?mode:ReadOnly;
 	}
 
 	/** Checks whether this pdf is linearized.
@@ -1507,8 +1506,7 @@ public:
 	/** Revision type.
 	 * This is used to determine which revision should or is used.
 	 * It is only alias to unsigned number and 0 stands for the 
-	 * newest revision. An older revision has higher number than
-	 * newer one.
+	 * oldest revision and newer revisions have higher numbers.
 	 */
 	typedef unsigned revision_t;
 
@@ -1539,7 +1537,8 @@ public:
 	}
 
 	/** Changes revision to given one.
-	 * @param revisionNum Revision number (the newest is 0).
+	 * @param revisionNum Revision number (the oldest is 0, getRevisionCount()-1 
+	 * for the newest one).
 	 *
 	 * Delegates to xref field and reinitializes all internal structures
 	 * which are revision specific (calls initRevisionSpecific method).
