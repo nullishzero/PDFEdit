@@ -1,4 +1,6 @@
 XXXX-XX-XX PDF Editor 0.4.X
+	* xpdf code base updated to 3.02pl3 patch which fixes
+	  several serious remote vulnerabilities
 	* French translation update (bug 275)
 	* Fix for [33853] Secunia advisory backported from poppler
 	* Flattener class implemented (bt#289)
