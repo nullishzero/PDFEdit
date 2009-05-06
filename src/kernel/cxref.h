@@ -188,15 +188,18 @@ protected:
 
 	/** Reinitializes all internal structures.
 	 * @param xrefOff Offset of cross reference table from which to start.
+	 * @param dropChanges Flag whether to drop changed objects.
 	 *
-	 * Clears all internal structures and forces XRef super type to throw away
-	 * all internal structures too and parse them again from stream starting
-	 * from given position.
+	 * Clears internal revision specific structures and forces XRef super type 
+	 * to throw away all internal structures as well and parse them again from 
+	 * the given stream position.
 	 * <br>
-	 * This method should be called if new revision is appended to the stream.
-	 * Otherwise all information about changes are lost!
+	 * If the dropChanges flag is true then also all changed objects are droped.
+	 * This flag should be set to false when we are changing the current 
+	 * revision and kept in default (true) value otherwise (final cleanup, saving
+	 * as new revision).
 	 */
-	void reopen(size_t xrefOff);
+	void reopen(size_t xrefOff, bool dropChanges=true);
 
 	/** Reserves reference for new indirect object.
 	 *

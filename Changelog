@@ -8,6 +8,8 @@ XXXX-XX-XX PDF Editor 0.4.X
 	* Internal changes
 		- all revisions are numbered in oposite direction (0 is 
 		  always the oldest one) to enable stable numbering
+		- changes are not discarded after we get to an older
+		  revision and back
 
 2008-12-15 PDF Editor 0.4.2
 	* dependency to boost-iostreams dropped

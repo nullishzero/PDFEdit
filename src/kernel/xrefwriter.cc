@@ -756,8 +756,9 @@ void XRefWriter::changeRevision(unsigned revNumber)
 	
 	// forces CXRef to reopen from revisions[revNumber] offset
 	// which points to start of xref section for that revision
+	// and forces keeping all changes
 	size_t off=revisions[revNumber];
-	reopen(off);
+	reopen(off, false);
 
 	// everything ok, so current revision can be set
 	revision=revNumber;

@@ -654,7 +654,7 @@ using namespace debug;
 }
 
 
-void CXref::reopen(size_t xrefOff)
+void CXref::reopen(size_t xrefOff, bool dropChanges)
 {
 using namespace debug;
 
@@ -662,7 +662,8 @@ using namespace debug;
 
 	// clears all object storages
 	kernelPrintDbg(DBG_DBG, "Destroying CXref internals");
-	cleanUp();
+	if(dropChanges)
+		cleanUp();
 
 	// clears XRef internals and forces to fill them again
 	kernelPrintDbg(DBG_DBG, "Destroing XRef internals");

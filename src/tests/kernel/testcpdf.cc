@@ -872,6 +872,13 @@ public:
 		shared_ptr<IProperty> prop = pdf->getIndirectProperty(ref);
 		CPPUNIT_ASSERT(prop->getType()==pInt);
 		CPPUNIT_ASSERT(utils::getValueFromSimple<CInt>(prop)==1);
+
+		printf("TC10:\tchange done to the latest revision is preserved\n");
+		pdf->changeRevision(0);
+		pdf->changeRevision(pdf->getRevisionsCount()-1);
+		prop = pdf->getIndirectProperty(ref);
+		CPPUNIT_ASSERT(prop->getType()==pInt);
+		CPPUNIT_ASSERT(utils::getValueFromSimple<CInt>(prop)==1);
 	}
 #undef TRY_READONLY_OP
 	
