@@ -646,8 +646,12 @@ void CPageAnnots::reset ()
 		// we already made a reset
 		if (!_page)
 			return;
-	// unregisters annotation observers 
-	unreg_observers ();
+	// we cannot unregister annotation observers with unreg_annots because
+	// this method requires access to properties which might be impossible
+	// because its CPdf can be already dead by that time. We should, however
+	// deactivate all observers and they will be deallocated automatically
+	_prop_wd->setActive(false);
+	_array_wd->setActive(false);
 	_page = NULL;
 	_annotations.clear ();
 	_prop_wd.reset ();
