@@ -642,6 +642,7 @@ echo " Build doxygen documentation   : $enable_doxygen_doc"
 echo " Build advanced documentation  : $enable_advanced_doc"
 echo " Build kernel tests            : $enable_kernel_tests"
 echo " Build GUI                     : $enable_gui"
+echo " Build pdfedit-core-dev        : $enable_pdfedit_core_dev"
 echo
 echo "Installation summary:"
 echo " Root directory                : $root_dir"
