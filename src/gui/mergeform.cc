@@ -137,8 +137,11 @@ void MergeDialog::mergeList_currentChanged( Q_ListBoxItem * item)
                         upBtn->setEnabled(FALSE);
 
                 // down button is enabled only if we are before END page
-                if(mergeList->currentItem()+1>pageCount) downBtn->setEnabled(FALSE);
-                else downBtn->setEnabled(TRUE);
+                // pageCount includes also already added pages
+                if(mergeList->currentItem()+1 >= pageCount) 
+			downBtn->setEnabled(FALSE);
+                else 
+			downBtn->setEnabled(TRUE);
         } else {
                 upBtn->setEnabled(FALSE);
                 downBtn->setEnabled(FALSE);
@@ -178,6 +181,9 @@ void MergeDialog::addBtn_clicked()
 
                 // gets position of selected item in mergeList
                 int pos=mergeList->currentItem();
+
+                // increase total page count
+                pageCount++;
 
                 // insert fileItem before currently selected node in mergeList
                 mergeList->insertItem(fileItem, (pos<0)?0:pos);
@@ -239,6 +245,9 @@ void MergeDialog::removeBtn_clicked()
                         ++pos;
                 }
 
+                // update total page count
+                pageCount--;
+
                 // inserts mergeItem to correct position and unselect it
                 fileList->insertItem(mergeItem, pos);
                 fileList->setCurrentItem(mergeItem);
@@ -265,7 +274,7 @@ void MergeDialog::upBtn_clicked() {
 
 void MergeDialog::downBtn_clicked() {
         int pos=mergeList->currentItem();
-        if (pos<pageCount) {
+        if (pos+1<pageCount) {
                 Q_ListBoxItem * item=mergeList->item(pos);
                 mergeList->takeItem(item);
                 mergeList->insertItem(item, pos+1);
