@@ -248,9 +248,14 @@ void MergeDialog::removeBtn_clicked()
                 // update total page count
                 pageCount--;
 
-                // inserts mergeItem to correct position and unselect it
+                // inserts mergeItem to the correct position and select the next
+                // one in the mergeList
                 fileList->insertItem(mergeItem, pos);
-                fileList->setCurrentItem(mergeItem);
+                // QT3 bug work-around - currentChanged is not triggered when we add
+                // the first item to an empt list - we have to force the handler for
+                // proper enable/disable logic
+                fileList->setCurrentItem(pos);
+                fileList_currentChanged(mergeItem);
                 mergeList->setCurrentItem(oldPos);
                 mergeList->setSelected(oldPos, TRUE);
         }else
