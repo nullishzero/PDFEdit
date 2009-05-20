@@ -67,7 +67,7 @@ function checkMenus() {
  enableItem("/need_removable",		(theType!="Pdf" && theType!=""));
  enableItem("/need_page",		(have_page));
  enableItem("/need_document",		(have_document));
- enableItem("/need_rw",		(have_document && !document.isReadOnly()));
+ enableItem("/need_rw",			(have_document && !document.isReadOnly()));
  showItem("/need_contentstream_root",	cstream_tab);
  enableItem("_zoom_tool",have_page);
  enableItem("_page_tool",have_document);
@@ -80,9 +80,8 @@ function checkMenus() {
 
 /** Callback called after document is loaded */
 function onLoad() {
- //show first page
-// go(1);
- PageSpace.refresh(document.getFirstPage(),document);
+ //show first page if present
+ if (document.getPageCount()>0) PageSpace.refresh(document.getFirstPage(),document);
  checkMenus();
 }
 

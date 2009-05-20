@@ -228,6 +228,12 @@ void PageSpace::refresh ( int pageToView, QSPdf * pdf ) {			// if pdf is NULL re
 			pageToView = 1;
 		
 	pageCount = pdf->get()->getPageCount();
+
+	if (pageCount <= 0) {
+		refresh( (QSPage *) NULL, (QSPdf *) NULL );
+		return;
+	}
+
 	if (pageToView > pageCount)
 			pageToView = pageCount;
 
