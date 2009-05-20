@@ -163,6 +163,7 @@ public:
 class MergeDialog : public QDialog {
     Q_OBJECT
 
+    // TODO get rid of this and use mergeList::count instead
     size_t pageCount;
 public:
     MergeDialog( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );

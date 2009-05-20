@@ -353,6 +353,7 @@ QString MergeDialog::fileName() {
 
 void MergeDialog::initOriginal( size_t count ) {
  char itemLabel[128];
+ pageCount = count;
  for(size_t i=1; i<=count; ++i) {
   snprintf(itemLabel, 127, "Page%d", (int)i);
   //ListItem * listItem=
@@ -387,7 +388,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
   //TODO: some messagebox?
   return false;
  }
- size_t count = pageCount = document->getPageCount();
+ size_t count = document->getPageCount();
  document.reset();
  char itemLabel[128];
  QFileInfo fi(fileName);
