@@ -33,7 +33,7 @@ function delinearize_fail(err) {
 function delinearize_gui() {
  inFile=fileOpenDialog();
  if (!inFile) return;
- outFile=fileSaveDialog();
+ outFile=fileSaveDialogDiffer(inFile);
  if (!outFile) return;
  if (!exists(inFile)) { delinearize_fail(tr("Input file '%1' does not exist").arg(inFile)); return; }
  if (inFile==outFile) { delinearize_fail(tr("Input and output files must be different")); return; }

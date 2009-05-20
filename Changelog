@@ -4,7 +4,7 @@ XXXX-XX-XX PDF Editor 0.4.X
 	* French translation update (bug 275)
 	* Fix for [33853] Secunia advisory backported from poppler
 	* Flattener class implemented (bt#289)
-	* Bugs 256, 285, 290, 291, 295, 301, 304, 305, 306, 307, 309, 310 fixed
+	* Bugs 256, 285, 290, 291, 295, 301, 304, 305, 306, 307, 309, 310, 314 fixed
 	* Internal changes
 		- all revisions are numbered in oposite direction (0 is 
 		  always the oldest one) to enable stable numbering

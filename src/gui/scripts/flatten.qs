@@ -33,7 +33,7 @@ function flatten_fail(err) {
 function flatten_gui() {
  inFile=fileOpenDialog();
  if (!inFile) return;
- outFile=fileSaveDialog();
+ outFile=fileSaveDialogDiffer(inFile);
  if (!outFile) return;
  if (!exists(inFile)) { flatten_fail(tr("Input file '%1' does not exist").arg(inFile)); return; }
  if (inFile==outFile) { flatten_fail(tr("Input and output files must be different")); return; }

@@ -401,6 +401,24 @@ QString BaseGUI::fileSaveDialog(const QString &oldName/*=QString::null*/) {
 
 /**
  Show "save file" dialog and return file selected, or NULL if dialog was cancelled
+ Name must be different than origName
+ @param origName Original name of the file
+ @return name of selected file.
+ */
+QString BaseGUI::fileSaveDialogDiffer(const QString &origName) {
+ guiPrintDbg(debug::DBG_DBG,"fileSaveDialogDiffer");
+ QString ret=QString::null;
+ for(;;) {
+  ret=saveFileDialogPdf(w,QString::null);
+  if (origName.isNull()) break;
+  if (ret!=origName) break;
+  warn(tr("You must pick a different file than '%1'").arg(origName));
+ } 
+ return ret;
+}
+
+/**
+ Show "save file" dialog and return file selected, or NULL if dialog was cancelled
  @param oldName Old name of the file (if known) - will be preselected
  @return name of selected file.
  */

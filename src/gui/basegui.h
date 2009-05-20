@@ -171,6 +171,12 @@ public slots: //This will be all exported to scripting
  */
  QString fileSaveDialog(const QString &oldName=QString::null);
  /*-
+  Show "save file" dialog and return file selected, or NULL if dialog was cancelled.
+  If file selected in dialog already exists, user is asked to confirm overwriting before returing its name.
+  Name must be different than origName.
+ */
+ QString fileSaveDialogDiffer(const QString &origName);
+ /*-
   Invokes "save file" dialog for XML file and return selected filename, or NULL if dialog was cancelled.
   If file selected in dialog already exists, user is asked to confirm overwriting before returing its name.
  */
