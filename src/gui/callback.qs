@@ -68,6 +68,7 @@ function checkMenus() {
  enableItem("/need_page",		(have_page));
  enableItem("/need_document",		(have_document));
  enableItem("/need_rw",			(have_document && !document.isReadOnly()));
+ enableItem("/need_page_rw",		(have_page && have_document && !document.isReadOnly()));
  showItem("/need_contentstream_root",	cstream_tab);
  enableItem("_zoom_tool",have_page);
  enableItem("_page_tool",have_document);

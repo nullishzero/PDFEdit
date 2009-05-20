@@ -66,18 +66,18 @@ MainMenu	= list Main menu,filemenu,editopersmenu,showmenu,pagemenu,toolsmenu,hel
   #Tools submenu
   toolsmenu		= list &Tools,opts,mergeDoc
     opts		= item &Options,options(),F9,options.png
-    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,insert_pages.png,need_document,need_rw
+    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,insert_pages.png,need_rw
   #Page submenu
-  pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinee,drawrecte,addtext,striketrough,highlightingtext
+  pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,pageRemove,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinee,drawrecte,addtext,striketrough,highlightingtext
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
-    reloadpage		= item Reload Page (show changes), go()			, F5	, reload.png		,need_page,need_rw
+    reloadpage		= item Reload Page (show changes), go()			, F5	, reload.png		,need_page_rw
     pagetext		= item Extract text from page	, viewPageText()	,	, page_text.png		,need_page
-    rot-90		= item Rotate page 270 degrees	, rotatePage(-90)	,Ctrl+[	, page_rotate_-90.png	,need_page,need_rw
-    rot90		= item Rotate page 90 degrees	, rotatePage(90)	,Ctrl+]	, page_rotate_90.png	,need_page,need_rw
-    delpage		= item Remove page		, delPage()		,	, page_del.png		,need_document,need_rw
-    editPageMediaBox	= item Edit page metrics	, editPageMediaBox()	,	, page_edit_metrics.png	,need_page,need_rw
-    setpagetm		= item Set page transformation matrix,setPageTm()	,	, page_settm.png	,need_page,need_rw
-    addSystemFont	= item Add system font to page	, addSystemFont()	,	, page_add_font.png	,need_page,need_rw
+    rot-90		= item Rotate page 270 degrees	, rotatePage(-90)	,Ctrl+[	, page_rotate_-90.png	,need_page_rw
+    rot90		= item Rotate page 90 degrees	, rotatePage(90)	,Ctrl+]	, page_rotate_90.png	,need_page_rw
+    pageRemove		= item Remove page		, delCurrentPage()	,	, page_delete.png	,need_page_rw
+    editPageMediaBox	= item Edit page metrics	, editPageMediaBox()	,	, page_edit_metrics.png	,need_page_rw
+    setpagetm		= item Set page transformation matrix,setPageTm()	,	, page_settm.png	,need_page_rw
+    addSystemFont	= item Add system font to page	, addSystemFont()	,	, page_add_font.png	,need_page_rw
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectGraphical,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
     selectAllObjects	= item Select all objects		, onSelectMode_AllObjects()		, , selectmode_allobjects.png	,mode_button
@@ -108,9 +108,8 @@ PageRiderToolbar	= list PageRider Toolbar,firstpage,prevpage,_page_tool,nextpage
   # _page_tool is special toolbar item to show/change current page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
-  pageMoveUp		= item Move page up,movePage(page()\,-1);rootReload(),,page_move_up.png,need_page,need_rw
-  pageMoveDown		= item Move page down,movePage(page()\,1);rootReload(),,page_move_down.png,need_page,need_rw
-  pageRemove		= item Remove page,removePage(document.getPagePosition(page()));rootReload(),,page_delete.png,need_page,need_rw
+  pageMoveUp		= item Move page up,movePage(page()\,-1);rootReload(),,page_move_up.png,need_page_rw
+  pageMoveDown		= item Move page down,movePage(page()\,1);rootReload(),,page_move_down.png,need_page_rw
 
 DrawToolbar		= list Draw Toolbar,drawlinee,drawarrowe,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button,need_rw

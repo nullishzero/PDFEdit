@@ -125,6 +125,15 @@ function removePage(pos)
         return displayPos;
 }
 
+/**
+ Delete current page in GUI
+*/
+function delCurrentPage() {
+ removePage(document.getPagePosition(page()));
+ rootReload();
+ checkMenus();
+}
+
 /** Calculates number of first n elements lower than value from given
  * array.
  * @param positions Array of numbers.
