@@ -758,7 +758,7 @@ bool PdfEditWindow::saveCopy(const QString &name) {
 void PdfEditWindow::setFileName(const QString &name) {
  fileName=name;
  if (name.isNull()) { //No name
-  setCaption(QString(APP_NAME));
+  setCaption(QString(APP_NAME)+" "+QString(PDFEDIT_VERSION));
   baseName=QString::null;
   return;
  }
