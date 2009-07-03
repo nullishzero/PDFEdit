@@ -554,7 +554,7 @@ function moveTextPos( delta_x, delta_y ) {
 /**
  * Draw line.
  */
-function drawLine(_lx,_ly,_rx,_ry,wantedit) {
+function drawLine(_lx,_ly,_rx,_ry,wantedit,_global_x,_global_y) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
@@ -592,7 +592,7 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 /**
  * Draw an arrow.
   */
-function drawArrow(_lx,_ly,_rx,_ry,wantedit) {
+function drawArrow(_lx,_ly,_rx,_ry,wantedit,_global_x,_global_y) {
 	// Get the end points
     var _a1 = _rx+(_lx-_ry+_ly-_rx)/10;
     var _a2 = _ry+(_ly+_rx-_lx-_ry)/10;
@@ -625,7 +625,7 @@ function drawArrow(_lx,_ly,_rx,_ry,wantedit) {
 /**
  * Draw rect.
  */
-function drawRect(_lx,_ly,_rx,_ry,wantedit) {
+function drawRect(_lx,_ly,_rx,_ry,wantedit,_global_x,_global_y) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
@@ -754,7 +754,7 @@ function findText ( text ) {
 	return numOfFounded;
 }
 
-function highlightingSelectedText() {
+function highlightingSelectedText(_lx, _ly, _rx, _ry, _global_x, _global_y) {
 	function getFirstTextOp( operator ) {
 		// TODO kontrola
 		var i = operator.iterator();
@@ -800,9 +800,8 @@ function highlightingSelectedText() {
 }
 
 /** Strike trougn text which are selected. */
-function strikeTroughSelection( thepage ) {
-	if (thepage == undefined)
-		thepage = page();
+function strikeTroughSelection(_lx, _ly, _rx, _ry, _global_x, _global_y) {
+	var thepage = page();
 
 	var _op = firstSelected();
 	var _lines = [];
