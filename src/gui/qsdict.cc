@@ -39,6 +39,19 @@ namespace gui {
 using namespace std;
 using namespace pdfobjects;
 
+//Theoretically, this could be done better with templates, but unfortunately, it is not possible due to some C++ limitations
+/** Standard error handling - code added before the operation */
+#define OP_BEGIN \
+ CDict *dict=dynamic_cast<CDict*>(obj.get());\
+ try {
+/** Standard error handling - code added after the operation */
+#define OP_END(func) \
+ } catch (ReadOnlyDocumentException &e) { \
+  base->errorException("Dict",func,QObject::tr("Document is read-only")); \
+ } catch (NotImplementedException &e) { \
+  base->errorException("Dict",func,QObject::tr("Operation not implemented: %1").arg(e.what())); \
+ }
+
 /**
  Construct wrapper with given CDict
  @param _dict CDict
@@ -136,13 +149,10 @@ QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
  @param name Property name
 */
 void QSDict::delProperty(const QString &name) {
- CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=util::convertFromUnicode(name,util::PDF);
- try {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
   dict->delProperty(pName);
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","delProperty",QObject::tr("Document is read-only"));
- }
+ OP_END("delProperty")
 }
 
 /**
@@ -152,13 +162,10 @@ void QSDict::delProperty(const QString &name) {
  @param ip Property to add
 */
 void QSDict::add(const QString &name,QSIProperty *ip) {
- CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=util::convertFromUnicode(name,util::PDF);
- try {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
   dict->addProperty(pName,*(ip->get().get()));
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","add",QObject::tr("Document is read-only"));
- }
+ OP_END("add")
 }
 
 /** \copydoc add(const QString&,QSIProperty*) */
@@ -175,14 +182,11 @@ void QSDict::add(const QString &name,QObject *ip) {
  @param ip string to add
 */
 void QSDict::add(const QString &name,const QString &ip) {
- CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=util::convertFromUnicode(name,util::PDF);
- CString property(util::convertFromUnicode(ip,util::PDF));
- try {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
+  CString property(util::convertFromUnicode(ip,util::PDF));
   dict->addProperty(pName,property);
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","add",QObject::tr("Document is read-only"));
- }
+ OP_END("add")
 }
 
 /**
@@ -192,14 +196,11 @@ void QSDict::add(const QString &name,const QString &ip) {
  @param ip integer to add
 */
 void QSDict::add(const QString &name,int ip) {
- CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=util::convertFromUnicode(name,util::PDF);
- CInt property(ip);
- try {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
+  CInt property(ip);
   dict->addProperty(pName,property);
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","add",QObject::tr("Document is read-only"));
- }
+ OP_END("add")
 }
 
 /**
