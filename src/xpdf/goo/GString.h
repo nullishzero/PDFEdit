@@ -133,4 +133,25 @@ private:
 			   GBool trim, char **p, int *len);
 };
 
+#if defined(WIN32) || defined(UNDER_CE)
+#include <string.h>
+inline wchar_t* ASCItoWide(const char* s)
+{
+	size_t len = s ? strlen(s) : 0;
+
+	if (0 == len)
+	{
+		wchar_t* rv = new wchar_t[1];
+		*rv = 0;
+		return rv;
+	}
+
+	wchar_t* rv = new wchar_t[len + 1];
+	for(size_t i=0;i<len;++i)
+		rv[i] = s[i];
+	rv[len] = 0;
+	return rv;
+}
+#endif
+
 #endif

@@ -91,8 +91,12 @@ GString *getCurrentDir() {
 
 #if defined(__EMX__)
   if (_getcwd2(buf, sizeof(buf)))
-#elif defined(WIN32)
-  if (GetCurrentDirectory(sizeof(buf), buf))
+#elif defined(WIN32) || defined(UNDER_CE)
+  wchar_t _buf[PATH_MAX+1];
+  int ret = GetCurrentDirectory(sizeof(_buf), _buf);
+  for (int i = 0; i < ret; ++i)
+	  buf[i] = (char)_buf[i];
+  if (ret)
 #elif defined(ACORN)
   if (strcpy(buf, "@"))
 #elif defined(MACOS)
@@ -149,11 +153,16 @@ GString *appendToPath(GString *path, char *fileName) {
   //---------- Win32 ----------
   GString *tmp;
   char buf[256];
+  wchar_t wbuf[256];
 
   tmp = new GString(path);
   tmp->append('/');
   tmp->append(fileName);
-  GetFullPathName(tmp->getCString(), sizeof(buf), buf, NULL);
+  wchar_t* str = ASCItoWide (tmp->getCString());
+  DWORD ret = GetFullPathName(str, 256, wbuf, NULL);
+  delete [] str;
+  for (int i=0; i<ret; ++i)
+	  buf[i] = wbuf[i];
   delete tmp;
   path->clear();
   path->append(buf);
@@ -356,13 +365,19 @@ GString *makePathAbsolute(GString *path) {
 
 #elif defined(WIN32)
   //---------- Win32 ----------
+  wchar_t wbuf[_MAX_PATH];
   char buf[_MAX_PATH];
-
-  buf[0] = '\0';
-  if (!GetFullPathName(path->getCString(), _MAX_PATH, buf, NULL)) {
+  wbuf[0] = '\0';
+  wchar_t* str = ASCItoWide (path->getCString());
+  DWORD ret = 0;
+  if (!(ret=GetFullPathName(str, _MAX_PATH, wbuf, NULL))) {
     path->clear();
+    delete [] str;
     return path;
   }
+  for (int i = 0; i < ret; ++i)
+	  buf[i] = wbuf[i];
+  delete [] str;
   path->clear();
   path->append(buf);
   return path;
@@ -585,8 +600,10 @@ GDirEntry::GDirEntry(char *dirPath, char *nameA, GBool doStat) {
 #else
     s = new GString(dirPath);
     appendToPath(s, nameA);
-#ifdef WIN32
-    fa = GetFileAttributes(s->getCString());
+#if defined(WIN32) || defined(UNDER_CE)
+	wchar_t* str = ASCItoWide (s->getCString());
+    fa = GetFileAttributes(str);
+	delete [] str;
     dir = (fa != 0xFFFFFFFF && (fa & FILE_ATTRIBUTE_DIRECTORY));
 #else
     if (stat(s->getCString(), &st) == 0)
@@ -609,7 +626,9 @@ GDir::GDir(char *name, GBool doStatA) {
 
   tmp = path->copy();
   tmp->append("/*.*");
-  hnd = FindFirstFile(tmp->getCString(), &ffd);
+  wchar_t* str = ASCItoWide (tmp->getCString());
+  hnd = FindFirstFile(str, &ffd);
+  delete [] str;
   delete tmp;
 #elif defined(ACORN)
 #elif defined(MACOS)
@@ -690,7 +709,9 @@ void GDir::rewind() {
     FindClose(hnd);
   tmp = path->copy();
   tmp->append("/*.*");
-  hnd = FindFirstFile(tmp->getCString(), &ffd);
+  wchar_t* str = ASCItoWide (tmp->getCString());
+  hnd = FindFirstFile(str, &ffd);
+  delete [] str;
   delete tmp;
 #elif defined(ACORN)
 #elif defined(MACOS)

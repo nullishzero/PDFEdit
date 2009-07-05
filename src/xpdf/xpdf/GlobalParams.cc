@@ -45,6 +45,7 @@
 #include "xpdf/GlobalParams.h"
 
 #ifdef WIN32
+#include <winreg.h>
 #  define strcasecmp stricmp
 #endif
 
@@ -197,12 +198,16 @@ WinFontInfo *WinFontInfo::make(GString *nameA, GBool boldA, GBool italicA,
   }
   regName->append(" (TrueType)");
   n = sizeof(buf);
-  if (RegQueryValueEx(regKey, regName->getCString(), NULL, NULL,
+#ifndef UNDER_CE
+	wchar_t* str = ASCItoWide (regName->getCString());
+  if (RegQueryValueEx(regKey, str, NULL, NULL,
 		      (LPBYTE)buf, &n) == ERROR_SUCCESS) {
     fileNameA = new GString(winFontDir);
     fileNameA->append('\\')->append(buf);
   }
+	delete [] str;
   delete regName;
+#endif
   if (!fileNameA) {
     delete nameA;
     return NULL;
@@ -279,12 +284,16 @@ WinFontList::WinFontList(char *winFontDirA) {
   } else {
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Fonts\\";
   }
-  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0,
+#ifndef UNDER_CE
+	wchar_t* str = ASCItoWide (path);
+  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, str, 0,
 		   KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
 		   &regKey) == ERROR_SUCCESS) {
     EnumFonts(dc, NULL, &WinFontList::enumFunc1, (LPARAM)this);
     RegCloseKey(regKey);
   }
+	delete [] str;
+#endif
   ReleaseDC(NULL, dc);
 }
 
@@ -765,9 +774,12 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
     }
   }
   if (!f) {
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(WIN32) && !defined(__CYGWIN32__) 
+    wchar_t wbuf[512];
+    i = GetModuleFileName(NULL, wbuf, sizeof(wbuf));
     char buf[512];
-    i = GetModuleFileName(NULL, buf, sizeof(buf));
+	for (int j = 0; j < i; ++j)
+		buf[j] = (char)wbuf[i];
     if (i <= 0 || i >= sizeof(buf)) {
       // error or path too long for buffer - just use the current dir
       buf[0] = '\0';
@@ -1852,11 +1864,11 @@ void GlobalParams::setupBaseFonts(const char *dir) {
   DisplayFontParam *dfp;
   int i, j;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(UNDER_CE)
   // SHGetSpecialFolderPath isn't available in older versions of
   // shell32.dll (Win95 and WinNT4), so do a dynamic load
   winFontDir[0] = '\0';
-  if ((shell32Lib = LoadLibrary("shell32.dll"))) {
+  if ((shell32Lib = LoadLibrary(L"shell32.dll"))) {
     if ((SHGetSpecialFolderPathFunc = 
 	 (BOOL (__stdcall *)(HWND hwndOwner, LPTSTR lpszPath,
 			     int nFolder, BOOL fCreate))
