@@ -5,7 +5,7 @@
 //- add zlib1d.lib to Linker->Input in project Properties 
 //- put the dll to known directory (e.g. from which it is executed)
 
-int main(int argc, char* argv[])
+int main(int , char* [])
 {
 	return 0;
 }

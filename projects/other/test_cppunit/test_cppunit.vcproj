@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="test_cppunit"
 	ProjectGUID="{54BD1798-9070-4080-939E-7CFCC7AECE12}"
 	RootNamespace="test_cppunit"
-	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform
@@ -16,237 +15,21 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)"
-			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- testing CPPUNIT availability&quot;"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install CPPUNIT properly.&quot;"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- CPPUNIT available.&quot;"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)"
-			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
+      InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\exe.vsprops"
+  		ConfigurationType="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- testing CPPUNIT availability&quot;"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
+				CommandLine="echo &quot;PdfEdit -- testing $(ProjectName) availability&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install CPPUNIT properly.&quot;"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
+				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install $(ProjectName) properly.&quot;"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- CPPUNIT available.&quot;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug-Tools (testing)|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)"
-			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- testing CPPUNIT availability&quot;"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-				CommandLine="echo &quot;PdfEdit -- If NOT successful, please install CPPUNIT properly.&quot;"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;PdfEdit -- CPPUNIT available.&quot;"
+				CommandLine="echo &quot;PdfEdit -- $(ProjectName) available.&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -256,33 +39,6 @@
 		<File
 			RelativePath=".\test_cppunit.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug-Tools (testing)|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\$(InputName)1.obj"
-					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-				/>
-			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
