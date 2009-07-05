@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="pdftops"
+	ProjectGUID="{30B3E720-FD92-47C5-940B-9E5CB0213F12}"
+	RootNamespace="pdftops"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+		<Platform
+			Name="WINCESDK_600 (ARMV4I)"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\tools.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\exe.vsprops"
+			>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\tools.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\exe.vsprops"
+			>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath="$(SolutionDir)..\src\xpdf\xpdf\pdftops.cc"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

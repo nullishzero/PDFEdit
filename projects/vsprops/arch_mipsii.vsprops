@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="VSprops MIPSII (CE) Architecture"
+	>
+	<Tool
+		Name="VCLinkerTool"
+		TargetMachine="7"
+	/>
+	<UserMacro
+		Name="_Z_ARCH_"
+		Value="mipsii"
+		PerformEnvironmentSet="true"
+	/>
+</VisualStudioPropertySheet>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="VSprops Release"
+	WholeProgramOptimization="65535"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		Optimization="2"
+		FavorSizeOrSpeed="2"
+		PreprocessorDefinitions="NDEBUG"
+		RuntimeLibrary="0"
+		RuntimeTypeInfo="true"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="1"
+		GenerateDebugInformation="true"
+		OptimizeReferences="2"
+		EnableCOMDATFolding="2"
+		LinkTimeCodeGeneration="1"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		PreprocessorDefinitions="NDEBUG"
+	/>
+</VisualStudioPropertySheet>

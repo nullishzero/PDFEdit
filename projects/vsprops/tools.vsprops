@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Tools Common Settings"
+	>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="zdll.lib xpdf-$(_Z_PLTFRM_)$(_Z_ARCH_).lib"
+		OutputFile="$(OutDir)\$(ProjectName)-tool.exe"
+		AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
+		GenerateDebugInformation="true"
+		RandomizedBaseAddress="1"
+		DataExecutionPrevention="0"
+	/>
+</VisualStudioPropertySheet>

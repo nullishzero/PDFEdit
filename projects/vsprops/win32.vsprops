@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+    ProjectType="Visual C++"
+    Version="8.00"
+    Name="VSProps Win32"
+    >
+<Tool
+		Name="VCCLCompilerTool"
+    PreprocessorDefinitions="WIN32;_WINDOWS;_WIN32_WINNT=0x0502;WINVER=0x0502"
+	/>    
+ <Tool
+    Name="VCResourceCompilerTool"
+    PreprocessorDefinitions="WIN32;_WINDOWS;_WIN32_WINNT=0x0502;WINVER=0x0502"
+/>	
+<UserMacro
+	Name="_Z_ARCH_"
+	Value="win32"
+	PerformEnvironmentSet="true"
+/>
+<UserMacro
+    Name="_Z_PLTFRM_"
+    Value=""
+    PerformEnvironmentSet="true"
+  />
+</VisualStudioPropertySheet>

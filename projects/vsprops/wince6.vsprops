@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+    ProjectType="Visual C++"
+    Version="8.00"
+    Name="VSprops WinCE"
+    >
+    <Tool
+        Name="VCCLCompilerTool"
+        ExecutionBucket="7"
+        PreprocessorDefinitions="_WIN32_WCE=$(CEVER);UNDER_CE;WINCE;_WINDOWS;$(ARCHFAM);$(_ARCHFAM_)"
+    />
+    <Tool
+        Name="VCLinkerTool"
+        DelayLoadDLLs="$(NOINHERIT)"
+        AdditionalOptions=" /subsystem:windowsce,6.00"
+        AdditionalDependencies="aygshell.lib"
+        SubSystem="0"
+        StackReserveSize="1048576"
+        StackCommitSize="4096"
+    />
+    <Tool
+        Name="VCResourceCompilerTool"
+        PreprocessorDefinitions="_WIN32_WCE=$(CEVER);UNDER_CE"
+    />
+    <UserMacro
+        Name="_Z_PLTFRM_"
+        Value="wince6-"
+        PerformEnvironmentSet="true"
+    />
+</VisualStudioPropertySheet>

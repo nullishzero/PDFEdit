@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="xpdf"
 	ProjectGUID="{005F915C-B7B1-4448-AC1D-A99336E67078}"
 	RootNamespace="xpdf"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
 			Name="Win32"
+		/>
+		<Platform
+			Name="WINCESDK_600 (ARMV4I)"
 		/>
 	</Platforms>
 	<ToolFiles>
@@ -17,207 +21,26 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
-			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="2"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				Description="XPDF needs generated header file for each operating system. Generate it. Remove after first build (xpdf Property Page-&gt;Configuration Properties-&gt;Build Events-&gt;Pre-Build Event)"
-				CommandLine="copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\src&quot;;&quot;$(SolutionDir)\..\src\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\splash&quot;;&quot;$(SolutionDir)\..\src\xpdf\goo&quot;;&quot;$(SolutionDir)\..\src\xpdf\fofi&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				BrowseInformation="1"
-				BrowseInformationFile="$(IntDir)\"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libs\$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-				OutputFile="$(OutDir)/$(ConfigurationName)/$(ProjectName).bsc"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
-			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\aconf.h"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\src\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\splash&quot;;&quot;$(SolutionDir)\..\src\xpdf\goo&quot;;&quot;$(SolutionDir)\..\src\xpdf\fofi&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				BrowseInformationFile="$(IntDir)\"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libs\$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-				OutputFile="$(OutDir)/$(ConfigurationName)/$(ProjectName).bsc"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
 		</Configuration>
 		<Configuration
-			Name="Debug-Tools (testing)|Win32"
-			OutputDirectory="$(SolutionDir)\output\$(ProjectName)\"
-			IntermediateDirectory="$(SolutionDir)\output\$(ProjectName)\$(ConfigurationName)"
+			Name="Debug|WINCESDK_600 (ARMV4I)"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				Description="XPDF needs generated header file for each operating system. Generate it. Remove after first build (xpdf Property Page-&gt;Configuration Properties-&gt;Build Events-&gt;Pre-Build Event)"
-				CommandLine="copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\src&quot;;&quot;$(SolutionDir)\..\src\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\splash&quot;;&quot;$(SolutionDir)\..\src\xpdf\goo&quot;;&quot;$(SolutionDir)\..\src\xpdf\fofi&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				BrowseInformation="1"
-				BrowseInformationFile="$(IntDir)\"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libs\$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-				OutputFile="$(OutDir)/$(ConfigurationName)/$(ProjectName).bsc"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
+		/>
+		<Configuration
+			Name="Release|WINCESDK_600 (ARMV4I)"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\arch_armv4i.vsprops;$(SolutionDir)\vsprops\wince6.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
+		/>
 	</Configurations>
 	<References>
 	</References>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="VSProps Exe"
+	>
+<Tool
+		Name="VCLinkerTool"
+		OutputFile="$(SolutionDir)/output/$(ProjectName)-$(_Z_PLTFRM_)$(_Z_ARCH_).exe"
+    ProgramDatabaseFile="$(OutDir)/pdb/$(ProjectName)-$(_Z_PLTFRM_)$(_Z_ARCH_).pdb"
+    GenerateMapFile="true"
+    MapFileName="$(OutDir)/maps/$(ProjectName)-$(_Z_PLTFRM_)$(_Z_ARCH_).map"
+/>
+
+</VisualStudioPropertySheet>

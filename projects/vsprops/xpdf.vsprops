@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="VSProps xpdf"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		Optimization="0"
+		AdditionalIncludeDirectories="$(SolutionDir)\..\src;$(SolutionDir)\..\src\xpdf;$(SolutionDir)\..\src\xpdf\xpdf;$(SolutionDir)\..\src\xpdf\splash;$(SolutionDir)\..\src\xpdf\goo;$(SolutionDir)\..\src\xpdf\fofi"
+		DisableSpecificWarnings="4100;4706;4267;4244;4310;4127"
+	/>
+	<Tool
+		Name="VCPreBuildEventTool"
+		Description="XPDF needs generated header file for each operating system. Generate it. Remove after first build (xpdf Property Page-&gt;Configuration Properties-&gt;Build Events-&gt;Pre-Build Event)"
+		CommandLine="copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
+	/>
+</VisualStudioPropertySheet>
