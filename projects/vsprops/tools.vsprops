@@ -12,5 +12,8 @@
 		GenerateDebugInformation="true"
 		RandomizedBaseAddress="1"
 		DataExecutionPrevention="0"
+		ProgramDatabaseFile="$(OutDir)/pdb/$(ProjectName)-$(_Z_PLTFRM_)$(_Z_ARCH_).pdb"
+		GenerateMapFile="true"
+		MapFileName="$(OutDir)/maps/$(ProjectName)-$(_Z_PLTFRM_)$(_Z_ARCH_).map"
 	/>
 </VisualStudioPropertySheet>
