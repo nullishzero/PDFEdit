@@ -54,11 +54,22 @@ class TestEncryptCPdf: public CppUnit::TestFixture
 		CPPUNIT_TEST(Test);
 	CPPUNIT_TEST_SUITE_END();
 
-#define CHECK_FOR_PERMISSIONS(pdf, shouldFail, method, params...)	\
+
+/* Helper macro for code reduction. This will call given method
+ * on the given pdf and says whether this function should fail
+ * or not.
+ * CPPUNIT_FAIL is triggered if the method doesn't fail and it
+ * should or otherwise. If NotImplementedException or ReadOnlyDocumentException
+ * is thrown then it checjs linearization resp. encryption
+ * or current mode.
+ * Use NO_PARAM if the method doesn't get any parameters or one of
+ * the PARAM_# with appropriate numbers of parameters.
+ */
+#define CHECK_FOR_PERMISSIONS(pdf, shouldFail, method, params)	\
 	do {							\
 	try {							\
 		OUTPUT << " " << #method;			\
-		pdf->method(params);				\
+		pdf->method params ;				\
 		if(shouldFail)					\
 			CPPUNIT_FAIL(#method" should fail");	\
 	}catch(PermissionException e)				\
@@ -76,6 +87,15 @@ class TestEncryptCPdf: public CppUnit::TestFixture
 		CPPUNIT_ASSERT(pdf->getMode()==CPdf::ReadOnly);	\
 	}							\
 	}while(0)
+
+/* Hack for variable number of parameters workaround which is not
+ * defined in ANSI C++ (gcc extension would use params... in the
+ * above macro and this would be useless).
+ */
+#define NO_PARAM ()
+#define PARAM_1(p) (p)
+#define PARAM_2(p1, p2) (p1, p2)
+
 
 	shared_ptr<CPdf> checkInstancing(const string& fileName)
 	{
@@ -108,56 +128,56 @@ class TestEncryptCPdf: public CppUnit::TestFixture
 			<<haveCredentials << endl << "\t";
 		IndiRef ref(1,0);
 		bool shouldThrow = !haveCredentials;
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getIndirectProperty, ref);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getIndirectProperty, PARAM_1(ref));
 
 		shared_ptr<CInt> intProp(CIntFactory::getInstance(1));
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, addIndirectProperty, intProp);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, changeIndirectProperty, intProp);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, save);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, addIndirectProperty, PARAM_1(intProp));
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, changeIndirectProperty, PARAM_1(intProp));
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, save, NO_PARAM);
 		FILE * file = fopen("testfile", "w");
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, clone, file);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, clone, PARAM_1(file));
 		fclose(file);
 
 		shared_ptr<CDict> pageDict(CDictFactory::getInstance());
 		shared_ptr<CPage> page;
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getFirstPage);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getFirstPage, NO_PARAM);
 		if(!haveCredentials)
 			page = shared_ptr<CPage>(new CPage(pageDict));
 		else
 			page = pdf->getFirstPage();
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPagePosition, page);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPageCount);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, hasNextPage, page);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, hasPrevPage, page);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getLastPage);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPage, 1);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPagePosition, PARAM_1(page));
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPageCount, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, hasNextPage, PARAM_1(page));
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, hasPrevPage, PARAM_1(page));
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getLastPage, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPage, PARAM_1(1));
 		if(haveCredentials)
 		{
 			// for haveCredentials case we have to be carefull to
 			// prevent from PageNotFound exception
 			if(pdf->getPageCount() != 1)
 			{
-				CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getNextPage, page);
+				CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getNextPage, PARAM_1(page));
 				page = pdf->getLastPage();
-				CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPrevPage, page);
+				CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPrevPage, PARAM_1(page));
 
 			}
 		}else
 		{
-			CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPrevPage, page);
-			CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getNextPage, page);
+			CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getPrevPage, PARAM_1(page));
+			CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getNextPage, PARAM_1(page));
 		}
 		page = shared_ptr<CPage>(new CPage(pageDict));
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, insertPage, page, 1);
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, removePage, 1);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, insertPage, PARAM_2(page, 1));
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, removePage, PARAM_1(1));
 		/* FIXME
 		vector<COutline> container;
 		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, getOutlines, container);
 		*/
-		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, canChange);
+		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, canChange, NO_PARAM);
 		try
 		{
-			CHECK_FOR_PERMISSIONS(pdf, shouldThrow, changeRevision, 1);
+			CHECK_FOR_PERMISSIONS(pdf, shouldThrow, changeRevision, PARAM_1(1));
 		}catch(OutOfRange e)
 		{
 			// OK - we haven't check for number
@@ -171,19 +191,19 @@ class TestEncryptCPdf: public CppUnit::TestFixture
 	void checkDontNeedCredentialMethods(shared_ptr<CPdf> pdf)
 	{
 		OUTPUT << "Checking methods which don't require credentials\n\t";
-		CHECK_FOR_PERMISSIONS(pdf, false, getId);
-		CHECK_FOR_PERMISSIONS(pdf, false, getCXref);
-		CHECK_FOR_PERMISSIONS(pdf, false, getModeController);
-		CHECK_FOR_PERMISSIONS(pdf, false, setModeController, NULL);
-		CHECK_FOR_PERMISSIONS(pdf, false, isChanged);
-		CHECK_FOR_PERMISSIONS(pdf, false, getTrailer);
-		CHECK_FOR_PERMISSIONS(pdf, false, getMode);
-		CHECK_FOR_PERMISSIONS(pdf, false, isLinearized);
-		CHECK_FOR_PERMISSIONS(pdf, false, getActualRevision);
-		CHECK_FOR_PERMISSIONS(pdf, false, getRevisionSize, 0);
-		CHECK_FOR_PERMISSIONS(pdf, false, getRevisionsCount);
-		CHECK_FOR_PERMISSIONS(pdf, false, getPdfWriter);
-		CHECK_FOR_PERMISSIONS(pdf, false, needsCredentials);
+		CHECK_FOR_PERMISSIONS(pdf, false, getId, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getCXref, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getModeController, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, setModeController, PARAM_1(NULL));
+		CHECK_FOR_PERMISSIONS(pdf, false, isChanged, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getTrailer, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getMode, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, isLinearized, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getActualRevision, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getRevisionSize, PARAM_1(0));
+		CHECK_FOR_PERMISSIONS(pdf, false, getRevisionsCount, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, getPdfWriter, NO_PARAM);
+		CHECK_FOR_PERMISSIONS(pdf, false, needsCredentials, NO_PARAM);
 		OUTPUT << endl;
 	}
 
