@@ -3,10 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="pagemetrics"
-	ProjectGUID="{53AB2768-6F97-4420-B7CF-2664AC43AE6D}"
-	RootNamespace="diplaycs"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
+	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3c0}"
 	>
 	<Platforms>
 		<Platform
@@ -22,127 +19,27 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\tools.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\exe.vsprops"
+			InheritedPropertySheets="$(SolutionDir)/vsprops/base.vsprops;$(SolutionDir)/vsprops/tools.vsprops;$(SolutionDir)/vsprops/debug.vsprops;$(SolutionDir)/vsprops/win32.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				IgnoreDefaultLibraryNames="MSVCRTD.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\tools.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\exe.vsprops"
+			InheritedPropertySheets="$(SolutionDir)/vsprops/base.vsprops;$(SolutionDir)/vsprops/tools.vsprops;$(SolutionDir)/vsprops/release.vsprops;$(SolutionDir)/vsprops/win32.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
 		</Configuration>
-	</Configurations>
+</Configurations>
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath="$(SolutionDir)\..\src\tests\tools\pagemetrics.cc"
-			>
-		</File>
+  
+    		<File
+    			RelativePath="../../src/tests/tools\pagemetrics.cc"
+    			>
+    		</File>
+        
 	</Files>
 	<Globals>
 	</Globals>
 </VisualStudioProject>
+  
