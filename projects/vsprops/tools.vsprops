@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="zdll.lib xpdf-$(_Z_PLTFRM_)$(_Z_ARCH_).lib"
+		AdditionalDependencies="zdll.lib xpdf-$(_Z_PLTFRM_)$(_Z_ARCH_).lib kernel-$(_Z_PLTFRM_)$(_Z_ARCH_).lib"
 		OutputFile="$(OutDir)\$(ProjectName)-tool.exe"
 		AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 		GenerateDebugInformation="true"
