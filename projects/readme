@@ -1,30 +1,13 @@
-Windows Project Files
-
+Win* Project Files for Visual Studio
 ---------------------------
 
+* Step-by-step how to compile pdfedit*
 
-
-1) General Steps
-
-
-
-   a) open the project file according to your development environment
-   
-   b) compile BOOST (http://www.boost-consulting.com/products/free) and CPPUNIT (http://sourceforge.net/project/downloading.php?groupname=cppunit&filename=cppunit-1.12.0.tar.gz&use_mirror=surfnet)
-   
-   c) set BOOST & CPPUNIT includes in either Tools->Options->Project&Solutions->VC++ Directories->Include Files-> OR pdfedit->Property Pages->C/C++->General->Additional Include Directories
-
-   d) set debug parameters pdfedit->Property Pages->Configuration Properties->Debugging->Command Arguments to e.g. "-all -dir ..\testset -files ..\doc\zadani.pdf" 
-
-   e) build solution
-
-   f) run tests 
-
-
-
-Tested:
-
-VC 2005 Express Edition
-
-	-> Debug version
-
+   1) get BOOST (http://www.boost-consulting.com/products/free) with additional dependencies - program_options, filesystem, iostreams
+   2) get ZLIB (http://www.zlib.net/)
+   3) (for tests) get CPPUNIT (http://sourceforge.net/project/downloading.php?groupname=cppunit&filename=cppunit-1.12.0.tar.gz&use_mirror=surfnet)
+   4) set includes/library directories in Visual Studio in either 
+        Tools->Options->Project&Solutions->VC++ Directories->Include Files-> 
+        OR 
+        pdfedit->Property Pages->C/C++->General->Additional Include Directories
+   5) build solution (tests, tools, library)
