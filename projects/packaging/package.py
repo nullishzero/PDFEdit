@@ -20,11 +20,15 @@ def run_command (cmd):
   p = subprocess.Popen(cmd, shell=True).communicate()
   return p
 
-def subst (env, line):
+def subst (env, str):
   """
-    Subst var in lines with values in dict
+    Subst var in str with values in dict
   """
-  return string.Template(line).safe_substitute(env)
+  old = ""
+  while old != str:
+      old = str
+      str = string.Template(str).safe_substitute(env)
+  return str
 
 def inherit (base, d):
   """
@@ -52,7 +56,8 @@ class Execute:
 pack_tools = {
   "class" : "Execute",
   "cmd"   : """
-              cd $bin_dir && 7z a -r *tool -x!*CVS* -o$output
+              cd $bin_dir && 7z a -r $output -x!*CVS* *tool*exe
+              cd $tools_src_dir\\.. && 7z a -r $output -x!*CVS* -ir0!*tools\\*.cc
               echo Done.  
             """,
 }
@@ -66,6 +71,7 @@ product = {
   "platform": "",
   "start_dir": "",
   "bin_dir" : "",
+  "tools_src_dir" : "$start_dir\\..\\..\\src\\tests\\tools",
   "do"      : [],
 }
 
@@ -90,7 +96,7 @@ def create (env, what, where, platform="win32"):
   what += "_product"
   try:
     what = eval(what)
-    what ["output"] = where 
+    what ["output"] = os.path.join (os.getcwd(), where) 
     what ["platform"] = platform
     what ["start_dir"] = os.getcwd()
     what ["bin_dir"] = env["bin_dir"]
