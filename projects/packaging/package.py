@@ -56,8 +56,13 @@ class Execute:
 pack_tools = {
   "class" : "Execute",
   "cmd"   : """
-              cd $bin_dir && 7z a -r $output -x!*CVS* *tool*exe
-              cd $tools_src_dir\\.. && 7z a -r $output -x!*CVS* -ir0!*tools\\*.cc
+              md $tmp_dir
+              md $tmp_dir\\bin
+              md $tmp_dir\\src
+              cd $bin_dir && copy *tool*exe $tmp_dir\\bin
+              cd $tools_src_dir && copy *cc $tmp_dir\\src
+              copy $start_dir\\..\\readme $tmp_dir
+              7z a -r $output -x!*CVS* $tmp_dir\\*
               echo Done.  
             """,
 }
@@ -71,6 +76,7 @@ product = {
   "platform": "",
   "start_dir": "",
   "bin_dir" : "",
+  "tmp_dir" : "$start_dir\\temp\\",
   "tools_src_dir" : "$start_dir\\..\\..\\src\\tests\\tools",
   "do"      : [],
 }
