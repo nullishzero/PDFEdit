@@ -34,6 +34,25 @@ using namespace std;
 using namespace boost;
 namespace po = program_options;
 
+namespace {
+	inline ostream& 
+	operator << (ostream& os, Object& o)
+	{
+		string str;
+		
+		if (o.isCmd() || o.isEOF())
+		{
+			os << o.getCmd() << endl;
+
+		}else
+		{
+			utils::xpdfObjToString (o,str);
+		}
+
+		return os;
+	}
+}
+
 int 
 main(int argc, char ** argv)
 {
@@ -92,7 +111,7 @@ main(int argc, char ** argv)
 			::Parser _parser (NULL, _lexer, gFalse);
 			while (_parser.getObj (_obj.get()) && !_obj->isEOF())
 			{
-				f << _obj << " ";
+				f << *_obj << " ";
 				f.flush();
 			}
 		}
