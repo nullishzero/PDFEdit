@@ -16,3 +16,8 @@ Step-by-step how to compile pdfedit* tools from tools_library
         OR 
         pdfedit->Property Pages->C/C++->General->Additional Include Directories
    5) build solution using "Debug-Tools|Win32" configuration
+
+Troubleshooting
+---------------------------
+
+  1) ensure zlib, cppunit is linked against the same library type as pdfedit - default is "Multi-threaded Debug" 
