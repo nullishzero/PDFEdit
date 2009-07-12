@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="displaycs"
-	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3be0}"
+	Name="parse_object"
+	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3be4}"
 	>
 	<Platforms>
 		<Platform
@@ -34,7 +34,7 @@
 	<Files>
   
     		<File
-    			RelativePath="../../src/tests/tools\displaycs.cc"
+    			RelativePath="../../src/tests/tools\parse_object.cc"
     			>
     		</File>
         

@@ -7,6 +7,7 @@ env = {
   "tools_dir" : "../../src/tests/tools",  # relative to SolutionDir
   "vcproj_dir":".",
   "guids"     : [],
+  "exclude"   : ["common.cc",]
 }
 
 #
@@ -110,7 +111,7 @@ def create_vcproj (env, project, guid, files, vsver = 9):
 #
 if __name__ == "__main__":
   gather_guids (env)
-  files = filter (lambda x: x.endswith(".cc"), os.listdir(env["tools_dir"]))
+  files = filter (lambda x: x.endswith(".cc") and not x in env["exclude"], os.listdir(env["tools_dir"]))
   # create [tool file, new vcproj, project name]
   files = map (lambda x: [os.path.join(env["tools_dir"], x),
                           os.path.join(env["vcproj_dir"], x.replace(".cc","")+".vcproj"),

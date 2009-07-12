@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="pagemetrics"
-	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3c0}"
+	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3be3}"
 	>
 	<Platforms>
 		<Platform
