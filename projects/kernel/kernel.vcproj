@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="kernel"
+	Name="pdfedit-kernel"
 	ProjectGUID="{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}"
 	RootNamespace="pdfedit"
 	Keyword="Win32Proj"
@@ -41,6 +41,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="kernel/static.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -444,6 +446,14 @@
 				<File
 					RelativePath="..\..\src\kernel\pdfedit-core-dev.cc"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\pdfoperators.cc"
@@ -472,6 +482,14 @@
 				<File
 					RelativePath="..\..\src\kernel\static.cc"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\kernel\streamwriter.cc"
@@ -580,6 +598,14 @@
 				<File
 					RelativePath="..\..\src\utils\confparser.cc"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\utils\debug.cc"

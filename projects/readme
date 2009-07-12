@@ -1,7 +1,12 @@
-Win* Project Files for Visual Studio
+Win32 pdfedit release
 ---------------------------
+Pdfedit win32 release currently contains binary tools, its sources and this readme. Binaries are built using visual studio 2008. Follow the step by step procedure below to compile it for yourself. 
 
-* Step-by-step how to compile pdfedit*
+Note: This is beta release and the source code was neither unified nor polished. The purpose is to show how simple it is to write your pdf utility using our pdfedit kernel.
+
+
+Step-by-step how to compile pdfedit* tools from tools_library 
+---------------------------
 
    1) get BOOST (http://www.boost-consulting.com/products/free) with additional dependencies - program_options, filesystem, iostreams
    2) get ZLIB (http://www.zlib.net/)
@@ -10,4 +15,4 @@ Win* Project Files for Visual Studio
         Tools->Options->Project&Solutions->VC++ Directories->Include Files-> 
         OR 
         pdfedit->Property Pages->C/C++->General->Additional Include Directories
-   5) build solution (tests, tools, library)
+   5) build solution using "Debug-Tools|Win32" configuration
