@@ -1656,8 +1656,8 @@ void CPdf::initRevisionSpecific()
 	// initialize trailer dictionary from xpdf trailer dictionary object
 	// no free should be called because trailer is returned directly from XRef
 	Object * trailerObj=xref->getTrailerDict();
-	assert(trailerObj->isDict());
 	kernelPrintDbg(debug::DBG_DBG, "Creating trailer dictionary from type="<<trailerObj->getType());
+	assert(trailerObj->isDict());
 	trailer=boost::shared_ptr<CDict>(CDictFactory::getInstance(*trailerObj));
 	
 	// Intializes document catalog dictionary.
