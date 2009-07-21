@@ -2359,9 +2359,10 @@ using namespace std;
 	kernelPrintDbg(debug::DBG_DBG,"File stream created");
 
 	// stream is ready, creates CPdf instance
+	shared_ptr<CPdf> instance;
 	try
 	{
-		shared_ptr<CPdf> instance(new CPdf(stream, mode), PdfFileDeleter(file));
+		instance = shared_ptr<CPdf>(new CPdf(stream, mode), PdfFileDeleter(file));
 		instance->_this = instance;
 
 		// initializes revision specific data for the newest revision
@@ -2380,7 +2381,14 @@ using namespace std;
 		return instance;
 	}catch(std::exception &e)
 	{
-		fclose(file);
+		// If we have failed in constructor then we have to close file handle
+		// manualy and delete stream as the PdfFileDeleter didn't get chance 
+		// to do it
+		if(!instance) 
+		{
+			delete stream;
+			fclose(file);
+		}
 		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. filename="
 				<<filename<<" cause="<<e.what());
 		string what=string("CPdf open failed. reason=")+e.what();
