@@ -862,20 +862,6 @@ private:
 	 */
 	IndirectMapping indMap;
 
-	/** Trailer dictionary for this revision.
-	 *
-	 * This dictionary contains all information for current revision. When
-	 * revision is changed this has to be initialized before
-	 * initRevisionSpecific method is called. First initialization is done in
-	 * constructor.
-	 * <br>
-	 * Trailer is direct object so it can't be obtained through
-	 * getIndirectProperty method. Only way how to do change, add or delete its
-	 * members (which is strongly unrecomended unless you know what you are
-	 * doing) is to use XRefWriter interface.
-	 */
-	boost::shared_ptr<CDict> trailer;
-		
 	/** Document catalog dictionary.
 	 *
 	 * It is used for document property handling. Initialization is done by
@@ -959,8 +945,7 @@ private:
 	 * 
 	 * Cleans up all internal structures which may depend on the current revision.
 	 * This includes indirect mapping and pageList (all pages are invalidated).
-	 * After clean up is ready, initializes trailer field from Xref trailer xpdf
-	 * Object. docCatalog field is initialized same way.
+	 * After clean up is ready, initializes docCatalog field.
 	 * <br>
 	 * Finally registers pageTreeWatchDog observer. Uses
 	 * registerPageTreeObserver method with Pages reference as parameter.
@@ -1304,10 +1289,7 @@ public:
 	 * @return Trailer dictionary wrapped by smart pointer (using shared_ptr
 	 * from boost library).
 	 */
-	boost::shared_ptr<const CDict> getTrailer()const
-	{
-		return trailer;
-	}
+	boost::shared_ptr<const CDict> getTrailer()const;
 		
 	/** Inserts given page to the document.
 	 * @param page Page used for new page creation.

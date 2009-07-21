@@ -1633,12 +1633,6 @@ void CPdf::initRevisionSpecific()
 	// invalidates pageCount
 	pageCount=0;
 
-	// invalidates document catalog and trailer
-	// if someone holds reference (in shared_ptr assigned from them), prints
-	// warning
-	if((trailer.get()) && (!trailer.unique()))
-		kernelPrintDbg(debug::DBG_WARN, "Trailer dictionary is held by somebody.");
-	trailer.reset();
 	if((docCatalog.get()) && (!docCatalog.unique()))
 		kernelPrintDbg(debug::DBG_WARN, "Document catalog dictionary is held by somebody.");
 	
@@ -1653,19 +1647,12 @@ void CPdf::initRevisionSpecific()
 	// Initialization part:
 	// ===================
 	
-	// initialize trailer dictionary from xpdf trailer dictionary object
-	// no free should be called because trailer is returned directly from XRef
-	Object * trailerObj=xref->getTrailerDict();
-	kernelPrintDbg(debug::DBG_DBG, "Creating trailer dictionary from type="<<trailerObj->getType());
-	assert(trailerObj->isDict());
-	trailer=boost::shared_ptr<CDict>(CDictFactory::getInstance(*trailerObj));
-	
 	// Intializes document catalog dictionary.
-	// gets Root field from trailer, which should contain reference to catalog.
+	// gets Root field, which should contain reference to catalog.
 	// If no present or not reference, we have corrupted PDF file and exception
 	// is thrown
 	kernelPrintDbg(debug::DBG_DBG, "Getting Root field - document catalog");
-	IndiRef rootRef=utils::getRefFromDict("Root", trailer);
+	IndiRef rootRef(xref->getRootNum(), xref->getRootGen());
 	shared_ptr<IProperty> prop_ptr=getIndirectProperty(rootRef);
 	if(prop_ptr->getType()!=pDict)
 	{
@@ -3204,6 +3191,12 @@ using namespace debug;
 
 	// delagates to XRefWriter - check for credentials is done there
 	xref->cloneRevision(file);
+}
+
+boost::shared_ptr<const CDict> CPdf::getTrailer()const
+{
+	CDict *trailer = CDictFactory::getInstance(*xref->getTrailerDict());
+	return boost::shared_ptr<const CDict>(trailer);
 }
 
 void CPdf::changeRevision(revision_t revisionNum)
