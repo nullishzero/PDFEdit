@@ -311,7 +311,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		
 		kernelPrintDbg(DBG_DBG, "mode=paranoid type safety is checked");
 		// gets original value of value
-		Dict * dict=trailerDict.getDict();
+		Dict * dict=getTrailerDict()->getDict();
 		dict->lookupNF(name, &original);
 		bool safe=typeSafe(&original, value);
 		original.free();
@@ -446,7 +446,7 @@ using namespace utils;
 	// Stores position of the cross reference section to xrefPos
 	size_t xrefPos=streamWriter->getPos();
 	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::maxObj+1};
-	size_t newEofPos=pdfWriter->writeTrailer(trailerDict, secInfo, *streamWriter);
+	size_t newEofPos=pdfWriter->writeTrailer(*getTrailerDict(), secInfo, *streamWriter);
 
 	// if new revision should be created, moves storePos behind stored content
 	// (more preciselly before pdf end of file marker %%EOF) and forces CXref 
@@ -650,7 +650,7 @@ void XRefWriter::collectRevisions()
 	}
 
 	// uses deep copy to prevent problems with original data
-	Object * trailer=XRef::trailerDict.clone();
+	Object * trailer = XRef::getTrailerDict()->clone();
 	if(!trailer)
 	{
 		kernelPrintDbg(DBG_ERR, "Unable to clone trailer. Ignoring revision collecting.");

@@ -105,7 +105,7 @@ public:
   virtual GBool okToAddNotes(GBool ignoreOwnerPW = gFalse);
   
   // Get catalog object.
-  virtual Object *getCatalog(Object *obj) { return fetch(rootNum, rootGen, obj); }
+  virtual Object *getCatalog(Object *obj) { return fetch(getRootNum(), getRootGen(), obj); }
   
   // Fetch an indirect reference.
   virtual Object *fetch(int num, int gen, Object *obj);
@@ -162,8 +162,8 @@ public:
   virtual Guint getLastXRefPos() { return lastXRefPos; }
 
   // Return the catalog object reference.
-  virtual int getRootNum() { return rootNum; }
-  virtual int getRootGen() { return rootGen; }
+  virtual int getRootNum();
+  virtual int getRootGen();
 
   // Get end position for a stream in a damaged file.
   // Returns false if unknown or file is not damaged.
@@ -175,6 +175,11 @@ public:
   virtual Object *getTrailerDict() { return &trailerDict; }
 
   virtual const char *getPDFVersion()const {return pdfVersion.getCString(); }
+private:
+  Object trailerDict;		// trailer dictionary - keep it private because
+  				// we want to force all descendants to use 
+				// getTrailerDict accessor method which they can
+				// override
 protected:
 
   BaseStream *str;		// input stream
@@ -182,10 +187,8 @@ protected:
 				//   at beginning of file)
   XRefEntry *entries;		// xref entries
   int size;			// size of <entries> array
-  int rootNum, rootGen;		// catalog dict
   GBool ok;			// true if xref table is valid
   int errCode;			// error code (if <ok> is false)
-  Object trailerDict;		// trailer dictionary
   Guint lastXRefPos;		// offset of last xref table
   Guint eofPos;                 // %%EOF marker position or safe position to 
                                 //   store new data 

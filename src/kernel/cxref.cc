@@ -189,7 +189,7 @@ using namespace debug;
 	
 	check_need_credentials(this);
 
-	Dict * trailer = trailerDict.getDict(); 
+	Dict * trailer = getTrailerDict()->getDict(); 
 
 	Object * clonedObject=value->clone();
 	if(!clonedObject)
@@ -457,7 +457,7 @@ using namespace debug;
 using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "name="<<name);
-	Dict * trailer = trailerDict.getDict();
+	Dict * trailer = getTrailerDict()->getDict();
 
 	// lookupNF doesn't create deep copy, so 
 	// we have to get value and then make deep copy

@@ -283,12 +283,8 @@ void XRef::initInternals(Guint pos)
   }
 
   // get the root dictionary (catalog) object
-  trailerDict.dictLookupNF("Root", &obj);
-  if (obj.isRef()) {
-    rootNum = obj.getRefNum();
-    rootGen = obj.getRefGen();
-    obj.free();
-  } else {
+  getTrailerDict()->dictLookupNF("Root", &obj);
+  if (!obj.isRef()) {
     obj.free();
     if (!(ok = constructXRef())) {
       setErrCode(errDamaged);
@@ -298,7 +294,7 @@ void XRef::initInternals(Guint pos)
 
   // now set the trailer dictionary's xref pointer so we can fetch
   // indirect objects from it
-  trailerDict.getDict()->setXRef(this);
+  getTrailerDict()->getDict()->setXRef(this);
 }
 
 void XRef::destroyInternals()
@@ -308,6 +304,9 @@ void XRef::destroyInternals()
     gfree(entries);
     entries=NULL;
   }
+  // Don't use getTrailerDict here because we have to be sure that we
+  // are deallocating the correct trailer (not the one from descendant
+  // class which replaces the original one because of changes)
   trailerDict.free();
   if (streamEnds) {
     gfree(streamEnds);
@@ -541,6 +540,8 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
   obj2.free();
 
   // save the first trailer dictionary
+  // XPDF don't care about older trailers and it always uses the
+  // most recent one
   if (trailerDict.isNone()) {
     obj.copy(&trailerDict);
   }
@@ -647,6 +648,9 @@ GBool XRef::readXRefStream(Stream *xrefStr, Guint *pos) {
     more = gFalse;
   }
   obj.free();
+  // save the first trailer dictionary
+  // XPDF don't care about older trailers and it always uses the
+  // most recent one
   if (trailerDict.isNone()) {
     trailerDict.initDict(dict);
   }
@@ -778,8 +782,6 @@ GBool XRef::constructXRef() {
       if (newTrailerDict.isDict()) {
 	newTrailerDict.dictLookupNF("Root", &obj);
 	if (obj.isRef()) {
-	  rootNum = obj.getRefNum();
-	  rootGen = obj.getRefGen();
 	  if (!trailerDict.isNone()) {
 	    trailerDict.free();
 	  }
@@ -979,12 +981,12 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
 }
 
 Object *XRef::getDocInfo(Object *obj) {
-  return trailerDict.dictLookup("Info", obj);
+  return getTrailerDict()->dictLookup("Info", obj);
 }
 
 // Added for the pdftex project.
 Object *XRef::getDocInfoNF(Object *obj) {
-  return trailerDict.dictLookupNF("Info", obj);
+  return getTrailerDict()->dictLookupNF("Info", obj);
 }
 
 GBool XRef::getStreamEnd(Guint streamStart, Guint *streamEnd) {
@@ -1020,4 +1022,32 @@ Guint XRef::strToUnsigned(char *s) {
     x = 10 * x + (*p - '0');
   }
   return x;
+}
+
+int getRootFromTrailer(Object *trailer, Ref &ref)
+{
+	Object o;
+	trailer->dictLookupNF("Root", &o);
+	if (o.getType() == objRef)
+	{
+		ref = o.getRef();
+		return 0;
+	}
+	return -1;
+}
+
+int XRef::getRootNum()
+{
+	Ref r;
+	if(!getRootFromTrailer(getTrailerDict(), r))
+		return r.num;
+	return -1;
+}
+
+int XRef::getRootGen()
+{
+	Ref r;
+	if(!getRootFromTrailer(getTrailerDict(), r))
+		return r.gen;
+	return -1;
 }
