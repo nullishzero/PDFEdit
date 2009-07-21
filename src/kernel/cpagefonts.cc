@@ -186,7 +186,7 @@ CPageFonts::getFontIdsAndNames (FontList& cont) const
 
 	}catch (ElementNotFoundException&)
 	{
-		kernelPrintDbg (debug::DBG_ERR, "No resource dictionary.");
+		kernelPrintDbg (debug::DBG_INFO, "No resource dictionary.");
 	}
 }
 
