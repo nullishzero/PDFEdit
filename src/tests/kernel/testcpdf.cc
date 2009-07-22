@@ -1183,7 +1183,7 @@ public:
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
 CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPdf, "TEST_CPDF");
 
-boost::shared_ptr<pdfobjects::CPdf> getTestCPdf(const char* filename)
+boost::shared_ptr<pdfobjects::CPdf> getTestCPdf(const char* filename, pdfobjects::CPdf::OpenMode mode)
 {
-	return CPdf::getInstance(filename, CPdf::ReadWrite);
+	return CPdf::getInstance(filename, mode);
 }
