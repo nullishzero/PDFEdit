@@ -3204,8 +3204,22 @@ using namespace debug;
 boost::shared_ptr<const CDict> CPdf::getTrailer()const
 {
 	CDict *trailer = CDictFactory::getInstance(*xref->getTrailerDict());
+	trailer->setPdf(_this);
+
 	return boost::shared_ptr<const CDict>(trailer);
 }
+
+void CPdf::changeTrailer(std::string &name, boost::shared_ptr<IProperty> value)
+{
+	Object *result;
+	boost::shared_ptr<Object> o(value->_makeXpdfObject());
+	result = xref->changeTrailer(name.c_str(), o.get());
+	if (result) {
+		xpdf::object_deleter d;
+		d(result);
+	}
+}
+
 
 void CPdf::changeRevision(revision_t revisionNum)
 {

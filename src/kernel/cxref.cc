@@ -99,6 +99,9 @@ using namespace debug;
 	// newStorage doesn't need special entries deallocation
 	newStorage.clear();
 	kernelPrintDbg(DBG_DBG, "newStorage cleaned up");
+
+	// remove changed trailer
+	currTrailer.reset();
 }
 
 CXref::~CXref()
@@ -183,13 +186,16 @@ using namespace debug;
 
 ::Object * CXref::changeTrailer(const char * name, ::Object * value)
 {
-using namespace debug;
+	using namespace debug;
 
+	if (!name || !value)
+	{
+		kernelPrintDbg(DBG_ERR, "Invalid parameters. name="<<name<<" value="<<value);
+		throw ElementBadTypeException("");
+	}
 	kernelPrintDbg(DBG_DBG, "name="<<name<<" value type="<<value->getType());
 	
 	check_need_credentials(this);
-
-	Dict * trailer = getTrailerDict()->getDict(); 
 
 	Object * clonedObject=value->clone();
 	if(!clonedObject)
@@ -203,6 +209,17 @@ using namespace debug;
 		throw NotImplementedException("clone failure.");
 	}
 	char * key=copyString(name);
+
+	// make sure that we will write into the CXref::currTrailer and
+	// not the one in XRef which will change when-ever we change
+	// current revision
+	if (!currTrailer)
+	{
+		// first change to the trailer
+		currTrailer = boost::shared_ptr<Object>(new Object(), xpdf::object_deleter());
+		XRef::getTrailerDict()->copy(currTrailer.get());
+	}
+	Dict * trailer = getTrailerDict()->getDict(); 
 	::Object * prev = trailer->update(key, clonedObject);
 	gfree(clonedObject);
 

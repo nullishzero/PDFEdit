@@ -1139,6 +1139,179 @@ public:
 		delinearizator->delinearize(outputFile.c_str());
 	}
 
+#define staticArraySize(array) sizeof(array)/sizeof(*array)
+	void changeTrailerTC(string& fname)
+	{
+		printf("%s\n", __FUNCTION__);
+		struct TestField {
+			const char *name;
+			// NULL means that all values are valid
+			::Object *validVal;
+		};
+		boost::shared_ptr<CPdf> pdf1 = getTestCPdf(fname.c_str());
+		boost::shared_ptr<CPdf> pdf2 = getTestCPdf(fname.c_str(), CPdf::Advanced);
+		XRefWriter *xref1 = dynamic_cast<XRefWriter *>(pdf1->getCXref());
+		XRefWriter *xref2 = dynamic_cast<XRefWriter *>(pdf2->getCXref());
+
+		Object oNull;
+		oNull.initNull();
+		Object oInt;
+		oInt.initInt(1);
+		Object oRef;
+		oRef.initRef(1,0);
+		Object oDict;
+		oDict.initDict(xref1);
+		Object oArray;
+		oArray.initArray(xref1);
+		Object oStream;
+		Stream *str= new MemStream((char*)malloc(sizeof(char)*10), 0, 10, &oDict, true);
+		oStream.initStream(str);
+
+		printf("\tNULL value is not allowed\n");
+		try
+		{
+			xref1->changeTrailer("Foo", NULL);
+			CPPUNIT_FAIL("changeTrailer(\"Foo\", NULL) should fail");
+		}catch(ElementBadTypeException )
+		{
+		}
+		try
+		{
+			xref1->changeTrailer(NULL, NULL);
+			CPPUNIT_FAIL("changeTrailer(NULL, NULL) should fail");
+		}catch(ElementBadTypeException )
+		{
+		}
+		try
+		{
+			xref1->changeTrailer(NULL, &oInt);
+			CPPUNIT_FAIL("changeTrailer(null, obj) should fail");
+		}catch(ElementBadTypeException )
+		{
+		}
+		try
+		{
+			xref2->changeTrailer("Foo", NULL);
+			CPPUNIT_FAIL("changeTrailer(\"Foo\", NULL) should fail also for easy mode");
+		}catch(ElementBadTypeException )
+		{
+		}
+		try
+		{
+			xref2->changeTrailer(NULL, NULL);
+			CPPUNIT_FAIL("changeTrailer(NULL, NULL) should fail also for easy mode");
+		}catch(ElementBadTypeException )
+		{
+		}
+		try
+		{
+			xref2->changeTrailer(NULL, &oInt);
+			CPPUNIT_FAIL("changeTrailer(NULL, obj) should fail also for easy mode");
+		}catch(ElementBadTypeException )
+		{
+		}
+
+		static const struct TestField fieldsToTest[] = {
+			{"Prev", &oInt}, 
+			{"Size", &oInt}, 
+			{"Root", &oRef},
+			{"Encrypt", &oRef},
+			{"Info", &oRef},
+			{"ID", &oArray},
+			{"Foo", NULL}};
+		Object *allValues[] = {&oNull, &oInt, &oRef, &oDict, &oArray, &oStream};
+
+		for(size_t i=0; i<staticArraySize(fieldsToTest); ++i) 
+		{
+			const char *name = fieldsToTest[i].name;
+			bool canChange = utils::canChangeTrailerEntry(name);
+			printf("\t%s: canChange=%s\n", name, (canChange)?"yes":"no");
+			
+			// check for canChangeTrailerEntry and changeTrailer consistency
+			try
+			{
+				// if the validVal==NULL then all values are valid
+				if(fieldsToTest[i].validVal)
+					xref1->changeTrailer(name, fieldsToTest[i].validVal);
+				else
+					for(size_t j=0; j<staticArraySize(allValues); ++j)
+						xref1->changeTrailer(name, allValues[j]);
+
+				CPPUNIT_ASSERT(canChange);
+			}catch(ElementBadTypeException)
+			{
+				CPPUNIT_ASSERT(!canChange);
+			}
+
+			// invalid value must fail - only for fields which have some
+			// well known invalid value (validVal!=NULL) - invalid values
+			// are considered all but the valid one
+			if (canChange && fieldsToTest[i].validVal)
+				for(size_t j=0; j<staticArraySize(allValues); j++)
+				{
+					if (fieldsToTest[i].validVal != allValues[j])
+					{
+						Object *o = allValues[j];
+						printf("\t%s: must fail with invalid value with type=%d\n", name, o->getType());
+						try
+						{
+							xref1->changeTrailer(name, o);
+							CPPUNIT_FAIL("Invalid value setting succedded for changeTrailer");
+						}catch(ElementBadTypeException)
+						{
+						}
+					}
+				}
+
+			// ADVANCED mode eats everything
+			printf("\t%s: Advanced mode eats everything\n", name);
+			for(size_t j=0; j<staticArraySize(allValues); j++)
+			{
+				try
+				{
+					Object *o = allValues[j];
+					xref2->changeTrailer(name, o);
+				}catch(ElementBadTypeException)
+				{
+					CPPUNIT_FAIL("changeTrailer failed in Advanced mode");
+				}
+			}
+		}
+
+		// play with CPdf now
+		pdf2.reset();
+		pdf2 = getTestCPdf(fname.c_str(), CPdf::Advanced);
+		printf("\tCheck CPdf::changeTrailer\n");
+		std::string name = "FooXXXXXXXXX";
+		int initV = 100;
+		shared_ptr<IProperty> vP(CIntFactory::getInstance(initV));
+		pdf2->changeTrailer(name, vP);
+		shared_ptr<const CDict> trailer = pdf2->getTrailer();
+		shared_ptr<CInt> newVP = IProperty::getSmartCObjectPtr<CInt>(trailer->getProperty(name));
+		int v = newVP->getValue();
+		CPPUNIT_ASSERT(v == initV);
+
+		if (pdf2->getRevisionsCount()>1)
+		{
+			pdf2->changeRevision(0);
+			trailer = pdf2->getTrailer();
+			printf("\tCPdf::changeTrailer mustn't influence other revisions\n");
+			try
+			{
+				IProperty::getSmartCObjectPtr<CInt>(trailer->getProperty(name));
+				CPPUNIT_FAIL("trailer shouldn't contain property added in a different revision");
+			}catch(ElementNotFoundException )
+			{
+			}
+			printf("\tCPdf::changeTrailer must survive revision change\n");
+			pdf2->changeRevision(pdf2->getRevisionsCount()-1);
+			trailer = pdf2->getTrailer();
+			newVP = IProperty::getSmartCObjectPtr<CInt>(trailer->getProperty(name));
+			v = newVP->getValue();
+			CPPUNIT_ASSERT(v == initV);
+		}
+	}
+
 	void setUp()
 	{
 	}
@@ -1174,6 +1347,7 @@ public:
 			linearizedTC(pdf);
 
 			delinearizatorTC(fileName);
+			changeTrailerTC(fileName);
 		}
 		revisionsTC();
 		printf("TEST_CPDF testig finished\n");

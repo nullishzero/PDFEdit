@@ -171,6 +171,29 @@ protected:
 	 */
 	::Object * changeObject(::Ref ref, ::Object * instance);
 
+	/** Trailer dictionary for changes.
+	 * This is allocated on demand when changeTrailer is called for the first
+	 * time and it is used in getTrailerDict to force changed trailer
+	 * rather than the one from XRef which is parsed each time reopen method 
+	 * is called.
+	 * <br>
+	 * Instance is cleaned up only if reopen is called with dropChanges flag
+	 * (in cleanUp method) because this means that we have just created a new 
+	 * revision which is clean.
+	 */
+	boost::shared_ptr<Object> currTrailer;
+
+	/** Overrides XRef::getTrailerDict to force changed trailer if
+	 * there are some changes otherwise delegate to XRef::getTrailerDict.
+	 * Never deallocate returned object.
+	 */
+	virtual Object *getTrailerDict() 
+	{
+		if (!currTrailer)
+			return XRef::getTrailerDict();
+		return currTrailer.get();
+	}
+
 	/** Changes entry in trailer dictionary.
 	 * @param name Name of the value.
 	 * @param value Value to be set.

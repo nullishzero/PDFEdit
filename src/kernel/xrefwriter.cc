@@ -277,8 +277,85 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		xpdf::freeXpdfObject(oldValue);
 }
 
+namespace utils {
+bool canChangeTrailerEntry(const char * name)
+{
+	/* Trailer entries which cannot be changed by changeTrailer method.
+	 * This check is not done for easy mode where you are allowed to
+	 * to do anything you want. Please note that some of the fields changing
+	 * will not have any effect because they are are generated automatically
+	 * during save (e.g. Prev and Size).
+	 */
+	static const char *bannedTrailerEntries[] = {"Prev", "Size", "Encrypt", NULL};
+
+	for(int i=0; bannedTrailerEntries[i]; ++i)
+		if(!strcmp(name, bannedTrailerEntries[i]))
+		{
+			kernelPrintDbg(DBG_WARN, name<<" field is not editable in Trailer");
+			return false;
+		}
+	return true;
+}
+
+bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref)
+{
+	// all values have to be checked according to the specification
+	if(!strcmp(name, "Prev") || !strcmp(name, "Size"))	// Direct integer values
+	{
+		if(value.getType() != objInt)
+		{
+			kernelPrintDbg(DBG_ERR, name<<" cannot be assigned to "<<value.getType());
+			return false;
+		}
+	}else if(!strcmp(name, "Root") || !strcmp(name, "Info")) // Indirect reference to dictionary
+	{
+		if(value.getType() != objRef)
+		{
+			kernelPrintDbg(DBG_ERR, name<<" cannot be assigned to "<<value.getType());
+			return false;
+		}
+		boost::shared_ptr<Object> o(new Object(), xpdf::object_deleter());
+		xref.fetch(value.getRefNum(), value.getRefGen(), o.get());
+		if(o->getType() != objDict)
+		{
+			kernelPrintDbg(DBG_ERR, name<<" cannot be assigned to "<<o->getType());
+			return false;
+		}
+	}else if(!strcmp(name, "ID"))	// direct array
+	{
+		if(value.getType() != objArray)
+		{
+			kernelPrintDbg(DBG_ERR, name<<" cannot be assigned to "<<value.getType());
+			return false;
+		}
+		// TODO maybe we should be more pedantic and check also
+		// the size and types of elements (2 strings)
+	}else if(!strcmp(name, "Encrypt"))	// direct array
+	{
+		boost::shared_ptr<Object> o(new Object(), xpdf::object_deleter());
+		value.fetch(&xref, o.get());
+		if(o->getType() != objDict)
+		{
+			kernelPrintDbg(DBG_ERR, name<<" cannot be assigned to "<<o->getType());
+			return false;
+		}
+
+	}
+
+	// All other 
+
+	return true;
+}
+
+}
+
 ::Object * XRefWriter::changeTrailer(const char * name, ::Object * value)
 {
+	if (!name || !value)
+	{
+		kernelPrintDbg(DBG_ERR, "Invalid parameters. name="<<name<<" value="<<value);
+		throw ElementBadTypeException("");
+	}
 	kernelPrintDbg(DBG_DBG, "name="<<name);
 
 	check_need_credentials(this);
@@ -307,19 +384,17 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	// direct - we are in trailer
 	if(mode==paranoid)
 	{
-		::Object original;
-		
 		kernelPrintDbg(DBG_DBG, "mode=paranoid type safety is checked");
-		// gets original value of value
-		Dict * dict=getTrailerDict()->getDict();
-		dict->lookupNF(name, &original);
-		bool safe=typeSafe(&original, value);
-		original.free();
-		if(!safe)
-		{
-			kernelPrintDbg(DBG_ERR, "type safety error");
-			throw ElementBadTypeException(name);
-		}
+ 
+ 		if(!utils::canChangeTrailerEntry(name))
+ 		{
+ 			throw ElementBadTypeException("banned field");
+ 		}
+ 
+ 		if(!utils::typeSafeTrailerEntry(name, *value, *this))
+  		{
+  			throw ElementBadTypeException(name);
+  		}
 	}
 
 	// everything ok

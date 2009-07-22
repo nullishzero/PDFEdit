@@ -356,9 +356,10 @@ public:
 	 *
 	 * If revision is 0 (most recent), delegates to the 
 	 * CXref::changeTrailer method. Otherwise deny to make chage, because
-	 * it is not possible to do changes to a older release.	 
+	 * it is not possible to do changes to an older release.	 
 	 * <br>
-	 * If mode is set to paranoid, checks the reference existence and after
+	 * If mode is set to paranoid, checks whether field with the given name
+	 * is on banned list (canChangeTrailerEntry), reference existence and finally
 	 * type safety. If tests are ok, operation is permitted otherwise 
 	 * operation fails.
 	 * 
@@ -366,6 +367,8 @@ public:
 	 * revision is not the newest one or if pdf is in read-only mode.
 	 * @throw NotImplementedException if document is encrypted or when trailer
 	 * dictionary can't be cloned (because clone method failes).
+	 * @throw ElementBadTypeException if the change is not allowed (either due to
+	 * type safety or that given entry cannot be changed).
 	 * @return Previous value of object or 0 if previous revision not
 	 * available (new name value pair in trailer).
 	 */
@@ -531,6 +534,20 @@ public:
 		// otherwise use XRef directly
 		return XRef::knowsRef(ref);
 	}
+
+	/** Returns current trailer dictionary.
+	 *
+	 * Checks if the current revision is the newest one and
+	 * delegates to CXref imlementation, because it can contain
+	 * changed trailer. 
+	 * Otherwise delegates to XRef implementation.
+	 */
+	virtual Object *getTrailerDict()
+	{
+		if(utils::isLatestRevision(*this))
+			return CXref::getTrailerDict();
+		return XRef::getTrailerDict();
+	}
 	
 	/** Checks if given reference is known.
 	 * @param ref Indirect reference to check.
@@ -589,6 +606,24 @@ public:
 		return XRef::getNumObjects();
 	}
 };
+
+namespace utils {
+
+/** Checks whether trailer entry with the following name can be changed.
+ * @param name Name of the field (must be non NULL).
+ * @return true if the name is not black-listed false otherwise.
+ */
+bool canChangeTrailerEntry(const char * name);
+
+/** Checks whether given name, value pair is valid for Trailer entry.
+ * @param name Name for the Trailer entry (must be non NULL).
+ * @param value Value to be set for Trailer entry.
+ * @param xref Xref for value fetching.
+ * @return true if the given pair is valid, false otherwise.
+ */
+bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref);
+
+} // end of utils namespace
 
 } // end of pdfobjects namespace
 #endif

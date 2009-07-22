@@ -1290,6 +1290,22 @@ public:
 	 * from boost library).
 	 */
 	boost::shared_ptr<const CDict> getTrailer()const;
+
+	/** Changes/Adds given value associated with the given name to the trailer.
+	 * @param name Property name.
+	 * @param value Property value.
+	 * 
+	 * If a property with the given name already exists, its value will be
+	 * replaced by the given one (if it is safe to do so see XRefWriter::changeTrailer)
+	 * or simply add a new one entry to the trailer.
+	 * @throw ReadOnlyDocumentException if no changes can be done because actual
+	 * revision is not the newest one or if pdf is in read-only mode.
+	 * @throw NotImplementedException if document is encrypted or when trailer
+	 * dictionary can't be cloned (because clone method failes).
+	 * @throw ElementBadTypeException if the change is not allowed (either due to
+	 * type safety or that given entry cannot be changed).
+	 */
+	void changeTrailer(std::string &name, boost::shared_ptr<IProperty> value);
 		
 	/** Inserts given page to the document.
 	 * @param page Page used for new page creation.
