@@ -80,3 +80,16 @@ using namespace std;
 				curr->max_time, curr->min_time, avg, curr->count);
 	}
 }
+
+int getFontId(boost::shared_ptr<pdfobjects::CPage> page, const std::string &fontName, std::string &fontId)
+{
+	pdfobjects::CPage::FontList fonts;
+	page->getFontIdsAndNames(fonts);
+	for(pdfobjects::CPage::FontList::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+		if(i->second == fontName)
+		{
+			fontId = i->first;
+			return 0;
+		}
+	return -1;
+}

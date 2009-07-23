@@ -26,6 +26,7 @@
 
 #include <kernel/static.h>
 #include <kernel/cpdf.h>
+#include <kernel/cpage.h>
 #include <sys/time.h>
 #include <time.h>
 #include <boost/shared_ptr.hpp>
@@ -65,6 +66,9 @@ static inline boost::shared_ptr<pdfobjects::CPdf> open_file(
 {
 	return pdfobjects::CPdf::getInstance(name, mode);
 }
+
+// TODO something like this should be part of standard API
+int getFontId(boost::shared_ptr<pdfobjects::CPage> page, const std::string &fontName, std::string &fontId);
 
 #endif
 

@@ -12,7 +12,7 @@ UTILS_OBJS = $(UTILS_SRCS:.cc=.o)
 TARGET_SRCS = xrefwriter_bench.cc cpdf_bench.cc
 SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
-TARGET = xrefwriter_bench cpdf_bench file_info
+TARGET = xrefwriter_bench cpdf_bench file_info content_stream_bench
 .PHONY: all clean
 all: $(TARGET)
 
@@ -21,6 +21,9 @@ xrefwriter_bench: xrefwriter_bench.o $(UTILS_OBJS)
 
 cpdf_bench: cpdf_bench.o $(UTILS_OBJS)
 	$(LINK) $(LDFLAGS) -o cpdf_bench cpdf_bench.o $(UTILS_OBJS) $(MANDATORY_LIBS)
+
+content_stream_bench: content_stream_bench.o $(UTILS_OBJS)
+	$(LINK) $(LDFLAGS) -o content_stream_bench content_stream_bench.o $(UTILS_OBJS) $(MANDATORY_LIBS)
 
 file_info: file_info.o
 	$(LINK) $(LDFLAGS) -o file_info file_info.o $(UTILS_OBJS) $(MANDATORY_LIBS)
