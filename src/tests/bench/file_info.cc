@@ -38,7 +38,7 @@ void print_info(shared_ptr<CPdf> pdf, FILE * out)
 	fprintf(out, "\tlinearized: %s\n", (pdf->isLinearized())?"true":"false");
 
 	// encryption
-	bool encrypted = utils::isEncrypted(pdf, NULL);
+	bool encrypted = utils::isEncrypted(pdf);
 	fprintf(out, "\tencrypted: %s\n", (encrypted)?"true":"false");
 	if(encrypted)
 		return;
