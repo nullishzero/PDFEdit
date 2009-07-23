@@ -32,10 +32,9 @@
 #include <boost/shared_ptr.hpp>
 #include <limits.h>
 
-
 extern const char * file_name;
 
-int parse_cmd_line(int argc, char ** argv);
+int init_bench(int argc, char **argv);
 
 // redefine if something different than gettimeofday should
 // be used for time measuring

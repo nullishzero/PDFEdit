@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
 {
 	int ret;
 	FILE * out = stdout;
-	if((ret = parse_cmd_line(argc, argv)))
+	if((ret = init_bench(argc, argv)))
 		return ret;
 	fprintf(out, "Document information: \"%s\"\n", file_name);
 	print_info(open_file(file_name), out);

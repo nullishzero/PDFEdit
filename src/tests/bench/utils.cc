@@ -21,6 +21,8 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
+#include <stdlib.h>
+#include <kernel/pdfedit-core-dev.h>
 #include "utils.h"
 const char *file_name;
 int parse_cmd_line(int argc, char **argv)
@@ -28,13 +30,22 @@ int parse_cmd_line(int argc, char **argv)
 	if(argc<2)
 	{
 		std::cerr << "Bad usage. Filename parameter expected" << std::endl;
-		return 1;
+		exit(EXIT_FAILURE);
 	}
 
 	// TODO use getopt instead and support several files
 	file_name = argv[1];
 	return 0;
-	return 0;
+}
+
+int init_bench(int argc, char **argv)
+{
+  	if (pdfedit_core_dev_init(&argc, &argv))
+  	{
+  		// not able to initialize pdfedit-core-dev
+  		return 1;
+  	}
+	return parse_cmd_line(argc, argv);
 }
 
 // result is in miliseconds

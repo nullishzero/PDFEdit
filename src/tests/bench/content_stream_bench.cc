@@ -21,7 +21,6 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
-#include <kernel/pdfedit-core-dev.h>
 #include <kernel/cpdf.h>
 #include <kernel/cpage.h>
 #include <kernel/factories.h>
@@ -97,14 +96,9 @@ int main(int argc, char ** argv)
 	int ret;
 	std::string fontName = "Times-Roman";
 
-  	if (pdfedit_core_dev_init(&argc, &argv))
-  	{
-  		// not able to initialize pdfedit-core-dev
-  		return 1;
-  	}
-
-	if((ret = parse_cmd_line(argc, argv)))
+	if((ret = init_bench(argc, argv)))
 		return ret;
+
 	time_stamp_t start, end;
 	shared_ptr<CPdf> pdf;
 

@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 	if(pdfedit_core_dev_init(&argc, &argv))
 		return 1;
 
-	if((ret = parse_cmd_line(argc, argv)))
+	if((ret = init_bench(argc, argv)))
 		return ret;
 	time_stamp_t start, end;
 	shared_ptr<CPdf> pdf;
