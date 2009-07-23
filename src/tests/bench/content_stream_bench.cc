@@ -81,6 +81,8 @@ void bench_addTextToStream(shared_ptr<CPdf> pdf, const std::string &fontName, st
 		fontId = page->addSystemType1Font(fontName);
 	time_stamp_t start,  end;
 	std::string text="Foooo";
+	// don't include time for parsing existing content streams on the page
+	bench_get_ccstreams(pdf, NULL, p, 1);
 	for(int iter = 0; iter < numberOfAdditions; ++iter)
 	{
 		get_time_stamp(&start);
@@ -116,6 +118,10 @@ int main(int argc, char ** argv)
 	bench_addTextToStream(pdf, fontName, &addTextToStream1, 1, 1);
 
 	pdf = open_file(file_name);
+	DEFINE_RESULTS(addTextToStream10, "addToStream10");
+	bench_addTextToStream(pdf, fontName, &addTextToStream10, 1, 10);
+
+	pdf = open_file(file_name);
 	DEFINE_RESULTS(addTextToStream100, "addToStream100");
 	bench_addTextToStream(pdf, fontName, &addTextToStream100, 1, 100);
 
@@ -128,6 +134,9 @@ int main(int argc, char ** argv)
 	DEFINE_RESULTS(addTextToStream1cumulative, "addToStream1cumulative");
 	bench_addTextToStream(pdf, fontName, &addTextToStream1cumulative, 1, 1);
 
+	DEFINE_RESULTS(addTextToStream10cumulative, "addToStream10cumulative");
+	bench_addTextToStream(pdf, fontName, &addTextToStream10cumulative, 1, 10);
+
 	DEFINE_RESULTS(addTextToStream100cumulative, "addToStream100cumulative");
 	bench_addTextToStream(pdf, fontName, &addTextToStream100cumulative, 1, 100);
 
@@ -139,9 +148,11 @@ int main(int argc, char ** argv)
 		&getCStreams_first,
 		&getCStreams_again,
 		&addTextToStream1,
+		&addTextToStream10,
 		&addTextToStream100,
 		&addTextToStream1000,
 		&addTextToStream1cumulative,
+		&addTextToStream10cumulative,
 		&addTextToStream100cumulative,
 		&addTextToStream1000cumulative,
 		NULL
