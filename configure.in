@@ -182,8 +182,8 @@ else
 	OPTIM="$OPTIM -O0"
 	dnl maybe asserts and stuff like that?
 	DEBUG="$DEBUG -g -DDEBUG"
-	WARN="$WARN -W -Wall -Wconversion -Wwrite-strings \
-	   -Wno-unused-variable -Wunused-function -Wwrite-strings\
+	WARN="$WARN -W -Wall -Wconversion -Wno-unused-variable \
+	   -Wunused-function -Wno-write-strings \
 	   -Wunused-macros"
 
 fi
