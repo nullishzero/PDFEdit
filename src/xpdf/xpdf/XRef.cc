@@ -1051,3 +1051,31 @@ int XRef::getRootGen()
 		return r.gen;
 	return -1;
 }
+
+RefState XRef::knowsRef(const Ref &ref)
+{
+   // boundary checking
+   if(ref.num<0 || ref.num>size)
+      return UNUSED_REF;
+
+   switch(entries[ref.num].type)
+   {
+      // must not be free entry
+      case xrefEntryFree:
+         return UNUSED_REF;
+
+      // if uncompressed entry, also gen number must fit
+      case xrefEntryUncompressed:
+         return (ref.gen==entries[ref.num].gen)?INITIALIZED_REF:UNUSED_REF;
+
+      // if compressed entry, gen number must be 0
+      // NOTE: XRef internaly uses this number for indexing of object in 
+      // object stream
+      case xrefEntryCompressed:
+         return (ref.gen==0)?INITIALIZED_REF:UNUSED_REF;
+         
+   }
+
+   // unknown entry type
+   return UNUSED_REF;
+}

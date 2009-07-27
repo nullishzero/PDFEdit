@@ -134,7 +134,7 @@ protected:
 	 * This structure contains new Object value for reference and 
 	 * flag. 
 	 */
-	ObjectStorage< ::Ref, ObjectEntry*, xpdf::RefComparator> changedStorage;   
+	ObjectStorage<const ::Ref, ObjectEntry*, xpdf::RefComparator> changedStorage;   
 
 	/** Object storage for newly created objects.
 	 * Value is the flag of newly created reference. When new entry is added, it
@@ -142,7 +142,7 @@ protected:
 	 * Initialized. Unused is default value for not found, so unknown
 	 * (ObjectStorage returns 0 if entry is not found). 
 	 */
-	ObjectStorage< ::Ref, RefState, xpdf::RefComparator> newStorage;
+	ObjectStorage<const ::Ref, RefState, xpdf::RefComparator> newStorage;
 
 	/** Registers change in given object addressable through given 
 	 * reference.
@@ -393,7 +393,7 @@ public:
 	 * @see INITIALIZED_REF
 	 * @return Current state of given reference.
 	 */
-	virtual RefState knowsRef(::Ref& ref);
+	virtual RefState knowsRef(const ::Ref& ref);
 
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.

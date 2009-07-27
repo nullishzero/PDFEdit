@@ -198,7 +198,7 @@ using namespace utils;
 	return current;
 }
 
-bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
+bool XRefWriter::paranoidCheck(const ::Ref &ref, ::Object * obj)
 {
 	kernelPrintDbg(DBG_DBG, ref<<" type="<<obj->getType());
 
@@ -401,7 +401,7 @@ bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref)
 	return CXref::changeTrailer(name, value);
 }
 
-RefState XRefWriter::knowsRef(IndiRef& ref)
+RefState XRefWriter::knowsRef(const IndiRef& ref)
 {
 	::Ref xpdfRef={ref.num, ref.gen};
 	// otherwise use XRef directly

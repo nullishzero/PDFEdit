@@ -193,7 +193,7 @@ protected:
 	 *
 	 * @return true if all checks are ok, false otherwise.
 	 */
-	bool paranoidCheck(::Ref ref, ::Object * obj);
+	bool paranoidCheck(const ::Ref &ref, ::Object * obj);
 
 	/** Parses old style trailer from given position.
 	 * @param trailer Previous trailer which will be filled with new data
@@ -525,7 +525,7 @@ public:
 	 * @see RefState
 	 * @return Reference state.
 	 */
-	virtual RefState knowsRef(::Ref& ref)
+	virtual RefState knowsRef(const ::Ref& ref)
 	{
 		// if we are in newest revision, delegates to CXref
 		if(utils::isLatestRevision(*this))
@@ -557,7 +557,7 @@ public:
 	 * @see RefState
 	 * @return Reference state.
 	 */
-	virtual RefState knowsRef(IndiRef& ref);
+	virtual RefState knowsRef(const IndiRef& ref);
 	
 	/** Registers new reference.
 	 *
