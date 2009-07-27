@@ -776,7 +776,7 @@ size_t getNodePosition(const shared_ptr<CPdf> &pdf, const shared_ptr<IProperty> 
 	throw PageNotFoundException(0);
 }
 
-bool isDescendant(const boost::shared_ptr<CPdf>& pdf, const IndiRef &parent, const shared_ptr<CDict> &child)
+bool isNodeDescendant(const boost::shared_ptr<CPdf>& pdf, const IndiRef &parent, const shared_ptr<CDict> &child)
 {
 using namespace utils;
 
@@ -805,7 +805,7 @@ using namespace utils;
 	try
 	{
 		shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentProp);
-		return isDescendant(pdf, parent, parentDict);
+		return isNodeDescendant(pdf, parent, parentDict);
 	}catch(CObjectException & )
 	{
 		// parent indirect object is not valid
@@ -2604,7 +2604,7 @@ using namespace utils;
 					shared_ptr<CPage> page=i->second;
 					// checks page's dictionary whether it is in oldDict_ptr sub
 					// tree and if so removes it from pageList
-					if(isDescendant(_this.lock(), ref, page->getDictionary()))
+					if(isNodeDescendant(_this.lock(), ref, page->getDictionary()))
 					{
 						// sets flag, that at least one descendants is found
 						found=true;

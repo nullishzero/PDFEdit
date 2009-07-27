@@ -511,7 +511,7 @@ public:
 			for(size_t i=1; i<=pageCount; i++)
 			{
 				shared_ptr<CPage> page=pdf->getPage(i);	
-				if(isDescendant(pdf, interNode->getIndiRef(), page->getDictionary()))
+				if(isNodeDescendant(pdf, interNode->getIndiRef(), page->getDictionary()))
 					descendants.push_back(page);
 			}
 

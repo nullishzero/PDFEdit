@@ -656,7 +656,7 @@ protected:
 	 *
 	 * Removes all CPages, which are in old reference sub tree (if oldValue is 
 	 * not CNull - what means that new element to Kids array has been added) 
-	 * from pageList and invalidates them. Uses isDescendant method for each 
+	 * from pageList and invalidates them. Uses isNodeDescendant method for each 
 	 * page from pageList to find out if it is in sub tree.
 	 * <br>
 	 * Also calculates difference between lost pages and newly added pages (each
@@ -1817,7 +1817,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
  *
  * @return true If given child belongs to parent subtree, false otherwise.
  */
-bool isDescendant(const boost::shared_ptr<CPdf>& pdf, const IndiRef &parent, const boost::shared_ptr<CDict> &child);
+bool isNodeDescendant(const boost::shared_ptr<CPdf>& pdf, const IndiRef &parent, const boost::shared_ptr<CDict> &child);
 
 /** Collects all kids elements from internode dictionary.
  * @param interNodeDict Intermediate node dictionary.
