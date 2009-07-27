@@ -2,6 +2,9 @@ XXXX-XX-XX PDF Editor 0.4.4
 	* Bugs 320 fixed
 	* Internal changes
 		- CPdf::changeTrailer implemented (bt#224)
+		- utils::isDescendant renamed to utils::isNodeDescendant
+		- CPdf methods signiture cleanup - const and references for
+		  parameters
 
 2009-07-21 PDF Editor 0.4.3
 	* xpdf code base updated to 3.02pl3 patch which fixes
