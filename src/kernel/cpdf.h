@@ -131,7 +131,7 @@ typedef std::map<IndiRef, ResolvedRefEntry*, utils::IndComparator > ResolvedRefS
 /**
  * Indirect properties mapping type.
  */
-typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
+typedef std::map<const IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
 
 /** Type for pdf identificator.
  */
@@ -648,7 +648,7 @@ protected:
 	 *
 	 * @return true if tree consolidation kept pages count, false otherwise.
 	 */
-	bool consolidatePageTree(boost::shared_ptr<CDict> & interNode, bool propagate=false);
+	bool consolidatePageTree(const boost::shared_ptr<CDict> & interNode, bool propagate=false);
 	
 	/** Consolidates pageList after change in Page tree.
 	 * @param oldValue Old reference (CNull if no previous state).
@@ -706,7 +706,7 @@ protected:
 	 * but on the same position. It is not possible that these values could be 
 	 * on different positions (this would cause page numbering problem).
 	 */
-	void consolidatePageList(boost::shared_ptr<IProperty> & oldValue, boost::shared_ptr<IProperty> & newValue);
+	void consolidatePageList(const boost::shared_ptr<IProperty> & oldValue, const boost::shared_ptr<IProperty> & newValue);
 
 	/** Registers definitive value of property to the xref.
 	 * @param ip Property to be used.
@@ -719,7 +719,7 @@ protected:
 	 * 
 	 * @return Reserved reference to changed object.
 	 */
-	IndiRef registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef &ref);
+	IndiRef registerIndirectProperty(const boost::shared_ptr<IProperty> &ip, IndiRef &ref);
 	
 	/** Registers page tree observers.
 	 * @param prop Page tree node reference or dictionary.
@@ -783,7 +783,7 @@ protected:
 	 * @see subsReferencies
 	 * @return reference of added property.
 	 */
-	IndiRef addProperty(boost::shared_ptr<IProperty> ip, IndiRef &indiRef, 
+	IndiRef addProperty(const boost::shared_ptr<IProperty> &ip, IndiRef &indiRef, 
 			ResolvedRefStorage & storage, bool followRefs);
 
 	/** Substitues reference(s) with valid in this pdf.
@@ -831,7 +831,7 @@ protected:
 	 * @return invalid reference if no substitution has to be done or reference
 	 * which should be used instead (use isRefValid for checking).
 	 */
-	IndiRef subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs);
+	IndiRef subsReferencies(const boost::shared_ptr<IProperty> &ip, ResolvedRefStorage & container, bool followRefs);
 private:
 	/** Identificator for this pdf instance.
 	 */
@@ -859,7 +859,7 @@ private:
 	 * with same reference has to share value and this is guarantied by this 
 	 * mapping.
 	 */
-	IndirectMapping indMap;
+	mutable IndirectMapping indMap;
 
 	/** Document catalog dictionary.
 	 *
@@ -1113,7 +1113,7 @@ public:
 	 * 
 	 * @return IProperty wrapped by shared_ptr smart pointer.
 	 */
-	boost::shared_ptr<IProperty> getIndirectProperty(IndiRef &ref);
+	boost::shared_ptr<IProperty> getIndirectProperty(const IndiRef &ref)const;
 
 	/** Adds new indirect object.
 	 * @param prop Original property.
@@ -1176,7 +1176,7 @@ public:
 	 * @return Reference of new property (see restriction when given
 	 * property is reference itself).
 	 */ 
-	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop, bool followRefs=false);
+	IndiRef addIndirectProperty(const boost::shared_ptr<IProperty> &prop, bool followRefs=false);
 
 	/** Registers change of indirect property to the xref.
 	 * @param prop Indirect property.
@@ -1201,7 +1201,7 @@ public:
 	 * @throw ElementBadTypeException if XrefWriter is in paranoid mode and
 	 * paranoid check fails for new value.
 	 */
-	void changeIndirectProperty(boost::shared_ptr<IProperty> prop);
+	void changeIndirectProperty(const boost::shared_ptr<IProperty> &prop);
 	
 	/** Saves changes to pdf file.
 	 * @param newRevision Flag for new revision creation.
@@ -1304,7 +1304,7 @@ public:
 	 * @throw ElementBadTypeException if the change is not allowed (either due to
 	 * type safety or that given entry cannot be changed).
 	 */
-	void changeTrailer(std::string &name, boost::shared_ptr<IProperty> value);
+	void changeTrailer(std::string &name, const boost::shared_ptr<IProperty> &value);
 		
 	/** Inserts given page to the document.
 	 * @param page Page used for new page creation.
@@ -1337,7 +1337,7 @@ public:
 	 * position because of ambiguous page tree or page is already in the tree.
 	 * @throw NoPageRootException if no page tree root can be found.
 	 */
-	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
+	boost::shared_ptr<CPage> insertPage(const boost::shared_ptr<CPage> &page, size_t pos);
 
 	/** Removes page from given position.
 	 * @param pos Position of the page.
@@ -1373,7 +1373,7 @@ public:
 	 * @throw PageNotFoundException if given page is not recognized by CPdf
 	 * instance.
 	 */
-	size_t getPagePosition(boost::shared_ptr<CPage> page)const;
+	size_t getPagePosition(const boost::shared_ptr<CPage> &page)const;
 
 	/** Returnes total page count.
 	 *
@@ -1426,7 +1426,7 @@ public:
 	 * one or given page can't be found).
 	 * @return CPage instance wrapped by smart pointer.
 	 */ 
-	boost::shared_ptr<CPage> getNextPage(boost::shared_ptr<CPage> page)const;
+	boost::shared_ptr<CPage> getNextPage(const boost::shared_ptr<CPage> &page)const;
 
 	/** Returns previous page.
 	 * @param page Pointer to the page.
@@ -1440,7 +1440,7 @@ public:
 	 * one or given page can't be found).
 	 * @return CPage instance wrapped by smart pointer.
 	 */
-	boost::shared_ptr<CPage> getPrevPage(boost::shared_ptr<CPage> page)const;
+	boost::shared_ptr<CPage> getPrevPage(const boost::shared_ptr<CPage> &page)const;
 
 	/** Checks for next page.
 	 * @param page Page to check.
@@ -1450,7 +1450,7 @@ public:
 	 * @throw PageNotFoundException if given page doesn't come from this CPdf
 	 * instance.
 	 */
-	bool hasNextPage(boost::shared_ptr<CPage> page)const;
+	bool hasNextPage(const boost::shared_ptr<CPage> &page)const;
 	
 	/** Checks for previous page.
 	 * @param page Page to check.
@@ -1460,7 +1460,7 @@ public:
 	 * @throw PageNotFoundException if given page doesn't come from this CPdf
 	 * instance.
 	 */
-	bool hasPrevPage(boost::shared_ptr<CPage> page)const;
+	bool hasPrevPage(const boost::shared_ptr<CPage> &page)const;
 
 	/** Returns last page.
 	 * 
@@ -1552,7 +1552,7 @@ public:
 	 *
 	 * @see XRefWriter::getRevisionCount
 	 */
-	size_t getRevisionsCount()
+	size_t getRevisionsCount()const
 	{
 		return xref->getRevisionCount();
 	}
@@ -1564,7 +1564,7 @@ public:
 	 * are visited.
 	 */
 	template<typename Container>
-	void getOutlines (Container& cont)
+	void getOutlines (Container& cont)const
 	{
 
 		check_need_credentials(xref);
@@ -1722,7 +1722,7 @@ boost::shared_ptr<CDict> getPageTreeRoot(const boost::shared_ptr<CPdf> &pdf);
  */
 boost::shared_ptr<CDict> findPageDict(
 		const boost::shared_ptr<CPdf> &pdf, 
-		boost::shared_ptr<IProperty> pagesDict, 
+		const boost::shared_ptr<IProperty> &pagesDict, 
 		size_t startPos, 
 		size_t pos, 
 		PageTreeNodeCountCache * cache);
@@ -1751,7 +1751,7 @@ boost::shared_ptr<CDict> findPageDict(
  * @return Node position.
  */
 size_t getNodePosition(const boost::shared_ptr<CPdf> &pdf, 
-		boost::shared_ptr<IProperty> node, 
+		const boost::shared_ptr<IProperty> &node, 
 		PageTreeNodeCountCache * cache);
 
 /** Calculates number of direct pages under given node property.
@@ -1817,7 +1817,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
  *
  * @return true If given child belongs to parent subtree, false otherwise.
  */
-bool isDescendant(boost::shared_ptr<CPdf> pdf, IndiRef parent, boost::shared_ptr<CDict> child);
+bool isDescendant(const boost::shared_ptr<CPdf>& pdf, const IndiRef &parent, const boost::shared_ptr<CDict> &child);
 
 /** Collects all kids elements from internode dictionary.
  * @param interNodeDict Intermediate node dictionary.
@@ -1843,7 +1843,7 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
  *
  * @return true if file content is encrypted, false otherwise.
  */
-bool isEncrypted(boost::shared_ptr<CPdf> &pdf);
+bool isEncrypted(const boost::shared_ptr<CPdf> &pdf);
 
 // Following functions have to be in this header files because they are templates
 // (so have to be in header) and cobjecthelpers.h cannot include cpdf.h which
@@ -1862,7 +1862,7 @@ bool isEncrypted(boost::shared_ptr<CPdf> &pdf);
  * @return CType instance wrapped by shared_ptr smart pointer.
  */
 template<typename CType>
-boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
+boost::shared_ptr<CType> getCObjectFromRef(const boost::shared_ptr<IProperty> &refProp)
 {
 	// REMARK
 	// This helper has to be here because of gcc template manipulation
@@ -1894,7 +1894,7 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
  * @return CType instance wrapped by shared_ptr smart pointer.
  */
 template<typename CType>
-boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, boost::shared_ptr<CPdf> pdf)
+boost::shared_ptr<CType> getCObjectFromRef(const IndiRef& ref, const boost::shared_ptr<CPdf>& pdf)
 {
 	// REMARK
 	// This helper has to be here because of gcc template manipulation

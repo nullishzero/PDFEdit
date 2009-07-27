@@ -426,7 +426,7 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 
 boost::shared_ptr<CDict> findPageDict(
 		const boost::shared_ptr<CPdf> &pdf, 
-		boost::shared_ptr<IProperty> pagesDict, 
+		const boost::shared_ptr<IProperty> &pagesDict, 
 		size_t startPos, size_t pos, 
 		PageTreeNodeCountCache * cache)
 {
@@ -735,7 +735,7 @@ size_t searchTreeNode(
 	return position;
 }
 
-size_t getNodePosition(const shared_ptr<CPdf> &pdf, shared_ptr<IProperty> node, PageTreeNodeCountCache * cache)
+size_t getNodePosition(const shared_ptr<CPdf> &pdf, const shared_ptr<IProperty> &node, PageTreeNodeCountCache * cache)
 {
 	utilsPrintDbg(DBG_DBG, "");
 	// node must be from given pdf
@@ -776,7 +776,7 @@ size_t getNodePosition(const shared_ptr<CPdf> &pdf, shared_ptr<IProperty> node, 
 	throw PageNotFoundException(0);
 }
 
-bool isDescendant(boost::shared_ptr<CPdf> pdf, IndiRef parent, shared_ptr<CDict> child)
+bool isDescendant(const boost::shared_ptr<CPdf>& pdf, const IndiRef &parent, const shared_ptr<CDict> &child)
 {
 using namespace utils;
 
@@ -813,7 +813,7 @@ using namespace utils;
 	}
 }
 
-bool isEncrypted(boost::shared_ptr<CPdf> &pdf)
+bool isEncrypted(const boost::shared_ptr<CPdf> &pdf)
 {
  	return pdf->getCXref()->isEncrypted();
 }
@@ -1852,7 +1852,7 @@ CPdf::~CPdf()
 // 
 // this method can't be const because createObjFromXpdfObj requires 
 // CPdf * not const CPdf * given by this
-boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef &ref)
+boost::shared_ptr<IProperty> CPdf::getIndirectProperty(const IndiRef &ref)const
 {
 using namespace debug;
 
@@ -1897,7 +1897,7 @@ using namespace debug;
 }
 
 
-IndiRef CPdf::registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef &ref)
+IndiRef CPdf::registerIndirectProperty(const boost::shared_ptr<IProperty> &ip, IndiRef &ref)
 {
 using namespace debug;
 using namespace utils;
@@ -1933,7 +1933,7 @@ using namespace utils;
 	return reference;
 }
 
-IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef &indiRef, 
+IndiRef CPdf::addProperty(const boost::shared_ptr<IProperty> &ip, IndiRef &indiRef, 
 		ResolvedRefStorage & storage, bool followRefs )
 {
 	kernelPrintDbg(DBG_DBG, "");
@@ -2007,7 +2007,7 @@ using namespace debug;
 	return indiRef;
 }
 
-IndiRef CPdf::subsReferencies(boost::shared_ptr<IProperty> ip, 
+IndiRef CPdf::subsReferencies(const boost::shared_ptr<IProperty> &ip, 
 		ResolvedRefStorage & container, bool followRefs)
 {
 using namespace utils;
@@ -2123,7 +2123,7 @@ using namespace utils;
 	return invalidRef;
 }
 
-IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip, bool followRefs)
+IndiRef CPdf::addIndirectProperty(const boost::shared_ptr<IProperty> &ip, bool followRefs)
 {
 using namespace utils;
 using namespace debug;
@@ -2234,7 +2234,7 @@ using namespace boost;
 	return indiRef;
 }
 
-void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
+void CPdf::changeIndirectProperty(const boost::shared_ptr<IProperty> &prop)
 {
 	kernelPrintDbg(DBG_DBG, "");
 	
@@ -2463,7 +2463,7 @@ using namespace utils;
 	return pageCount;
 }
 
-bool CPdf::hasNextPage(boost::shared_ptr<CPage> page) const
+bool CPdf::hasNextPage(const boost::shared_ptr<CPage> &page) const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -2474,7 +2474,7 @@ bool CPdf::hasNextPage(boost::shared_ptr<CPage> page) const
 	return POSITION_IN_RANGE(pos);
 }
 
-boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
+boost::shared_ptr<CPage> CPdf::getNextPage(const boost::shared_ptr<CPage> &page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -2487,7 +2487,7 @@ boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
 
 }
 
-bool CPdf::hasPrevPage(boost::shared_ptr<CPage> page)const
+bool CPdf::hasPrevPage(const boost::shared_ptr<CPage> &page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -2497,7 +2497,7 @@ bool CPdf::hasPrevPage(boost::shared_ptr<CPage> page)const
 	return POSITION_IN_RANGE(pos);
 }
 
-boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)const
+boost::shared_ptr<CPage> CPdf::getPrevPage(const boost::shared_ptr<CPage> &page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -2510,7 +2510,7 @@ boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)const
 	return getPage(pos);
 }
 
-size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
+size_t CPdf::getPagePosition(const boost::shared_ptr<CPage> &page)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 		
@@ -2534,7 +2534,7 @@ size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
 }
 
 
-void CPdf::consolidatePageList(shared_ptr<IProperty> & oldValue, shared_ptr<IProperty> & newValue)
+void CPdf::consolidatePageList(const shared_ptr<IProperty> & oldValue, const shared_ptr<IProperty> & newValue)
 {
 using namespace utils;
 
@@ -2756,7 +2756,7 @@ using namespace utils;
 }
 
 
-bool CPdf::consolidatePageTree(boost::shared_ptr<CDict> & interNode, bool propagate)
+bool CPdf::consolidatePageTree(const boost::shared_ptr<CDict> & interNode, bool propagate)
 {
 using namespace utils;
 
@@ -2944,7 +2944,7 @@ using namespace utils;
 	return !countChanged;
 }
 
-boost::shared_ptr<CPage> CPdf::insertPage(boost::shared_ptr<CPage> page, size_t pos)
+boost::shared_ptr<CPage> CPdf::insertPage(const boost::shared_ptr<CPage> &page, size_t pos)
 {
 using namespace utils;
 
@@ -3210,7 +3210,7 @@ boost::shared_ptr<const CDict> CPdf::getTrailer()const
 	return boost::shared_ptr<const CDict>(trailer);
 }
 
-void CPdf::changeTrailer(std::string &name, boost::shared_ptr<IProperty> value)
+void CPdf::changeTrailer(std::string &name, const boost::shared_ptr<IProperty> &value)
 {
 	Object *result;
 	boost::shared_ptr<Object> o(value->_makeXpdfObject());
