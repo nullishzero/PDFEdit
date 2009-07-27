@@ -40,6 +40,8 @@ namespace pdfobjects {
 
 class IProperty;
 class CDict;
+class CXref;
+class CPage;
 template<typename IP> inline boost::shared_ptr<CDict> getCDictFromDict (IP& ip, const std::string& key);
 
 namespace utils {
@@ -77,9 +79,6 @@ public:
 };
 
 } // namespace utils
-
-class CPage;
-//class COutline;
 
 	
 /** Type for page tree node count chache.
@@ -1845,6 +1844,10 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
  * @return true if file content is encrypted, false otherwise.
  */
 bool isEncrypted(boost::shared_ptr<CPdf> &pdf);
+
+// Following functions have to be in this header files because they are templates
+// (so have to be in header) and cobjecthelpers.h cannot include cpdf.h which
+// is necessary for CPdf type completness
 
 /** Returns cobjects from given reference property.
  * @param refProp Reference property (must be pRef typed).
