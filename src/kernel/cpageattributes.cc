@@ -27,6 +27,8 @@
 #include "kernel/static.h"
 
 // 
+#include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 #include "kernel/cpageattributes.h"
 #include "kernel/displayparams.h"
 #include "kernel/factories.h"

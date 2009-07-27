@@ -26,6 +26,7 @@
 // static
 #include "kernel/static.h"
 #include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 #include "kernel/contentschangetag.h"
 #include "kernel/pdfoperators.h"
 

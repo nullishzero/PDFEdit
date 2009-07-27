@@ -27,7 +27,7 @@
 #define __CPDF_H__
 
 #include "kernel/static.h"
-
+#include "kernel/cobjecthelpers.h"
 #include "kernel/xrefwriter.h"
 #include "kernel/modecontroller.h"
 #include "kernel/iproperty.h"

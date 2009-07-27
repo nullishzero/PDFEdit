@@ -37,6 +37,7 @@
 #include "kernel/cpdf.h"
 
 #include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 #include "kernel/factories.h"
 #include "utils/observer.h"
 

@@ -25,6 +25,7 @@
 #include "kernel/static.h"
 
 #include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 #include "kernel/cpdf.h"
 #include "kernel/cpage.h"
 #include "kernel/factories.h"

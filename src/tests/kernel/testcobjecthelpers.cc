@@ -24,6 +24,8 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 #include "kernel/static.h"
+#include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 #include "tests/kernel/testmain.h"
 #include "kernel/cobjecthelpers.h"
 

@@ -30,6 +30,7 @@
 #include "kernel/cannotation.h"
 #include "utils/observer.h"
 #include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 #include "kernel/factories.h"
 #include "kernel/cpage.h"
 #include "kernel/cpdf.h"

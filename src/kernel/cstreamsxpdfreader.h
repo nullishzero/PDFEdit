@@ -27,7 +27,7 @@
 
 // all basic includes
 #include "kernel/static.h"
-#include "kernel/cstream.h"
+#include "kernel/cobject.h"
 #include "kernel/cobjecthelpers.h"
 
 /** 

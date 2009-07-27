@@ -27,6 +27,7 @@
 #include "kernel/static.h"
 
 #include "kernel/cobject.h"
+#include "kernel/cobjecthelpers.h"
 
 // =====================================================================================
 namespace pdfobjects {

@@ -26,6 +26,7 @@
 #include "kernel/static.h"
 #include"kernel/cannotation.h"
 #include"kernel/cobject.h"
+#include"kernel/cobjecthelpers.h"
 #include"utils/debug.h"
 #include"kernel/factories.h"
 
