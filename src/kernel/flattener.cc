@@ -93,16 +93,16 @@ void collectReacableRefs(::XRef& xref, ::Object &obj, Flattener::RefList &refLis
  */
 void collectDictRefElems(::XRef &xref, ::Dict &dict, Flattener::RefList &refList)
 {
+	boost::shared_ptr< ::Object> elem(new ::Object(), xpdf::object_deleter());
 	for(int i=0; i<dict.getLength(); i++)
 	{
-		Object elem;
-		if(!dict.getValNF(i, &elem))
+		if(!dict.getValNF(i, elem.get()))
 		{
 			utilsPrintDbg(debug::DBG_ERR, "Unable to get dictionary entry with index "<<i);
 			throw MalformedFormatExeption("bad data stream");
 		}
-		collectReacableRefs(xref, elem, refList);
-		elem.free();
+		collectReacableRefs(xref, *elem, refList);
+		elem->free();
 	}
 }
 
@@ -122,18 +122,20 @@ void collectReacableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList)
 	switch(obj.getType())
 	{
 		case objArray:
+		{
+			boost::shared_ptr< ::Object> elem(new ::Object(), xpdf::object_deleter());
 			for(int i=0; i<obj.arrayGetLength(); i++)
 			{
-				Object elem;
-				if(!obj.arrayGetNF(i, &elem))
+				if(!obj.arrayGetNF(i, elem.get()))
 				{
 					utilsPrintDbg(debug::DBG_ERR, "Unable to get array entry");
 					throw MalformedFormatExeption("bad data stream");
 				}
-				collectReacableRefs(xref, elem, refList);
-				elem.free();
+				collectReacableRefs(xref, *elem, refList);
+				elem->free();
 			}
 			break;
+		}
 		case objDict:
 		{
 			Dict *dict = obj.getDict();
@@ -155,16 +157,16 @@ void collectReacableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList)
 			// TODO should be sorted by offset to keep the same
 			// ordering in the file as the original document
 			refList.push_back(ref);
-			Object target;
-			if(!obj.fetch(&xref, &target) || !xref.isOk())
+			boost::shared_ptr< ::Object> target(new ::Object(), xpdf::object_deleter());
+			if(!obj.fetch(&xref, target.get()) || !xref.isOk())
 			{
 				kernelPrintDbg(debug::DBG_ERR, ref<<" object fetching failed with code="
 						<<xref.getErrorCode());
+				// FIXME why is obj freed here - we don't assign to it
 				obj.free();
 				throw MalformedFormatExeption("bad data stream");
 			}
-			collectReacableRefs(xref, target, refList);
-			target.free();
+			collectReacableRefs(xref, *target, refList);
 			break;
 		}
 		default:
