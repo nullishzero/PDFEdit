@@ -559,7 +559,7 @@ using namespace debug;
 
 ::Object * CXref::fetch(int num, int gen, ::Object *obj)
 {
-using namespace debug;
+	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "num="<<num<<" gen="<<gen);
 	
@@ -612,8 +612,8 @@ using namespace debug;
 
 	// delegates to original implementation
 	kernelPrintDbg(DBG_DBG, ref<<" is not changed - using Xref");
-	Object tmpObj;
-	XRef::fetch(num, gen, &tmpObj);
+	boost::shared_ptr< ::Object> tmpObj(new ::Object(), xpdf::object_deleter());
+	XRef::fetch(num, gen, tmpObj.get());
 	if (!isOk())
 	{
 		kernelPrintDbg(DBG_ERR, ref<<" object fetching failed with code="
@@ -624,14 +624,13 @@ using namespace debug;
 	// clones fetched object
 	// this has to be done because return value may be stream and we want to
 	// prevent direct changing of the stream
-	Object * cloneObj=tmpObj.clone();
+	Object * cloneObj=tmpObj->clone();
 	// deallocates XRef returned object content
-	tmpObj.free();
 	if(!cloneObj)
 	{
 		// cloning has failed
 		kernelPrintDbg(DBG_ERR, ref << " object ("
-				<<tmpObj.getType()
+				<<tmpObj->getType()
 				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
