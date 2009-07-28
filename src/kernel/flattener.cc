@@ -162,8 +162,6 @@ void collectReachableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList
 			{
 				kernelPrintDbg(debug::DBG_ERR, ref<<" object fetching failed with code="
 						<<xref.getErrorCode());
-				// FIXME why is obj freed here - we don't assign to it
-				obj.free();
 				throw MalformedFormatExeption("bad data stream");
 			}
 			collectReachableRefs(xref, *target, refList);
