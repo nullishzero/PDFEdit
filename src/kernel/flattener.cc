@@ -83,7 +83,7 @@ bool containsRef(const Flattener::RefList & refList, const ::Ref& ref)
 }
 
 // fwd declaration
-void collectReacableRefs(::XRef& xref, ::Object &obj, Flattener::RefList &refList);
+void collectReachableRefs(::XRef& xref, ::Object &obj, Flattener::RefList &refList);
 
 /** Helper function to find all references from given dictionary.
  * @param xref XRef table.
@@ -101,7 +101,7 @@ void collectDictRefElems(::XRef &xref, ::Dict &dict, Flattener::RefList &refList
 			utilsPrintDbg(debug::DBG_ERR, "Unable to get dictionary entry with index "<<i);
 			throw MalformedFormatExeption("bad data stream");
 		}
-		collectReacableRefs(xref, *elem, refList);
+		collectReachableRefs(xref, *elem, refList);
 		elem->free();
 	}
 }
@@ -117,7 +117,7 @@ void collectDictRefElems(::XRef &xref, ::Dict &dict, Flattener::RefList &refList
  * If you start with the Trailer then you will collect all reachable 
  * objects.
  */
-void collectReacableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList)
+void collectReachableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList)
 {
 	switch(obj.getType())
 	{
@@ -131,7 +131,7 @@ void collectReacableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList)
 					utilsPrintDbg(debug::DBG_ERR, "Unable to get array entry");
 					throw MalformedFormatExeption("bad data stream");
 				}
-				collectReacableRefs(xref, *elem, refList);
+				collectReachableRefs(xref, *elem, refList);
 				elem->free();
 			}
 			break;
@@ -166,7 +166,7 @@ void collectReacableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList)
 				obj.free();
 				throw MalformedFormatExeption("bad data stream");
 			}
-			collectReacableRefs(xref, *target, refList);
+			collectReachableRefs(xref, *target, refList);
 			break;
 		}
 		default:
@@ -185,7 +185,7 @@ void Flattener::initReachableObjects()
 	// to the reachAbleRefs - this should provide complete list of all objects
 	// required for document
 	Object *trailer = getTrailerDict();
-	collectReacableRefs(*this, *trailer, reachAbleRefs);
+	collectReachableRefs(*this, *trailer, reachAbleRefs);
 	utilsPrintDbg(debug::DBG_INFO, reachAbleRefs.size()<<" indirect objects collected");
 	lastIndex=0;
 }
