@@ -54,7 +54,7 @@ const int MAXOBJGEN = 65535;
  * Class works in three layers:
  * <ul>
  * <li>Maintaining layer - registers changes (in values or new objects), which
- *    uses ObjectStorage instances to know which objects are changed 
+ *    uses ChangedStorage instances to know which objects are changed 
  *    (changedStorage field) and which objects are new (newStorage field).  
  * <li>xpdf layer - delegation to original xpdf implementation of XRef.  
  * <li>caching layer - holds objects which where required to prevent getting
@@ -80,7 +80,7 @@ const int MAXOBJGEN = 65535;
  * <br>
  * Because, in fact, all object which can be changed (we are meaning change 
  * value inside Object instance) has to be indirect Object, obj and gen number 
- * are used as identificators, when objects are stored to the ObjectStorage. So
+ * are used as identificators, when objects are stored to the ChangedStorage. So
  * when someone wants to change object value using changeObject method, he has
  * to suply also obj and gen numbers.
  * Only one exception in pdf format is trailer, which is not indirect object and
@@ -119,7 +119,7 @@ protected:
 	 */
 	CXref(): XRef(NULL), needs_credentials(false), internal_fetch(false){}
 
-	/** Entry for ObjectStorage.
+	/** Entry for ChangedStorage.
 	 *
 	 * Each entry contains pointer to changed object. It may be extended in
 	 * future, so structure is used.
@@ -129,12 +129,16 @@ protected:
 		::Object * object;
 	} ObjectEntry;
 	
+	typedef ObjectStorage<const ::Ref, ObjectEntry*, xpdf::RefComparator> ChangedStorage;
+
 	/** Object storage for changed objects.
 	 * Mapping from object referencies to the ObjectEntry structure.
 	 * This structure contains new Object value for reference and 
 	 * flag. 
 	 */
-	ObjectStorage<const ::Ref, ObjectEntry*, xpdf::RefComparator> changedStorage;   
+	ChangedStorage changedStorage;   
+
+	typedef ObjectStorage<const ::Ref, RefState, xpdf::RefComparator> RefStorage;
 
 	/** Object storage for newly created objects.
 	 * Value is the flag of newly created reference. When new entry is added, it
@@ -142,7 +146,7 @@ protected:
 	 * Initialized. Unused is default value for not found, so unknown
 	 * (ObjectStorage returns 0 if entry is not found). 
 	 */
-	ObjectStorage<const ::Ref, RefState, xpdf::RefComparator> newStorage;
+	RefStorage newStorage;
 
 	/** Registers change in given object addressable through given 
 	 * reference.

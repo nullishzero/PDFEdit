@@ -53,7 +53,7 @@ CXref::CXref(BaseStream * stream):XRef(stream), internal_fetch(true)
 
 void CXref::cleanUp()
 {
-using namespace debug;
+	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -62,7 +62,7 @@ using namespace debug;
 	// returned from remove object (iterators are not invalidated by remove
 	// method)
 	kernelPrintDbg(DBG_DBG, "Deallocating changedStorage (size="<<changedStorage.size()<<")");
-	ObjectStorage< ::Ref, ObjectEntry*, xpdf::RefComparator>::Iterator i;
+	ChangedStorage::Iterator i;
 	int index=0;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
 	{
@@ -654,12 +654,12 @@ using namespace debug;
 
 int CXref::getNumObjects() 
 { 
-using namespace debug;
+	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 
 	size_t newSize=0;
-	ObjectStorage< ::Ref, RefState, xpdf::RefComparator>::Iterator begin, i;
+	RefStorage::Iterator begin, i;
 
 	for(i=newStorage.begin(); i!=newStorage.end(); ++i)
 		if(i->second==INITIALIZED_REF)

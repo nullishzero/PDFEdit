@@ -471,7 +471,7 @@ RefState XRefWriter::knowsRef(const IndiRef& ref)
 
 void XRefWriter::saveChanges(bool newRevision)
 {
-using namespace utils;
+	using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -500,7 +500,7 @@ using namespace utils;
 
 	// gets vector of all changed objects
 	IPdfWriter::ObjectList changed;
-	ObjectStorage< ::Ref, ObjectEntry *, xpdf::RefComparator>::Iterator i;
+	ChangedStorage::Iterator i;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
 	{
 		::Ref ref=i->first;
