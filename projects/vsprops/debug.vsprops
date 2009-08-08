@@ -5,14 +5,21 @@
 	Name="VSProps Debug"
 	>
 	<Tool
+		Name="VCBscMakeTool"
+		OutputFile="$(OutDir)/bsc/"
+	/>
+	<Tool
 		Name="VCCLCompilerTool"
 		Optimization="0"
 		PreprocessorDefinitions="_DEBUG;DEBUG"
 		RuntimeLibrary="1"
 		BrowseInformation="1"
+		BrowseInformationFile="$(OutDir)/bsc/"
+		DebugInformationFormat="3"
 	/>
 	<Tool
 		Name="VCLinkerTool"
+		LinkIncremental="1"
 		IgnoreDefaultLibraryNames="msvcrt.lib"
 		GenerateDebugInformation="true"
 	/>
