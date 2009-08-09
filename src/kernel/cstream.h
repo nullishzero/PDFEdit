@@ -169,6 +169,10 @@ public:
 		{return dictionary.getProperty (id);}
 	
 	/** Delagate this operation to underlying dictionary. \see CDict */
+	bool containsProperty (PropertyId id) const
+		{return dictionary.containsProperty (id);}
+	
+	/** Delagate this operation to underlying dictionary. \see CDict */
 	PropertyType getPropertyType (PropertyId id) const
 		{return dictionary.getPropertyType (id);}
 	
