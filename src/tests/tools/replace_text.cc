@@ -132,7 +132,7 @@ main(int argc, char ** argv)
 					if (!del) return -1;
 				del->delinearize(out.c_str());
 			}
-			pdf = CPdf::getInstance (file.c_str(), CPdf::ReadWrite);
+			pdf = CPdf::getInstance (out.c_str(), CPdf::ReadWrite);
 		}
 
 
