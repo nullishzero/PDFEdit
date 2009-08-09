@@ -29,12 +29,31 @@
 */
 
 #include "qsstream.h"
+#include "qsimporter.h"
+#include "pdfutil.h"
 #include "util.h"
 #include <qfile.h>
 #include <kernel/cobject.h>
 #include <qstring.h>
 
 namespace gui {
+
+using namespace std;
+using namespace pdfobjects;
+
+//Theoretically, this could be done better with templates, but unfortunately, it is not possible due to some C++ limitations
+/** Standard error handling - code added before the operation */
+#define OP_BEGIN \
+ CStream *st=dynamic_cast<CStream*>(obj.get());\
+ assert(st);\
+ try {
+/** Standard error handling - code added after the operation */
+#define OP_END(func) \
+ } catch (ReadOnlyDocumentException &e) { \
+  base->errorException("Stream",func,QObject::tr("Document is read-only")); \
+ } catch (NotImplementedException &e) { \
+  base->errorException("Stream",func,QObject::tr("Operation not implemented: %1").arg(e.what())); \
+ }
 
 /**
  Construct wrapper with given CStream
@@ -69,11 +88,12 @@ const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
 
 /** Call CStream::getDecodedStringRepresentation(ret); return ret */
 QString QSStream::getDecoded() {
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- std::string text;
- st->getDecodedStringRepresentation(text);
- return util::convertToUnicode(text,util::PDF);
+ OP_BEGIN
+  std::string text;
+  st->getDecodedStringRepresentation(text);
+  return util::convertToUnicode(text,util::PDF);
+ OP_END("getDecoded")
+ return QString::null;
 }
 
 /**
@@ -145,12 +165,13 @@ bool QSStream::saveBuffer(const QString &fileName) {
  @return true on success, false on failure while reading from file
 */
 bool QSStream::loadBuffer(const QString &fileName) {
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- QByteArray qb;
- if (!loadFile(fileName,qb)) return false;
- st->setBuffer(arrayToBuffer(qb));
- return true;
+ OP_BEGIN
+  QByteArray qb;
+  if (!loadFile(fileName,qb)) return false;
+  st->setBuffer(arrayToBuffer(qb));
+  return true;
+ OP_END("loadBuffer")
+ return false;
 }
 
 /**
@@ -159,12 +180,13 @@ bool QSStream::loadBuffer(const QString &fileName) {
  @return true on success, false on failure while reading from file
 */
 bool QSStream::loadRawBuffer(const QString &fileName) {
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- QByteArray qb;
- if (!loadFile(fileName,qb)) return false;
- st->setBuffer(arrayToBuffer(qb));
- return true;
+ OP_BEGIN
+  QByteArray qb;
+  if (!loadFile(fileName,qb)) return false;
+  st->setBuffer(arrayToBuffer(qb));
+  return true;
+ OP_END("loadRawBuffer")
+ return false;
 }
 
 /**
@@ -188,13 +210,9 @@ bool QSStream::loadFile(const QString &fileName,QByteArray &qb) {
 */
 void QSStream::setBuffer(const QString &s) {
  if (s.isNull()) return;
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- try {
+ OP_BEGIN
   st->setBuffer(stringToBuffer(s));
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setBuffer",QObject::tr("Document is read-only"));
- }
+ OP_END("setBuffer")
 }
 
 /**
@@ -202,13 +220,9 @@ void QSStream::setBuffer(const QString &s) {
  @param a Data to set into buffer
 */
 void QSStream::setBuffer(const QByteArray &a) {
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- try {
+ OP_BEGIN
   st->setBuffer(arrayToBuffer(a));
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setBuffer",QObject::tr("Document is read-only"));
- }
+ OP_END("setBuffer")
 }
 
 /**
@@ -216,14 +230,10 @@ void QSStream::setBuffer(const QByteArray &a) {
  @param s Data to set into buffer
 */
 void QSStream::setRawBuffer(const QString &s) {
- if (s.isNull()) return;
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- try {
+ OP_BEGIN
+  if (s.isNull()) return;
   st->setRawBuffer(stringToBuffer(s));
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setRawBuffer",QObject::tr("Document is read-only"));
- }
+ OP_END("setRawBuffer")
 }
 
 /**
@@ -231,13 +241,9 @@ void QSStream::setRawBuffer(const QString &s) {
  @param a Data to set into buffer
 */
 void QSStream::setRawBuffer(const QByteArray &a) {
- CStream *st=dynamic_cast<CStream*>(obj.get());
- assert(st);
- try {
+ OP_BEGIN
   st->setRawBuffer(arrayToBuffer(a));
- } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setRawBuffer",QObject::tr("Document is read-only"));
- }
+ OP_END("setRawBuffer")
 }
 
 /**
@@ -259,5 +265,101 @@ QByteArray QSStream::getBuffer() {
  assert(st);
  return arrayFromBuffer(st->getBuffer());
 }
+
+/**
+ Delete property from stream dictionary
+ @param name Property name
+*/
+void QSStream::delProperty(const QString &name) {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
+  st->delProperty(pName);
+ OP_END("delProperty")
+}
+
+/**
+ Add property to stream dictionary
+ @param name Property name
+ @param ip Property to add
+*/
+void QSStream::add(const QString &name,QSIProperty *ip) {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
+  st->addProperty(pName,*(ip->get().get()));
+ OP_END("add")
+}
+
+/** \copydoc add(const QString&,QSIProperty*) */
+void QSStream::add(const QString &name,QObject *ip) {
+ //QSA-bugfix variant of this method
+ QSIProperty *ipr=dynamic_cast<QSIProperty*>(ip);
+ if (ipr) add(name,ipr);
+}
+
+/**
+ Add string to stream dictionary as property
+ @param name Property name
+ @param ip string to add
+*/
+void QSStream::add(const QString &name,const QString &ip) {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
+  CString property(util::convertFromUnicode(ip,util::PDF));
+  st->addProperty(pName,property);
+ OP_END("add")
+}
+
+/**
+ Add integer to stream dictionary as property
+ @param name Property name
+ @param ip integer to add
+*/
+void QSStream::add(const QString &name,int ip) {
+ OP_BEGIN
+  string pName=util::convertFromUnicode(name,util::PDF);
+  CInt property(ip);
+  st->addProperty(pName,property);
+ OP_END("add")
+}
+
+/**
+ Return list of all property names in stream dictionary
+ @return List of all property names
+*/
+QStringList QSStream::propertyNames() {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ QStringList names;
+ vector<string> list;
+ st->getAllPropertyNames(list);
+ vector<string>::iterator it;
+ for( it=list.begin();it!=list.end();++it) { // for each property
+  names+=util::convertToUnicode(*it,util::PDF);
+ }
+ return names;
+}
+
+/** call CDict::getPropertyCount() for stream dictionary */
+int QSStream::count() {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ return st->getPropertyCount();
+}
+
+/**
+ Get property by its name
+ @param name Name of property
+ @return the property, or NULL if not found
+*/
+QSCObject* QSStream::property(const QString &name) {
+ try {
+  CStream *st=dynamic_cast<CStream*>(obj.get());
+  boost::shared_ptr<IProperty> property=st->getProperty(util::convertFromUnicode(name,util::PDF));
+  return QSImporter::createQSObject(property,base);
+ } catch (...) {
+  //Some error, probably the property does not exist
+  return NULL;
+ }
+}
+
+//TODO: add exist(..) once support in kernel
 
 } // namespace gui

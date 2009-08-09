@@ -25,6 +25,7 @@
 #define __QSSTREAM_H__
 
 #include <kernel/cobject.h>
+#include <qstringlist.h>
 #include "qsiproperty.h"
 class QString;
 
@@ -65,6 +66,21 @@ public slots:
  bool saveBuffer(const QString &fileName);
  /*- Return decoded text representation of this property */
  QString getDecoded();
+ /*- Add property with given name to stream dictionary */
+ void add(const QString &name,QSIProperty *ip);
+ void add(const QString &name,QObject *ip);
+ /*- Add string property with given name to stream dictionary */
+ void add(const QString &name,const QString &ip);
+ /*- Add integer property with given name to stream dictionary */
+ void add(const QString &name,int ip);
+ /*- Return number of properties held in stream dictionary */
+ int count();
+ /*- Delete property with given name from stream dictionary */
+ void delProperty(const QString &name);
+ /*- Get property with given name from stream dictionary */
+ QSCObject* property(const QString &name);
+ /*- Return array containing names of all properties in stream dictionary */
+ QStringList propertyNames();
 };
 
 } // namespace gui

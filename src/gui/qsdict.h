@@ -83,7 +83,7 @@ public slots:
   and return it
  */
  QSCObject* propertyDef(const QString &name,QString defValue);
- /*- Return array containig names of all properties */
+ /*- Return array containing names of all properties */
  QStringList propertyNames();
 };
 
