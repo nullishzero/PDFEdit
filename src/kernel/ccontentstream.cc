@@ -113,32 +113,30 @@ namespace {
 		dict.initDict ((XRef*)NULL); // We do not have (need) valid xref, but be CAREFUL
 
 		// Get first object
-		Object o;
-		streamreader.getXpdfObject (o);
+		boost::shared_ptr< ::Object> o(new Object(), xpdf::object_deleter());
+		streamreader.getXpdfObject (*o);
 
 		//
 		// Get the inline image dictionary
 		// 
-		while (!streamreader.eof() && !o.isCmd("ID")) 
+		while (!streamreader.eof() && !o->isCmd("ID")) 
 		{
-			if (o.isName())
+			if (o->isName())
 			{
-				char* key = ::copyString (o.getName());
-				streamreader.getXpdfObject (o);
+				char* key = ::copyString (o->getName());
+				streamreader.getXpdfObject (*o);
 				if (streamreader.eof()) 
 				{
 					gfree (key);
 					assert (!"Bad inline image.");
 					throw CObjInvalidObject ();
 				}
-				dict.dictAdd (key, &o);
+				dict.dictAdd (key, o.get());
 			
 			}
 			
-			streamreader.getXpdfObject (o);
+			streamreader.getXpdfObject (*o);
 		}
-		// Free ID
-		o.free ();
 
 		// Bad content stream
 		if (streamreader.eof())
