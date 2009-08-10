@@ -342,12 +342,12 @@ boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::instance;
 boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::defaultWriter;
 FilterStreamWriter::WritersList FilterStreamWriter::writers;
 
-void FilterStreamWriter::registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
+void FilterStreamWriter::registerFilterStreamWriter(const boost::shared_ptr<FilterStreamWriter> &streamWriter)
 {
 	writers.push_back(streamWriter);
 }
 
-void FilterStreamWriter::unregisterFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
+void FilterStreamWriter::unregisterFilterStreamWriter(const boost::shared_ptr<FilterStreamWriter> &streamWriter)
 {
 	WritersList::iterator iter;
 	for(iter=writers.begin(); iter != writers.end(); ++iter)
@@ -365,7 +365,7 @@ void FilterStreamWriter::clearAllFilterStreamWriters()
 	writers.clear();
 }
 
-void FilterStreamWriter::setDefaultStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter)
+void FilterStreamWriter::setDefaultStreamWriter(const boost::shared_ptr<FilterStreamWriter> &streamWriter)
 {
 	defaultWriter = streamWriter;
 }
@@ -484,7 +484,7 @@ void IPdfWriter::writeHeader(const char* version, StreamWriter &stream)
 const std::string OldStylePdfWriter::CONTENT = "Content phase"; 
 const std::string OldStylePdfWriter::TRAILER = "XREF/TRAILER phase";
 
-void OldStylePdfWriter::writeContent(ObjectList & objectList, StreamWriter & stream, size_t off)
+void OldStylePdfWriter::writeContent(const ObjectList & objectList, StreamWriter & stream, size_t off)
 {
 using namespace debug;
 using namespace boost;
@@ -496,7 +496,7 @@ using namespace boost;
 	if(off)
 		stream.setPos(off);
 
-	ObjectList::iterator i;
+	ObjectList::const_iterator i;
 	size_t index=0;
 	
 	// creates context for observers
@@ -546,7 +546,7 @@ using namespace boost;
 	utilsPrintDbg(DBG_DBG, "All objects (number="<<objectList.size()<<") stored.");
 }
 
-size_t OldStylePdfWriter::writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off)
+size_t OldStylePdfWriter::writeTrailer(Object & trailer,const PrevSecInfo &prevSection, StreamWriter & stream, size_t off)
 {
 using namespace std;
 using namespace debug;

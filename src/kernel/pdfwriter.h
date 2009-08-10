@@ -248,12 +248,12 @@ public:
 	/** Adds new filter writer to the registered.
 	 * @param streamwriter Filter stream writer implementation.
 	 */
-	static void registerFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter);
+	static void registerFilterStreamWriter(const boost::shared_ptr<FilterStreamWriter> &streamWriter);
 
 	/** Removes already registerd filter writer.
 	 * @param streamWriter Filter stream writer to remove.
 	 */
-	static void unregisterFilterStreamWriter(boost::shared_ptr<FilterStreamWriter> streamWriter);
+	static void unregisterFilterStreamWriter(const boost::shared_ptr<FilterStreamWriter> &streamWriter);
 
 	/** Removes all registered filter writers.
 	 */
@@ -262,7 +262,7 @@ public:
 	/** Sets default stream writer.
 	 * @param streamWriter Writer to be set.
 	 */
-	static void setDefaultStreamWriter(boost::shared_ptr<FilterStreamWriter> defaultWriter);
+	static void setDefaultStreamWriter(const boost::shared_ptr<FilterStreamWriter> &defaultWriter);
 
 	/** Checks whether this filter writer is able to handle given object.
 	 * Implementation is absolutely free on which criteria it decides whether
@@ -465,7 +465,7 @@ public:
 	 * <br>
 	 * Doesn't write xref and trailer.
 	 */
-	virtual void writeContent(ObjectList & objectList, StreamWriter & stream, size_t off=0) =0;
+	virtual void writeContent(const ObjectList & objectList, StreamWriter & stream, size_t off=0) =0;
 
 	/** Writes xref and trailer section.
 	 * @param trailer Trailer object.xrefPos.
@@ -480,7 +480,7 @@ public:
 	 *
 	 * @return stream position where it is safe to store data for new revision.
 	 */
-	virtual size_t writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0)=0;
+	virtual size_t writeTrailer(Object & trailer, const PrevSecInfo &prevSection, StreamWriter & stream, size_t off=0)=0;
 
 	/** Resets internal data collected in writeContent method.
 	 *
@@ -501,7 +501,7 @@ class OldStylePdfWriter: public IPdfWriter
 	/** Type for offset table.
 	 * Mapping from reference to file offset of indirect object.
 	 */
-	typedef std::map< ::Ref, size_t, xpdf::RefComparator> OffsetTab;
+	typedef std::map<const ::Ref, size_t, xpdf::RefComparator> OffsetTab;
 
 	/** Offset table.
 	 *
@@ -568,7 +568,7 @@ public:
 	 * contains total number of objects which should be written by this call.
 	 * Context task field contains CONTENT string.
 	 */
-	virtual void writeContent(ObjectList & objectList, StreamWriter & stream, size_t off=0);
+	virtual void writeContent(const ObjectList & objectList, StreamWriter & stream, size_t off=0);
 
 	/** Writes cross reference table and trailer.
 	 * @param trailer Trailer object.
@@ -621,7 +621,7 @@ public:
 	 *
 	 * @return stream position of pdf end of file %%EOF marker.
 	 */
-	virtual size_t writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0);
+	virtual size_t writeTrailer(Object & trailer, const PrevSecInfo &prevSection, StreamWriter & stream, size_t off=0);
 
 	/** Resets all collected data.
 	 *
