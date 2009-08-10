@@ -64,7 +64,7 @@ int main(int argc, char ** argv)
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);    
 
-		if (vm.count(HELP) || !vm.count(INFILE))
+		if (vm.count("help") || !vm.count("file"))
 		{
 			cout << desc << "\n";
 			return 1;
