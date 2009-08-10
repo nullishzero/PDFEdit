@@ -592,6 +592,14 @@ public:
 		_contents->replaceText (what, with);
 	}
 
+	/**
+	 * Adds text to specified position.
+	 */
+	void addText (const std::string& what, const libs::Point& where)
+	{
+			_check_validity();
+		_contents->addText (what, where);
+	}
 
 	 //
 	 // Helper functions

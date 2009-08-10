@@ -180,6 +180,12 @@ public:
 	void replaceText (const std::string& what, const std::string& with);
 
 	/**
+	 * Replaces text in the whole page.
+	 */
+	void addText (const std::string& what, 
+				  const libs::Point& where);
+
+	/**
 	 * Get text source of a page.
 	 */
 	template<typename WordEngine, 

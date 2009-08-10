@@ -458,6 +458,51 @@ CPageContents::replaceText (const std::string& what, const std::string& with)
 		(*it)->replaceText (what, with);
 }
 
+//
+//
+//
+void 
+CPageContents::addText (const std::string& what, const libs::Point& where)
+{
+	init();
+
+	// create the array of PDF operators and add them to back of content streams
+	// q
+	// BT
+	// rg col
+	// fname fsize Tf
+	// x y Td
+	// text Tj
+	// ET
+	// Q
+	//
+	std::string fontName = "PDFEDIT_F1";
+    double fontSize = 15.0;
+    shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
+    shared_ptr<UnknownCompositePdfOperator> BT(new UnknownCompositePdfOperator("BT", "ET"));
+    PdfOperator::Operands fontOperands;
+    fontOperands.push_back(shared_ptr<IProperty>(new CName (fontName)) );
+    fontOperands.push_back(shared_ptr<IProperty>(new CReal (fontSize)));
+    q->push_back(BT,q);
+    BT->push_back(createOperator("Tf", fontOperands), getLastOperator(BT));
+    PdfOperator::Operands posOperands;
+    posOperands.push_back(shared_ptr<IProperty>(new CReal (where.x)));
+    posOperands.push_back(shared_ptr<IProperty>(new CReal (where.y)));
+    BT->push_back(createOperator("Td", posOperands), getLastOperator(BT));
+    PdfOperator::Operands textOperands;
+    textOperands.push_back(shared_ptr<IProperty>(new CString (what)));
+    BT->push_back(createOperator("Tj", textOperands), getLastOperator(BT));
+    PdfOperator::Operands emptyOperands;
+    BT->push_back(createOperator("ET", emptyOperands), getLastOperator(BT));
+    q->push_back(createOperator("Q", emptyOperands), getLastOperator(q));
+    
+	std::vector<shared_ptr<PdfOperator> > contents;
+    contents.push_back(q);
+    
+	addToBack (contents);
+}
+
+
 
 //==========================================================
 namespace {
