@@ -992,7 +992,7 @@ PSOutputDev::PSOutputDev(char *fileName, XRef *xrefA, Catalog *catalog,
 #ifndef WIN32
     signal(SIGPIPE, (SignalFunc)SIG_IGN);
 #endif
-    if (!(f = popen(fileName + 1, "w"))) {
+    if (!(f = popen(fileName + 1, "wb"))) {
       error(-1, "Couldn't run print command '%s'", fileName);
       ok = gFalse;
       return;
@@ -1004,7 +1004,7 @@ PSOutputDev::PSOutputDev(char *fileName, XRef *xrefA, Catalog *catalog,
 #endif
   } else {
     fileTypeA = psFile;
-    if (!(f = fopen(fileName, "w"))) {
+    if (!(f = fopen(fileName, "wb"))) {
       error(-1, "Couldn't open PostScript file '%s'", fileName);
       ok = gFalse;
       return;

@@ -33,7 +33,7 @@ using namespace pdfobjects::utils;
 
 int delinearize(const char *input, const char *output)
 {
-	FILE *file=fopen(input, "r");
+	FILE *file=fopen(input, "rb");
 	Object dict;
 	dict.initNull();
 	boost::shared_ptr<Delinearizator> del = 

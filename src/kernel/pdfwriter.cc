@@ -788,7 +788,7 @@ using namespace debug;
 	utilsPrintDbg(DBG_DBG, "fileName="<<fileName);
 
 	// opens file handle and creates FileStreamWriter instance
-	FILE * file=fopen(fileName, "r");
+	FILE * file=fopen(fileName, "rb");
 	if(!file)
 	{
 		int err=errno;
@@ -826,7 +826,7 @@ using namespace debug;
 
 	utilsPrintDbg(DBG_DBG, "fileName="<<fileName);
 
-	FILE * f=fopen(fileName, "w");
+	FILE * f=fopen(fileName, "wb");
 	int err=0;
 	if(!f)
 	{

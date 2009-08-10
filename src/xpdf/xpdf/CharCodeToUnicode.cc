@@ -63,7 +63,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GString *fileName,
   Unicode u;
   CharCodeToUnicode *ctu;
 
-  if (!(f = fopen(fileName->getCString(), "r"))) {
+  if (!(f = fopen(fileName->getCString(), "rb"))) {
     error(-1, "Couldn't open cidToUnicode file '%s'",
 	  fileName->getCString());
     return NULL;
@@ -108,7 +108,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseUnicodeToUnicode(
   CharCodeToUnicode *ctu;
   int line, n, i;
 
-  if (!(f = fopen(fileName->getCString(), "r"))) {
+  if (!(f = fopen(fileName->getCString(), "rb"))) {
     error(-1, "Couldn't open unicodeToUnicode file '%s'",
 	  fileName->getCString());
     return NULL;

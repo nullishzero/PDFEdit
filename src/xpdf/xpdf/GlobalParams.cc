@@ -763,13 +763,13 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   fileName = NULL;
   if (cfgFileName && cfgFileName[0]) {
     fileName = new GString(cfgFileName);
-    if (!(f = fopen(fileName->getCString(), "r"))) {
+    if (!(f = fopen(fileName->getCString(), "rb"))) {
       delete fileName;
     }
   }
   if (!f) {
     fileName = appendToPath(getHomeDir(), xpdfUserConfigFile);
-    if (!(f = fopen(fileName->getCString(), "r"))) {
+    if (!(f = fopen(fileName->getCString(), "rb"))) {
       delete fileName;
     }
   }
@@ -789,7 +789,7 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
 #else
     fileName = new GString(xpdfSysConfigFile);
 #endif
-    if (!(f = fopen(fileName->getCString(), "r"))) {
+    if (!(f = fopen(fileName->getCString(), "rb"))) {
       delete fileName;
     }
   }
@@ -1160,7 +1160,7 @@ void GlobalParams::parseNameToUnicode(GList *tokens, GString *fileName,
     return;
   }
   name = (GString *)tokens->get(1);
-  if (!(f = fopen(name->getCString(), "r"))) {
+  if (!(f = fopen(name->getCString(), "rb"))) {
     error(-1, "Couldn't open 'nameToUnicode' file '%s'",
 	  name->getCString());
     return;
@@ -1998,7 +1998,7 @@ FILE *GlobalParams::getUnicodeMapFile(GString *encodingName) {
 
   lockGlobalParams;
   if ((fileName = (GString *)unicodeMaps->lookup(encodingName))) {
-    f = fopen(fileName->getCString(), "r");
+    f = fopen(fileName->getCString(), "rb");
   } else {
     f = NULL;
   }
@@ -2021,7 +2021,7 @@ FILE *GlobalParams::findCMapFile(GString *collection, GString *cMapName) {
   for (i = 0; i < list->getLength(); ++i) {
     dir = (GString *)list->get(i);
     fileName = appendToPath(dir->copy(), cMapName->getCString());
-    f = fopen(fileName->getCString(), "r");
+    f = fopen(fileName->getCString(), "rb");
     delete fileName;
     if (f) {
       unlockGlobalParams;
@@ -2041,7 +2041,7 @@ FILE *GlobalParams::findToUnicodeFile(GString *name) {
   for (i = 0; i < toUnicodeDirs->getLength(); ++i) {
     dir = (GString *)toUnicodeDirs->get(i);
     fileName = appendToPath(dir->copy(), name->getCString());
-    f = fopen(fileName->getCString(), "r");
+    f = fopen(fileName->getCString(), "rb");
     delete fileName;
     if (f) {
       unlockGlobalParams;

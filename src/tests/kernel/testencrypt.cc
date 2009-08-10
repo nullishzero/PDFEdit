@@ -134,7 +134,7 @@ class TestEncryptCPdf: public CppUnit::TestFixture
 		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, addIndirectProperty, PARAM_1(intProp));
 		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, changeIndirectProperty, PARAM_1(intProp));
 		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, save, NO_PARAM);
-		FILE * file = fopen("testfile", "w");
+		FILE * file = fopen("testfile", "wb");
 		CHECK_FOR_PERMISSIONS(pdf, shouldThrow, clone, PARAM_1(file));
 		fclose(file);
 
