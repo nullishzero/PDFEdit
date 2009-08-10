@@ -1,5 +1,5 @@
 XXXX-XX-XX PDF Editor 0.4.4
-	* Bugs 320 fixed
+	* Bugs 320, 324 fixed
 	* Internal changes
 		- CPdf::changeTrailer implemented (bt#224)
 		- utils::isDescendant renamed to utils::isNodeDescendant
