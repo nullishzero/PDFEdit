@@ -39,7 +39,7 @@ def create_guid (env):
     newguid = env["guids"][-1].split("-")
     newguid[-1] = hex(int(newguid[-1],16)+1).lstrip("0x").rstrip("L")
     newguid = "-".join(newguid)
-    env["guids"].append (newguid)
+    env["guids"].append (newguid.upper())
     env["guids"].sort()
     return newguid
   else:

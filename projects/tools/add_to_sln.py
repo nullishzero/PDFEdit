@@ -26,7 +26,7 @@ def gather_guids (env):
         m = namepattern.search (l)
         if m and name == "": name = m.group(1)
         if guid != "" and name != "": break
-      guids.update ({name : guid})
+      guids.update ({name : guid.upper()})
   env["guids"] = guids
  
 def update_sln (env):
@@ -61,7 +61,7 @@ def update_sln (env):
     l = projects[i]
     m = projectpattern.match(l)
     if m:
-      g_guid = m.group(1); project = m.group(2); guid = m.group(3) 
+      g_guid = m.group(1).upper(); project = m.group(2); guid = m.group(3) 
       if project in env["guids"].keys():
         if guid != env["guids"][project]:
           print "Guid do not match [%s, %s]! Aborting..." % (guid, env["guids"][project])
