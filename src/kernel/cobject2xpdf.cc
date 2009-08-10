@@ -768,10 +768,11 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 	int len = dict.dictGetLength ();
 	for (int i = 0; i < len; ++i)
 	{
-		// Make string from key
+		// get rid of previous value and fetch the current one
+		obj->free();
 		string key = dict.dictGetKey (i);
-		// Make IProperty from value
 		dict.dictGetValNF (i,obj.get());
+		// Make IProperty from value
 		scoped_ptr<IProperty> cobj (createObjFromXpdfObj (*obj));
 		if (cobj)
 		{
