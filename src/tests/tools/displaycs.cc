@@ -64,16 +64,12 @@ int main(int argc, char ** argv)
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);    
 
-	if (vm.count("help")) {
-		cout << desc << "\n";
-		return 1;
-	}
+		if (vm.count(HELP) || !vm.count(INFILE))
+		{
+			cout << desc << "\n";
+			return 1;
+		}
 
-	if (!vm.count("file")) 
-	{
-		cout << "File not specified" << endl;
-		return 1;
-	}
 	string file = vm["file"].as<string>(); 
 	size_t from = vm["from"].as<size_t>();
 
