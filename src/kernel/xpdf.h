@@ -89,50 +89,6 @@ struct object_deleter
 	void operator() (::Object* o)
 		{ assert (o); o->free(); ::gfree(o); }
 };
-					
-	
-/** 
- * Wrapper around a class which uses free method.
- *
- * This class uses a special free method to deallocate objects. 
- * In xpdf Object class the free method is necessary because Object implements reference 
- * counting.
- */
-template<typename T>
-class MassiveIdiocyWrapper // : noncopyable 
-{
-private:
-	T obj;
-	
-	/** Disallow copy ctor. */
-	MassiveIdiocyWrapper (const MassiveIdiocyWrapper&);
-	/** Disallow copy ctor. */
-	const MassiveIdiocyWrapper& operator= (const MassiveIdiocyWrapper&);
-	
-public:	
-	typedef T element_type;
-
-	/** Constructor. */
-	MassiveIdiocyWrapper () {}
-
-	/** Explicit delete.	*/
-	void reset () { obj.free (); }
-	
-	/** Dereference. */
-	T& operator*() /*const*/ { return obj; }
-	/** Dereference. */
-	T* operator->() /*const*/ { return &obj; }
-
-	/** Get raw pointer. */
-	T* get () /*const*/ { return &obj; }
-	
-	/** Destructor. */
-	~MassiveIdiocyWrapper () { obj.free (); }
-};
-
-/** Xpdf object wrapper. */
-typedef MassiveIdiocyWrapper<Object> XpdfObject;
-
 
 /**
  * Free an object. We assume that all child objects (if any)

@@ -812,7 +812,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		  //
 		  // Try to find out the height and width of this letter
 		  //
-		  xpdf::XpdfObject charProc;
+		  boost::shared_ptr< ::Object> charProc(new ::Object(), xpdf::object_deleter());
 		  static_cast<Gfx8BitFont*>(font)->getCharProc (code, charProc.get());
 		  if (charProc->isStream())
 		  {
@@ -823,7 +823,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 						  gFalse
 						  )
 					  );
-			  xpdf::XpdfObject obj;
+			  boost::shared_ptr< ::Object> obj(new ::Object(), xpdf::object_deleter());
 			  // Read till BI found
 			  while (!parser->eofOfActualStream() && !obj->isCmd("BI"))
 			  {

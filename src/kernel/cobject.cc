@@ -87,8 +87,10 @@ parseStreamToContainer (T& container, ::Object& obj)
 	}
 
 	// Get stream length
-	xpdf::XpdfObject xpdfDict; xpdfDict->initDict (obj.streamGetDict());
-	xpdf::XpdfObject xpdfLen; xpdfDict->dictLookup ("Length", xpdfLen.get());
+	boost::shared_ptr< ::Object> xpdfDict(new ::Object(), xpdf::object_deleter()); 
+	xpdfDict->initDict (obj.streamGetDict());
+	boost::shared_ptr< ::Object> xpdfLen(new ::Object(), xpdf::object_deleter()); 
+	xpdfDict->dictLookup ("Length", xpdfLen.get());
 	assert (xpdfLen->isInt ());
 	assert (0 <= xpdfLen->getInt());
 	size_t len = static_cast<size_t> (xpdfLen->getInt());

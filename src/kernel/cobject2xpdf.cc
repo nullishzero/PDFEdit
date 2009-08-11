@@ -364,7 +364,7 @@ namespace {
 		utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 		ostringstream oss;
-		xpdf::XpdfObject o;
+		boost::shared_ptr< ::Object> o(new ::Object(), xpdf::object_deleter());
 		int i;
 
 		switch (obj.getType()) 
@@ -445,7 +445,7 @@ namespace {
 			utilsPrintDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 			
 			boost::shared_ptr<CPdf> pdf = ip.getPdf ().lock ();
-			XpdfObject obj;
+			boost::shared_ptr< ::Object> obj(new ::Object(), xpdf::object_deleter());
 
 			int len = array.arrayGetLength ();
 			for (int i = 0; i < len; ++i)
@@ -494,7 +494,7 @@ namespace {
 			utilsPrintDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 			
 			boost::shared_ptr<CPdf> pdf = ip.getPdf ().lock ();
-			xpdf::XpdfObject obj;
+			boost::shared_ptr< ::Object> obj(new ::Object, xpdf::object_deleter());
 
 			int len = dict.dictGetLength ();
 			for (int i = 0; i < len; ++i)
@@ -763,7 +763,7 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 	assert (0 <= dict.dictGetLength ());
 	utilsPrintDbg (debug::DBG_DBG, "" );
 			
-	xpdf::XpdfObject obj;
+ 	boost::shared_ptr< ::Object> obj(new ::Object(), xpdf::object_deleter());
 
 	int len = dict.dictGetLength ();
 	for (int i = 0; i < len; ++i)

@@ -113,7 +113,7 @@ namespace {
 		dict.initDict ((XRef*)NULL); // We do not have (need) valid xref, but be CAREFUL
 
 		// Get first object
-		boost::shared_ptr< ::Object> o(new Object(), xpdf::object_deleter());
+		boost::shared_ptr< ::Object> o(new ::Object(), xpdf::object_deleter());
 		streamreader.getXpdfObject (*o);
 
 		//
@@ -187,7 +187,7 @@ namespace {
 	bool
 	createOperandsFromStream (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
 					PdfOperator::Operands& operands,
-					xpdf::XpdfObject& o)
+					boost::shared_ptr< ::Object>& o)
 	{
 		// Get first object
 		streamreader.getXpdfObject (*o);
@@ -228,7 +228,7 @@ namespace {
 					PdfOperator::Operands& operands)
 	{
 		// Get operands
-		xpdf::XpdfObject o;
+		boost::shared_ptr< ::Object> o(new ::Object(), xpdf::object_deleter());
 		if (!createOperandsFromStream (streamreader, operands, o))
 			return shared_ptr<PdfOperator> ();
 		
@@ -404,7 +404,7 @@ namespace {
 					{
 						if (our_change)
 							break;
-						xpdf::XpdfObject o;
+						boost::shared_ptr< ::Object> o(new ::Object(), xpdf::object_deleter());
 						streamreader.lookXpdfObject (*o);
 						if (o->isName (ContentsChangeTag::CHANGE_TAG_ID))
 							break;

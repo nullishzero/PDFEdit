@@ -63,8 +63,8 @@ public:
 
 private:
 	CStreams streams;			/**< Array of streams. */
-	xpdf::XpdfObject xarr;		/**< Xpdf array of streams. */
-	xpdf::XpdfObject curobj;	/**< Current object. */
+	boost::shared_ptr< ::Object> xarr;	/**< Xpdf array of streams. */
+	boost::shared_ptr< ::Object> curobj;	/**< Current object. */
 
 	boost::shared_ptr<Parser> parser; /**< Xpdf parser. */
 	::Lexer* lexer;					  /**< Xpdf lexer. */
@@ -73,9 +73,19 @@ public:
 
 	/** Constructor. */
 	CStreamsXpdfReader (Container& strs) :  lexer(NULL)
-		{ assert (!strs.empty()); std::copy (strs.begin(), strs.end(), std::back_inserter(streams)); }
+	{ 
+		assert (!strs.empty()); 
+		std::copy (strs.begin(), strs.end(), std::back_inserter(streams)); 
+		xarr = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
+		curobj = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
+	}
 	CStreamsXpdfReader (boost::shared_ptr<CStream> str) : lexer(NULL)
-		{ assert (str); streams.push_back (str); }
+	{ 
+		assert (str); 
+		streams.push_back (str); 
+		xarr = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
+		curobj = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
+	}
 
 	/** Open. */
 	void open ()
@@ -92,7 +102,7 @@ public:
 		{
 			assert (hasValidRef(*it) && hasValidPdf (*it));
 			IndiRef rf = (*it)->getIndiRef();
-			xpdf::XpdfObject tmp;
+			boost::shared_ptr< ::Object> tmp(new ::Object(), xpdf::object_deleter());
 			tmp->initRef (rf.num, rf.gen);
 			xarr->arrayAdd (tmp.get());
 		}
@@ -298,7 +308,7 @@ public:
 				actstream = streams[pos];
 				actstream->open ();
 				// Fetch an object and look at it
-				xpdf::XpdfObject obj;
+				boost::shared_ptr< ::Object> obj(new ::Object(), xpdf::object_deleter());
 				actstream->getXpdfObject (*obj);
 				if (!actstream->eof())
 				{
