@@ -379,7 +379,7 @@ namespace {
 				string tmp;
 				xpdfObjToString (*o,tmp);
 				oss << tmp;
-				o.reset ();
+				o->free ();
 			}
 			oss << Specification::CARRAY_SUFFIX;
 			break;
@@ -393,7 +393,7 @@ namespace {
 				string tmp;
 				xpdfObjToString (*o,tmp);
 				oss << tmp;
-				o.reset ();
+				o->free ();
 			}
 			oss << Specification::CDICT_SUFFIX;
 			break;
@@ -470,7 +470,7 @@ namespace {
 					// Store it in the storage
 					resultArray.push_back (cobj);
 					// Free resources allocated by the object
-					obj.reset ();
+					obj->free ();
 						
 				}else
 					throw CObjInvalidObject ();

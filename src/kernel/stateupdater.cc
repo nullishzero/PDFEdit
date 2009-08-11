@@ -827,12 +827,10 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 			  // Read till BI found
 			  while (!parser->eofOfActualStream() && !obj->isCmd("BI"))
 			  {
-				obj.reset ();
+				obj->free ();
 				if(!parser->getObj (obj.get())) 
 					throwMalformedFormat("bad data stream");
 			  }
-			  obj.reset();
-
 
 			  if (!parser->eofOfActualStream())
 			  {
@@ -847,7 +845,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 					{
 					  // Get name
 					  string key (obj->getName());
-					  obj.reset();
+					  obj->free();
 					  // Get key
 					  if(!parser->getObj(obj.get())) 
 						  throwMalformedFormat("bad data stream");
@@ -873,16 +871,13 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 						kernelPrintDbg (DBG_DBG, "Bad inline image dictionary.");
 						break;
 					}
-					obj.reset();
+					obj->free();
 					if(!parser->getObj(obj.get())) 
 						throwMalformedFormat("bad data stream");
 				  }
 
 			   } //  if (parser->eofOfActualStream())
 			} // if (charProc->isStream())
-
-			// Free resources
-			charProc.reset ();
 
 			//
 			// Found right width now do the transformations

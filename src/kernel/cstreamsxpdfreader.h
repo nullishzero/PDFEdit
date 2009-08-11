@@ -91,7 +91,7 @@ public:
 	void open ()
 	{		
 		assert (!streams.empty());
-		curobj.reset ();
+		curobj->free ();
 		
 		// Get xref
 		::XRef* xref = utils::getXRef (streams.front());
@@ -123,8 +123,8 @@ public:
 	{
 		parser.reset();
 		lexer = NULL;
-		xarr.reset ();
-		curobj.reset ();
+		xarr->free ();
+		curobj->free ();
 	}
 
 	/** 
@@ -160,7 +160,7 @@ public:
 	 */
 	void getXpdfObject (::Object& obj)
 	{
-		curobj.reset ();
+		curobj->free ();
 		if(!parser->getObj (curobj.get()))
 		{
 			kernelPrintDbg(debug::DBG_ERR, "Unabel to parse object");
