@@ -360,6 +360,16 @@ QSCObject* QSStream::property(const QString &name) {
  }
 }
 
+/**
+ Check if given property exists in stream dictionary
+ @param name Name of property
+ @return True, if property exists in stream dictionary, false if not
+*/
+bool QSStream::exist(const QString &name) {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ return st->containsProperty(util::convertFromUnicode(name,util::PDF));
+}
+
 //TODO: add exist(..) once support in kernel
 
 } // namespace gui

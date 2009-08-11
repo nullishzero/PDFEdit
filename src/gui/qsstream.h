@@ -77,6 +77,8 @@ public slots:
  int count();
  /*- Delete property with given name from stream dictionary */
  void delProperty(const QString &name);
+ /*- Check for existence of property with given name in stream dictionary. If it exists, returns true */
+ bool exist(const QString &name);
  /*- Get property with given name from stream dictionary */
  QSCObject* property(const QString &name);
  /*- Return array containing names of all properties in stream dictionary */
