@@ -38,14 +38,12 @@ namespace xpdf {
 void 
 freeXpdfObject (::Object* obj)
 {
-		assert (obj != NULL);
-		if (NULL == obj)
-			throw XpdfInvalidObject ();
+	assert (obj != NULL);
+	if (NULL == obj)
+		throw XpdfInvalidObject ();
 	
-	// delete all member variables
-	obj->free ();
-	// delete the object itself
-	gfree(obj);
+	object_deleter d;
+	d(obj);
 }
 
 
