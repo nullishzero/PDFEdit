@@ -336,6 +336,8 @@
 ./src/tests/bench/utils.cc
 ./src/tests/bench/utils.h
 ./src/tests/bench/xrefwriter_bench.cc
+./src/tests/bench/content_stream_bench.cc
+./src/tests/bench/delinearize_bench.cc
 ./src/tests/kernel/main.cc
 ./src/tests/kernel/testccontentstream.cc
 ./src/tests/kernel/testcobject.h
