@@ -15,7 +15,9 @@ function from_files()
 {
 	for i in $@
 	do
+		echo $i
 		grep "$WHICH" $i | cut -d: -f$WHAT | cut -d= -f2
+		echo ---
 	done
 }
 
