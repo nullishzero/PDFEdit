@@ -23,7 +23,7 @@
 
 NAME=`basename $0`
 
-function usage()
+usage()
 {
 	echo
 	echo "$NAME gui_directory [lang-gen]"

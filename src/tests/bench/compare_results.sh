@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-function usage()
+usage()
 {
 	echo "`basename $0` result_name field_name file1 [files]"
 	echo
@@ -11,7 +11,7 @@ function usage()
 	echo "At least one file is expected. If the file is - then reads from standard input"
 }
 
-function from_files()
+from_files()
 {
 	for i in $@
 	do
@@ -21,7 +21,7 @@ function from_files()
 	done
 }
 
-function from_input()
+from_input()
 {
 	grep "$WHICH" | cut -d: -f$WHAT | cut -d= -f2
 }

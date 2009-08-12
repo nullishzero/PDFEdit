@@ -23,7 +23,7 @@
 
 LOGFILE=/tmp/fake_install_tools.log
 
-function usage()
+usage()
 {
 	echo -e "\
 	`basename $0` command [params] \n\

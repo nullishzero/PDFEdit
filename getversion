@@ -69,7 +69,7 @@ RELEASE_STAMP_FILE="release_stamp"
 
 cd $GETVERSION_DIR
 
-function print_version()
+print_version()
 {
 	echo -n $PACKAGE_VERSION
 }
@@ -79,12 +79,12 @@ FIND="find src -type f \( -name '*.cc' -o -name '*.h' -o -name '*.qs' \) \
 	| grep -v -f $EXLUDE_FILES \
 	| sed 's@^@$CWD/@'"
 
-function print_files()
+print_files()
 {
 	eval $FIND	
 }
 
-function print_timestamp()
+print_timestamp()
 {
 	export TZ="UTC"
 	date --date=@`print_files | xargs stat -c "%Y" | \
@@ -92,7 +92,7 @@ function print_timestamp()
 		sort -r | head -n1` -u +%Y%m%d%H%M%S
 }
 
-function print_release()
+print_release()
 {
 	# Files which shouldn't be checked during PACKAGE_RELEASE calculation
 	PACKAGE_RELEASE_FILE="`print_timestamp`"
