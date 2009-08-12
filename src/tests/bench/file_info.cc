@@ -71,11 +71,19 @@ int main(int argc, char ** argv)
 	if((ret = init_bench(argc, argv)))
 		return ret;
 
+	ret = 0;
 	while(--argc > 0)
 	{
 		argv++;
 		fprintf(out, "Document information: \"%s\"\n", *argv);
-		print_info(open_file(*argv), out);
+		try 
+		{
+			print_info(open_file(*argv), out);
+		}catch(...)
+		{
+			fprintf(stderr, "Unable to process file\n");
+			ret++;
+		}
 	}
-	return 0;
+	return ret;
 }
