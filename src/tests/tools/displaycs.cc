@@ -77,7 +77,7 @@ int main(int argc, char ** argv)
 	shared_ptr<CPdf> pdf = CPdf::getInstance (file.c_str(), CPdf::ReadWrite);
 
 	// sane values
-	size_t to = pdf->getPageCount();
+	size_t to = pdf->getPageCount()+1;
 	if (vm.count("to")) 
 		to = std::min(to, vm["to"].as<size_t>());
 
