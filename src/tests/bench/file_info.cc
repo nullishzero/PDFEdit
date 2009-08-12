@@ -70,7 +70,12 @@ int main(int argc, char ** argv)
 	FILE * out = stdout;
 	if((ret = init_bench(argc, argv)))
 		return ret;
-	fprintf(out, "Document information: \"%s\"\n", file_name);
-	print_info(open_file(file_name), out);
+
+	while(--argc > 0)
+	{
+		argv++;
+		fprintf(out, "Document information: \"%s\"\n", *argv);
+		print_info(open_file(*argv), out);
+	}
 	return 0;
 }
