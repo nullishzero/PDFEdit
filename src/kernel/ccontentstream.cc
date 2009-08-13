@@ -596,7 +596,7 @@ CContentStream::CContentStream (CStreams& strs,
 	// Create operand observer
 	operandobserver = boost::shared_ptr<OperandObserver> (new OperandObserver (this));
 	
-	// Parse it, move parsed straems from strs to cstreams
+	// Parse it, move parsed streams from strs to cstreams
 	parse (operators, strs, *this, operandobserver, &cstreams);
 	
 	// Save bounding boxes

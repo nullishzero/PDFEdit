@@ -485,10 +485,11 @@ CPageContents::addText (const std::string& what, const libs::Point& where)
     fontOperands.push_back(shared_ptr<IProperty>(new CReal (fontSize)));
     q->push_back(BT,q);
     BT->push_back(createOperator("Tf", fontOperands), getLastOperator(BT));
-    PdfOperator::Operands posOperands;
-    posOperands.push_back(shared_ptr<IProperty>(new CReal (where.x)));
-    posOperands.push_back(shared_ptr<IProperty>(new CReal (where.y)));
-    BT->push_back(createOperator("Td", posOperands), getLastOperator(BT));
+    
+	_likely_tm.set_position(where);
+	PdfOperator::Operands posOperands = _likely_tm;
+    BT->push_back(createOperator("Tm", posOperands), getLastOperator(BT));
+
     PdfOperator::Operands textOperands;
     textOperands.push_back(shared_ptr<IProperty>(new CString (what)));
     BT->push_back(createOperator("Tj", textOperands), getLastOperator(BT));
@@ -802,6 +803,32 @@ CPageContents::parse ()
 		cc->setSmartPointer (cc);
 		_ccs.push_back (cc);
 	}
+
+	// uff, go through the first content operators and find out usefull information
+	// - for now the text orientation
+	// - pdfoperators will be reimplemented anyway
+	for (CCs::const_iterator it = _ccs.begin(); 
+			it != _ccs.end(); 
+			++it)
+	{
+		CContentStream::Operators ops;
+		(*it)->getPdfOperators (ops);
+		PdfOperator::Iterator opit = PdfOperator::getIterator (ops.front());
+		while (!opit.isEnd())
+		{
+			std::string tmp;
+			opit.getCurrent()->getOperatorName (tmp);
+			PdfOperator::Operands operands;
+			if (tmp == "Tm")
+			{
+					kernelPrintDbg (debug::DBG_WARN, "Using non default different Tm");
+				opit.getCurrent()->getParameters (operands);
+				_likely_tm = operands;
+			}
+			opit.next();
+		}
+	}
+
 
 
 	// Indicate change

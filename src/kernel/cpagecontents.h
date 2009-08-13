@@ -82,6 +82,36 @@ private:
 
 	//==========================================================
 
+	/** 
+	 * Text matrix according to pdf specification. 
+	 * @see pdf specification
+	 */
+	struct Tm 
+	{
+		Tm () 
+		{
+			std::fill (_tm, _tm+6, 0); _tm[0] = _tm[3] = 1; 
+		}
+		void operator= (const PdfOperator::Operands& ops) 
+		{ 
+				if (ops.size() !=  6)
+					return;
+			for (size_t i = 0; i < 6; ++i)
+				_tm[i] = utils::getDoubleFromIProperty(ops[i]);
+		}
+		void set_position (const libs::Point& p) 
+			{ _tm[4] = p.x; _tm[5] = p.y; }
+		operator PdfOperator::Operands () 
+		{
+			PdfOperator::Operands _opers;
+			for (const double* it = &_tm[0]; it != &_tm[6]; ++it)
+				_opers.push_back (boost::shared_ptr<IProperty>(new CReal (*it)));
+			return  _opers;
+		}
+		double _tm [6];
+	};
+
+
 	// Typedefs
 private:
 	typedef std::vector<boost::shared_ptr<CContentStream> > CCs;
@@ -91,7 +121,8 @@ private:
 	CCs _ccs;		// content streams
 	CPage* _page;	// pages
 	boost::shared_ptr<CDict> _dict;	// pages
-	boost::shared_ptr<ContentsWatchDog> _wd; // content streams
+	boost::shared_ptr<ContentsWatchDog> _wd;
+	Tm _likely_tm;
 
 
 	// Ctor & Dtor

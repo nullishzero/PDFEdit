@@ -25,6 +25,7 @@
 #include <kernel/pdfedit-core-dev.h>
 #include <kernel/cpdf.h>
 #include <kernel/cpage.h>
+#include <kernel/factories.h>
 #include <kernel/ccontentstream.h>
 #include <boost/program_options.hpp>
 
