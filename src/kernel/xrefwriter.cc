@@ -29,6 +29,7 @@
 #include "kernel/cxref.h"
 #include "kernel/streamwriter.h"
 #include "kernel/pdfwriter.h"
+#include "kernel/factories.h"
 
 using namespace debug;
 
@@ -314,7 +315,7 @@ bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref)
 			kernelPrintDbg(DBG_ERR, name<<" cannot be assigned to "<<value.getType());
 			return false;
 		}
-		boost::shared_ptr<Object> o(new Object(), xpdf::object_deleter());
+		boost::shared_ptr<Object> o(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		xref.fetch(value.getRefNum(), value.getRefGen(), o.get());
 		if(o->getType() != objDict)
 		{
@@ -332,7 +333,7 @@ bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref)
 		// the size and types of elements (2 strings)
 	}else if(!strcmp(name, "Encrypt"))	// direct array
 	{
-		boost::shared_ptr<Object> o(new Object(), xpdf::object_deleter());
+		boost::shared_ptr<Object> o(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		value.fetch(&xref, o.get());
 		if(o->getType() != objDict)
 		{

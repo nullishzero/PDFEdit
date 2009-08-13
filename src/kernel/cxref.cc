@@ -216,7 +216,7 @@ using namespace debug;
 	if (!currTrailer)
 	{
 		// first change to the trailer
-		currTrailer = boost::shared_ptr<Object>(new Object(), xpdf::object_deleter());
+		currTrailer = boost::shared_ptr<Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		XRef::getTrailerDict()->copy(currTrailer.get());
 	}
 	Dict * trailer = getTrailerDict()->getDict(); 
@@ -612,7 +612,7 @@ using namespace debug;
 
 	// delegates to original implementation
 	kernelPrintDbg(DBG_DBG, ref<<" is not changed - using Xref");
-	boost::shared_ptr< ::Object> tmpObj(new ::Object(), xpdf::object_deleter());
+	boost::shared_ptr< ::Object> tmpObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	XRef::fetch(num, gen, tmpObj.get());
 	if (!isOk())
 	{

@@ -30,6 +30,7 @@
 #include "kernel/stateupdater.h"
 #include "kernel/pdfoperators.h"
 #include "kernel/cobject.h"
+#include "kernel/factories.h"
 
 
 //==========================================================
@@ -812,7 +813,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		  //
 		  // Try to find out the height and width of this letter
 		  //
-		  boost::shared_ptr< ::Object> charProc(new ::Object(), xpdf::object_deleter());
+		  boost::shared_ptr< ::Object> charProc(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		  static_cast<Gfx8BitFont*>(font)->getCharProc (code, charProc.get());
 		  if (charProc->isStream())
 		  {
@@ -823,7 +824,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 						  gFalse
 						  )
 					  );
-			  boost::shared_ptr< ::Object> obj(new ::Object(), xpdf::object_deleter());
+			  boost::shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 			  // Read till BI found
 			  while (!parser->eofOfActualStream() && !obj->isCmd("BI"))
 			  {

@@ -29,6 +29,7 @@
 #include "kernel/static.h"
 #include "kernel/cobject.h"
 #include "kernel/cobjecthelpers.h"
+#include "kernel/factories.h"
 
 /** 
  * Content streams can be separated in crazy
@@ -76,15 +77,15 @@ public:
 	{ 
 		assert (!strs.empty()); 
 		std::copy (strs.begin(), strs.end(), std::back_inserter(streams)); 
-		xarr = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
-		curobj = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
+		xarr = boost::shared_ptr< ::Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+		curobj = boost::shared_ptr< ::Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	}
 	CStreamsXpdfReader (boost::shared_ptr<CStream> str) : lexer(NULL)
 	{ 
 		assert (str); 
 		streams.push_back (str); 
-		xarr = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
-		curobj = boost::shared_ptr< ::Object>(new ::Object(), xpdf::object_deleter());
+		xarr = boost::shared_ptr< ::Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+		curobj = boost::shared_ptr< ::Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	}
 
 	/** Open. */
@@ -102,7 +103,7 @@ public:
 		{
 			assert (hasValidRef(*it) && hasValidPdf (*it));
 			IndiRef rf = (*it)->getIndiRef();
-			boost::shared_ptr< ::Object> tmp(new ::Object(), xpdf::object_deleter());
+			boost::shared_ptr< ::Object> tmp(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 			tmp->initRef (rf.num, rf.gen);
 			xarr->arrayAdd (tmp.get());
 		}
@@ -308,7 +309,7 @@ public:
 				actstream = streams[pos];
 				actstream->open ();
 				// Fetch an object and look at it
-				boost::shared_ptr< ::Object> obj(new ::Object(), xpdf::object_deleter());
+				boost::shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 				actstream->getXpdfObject (*obj);
 				if (!actstream->eof())
 				{

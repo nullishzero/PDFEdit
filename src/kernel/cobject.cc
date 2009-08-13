@@ -32,6 +32,7 @@
 #include "kernel/cobject.h"
 #include "kernel/cpdf.h"
 #include "kernel/cxref.h"
+#include "kernel/factories.h"
 
 
 // =====================================================================================
@@ -87,9 +88,9 @@ parseStreamToContainer (T& container, ::Object& obj)
 	}
 
 	// Get stream length
-	boost::shared_ptr< ::Object> xpdfDict(new ::Object(), xpdf::object_deleter()); 
+	boost::shared_ptr< ::Object> xpdfDict(XPdfObjectFactory::getInstance(), xpdf::object_deleter()); 
 	xpdfDict->initDict (obj.streamGetDict());
-	boost::shared_ptr< ::Object> xpdfLen(new ::Object(), xpdf::object_deleter()); 
+	boost::shared_ptr< ::Object> xpdfLen(XPdfObjectFactory::getInstance(), xpdf::object_deleter()); 
 	xpdfDict->dictLookup ("Length", xpdfLen.get());
 	assert (xpdfLen->isInt ());
 	assert (0 <= xpdfLen->getInt());

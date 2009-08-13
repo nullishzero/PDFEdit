@@ -85,7 +85,7 @@ main(int argc, char ** argv)
 	ffile.read (buf, size);
 	ffile.close();
 
-	boost::shared_ptr<::Object> obj(new ::Object(), xpdf::object_deleter());
+	boost::shared_ptr<::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	::MemStream* stream = new ::MemStream (buf, 0, size, obj.get(), true);
 
 	// this is really NASTY
@@ -105,7 +105,7 @@ main(int argc, char ** argv)
 		//cout << obj << endl;
 		if (obj->isStream())
 		{
-			boost::shared_ptr<::Object> _obj(new ::Object(), xpdf::object_deleter());
+			boost::shared_ptr<::Object> _obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 			Stream* _stream = obj->getStream();
 			::Lexer* _lexer = new ::Lexer (NULL, _stream);
 			::Parser _parser (NULL, _lexer, gFalse);

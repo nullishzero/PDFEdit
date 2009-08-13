@@ -93,7 +93,7 @@ void collectReachableRefs(::XRef& xref, ::Object &obj, Flattener::RefList &refLi
  */
 void collectDictRefElems(::XRef &xref, ::Dict &dict, Flattener::RefList &refList)
 {
-	boost::shared_ptr< ::Object> elem(new ::Object(), xpdf::object_deleter());
+	boost::shared_ptr< ::Object> elem(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	for(int i=0; i<dict.getLength(); i++)
 	{
 		if(!dict.getValNF(i, elem.get()))
@@ -123,7 +123,7 @@ void collectReachableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList
 	{
 		case objArray:
 		{
-			boost::shared_ptr< ::Object> elem(new ::Object(), xpdf::object_deleter());
+			boost::shared_ptr< ::Object> elem(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 			for(int i=0; i<obj.arrayGetLength(); i++)
 			{
 				if(!obj.arrayGetNF(i, elem.get()))
@@ -157,7 +157,7 @@ void collectReachableRefs(XRef& xref, ::Object &obj, Flattener::RefList &refList
 			// TODO should be sorted by offset to keep the same
 			// ordering in the file as the original document
 			refList.push_back(ref);
-			boost::shared_ptr< ::Object> target(new ::Object(), xpdf::object_deleter());
+			boost::shared_ptr< ::Object> target(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 			if(!obj.fetch(&xref, target.get()) || !xref.isOk())
 			{
 				kernelPrintDbg(debug::DBG_ERR, ref<<" object fetching failed with code="
