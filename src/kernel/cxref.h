@@ -111,6 +111,10 @@ private:
 	 */
 	bool internal_fetch;
 
+	/** Core initialization for instance.
+	 * Called by constructor only.
+	 */
+	void init();
 protected:
 	/** Empty constructor.
 	 *
@@ -333,9 +337,13 @@ public:
 	 * @param stream Stream with file data.
 	 *
 	 * Delegates to XRef constructor with same parameter.
+	 * <br>
+	 * Given stream is always deallocated in this class. Caller should never
+	 * (even if an exception is thrown) deallocate it.
 	 *
 	 * @throw MalformedFormatExeption if XRef creation fails (instance is
 	 * unusable in such situation).
+	 * @throw PDFedit_devException if pdfedit-core-dev is not initialized.
 	 */
 	CXref(BaseStream * stream);
 

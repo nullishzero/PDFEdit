@@ -2383,11 +2383,9 @@ using namespace std;
 	}catch(std::exception &e)
 	{
 		// If we have failed in constructor then we have to close file handle
-		// manualy and delete stream as the PdfFileDeleter didn't get chance 
-		// to do it
+		// manualy as the PdfFileDeleter didn't get chance to do it
 		if(!instance) 
 		{
-			delete stream;
 			fclose(file);
 		}
 		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. filename="
