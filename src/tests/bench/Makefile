@@ -28,7 +28,7 @@ content_stream_bench: content_stream_bench.o $(UTILS_OBJS)
 delinearize_bench: delinearize_bench.o $(UTILS_OBJS)
 	$(LINK) $(LDFLAGS) -o delinearize_bench delinearize_bench.o $(UTILS_OBJS) $(MANDATORY_LIBS)
 
-file_info: file_info.o
+file_info: file_info.o utils.o
 	$(LINK) $(LDFLAGS) -o file_info file_info.o $(UTILS_OBJS) $(MANDATORY_LIBS)
 
 clean: 
