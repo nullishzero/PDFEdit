@@ -204,7 +204,7 @@ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
 //------------------------------------------------------------------------
 
 static const char * PDFHEADER="%PDF-";
-XRef::XRef(BaseStream *strA):entries(NULL) {
+XRef::XRef(BaseStream *strA):entries(NULL), streamEnds(NULL), objStr(NULL) {
   // inits stream and initializes internals
   str = strA;
 
