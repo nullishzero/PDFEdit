@@ -212,6 +212,7 @@ XRef::XRef(BaseStream *strA):entries(NULL) {
   // get PDF specification version from file
   char buffer[1024];
   char * header;
+  str->reset();
   do {
     if(!str->getLine(buffer, sizeof(buffer)))
     {
