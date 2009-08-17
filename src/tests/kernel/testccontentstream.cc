@@ -307,6 +307,11 @@ opcount (UNUSED_PARAM	ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> pdf = getTestCPdf (fileName);
 	/// Intermezzo
 	boost::scoped_ptr<PDFDoc> doc  (new PDFDoc (new GString(fileName), NULL, NULL));
+	if(!doc->isOk())
+	{
+		std::cout << "Bad PDF document: " << fileName << flush;
+		return false;
+	}
 
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
