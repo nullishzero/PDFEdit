@@ -354,7 +354,8 @@ bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref)
 {
 	if (!name || !value)
 	{
-		kernelPrintDbg(DBG_ERR, "Invalid parameters. name="<<name<<" value="<<value);
+		kernelPrintDbg(DBG_ERR, "Invalid parameters. name="<<((name)?name:"NULL")
+				<<" value="<<(const void*)value);
 		throw ElementBadTypeException("");
 	}
 	kernelPrintDbg(DBG_DBG, "name="<<name);
