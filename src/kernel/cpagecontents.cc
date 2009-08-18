@@ -813,6 +813,8 @@ CPageContents::parse ()
 	{
 		CContentStream::Operators ops;
 		(*it)->getPdfOperators (ops);
+		if (ops.empty())
+			continue;
 		PdfOperator::Iterator opit = PdfOperator::getIterator (ops.front());
 		while (!opit.isEnd())
 		{
