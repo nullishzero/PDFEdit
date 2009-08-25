@@ -324,7 +324,7 @@ boost::shared_ptr<IProperty> getIPropertyFromDate(const tm * time);
  * Get all children of a tree like structre of pdf objects with, "Prev", Next", "First"
  * dictionary entries. This function can be used e.g. for getting all outlines.
  *
- * @param topdict Top level dictionary.
+ * @param topdict Top level dictionary (it won't be included in the cont).
  * @param cont Output container of all children.
  */
 template<typename Container>
@@ -345,9 +345,6 @@ getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
 	}catch (ElementNotFoundException&) // No child
 		{ return; }
 
-	// Get the last child
-	boost::shared_ptr<CDict> last = getCDictFromDict (topdict, "Last");
-	
 	//
 	// Children found
 	// 
@@ -360,11 +357,12 @@ getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
 		// Add all its children
 		getAllChildrenOfPdfObject (dict, cont);
 		
-		// We are at the end
-		if (dict == last)
+		try {
+			dict = getCDictFromDict (dict, "Next");
+		}catch (ElementNotFoundException&)
+		{
 			return;
-		
-		dict = getCDictFromDict (dict, "Next");
+		}
 	}
 }
 
