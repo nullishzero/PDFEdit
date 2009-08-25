@@ -1,5 +1,5 @@
 XXXX-XX-XX PDF Editor 0.4.4
-	* Bugs 320, 324, 329, 330 fixed
+	* Bugs 320, 324, 329, 330, 334 fixed
 	* several potential memory leaks fixed
 	* Internal changes
 		- CPdf::changeTrailer implemented (bt#224)
