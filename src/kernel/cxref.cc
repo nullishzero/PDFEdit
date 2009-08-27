@@ -484,7 +484,7 @@ using namespace debug;
 
 ::Object * CXref::getTrailerEntry(char * name)
 {
-using namespace debug;
+	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "name="<<name);
 	Dict * trailer = getTrailerDict()->getDict();
@@ -493,16 +493,15 @@ using namespace debug;
 	// we have to get value and then make deep copy
 	// calling clone method. To keep clean reference counting
 	// obj has to be freed
-	::Object obj;
-	trailer->lookupNF(name, &obj);
+	boost::shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	trailer->lookupNF(name, obj.get());
 
-	::Object * retValue=obj.clone();
-	obj.free();
+	::Object * retValue=obj->clone();
 	if(!retValue)
 	{
 		// cloning has failed
 		kernelPrintDbg(DBG_ERR, "Trailer::"<<name<<" ("
-				<<obj.getType() 
+				<<obj->getType() 
 				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
@@ -512,61 +511,61 @@ using namespace debug;
 
 ::Object *CXref::getDocInfo(::Object *obj)
 {
-using namespace debug;
+	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 
 	// TODO needs credentials ?
 
 	// gets object
-	::Object docObj;
-	XRef::getDocInfo(&docObj);
+	boost::shared_ptr< ::Object> docObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	XRef::getDocInfo(docObj.get());
 
 	// creates deep copy and frees object from getDocInfo
 	// and initialize parameter from cloned value
-	::Object * retObj=docObj.clone();
-	docObj.free();
+	::Object * retObj=docObj->clone();
 	if(!retObj)
 	{
 		// cloning has failed
 		kernelPrintDbg(DBG_ERR, "Trailer::Info ("
-				<<docObj.getType()
+				<<docObj->getType()
 				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	*obj=*retObj;
 
+	// TODO do we really want to have different point returned than filled?
 	return retObj;
 }
 
 ::Object *CXref::getDocInfoNF(::Object *obj)
 {
-using namespace debug;
+	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 
 	// TODO needs credentials ?
 
 	// gets object
-	::Object docObj;
-	XRef::getDocInfoNF(&docObj);
+	boost::shared_ptr< ::Object> docObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	XRef::getDocInfoNF(docObj.get());
 
 	// creates deep copy and frees object (because getDocInfoNF 
 	// uses copy method) from getDocInfo
 	// and initialize parameter from cloned value
-	::Object * retObj=docObj.clone();
-	docObj.free();
+	::Object * retObj=docObj->clone();
 	if(!retObj)
 	{
 		// cloning has failed
 		kernelPrintDbg(DBG_ERR, "Trailer::Info ("
-				<<docObj.getType()
+				<<docObj->getType()
 				<<") can't be cloned. Uses objNull instead");
 		throw NotImplementedException("clone failure.");
 	}
 	// shallow copy of the content (deep copied)
 	*obj=*retObj;
 
+	// TODO do we really want to have different point returned than filled?
 	return retObj;
 }
 
@@ -710,17 +709,16 @@ using namespace debug;
 
 bool CXref::checkEncryptedContent()
 {
-	Object encrypt;
+	boost::shared_ptr< ::Object> encrypt(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	needs_credentials = false;
 	enableInternalFetch();
-	getTrailerDict()->dictLookup("Encrypt", &encrypt);
+	getTrailerDict()->dictLookup("Encrypt", encrypt.get());
 	disableInternalFetch();
 	encrypted = false;
-	if ((encrypted = encrypt.isDict())) {
+	if ((encrypted = encrypt->isDict())) {
 		needs_credentials = true;
 		encrypted = true;
 	}
-	encrypt.free();
 
 	return needs_credentials;
 }

@@ -58,6 +58,7 @@ bool checkLinearized(StreamWriter & stream, CXref * xref, Ref * ref)
 	//  result is false by default - it MUST BE linearized dictionary
 	bool result = false;
 
+	// TODO rewrite to use shared_ptr for obj1, obj2, obj3 
 	while(subStr->getPos() < FIRST_LINEARIZED_BLOCK)
 	{
 		Object obj1, obj2, obj3;
@@ -219,11 +220,10 @@ bool XRefWriter::paranoidCheck(const ::Ref &ref, ::Object * obj)
 		{
 			// gets original value and uses typeSafe to 
 			// compare with given value type
-			::Object original;
-			fetch(ref.num, ref.gen, &original);
-			ObjType originalType=original.getType();
-			bool safe=typeSafe(&original, obj);
-			original.free();
+			boost::shared_ptr< ::Object> original(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+			fetch(ref.num, ref.gen, original.get());
+			ObjType originalType=original->getType();
+			bool safe=typeSafe(original.get(), obj);
 			if(!safe)
 			{
 				kernelPrintDbg(DBG_WARN, ref<<" type="<<obj->getType()
@@ -575,19 +575,18 @@ size_t getPrevFromTrailer(Object * trailer)
 
 	// gets prev field from current trailer and if it is null object (not
 	// present) or doesn't have integer value, jumps out of loop
-	Object prev;
-	trailerDict->lookupNF("Prev", &prev);
-	if(prev.getType()!=objInt)
+	boost::shared_ptr< ::Object> prev(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	trailerDict->lookupNF("Prev", prev.get());
+	if(prev->getType()!=objInt)
 	{
 		kernelPrintDbg(DBG_DBG, "Prev doesn't have int value. type="
-				<<prev.getType()<<
+				<<prev->getType()<<
 				". Assuming no more revisions.");
-		prev.free();
 		return ERR_OFFSET;
 	}
 
 	// releases prev because we don't need it anymore
-	int value=prev.getInt();
+	int value=prev->getInt();
 	if(value<0)
 		return ERR_OFFSET;
 	return value;
@@ -661,21 +660,17 @@ int XRefWriter::getOldStyleTrailer(Object * trailer, size_t off)
 int XRefWriter::getStreamTrailer(Object * trailer, size_t off, ::Parser & parser)
 {
 	// gen number should follow
-	::Object obj;
-	if(!parser.getObj(&obj))
+	boost::shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	if(!parser.getObj(obj.get()))
 		goto malformedErr;
-	if(!obj.isInt())
+	if(!obj->isInt())
 		goto bad_header;
-	// We don't need to free obj here, because int is not
-	// allocated internally
-	// end of indirect object header is obj key word
-	if(!parser.getObj(&obj))
+	if(!parser.getObj(obj.get()))
 		goto malformedErr;
-	if(!obj.isCmd("obj"))
+	if(!obj->isCmd("obj"))
 		goto bad_header;
 
 	// header of indirect object is ok, so parse trailer object
-	obj.free();
 	trailer->free();
 	if(!parser.getObj(trailer))
 		goto malformedErr;
@@ -695,7 +690,6 @@ malformedErr:
 	return -1;
 bad_header:
 	kernelPrintDbg(DBG_ERR, "Trailer header corrupted.");
-	obj.free();
 	return -1;
 }
 
@@ -763,32 +757,30 @@ void XRefWriter::collectRevisions()
 		// It can be either xref key word or beginning of the 
 		// xref stream object
 		str->setPos(off);
-		Object parseObj, obj;
+		Object parseObj; 
+		boost::shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		::Parser parser = Parser(this,
 			new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj)),
 			gTrue
 			);
-		if(!parser.getObj(&obj))
+		if(!parser.getObj(obj.get()))
 		{
 			kernelPrintDbg(DBG_ERR, "Unable to parse stream");
 			throw MalformedFormatExeption("parse data stream");
 		}
-		if(obj.isCmd(XREF_KEYWORD))
+		if(obj->isCmd(XREF_KEYWORD))
 		{
-			obj.free();
 			if(getOldStyleTrailer(trailer, off)<0)
 				break;
-		}else if(obj.isInt())
+		}else if(obj->isInt())
 		{
 			// xref key work no found, it may be xref stream object
 			// gen number should follow
-			obj.free();
 			if(getStreamTrailer(trailer, off, parser))
 				break;
 		}else {
 			kernelPrintDbg(DBG_ERR, "Bad trailer definition. Dictionary or stream"
-					"expected, but "<<obj.getType()<<"found");
-			obj.free();
+					"expected, but "<<obj->getType()<<"found");
 			break;
 		}
 	// continues only if no problem with trailer occures

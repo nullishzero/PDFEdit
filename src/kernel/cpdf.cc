@@ -1854,7 +1854,7 @@ CPdf::~CPdf()
 // CPdf * not const CPdf * given by this
 boost::shared_ptr<IProperty> CPdf::getIndirectProperty(const IndiRef &ref)const
 {
-using namespace debug;
+	using namespace debug;
 
 	check_need_credentials(xref);
 
@@ -1870,9 +1870,9 @@ using namespace debug;
 
 	// mapping doesn't exist yet, so tries to create one
 	// fetches object according reference
-	Object obj;
+	shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	assert(xref);
-	xref->fetch(ref.num, ref.gen, &obj);
+	xref->fetch(ref.num, ref.gen, obj.get());
 	
 	boost::shared_ptr<IProperty> prop_ptr;
 
@@ -1880,9 +1880,9 @@ using namespace debug;
 	// parent is set to object reference (it is its own indirect parent)
 	// created object is wrapped to smart pointer and if not pNull also added to
 	// the mapping
-	if(obj.getType()!=objNull)
+	if(obj->getType()!=objNull)
 	{
-		IProperty * prop=utils::createObjFromXpdfObj(_this.lock(), obj, ref);
+		IProperty * prop=utils::createObjFromXpdfObj(_this.lock(), *obj, ref);
 		prop_ptr=shared_ptr<IProperty>(prop);
 		indMap.insert(IndirectMapping::value_type(ref, prop_ptr));
 		kernelPrintDbg(DBG_DBG, "Mapping created for "<<ref);
@@ -1892,7 +1892,6 @@ using namespace debug;
 		prop_ptr=shared_ptr<CNull>(CNullFactory::getInstance());
 	}
 
-	obj.free ();
 	return prop_ptr;
 }
 

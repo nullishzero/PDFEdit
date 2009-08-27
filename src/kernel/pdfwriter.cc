@@ -27,6 +27,7 @@
 #include "kernel/pdfwriter.h"
 #include "kernel/cobject.h"
 #include "kernel/streamwriter.h"
+#include "kernel/factories.h"
 #include <zlib.h>
 
 /** Size of buffer for xref table row.
@@ -147,15 +148,14 @@ bool NullFilterStreamWriter::supportObject(UNUSED_PARAM Object& obj)const
 unsigned char * NullFilterStreamWriter::null_extractor(Object&obj, size_t& size)
 {
 	assert(obj.isStream());
-	Object lenghtObj;
-	obj.streamGetDict()->lookup("Length", &lenghtObj);
-	if(!lenghtObj.isInt())
+	boost::shared_ptr< ::Object> lenghtObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	obj.streamGetDict()->lookup("Length", lenghtObj.get());
+	if(!lenghtObj->isInt())
 	{
-		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
-		lenghtObj.free();
+		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj->getType());
 		return NULL;
 	}
-	size_t streamLen = lenghtObj.getInt();
+	size_t streamLen = lenghtObj->getInt();
 
 	// we are using BaseStream here because we want to read data
 	// without any decoding

@@ -965,20 +965,19 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	}
 	
 	// gets buffer len from stream dictionary Length field
-	Object lenghtObj;
+	boost::shared_ptr< ::Object> lenghtObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	Dict *streamDict = streamObject.streamGetDict();
-	streamDict->lookup("Length", &lenghtObj);
-	if(!lenghtObj.isInt())
+	streamDict->lookup("Length", lenghtObj.get());
+	if(!lenghtObj->isInt())
 	{
-		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
-		lenghtObj.free();
+		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj->getType());
 		return 0;
 	}
 	// we don't need to call free for lenghtObj because it is 
 	// int which doesn't allocate any memory for internal data
-	if(0>lenghtObj.getInt())
+	if(0>lenghtObj->getInt())
 	{
-		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
+		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj->getInt());
 		return 0;
 	}
 	
@@ -1009,12 +1008,12 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	// Update dict stream with the new Length value (if necessary)
 	// TODO indirect value would be much better, but we don't have
 	// access to the XrefWriter here
-	if (lenghtObj.getInt() != realBufferLen)
+	if (lenghtObj->getInt() != realBufferLen)
 	{
-		lenghtObj.initInt(realBufferLen);
+		lenghtObj->initInt(realBufferLen);
 		// don't need to give copyString(Length) because we are sure, that
 		// this entry already exists
-		Object* oldLen = streamDict->update("Length", &lenghtObj);
+		Object* oldLen = streamDict->update("Length", lenghtObj.get());
 		if(oldLen)
 			freeXpdfObject(oldLen);
 	}
@@ -1023,11 +1022,10 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	// for Dict -> String conversion
 	// initDict increases streamDict's reference thus we need to
 	// decrease it back by free
-	Object streamDictObj;
-	streamDictObj.initDict(streamDict);
+	shared_ptr< ::Object> streamDictObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	streamDictObj->initDict(streamDict);
 	std::string dict;
-	xpdfObjToString(streamDictObj, dict);
-	streamDictObj.free();
+	xpdfObjToString(*streamDictObj, dict);
 
 	// gets total length and allocates CharBuffer for output
 	size_t len = header.length() + 

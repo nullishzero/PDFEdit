@@ -27,6 +27,7 @@
 #include "kernel/cstream.h"
 #include "kernel/cpdf.h"
 #include "kernel/exceptions.h"
+#include "kernel/factories.h"
 
 //=====================================================================================
 namespace pdfobjects {
@@ -56,12 +57,11 @@ CStream::CStream (boost::weak_ptr<CPdf> p, ::Object& o, const IndiRef& rf) : IPr
 		throw XpdfInvalidObject ();
 	
 	// Get the dictionary and init CDict with it
-	::Object objDict;
+	boost::shared_ptr< ::Object> objDict(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	::Dict* dict = o.streamGetDict ();
 	assert (NULL != dict);
-	objDict.initDict (dict);
-	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
-	objDict.free ();
+	objDict->initDict (dict);
+	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, *objDict, dictionary.value);
 
 	// Set pdf and ref
 	dictionary.setPdf (p);
@@ -84,12 +84,11 @@ CStream::CStream (::Object& o) : parser (NULL), tmpObj (NULL)
 		throw XpdfInvalidObject ();
 	
 	// Get the dictionary and init CDict with it
-	::Object objDict;
+	boost::shared_ptr< ::Object> objDict(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	::Dict* dict = o.streamGetDict();
 	assert (NULL != dict);
-	objDict.initDict (dict);
-	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
-	objDict.free ();
+	objDict->initDict (dict);
+	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, *objDict, dictionary.value);
 
 	// Save the contents of the container
 	utils::parseStreamToContainer (buffer, o);
