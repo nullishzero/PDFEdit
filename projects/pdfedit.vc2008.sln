@@ -97,6 +97,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "add_text", "tools\add_text.
 		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F} = {4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdf_to_text", "tools\pdf_to_text.vcproj", "{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F} = {4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -380,6 +385,19 @@ Global
 		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEA}.Release|WINCESDK_600 (ARMV4I).ActiveCfg = Release|Win32
 		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEA}.Release-Tests|Win32.ActiveCfg = Release|Win32
 		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEA}.Release-Tests|WINCESDK_600 (ARMV4I).ActiveCfg = Release|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug|WINCESDK_600 (ARMV4I).ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Tests|Win32.ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Tests|WINCESDK_600 (ARMV4I).ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Tools|Win32.ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Tools|Win32.Build.0 = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Tools|WINCESDK_600 (ARMV4I).ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Win32Gui|Win32.ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Debug-Win32Gui|WINCESDK_600 (ARMV4I).ActiveCfg = Debug|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Release|Win32.ActiveCfg = Release|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Release|WINCESDK_600 (ARMV4I).ActiveCfg = Release|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Release-Tests|Win32.ActiveCfg = Release|Win32
+		{F4B0B7E4-A405-4EB1-A74F-765181FE3BEB}.Release-Tests|WINCESDK_600 (ARMV4I).ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
