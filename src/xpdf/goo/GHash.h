@@ -29,9 +29,15 @@ public:
   GHash(GBool deleteKeysA = gFalse);
   ~GHash();
   void add(GString *key, void *val);
+  void add(const GString *key, void *val);
   void add(GString *key, int val);
+  void add(const GString *key, int val);
+  void replace(GString *key, void *val, GBool delKey);
   void replace(GString *key, void *val);
+  void replace(const GString *key, void *val);
+  void replace(GString *key, int val, GBool delKey);
   void replace(GString *key, int val);
+  void replace(const GString *key, int val);
   void *lookup(GString *key);
   int lookupInt(GString *key);
   void *lookup(char *key);

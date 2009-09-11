@@ -12,6 +12,7 @@
 #pragma implementation
 #endif
 
+#include <stdlib.h>
 #include "goo/gmem.h"
 #include "goo/GString.h"
 #include "goo/GHash.h"
@@ -82,6 +83,14 @@ void GHash::add(GString *key, void *val) {
   ++len;
 }
 
+void GHash::add(const GString *key, void *val) {
+  if (deleteKeys) {
+    fprintf(stderr, "BUG in GHash::add with const key and deleteKeys");
+    exit(1);
+  }
+  add((GString *)key, val);
+}
+
 void GHash::add(GString *key, int val) {
   GHashBucket *p;
   int h;
@@ -101,28 +110,62 @@ void GHash::add(GString *key, int val) {
   ++len;
 }
 
-void GHash::replace(GString *key, void *val) {
+void GHash::add(const GString *key, int val) {
+  if (deleteKeys) {
+    fprintf(stderr, "BUG in GHash::add with const key and deleteKeys");
+    exit(1);
+  }
+  add((GString*)key, val);
+}
+
+void GHash::replace(GString *key, void *val, GBool delKey) {
   GHashBucket *p;
   int h;
 
   if ((p = find(key, &h))) {
     p->val.p = val;
-    delete key;
+    if (delKey)
+      delete key;
+  } else {
+    add(key, val);
+  }
+}
+
+void GHash::replace(GString *key, void *val) {
+  replace(key, val, gTrue);
+}
+
+void GHash::replace(const GString *key, void *val) {
+  if (deleteKeys) {
+    fprintf(stderr, "BUG in GHash::replace with const key and deleteKeys");
+    exit(1);
+  }
+  replace((GString *)key, val, gFalse);
+}
+
+void GHash::replace(GString *key, int val, GBool delKey) {
+  GHashBucket *p;
+  int h;
+
+  if ((p = find(key, &h))) {
+    p->val.i = val;
+    if (delKey)
+      delete key;
   } else {
     add(key, val);
   }
 }
 
 void GHash::replace(GString *key, int val) {
-  GHashBucket *p;
-  int h;
+  replace(key, val, gTrue);
+}
 
-  if ((p = find(key, &h))) {
-    p->val.i = val;
-    delete key;
-  } else {
-    add(key, val);
+void GHash::replace(const GString *key, int val) {
+  if (deleteKeys) {
+    fprintf(stderr, "BUG in GHash::replace with const key and deleteKeys");
+    exit(1);
   }
+  replace((GString *)key, val, gFalse);
 }
 
 void *GHash::lookup(GString *key) {
