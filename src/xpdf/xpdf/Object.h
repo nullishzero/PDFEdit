@@ -176,12 +176,14 @@ public:
   // Dict accessors.
   int dictGetLength();
   void dictAdd(char *key, Object *val);
+  Object * dictUpdate(char *key, Object *val);
   GBool dictIs(const char *dictType);
   Object *dictLookup(const char *key, Object *obj);
   Object *dictLookupNF(const char *key, Object *obj);
   char *dictGetKey(int i);
   Object *dictGetVal(int i, Object *obj);
   Object *dictGetValNF(int i, Object *obj);
+  Object *dictDel(char *key);
 
   // Stream accessors.
   GBool streamIs(const char *dictType);
@@ -253,6 +255,9 @@ inline int Object::dictGetLength()
 inline void Object::dictAdd(char *key, Object *val)
   { dict->add(key, val); }
 
+inline Object * Object::dictUpdate(char *key, Object *val)
+  { return dict->update(key, val); }
+
 inline GBool Object::dictIs(const char *dictType)
   { return dict->is(dictType); }
 
@@ -273,6 +278,9 @@ inline Object *Object::dictGetVal(int i, Object *obj)
 
 inline Object *Object::dictGetValNF(int i, Object *obj)
   { return dict->getValNF(i, obj); }
+
+inline Object *Object::dictDel(char *key)
+  { return dict->del(key); }
 
 //------------------------------------------------------------------------
 // Stream accessors.
