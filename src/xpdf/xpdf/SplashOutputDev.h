@@ -58,14 +58,14 @@ public:
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  virtual GBool upsideDown() { return gTrue; }
+  virtual GBool upsideDown()const { return gTrue; }
 
   // Does this device use drawChar() or drawString()?
-  virtual GBool useDrawChar() { return gTrue; }
+  virtual GBool useDrawChar()const { return gTrue; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  virtual GBool interpretType3Chars() { return gTrue; }
+  virtual GBool interpretType3Chars()const { return gTrue; }
 
   //----- initialization and control
 
@@ -145,14 +145,14 @@ public:
 		       double llx, double lly, double urx, double ury);
 
   //----- transparency groups and soft masks
-  virtual void beginTransparencyGroup(GfxState *state, double *bbox,
+  virtual void beginTransparencyGroup(GfxState *state, const double *bbox,
 				      GfxColorSpace *blendingColorSpace,
 				      GBool isolated, GBool knockout,
 				      GBool forSoftMask);
   virtual void endTransparencyGroup(GfxState *state);
-  virtual void paintTransparencyGroup(GfxState *state, double *bbox);
-  virtual void setSoftMask(GfxState *state, double *bbox, GBool alpha,
-			   Function *transferFunc, GfxColor *backdropColor);
+  virtual void paintTransparencyGroup(GfxState *state, const double *bbox);
+  virtual void setSoftMask(GfxState *state, const double *bbox, GBool alpha,
+			   Function *transferFunc, const GfxColor *backdropColor);
   virtual void clearSoftMask(GfxState *state);
 
   //----- special access

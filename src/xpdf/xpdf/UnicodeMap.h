@@ -50,15 +50,15 @@ public:
 
   // Create the UnicodeMap specified by <encodingName>.  Sets the
   // initial reference count to 1.  Returns NULL on failure.
-  static UnicodeMap *parse(GString *encodingNameA);
+  static UnicodeMap *parse(const GString *encodingNameA);
 
   // Create a resident UnicodeMap.
-  UnicodeMap(char *encodingNameA, GBool unicodeOutA,
+  UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
 	     UnicodeMapRange *rangesA, int lenA);
 
   // Create a resident UnicodeMap that uses a function instead of a
   // list of ranges.
-  UnicodeMap(char *encodingNameA, GBool unicodeOutA,
+  UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
 	     UnicodeMapFunc funcA);
 
   ~UnicodeMap();
@@ -66,19 +66,19 @@ public:
   void incRefCnt();
   void decRefCnt();
 
-  GString *getEncodingName() { return encodingName; }
+  const GString *getEncodingName()const { return encodingName; }
 
-  GBool isUnicode() { return unicodeOut; }
+  GBool isUnicode()const { return unicodeOut; }
 
   // Return true if this UnicodeMap matches the specified
   // <encodingNameA>.
-  GBool match(GString *encodingNameA);
+  GBool match(const GString *encodingNameA)const;
 
   // Map Unicode to the target encoding.  Fills in <buf> with the
   // output and returns the number of bytes used.  Output will be
   // truncated at <bufSize> bytes.  No string terminator is written.
   // Returns 0 if no mapping is found.
-  int mapUnicode(Unicode u, char *buf, int bufSize);
+  int mapUnicode(Unicode u, char *buf, int bufSize)const;
 
 private:
 
@@ -113,7 +113,7 @@ public:
   // Get the UnicodeMap for <encodingName>.  Increments its reference
   // count; there will be one reference for the cache plus one for the
   // caller of this function.  Returns NULL on failure.
-  UnicodeMap *getUnicodeMap(GString *encodingName);
+  UnicodeMap *getUnicodeMap(const GString *encodingName);
 
 private:
 

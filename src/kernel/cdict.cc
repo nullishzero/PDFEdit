@@ -46,7 +46,7 @@ using namespace boost;
 //
 // Protected constructor
 //
-CDict::CDict (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProperty (p,rf) 
+CDict::CDict (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf) : IProperty (p,rf) 
 {
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pDict,Value&> (*this, o, value);
@@ -55,7 +55,7 @@ CDict::CDict (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProperty
 //
 // Protected constructor
 //
-CDict::CDict (Object& o)
+CDict::CDict (const Object& o)
 {
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pDict,Value&> (*this, o, value);

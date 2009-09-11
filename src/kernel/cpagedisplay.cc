@@ -103,7 +103,7 @@ CPageDisplay::displayPage (::OutputDev& out,
 			throw XpdfInvalidObject ();
 	
 	// Get page dictionary
-	Dict* xpdfPageDict = xpdfPage->getDict ();
+	const Dict* xpdfPageDict = xpdfPage->getDict ();
 		assert (NULL != xpdfPageDict);
 
 	

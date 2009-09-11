@@ -206,79 +206,79 @@ public:
 
   ~GlobalParams();
 
-  void setBaseDir(char *dir);
+  void setBaseDir(const char *dir);
   void setupBaseFonts(const char *dir);
 
-  void parseLine(char *buf, GString *fileName, int line);
+  void parseLine(const char *buf, const GString *fileName, int line);
 
   //----- accessors
 
-  CharCode getMacRomanCharCode(char *charName);
+  CharCode getMacRomanCharCode(const char *charName)const;
 
-  GString *getBaseDir();
-  Unicode mapNameToUnicode(char *charName);
-  UnicodeMap *getResidentUnicodeMap(GString *encodingName);
-  FILE *getUnicodeMapFile(GString *encodingName);
-  FILE *findCMapFile(GString *collection, GString *cMapName);
-  FILE *findToUnicodeFile(GString *name);
-  DisplayFontParam *getDisplayFont(GString *fontName);
-  DisplayFontParam *getDisplayCIDFont(GString *fontName, GString *collection);
-  GString *getPSFile();
-  int getPSPaperWidth();
-  int getPSPaperHeight();
-  void getPSImageableArea(int *llx, int *lly, int *urx, int *ury);
-  GBool getPSDuplex();
-  GBool getPSCrop();
-  GBool getPSExpandSmaller();
-  GBool getPSShrinkLarger();
-  GBool getPSCenter();
-  PSLevel getPSLevel();
-  PSFontParam *getPSFont(GString *fontName);
-  PSFontParam *getPSFont16(GString *fontName, GString *collection, int wMode);
-  GBool getPSEmbedType1();
-  GBool getPSEmbedTrueType();
-  GBool getPSEmbedCIDPostScript();
-  GBool getPSEmbedCIDTrueType();
-  GBool getPSPreload();
-  GBool getPSOPI();
-  GBool getPSASCIIHex();
-  GString *getTextEncodingName();
-  EndOfLineKind getTextEOL();
-  GBool getTextPageBreaks();
-  GBool getTextKeepTinyChars();
-  GString *findFontFile(GString *fontName, char **exts);
-  GString *getInitialZoom();
-  GBool getContinuousView();
-  GBool getEnableT1lib();
-  GBool getEnableFreeType();
-  GBool getAntialias();
-  GBool getVectorAntialias();
-  GBool getStrokeAdjust();
-  ScreenType getScreenType();
-  int getScreenSize();
-  int getScreenDotRadius();
-  double getScreenGamma();
-  double getScreenBlackThreshold();
-  double getScreenWhiteThreshold();
-  GString *getURLCommand() { return urlCommand; }
-  GString *getMovieCommand() { return movieCommand; }
-  GBool getMapNumericCharNames();
-  GBool getMapUnknownCharNames();
-  GList *getKeyBinding(int code, int mods, int context);
-  GBool getPrintCommands();
-  GBool getErrQuiet();
+  GString *getBaseDir()const;
+  Unicode mapNameToUnicode(const char *charName)const;
+  UnicodeMap *getResidentUnicodeMap(const GString *encodingName)const;
+  FILE *getUnicodeMapFile(const GString *encodingName)const;
+  FILE *findCMapFile(const GString *collection, const GString *cMapName)const;
+  FILE *findToUnicodeFile(const GString *name)const;
+  DisplayFontParam *getDisplayFont(const GString *fontName)const;
+  DisplayFontParam *getDisplayCIDFont(const GString *fontName, const GString *collection)const;
+  GString *getPSFile()const;
+  int getPSPaperWidth()const;
+  int getPSPaperHeight()const;
+  void getPSImageableArea(int *llx, int *lly, int *urx, int *ury)const;
+  GBool getPSDuplex()const;
+  GBool getPSCrop()const;
+  GBool getPSExpandSmaller()const;
+  GBool getPSShrinkLarger()const;
+  GBool getPSCenter()const;
+  PSLevel getPSLevel()const;
+  const PSFontParam *getPSFont(const GString *fontName)const;
+  const PSFontParam *getPSFont16(const GString *fontName, const GString *collection, int wMode)const;
+  GBool getPSEmbedType1()const;
+  GBool getPSEmbedTrueType()const;
+  GBool getPSEmbedCIDPostScript()const;
+  GBool getPSEmbedCIDTrueType()const;
+  GBool getPSPreload()const;
+  GBool getPSOPI()const;
+  GBool getPSASCIIHex()const;
+  GString *getTextEncodingName()const;
+  EndOfLineKind getTextEOL()const;
+  GBool getTextPageBreaks()const;
+  GBool getTextKeepTinyChars()const;
+  GString *findFontFile(const GString *fontName, char **exts)const;
+  GString *getInitialZoom()const;
+  GBool getContinuousView()const;
+  GBool getEnableT1lib()const;
+  GBool getEnableFreeType()const;
+  GBool getAntialias()const;
+  GBool getVectorAntialias()const;
+  GBool getStrokeAdjust()const;
+  ScreenType getScreenType()const;
+  int getScreenSize()const;
+  int getScreenDotRadius()const;
+  double getScreenGamma()const;
+  double getScreenBlackThreshold()const;
+  double getScreenWhiteThreshold()const;
+  const GString *getURLCommand()const { return urlCommand; }
+  const GString *getMovieCommand() { return movieCommand; }
+  GBool getMapNumericCharNames()const;
+  GBool getMapUnknownCharNames()const;
+  GList *getKeyBinding(int code, int mods, int context)const;
+  GBool getPrintCommands()const;
+  GBool getErrQuiet()const;
 
-  CharCodeToUnicode *getCIDToUnicode(GString *collection);
-  CharCodeToUnicode *getUnicodeToUnicode(GString *fontName);
-  UnicodeMap *getUnicodeMap(GString *encodingName);
-  CMap *getCMap(GString *collection, GString *cMapName);
-  UnicodeMap *getTextEncoding();
+  CharCodeToUnicode *getCIDToUnicode(const GString *collection)const;
+  CharCodeToUnicode *getUnicodeToUnicode(const GString *fontName)const;
+  UnicodeMap *getUnicodeMap(const GString *encodingName)const;
+  CMap *getCMap(const GString *collection, const GString *cMapName)const;
+  UnicodeMap *getTextEncoding()const;
 
   //----- functions to set parameters
 
   void addDisplayFont(DisplayFontParam *param);
-  void setPSFile(char *file);
-  GBool setPSPaperSize(char *size);
+  void setPSFile(const char *file);
+  GBool setPSPaperSize(const char *size);
   void setPSPaperWidth(int width);
   void setPSPaperHeight(int height);
   void setPSImageableArea(int llx, int lly, int urx, int ury);
@@ -295,16 +295,16 @@ public:
   void setPSPreload(GBool preload);
   void setPSOPI(GBool opi);
   void setPSASCIIHex(GBool hex);
-  void setTextEncoding(char *encodingName);
-  GBool setTextEOL(char *s);
+  void setTextEncoding(const char *encodingName);
+  GBool setTextEOL(const char *s);
   void setTextPageBreaks(GBool pageBreaks);
   void setTextKeepTinyChars(GBool keep);
-  void setInitialZoom(char *s);
+  void setInitialZoom(const char *s);
   void setContinuousView(GBool cont);
-  GBool setEnableT1lib(char *s);
-  GBool setEnableFreeType(char *s);
-  GBool setAntialias(char *s);
-  GBool setVectorAntialias(char *s);
+  GBool setEnableT1lib(const char *s);
+  GBool setEnableFreeType(const char *s);
+  GBool setAntialias(const char *s);
+  GBool setVectorAntialias(const char *s);
   void setScreenType(ScreenType t);
   void setScreenSize(int size);
   void setScreenDotRadius(int r);
@@ -319,49 +319,49 @@ public:
   //----- security handlers
 
   void addSecurityHandler(XpdfSecurityHandler *handler);
-  XpdfSecurityHandler *getSecurityHandler(char *name);
+  XpdfSecurityHandler *getSecurityHandler(const char *name);
 
 private:
 
   void createDefaultKeyBindings();
   void parseFile(GString *fileName, FILE *f);
-  void parseNameToUnicode(GList *tokens, GString *fileName, int line);
-  void parseCIDToUnicode(GList *tokens, GString *fileName, int line);
-  void parseUnicodeToUnicode(GList *tokens, GString *fileName, int line);
-  void parseUnicodeMap(GList *tokens, GString *fileName, int line);
-  void parseCMapDir(GList *tokens, GString *fileName, int line);
-  void parseToUnicodeDir(GList *tokens, GString *fileName, int line);
-  void parseDisplayFont(GList *tokens, GHash *fontHash,
+  void parseNameToUnicode(const GList *tokens, const GString *fileName, int line);
+  void parseCIDToUnicode(const GList *tokens, const GString *fileName, int line);
+  void parseUnicodeToUnicode(const GList *tokens, const GString *fileName, int line);
+  void parseUnicodeMap(const GList *tokens, const GString *fileName, int line);
+  void parseCMapDir(const GList *tokens, const GString *fileName, int line);
+  void parseToUnicodeDir(const GList *tokens, const GString *fileName, int line);
+  void parseDisplayFont(const GList *tokens, GHash *fontHash,
 			DisplayFontParamKind kind,
-			GString *fileName, int line);
-  void parsePSFile(GList *tokens, GString *fileName, int line);
-  void parsePSPaperSize(GList *tokens, GString *fileName, int line);
-  void parsePSImageableArea(GList *tokens, GString *fileName, int line);
-  void parsePSLevel(GList *tokens, GString *fileName, int line);
-  void parsePSFont(GList *tokens, GString *fileName, int line);
-  void parsePSFont16(char *cmdName, GList *fontList,
-		     GList *tokens, GString *fileName, int line);
-  void parseTextEncoding(GList *tokens, GString *fileName, int line);
-  void parseTextEOL(GList *tokens, GString *fileName, int line);
-  void parseFontDir(GList *tokens, GString *fileName, int line);
-  void parseInitialZoom(GList *tokens, GString *fileName, int line);
-  void parseScreenType(GList *tokens, GString *fileName, int line);
-  void parseBind(GList *tokens, GString *fileName, int line);
-  void parseUnbind(GList *tokens, GString *fileName, int line);
-  GBool parseKey(GString *modKeyStr, GString *contextStr,
+			const GString *fileName, int line);
+  void parsePSFile(const GList *tokens, const GString *fileName, int line);
+  void parsePSPaperSize(const GList *tokens, const GString *fileName, int line);
+  void parsePSImageableArea(const GList *tokens, const GString *fileName, int line);
+  void parsePSLevel(const GList *tokens, const GString *fileName, int line);
+  void parsePSFont(const GList *tokens, const GString *fileName, int line);
+  void parsePSFont16(const char *cmdName, GList *fontList,
+		     const GList *tokens, const GString *fileName, int line);
+  void parseTextEncoding(const GList *tokens, const GString *fileName, int line);
+  void parseTextEOL(const GList *tokens, const GString *fileName, int line);
+  void parseFontDir(const GList *tokens, const GString *fileName, int line);
+  void parseInitialZoom(const GList *tokens, const GString *fileName, int line);
+  void parseScreenType(const GList *tokens, const GString *fileName, int line);
+  void parseBind(const GList *tokens, const GString *fileName, int line);
+  void parseUnbind(const GList *tokens, const GString *fileName, int line);
+  GBool parseKey(const GString *modKeyStr, const GString *contextStr,
 		 int *code, int *mods, int *context,
-		 char *cmdName,
-		 GList *tokens, GString *fileName, int line);
-  void parseCommand(char *cmdName, GString **val,
-		    GList *tokens, GString *fileName, int line);
-  void parseYesNo(char *cmdName, GBool *flag,
-		  GList *tokens, GString *fileName, int line);
-  GBool parseYesNo2(char *token, GBool *flag);
-  void parseInteger(char *cmdName, int *val,
-		    GList *tokens, GString *fileName, int line);
-  void parseFloat(char *cmdName, double *val,
-		  GList *tokens, GString *fileName, int line);
-  UnicodeMap *getUnicodeMap2(GString *encodingName);
+		 const char *cmdName,
+		 const GList *tokens, const GString *fileName, int line);
+  void parseCommand(const char *cmdName, GString **val,
+		    const GList *tokens, const GString *fileName, int line);
+  void parseYesNo(const char *cmdName, GBool *flag,
+		  const GList *tokens, const GString *fileName, int line);
+  GBool parseYesNo2(const char *token, GBool *flag);
+  void parseInteger(const char *cmdName, int *val,
+		    const GList *tokens, const GString *fileName, int line);
+  void parseFloat(const char *cmdName, double *val,
+		  const GList *tokens, const GString *fileName, int line);
+  UnicodeMap *getUnicodeMap2(const GString *encodingName)const;
 #ifdef ENABLE_PLUGINS
   GBool loadPlugin(char *type, char *name);
 #endif

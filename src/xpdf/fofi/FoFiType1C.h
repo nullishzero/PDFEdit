@@ -159,19 +159,19 @@ public:
   // font.  If <ascii> is true the eexec section will be hex-encoded,
   // otherwise it will be left as binary data.  If <psName> is non-NULL,
   // it will be used as the PostScript font name.
-  void convertToType1(char *psName, char **newEncoding, GBool ascii,
+  void convertToType1(const char *psName, char **newEncoding, GBool ascii,
 		      FoFiOutputFunc outputFunc, void *outputStream);
 
   // Convert to a Type 0 CIDFont, suitable for embedding in a
   // PostScript file.  <psName> will be used as the PostScript font
   // name.
-  void convertToCIDType0(char *psName,
+  void convertToCIDType0(const char *psName,
 			 FoFiOutputFunc outputFunc, void *outputStream);
 
   // Convert to a Type 0 (but non-CID) composite font, suitable for
   // embedding in a PostScript file.  <psName> will be used as the
   // PostScript font name.
-  void convertToType0(char *psName,
+  void convertToType0(const char *psName,
 		      FoFiOutputFunc outputFunc, void *outputStream);
 
 private:

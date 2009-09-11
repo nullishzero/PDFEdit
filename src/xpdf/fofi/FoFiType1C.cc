@@ -129,7 +129,7 @@ Gushort *FoFiType1C::getCIDToGIDMap(int *nCIDs) {
   return map;
 }
 
-void FoFiType1C::convertToType1(char *psName, char **newEncoding, GBool ascii,
+void FoFiType1C::convertToType1(const char *psName, char **newEncoding, GBool ascii,
 				FoFiOutputFunc outputFunc,
 				void *outputStream) {
   int psNameLen;
@@ -429,7 +429,7 @@ void FoFiType1C::convertToType1(char *psName, char **newEncoding, GBool ascii,
   (*outputFunc)(outputStream, "cleartomark\n", 12);
 }
 
-void FoFiType1C::convertToCIDType0(char *psName,
+void FoFiType1C::convertToCIDType0(const char *psName,
 				   FoFiOutputFunc outputFunc,
 				   void *outputStream) {
   int *cidMap;
@@ -755,7 +755,7 @@ void FoFiType1C::convertToCIDType0(char *psName,
   gfree(cidMap);
 }
 
-void FoFiType1C::convertToType0(char *psName,
+void FoFiType1C::convertToType0(const char *psName,
 				FoFiOutputFunc outputFunc,
 				void *outputStream) {
   int *cidMap;

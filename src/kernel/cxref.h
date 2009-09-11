@@ -195,7 +195,7 @@ protected:
 	 * there are some changes otherwise delegate to XRef::getTrailerDict.
 	 * Never deallocate returned object.
 	 */
-	virtual Object *getTrailerDict() 
+	virtual const Object *getTrailerDict()const 
 	{
 		if (!currTrailer)
 			return XRef::getTrailerDict();
@@ -405,7 +405,7 @@ public:
 	 * @see INITIALIZED_REF
 	 * @return Current state of given reference.
 	 */
-	virtual RefState knowsRef(const ::Ref& ref);
+	virtual RefState knowsRef(const ::Ref& ref)const;
 
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.
@@ -417,7 +417,7 @@ public:
 	 *
 	 * @return reference current state.
 	 */
-	virtual RefState knowsRef(IndiRef ref)
+	virtual RefState knowsRef(IndiRef& ref)const
 	{
 		::Ref xpdfRef={ref.num, ref.gen};
 		return knowsRef(xpdfRef);
@@ -502,7 +502,7 @@ public:
 	 * @return Pointer with initialized object given as parameter, if not
 	 * found obj is set to objNull.
 	 */
-	virtual ::Object * fetch(int num, int gen, ::Object *obj);
+	virtual ::Object * fetch(int num, int gen, ::Object *obj)const;
 };
 
 // implemented as macro because we want to have better log information

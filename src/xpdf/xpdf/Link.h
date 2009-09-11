@@ -42,20 +42,20 @@ public:
   virtual ~LinkAction() {}
 
   // Was the LinkAction created successfully?
-  virtual GBool isOk() = 0;
+  virtual GBool isOk()const = 0;
 
   // Check link action type.
-  virtual LinkActionKind getKind() = 0;
+  virtual LinkActionKind getKind()const = 0;
 
   // Parse a destination (old-style action) name, string, or array.
-  static LinkAction *parseDest(Object *obj);
+  static LinkAction *parseDest(const Object *obj);
 
   // Parse an action dictionary.
-  static LinkAction *parseAction(Object *obj, GString *baseURI = NULL);
+  static LinkAction *parseAction(const Object *obj, const GString *baseURI = NULL);
 
   // Extract a file name from a file specification (string or
   // dictionary).
-  static GString *getFileSpecName(Object *fileSpecObj);
+  static GString *getFileSpecName(const Object *fileSpecObj);
 };
 
 //------------------------------------------------------------------------
@@ -77,27 +77,27 @@ class LinkDest {
 public:
 
   // Build a LinkDest from the array.
-  LinkDest(Array *a);
+  LinkDest(const Array *a);
 
   // Copy a LinkDest.
-  LinkDest *copy() { return new LinkDest(this); }
+  LinkDest *copy()const { return new LinkDest(this); }
 
   // Was the LinkDest created successfully?
-  GBool isOk() { return ok; }
+  GBool isOk()const { return ok; }
 
   // Accessors.
-  LinkDestKind getKind() { return kind; }
-  GBool isPageRef() { return pageIsRef; }
-  int getPageNum() { return pageNum; }
-  Ref getPageRef() { return pageRef; }
-  double getLeft() { return left; }
-  double getBottom() { return bottom; }
-  double getRight() { return right; }
-  double getTop() { return top; }
-  double getZoom() { return zoom; }
-  GBool getChangeLeft() { return changeLeft; }
-  GBool getChangeTop() { return changeTop; }
-  GBool getChangeZoom() { return changeZoom; }
+  LinkDestKind getKind()const { return kind; }
+  GBool isPageRef()const { return pageIsRef; }
+  int getPageNum()const { return pageNum; }
+  const Ref& getPageRef()const { return pageRef; }
+  double getLeft()const { return left; }
+  double getBottom()const { return bottom; }
+  double getRight()const { return right; }
+  double getTop()const { return top; }
+  double getZoom()const { return zoom; }
+  GBool getChangeLeft()const { return changeLeft; }
+  GBool getChangeTop()const { return changeTop; }
+  GBool getChangeZoom()const { return changeZoom; }
 
 private:
 
@@ -114,7 +114,7 @@ private:
   GBool changeZoom;		//   components to change
   GBool ok;			// set if created successfully
 
-  LinkDest(LinkDest *dest);
+  LinkDest(const LinkDest *dest);
 };
 
 //------------------------------------------------------------------------
@@ -125,18 +125,18 @@ class LinkGoTo: public LinkAction {
 public:
 
   // Build a LinkGoTo from a destination (dictionary, name, or string).
-  LinkGoTo(Object *destObj);
+  LinkGoTo(const Object *destObj);
 
   // Destructor.
   virtual ~LinkGoTo();
 
   // Was the LinkGoTo created successfully?
-  virtual GBool isOk() { return dest || namedDest; }
+  virtual GBool isOk()const { return dest || namedDest; }
 
   // Accessors.
-  virtual LinkActionKind getKind() { return actionGoTo; }
-  LinkDest *getDest() { return dest; }
-  GString *getNamedDest() { return namedDest; }
+  virtual LinkActionKind getKind()const { return actionGoTo; }
+  const LinkDest *getDest()const { return dest; }
+  const GString *getNamedDest()const { return namedDest; }
 
 private:
 
@@ -155,19 +155,19 @@ public:
 
   // Build a LinkGoToR from a file spec (dictionary) and destination
   // (dictionary, name, or string).
-  LinkGoToR(Object *fileSpecObj, Object *destObj);
+  LinkGoToR(const Object *fileSpecObj, const Object *destObj);
 
   // Destructor.
   virtual ~LinkGoToR();
 
   // Was the LinkGoToR created successfully?
-  virtual GBool isOk() { return fileName && (dest || namedDest); }
+  virtual GBool isOk()const { return fileName && (dest || namedDest); }
 
   // Accessors.
-  virtual LinkActionKind getKind() { return actionGoToR; }
-  GString *getFileName() { return fileName; }
-  LinkDest *getDest() { return dest; }
-  GString *getNamedDest() { return namedDest; }
+  virtual LinkActionKind getKind()const { return actionGoToR; }
+  const GString *getFileName()const { return fileName; }
+  const LinkDest *getDest()const { return dest; }
+  const GString *getNamedDest()const { return namedDest; }
 
 private:
 
@@ -186,18 +186,18 @@ class LinkLaunch: public LinkAction {
 public:
 
   // Build a LinkLaunch from an action dictionary.
-  LinkLaunch(Object *actionObj);
+  LinkLaunch(const Object *actionObj);
 
   // Destructor.
   virtual ~LinkLaunch();
 
   // Was the LinkLaunch created successfully?
-  virtual GBool isOk() { return fileName != NULL; }
+  virtual GBool isOk()const { return fileName != NULL; }
 
   // Accessors.
-  virtual LinkActionKind getKind() { return actionLaunch; }
-  GString *getFileName() { return fileName; }
-  GString *getParams() { return params; }
+  virtual LinkActionKind getKind()const { return actionLaunch; }
+  const GString *getFileName()const { return fileName; }
+  const GString *getParams()const { return params; }
 
 private:
 
@@ -213,17 +213,17 @@ class LinkURI: public LinkAction {
 public:
 
   // Build a LinkURI given the URI (string) and base URI.
-  LinkURI(Object *uriObj, GString *baseURI);
+  LinkURI(const Object *uriObj, const GString *baseURI);
 
   // Destructor.
   virtual ~LinkURI();
 
   // Was the LinkURI created successfully?
-  virtual GBool isOk() { return uri != NULL; }
+  virtual GBool isOk()const { return uri != NULL; }
 
   // Accessors.
-  virtual LinkActionKind getKind() { return actionURI; }
-  GString *getURI() { return uri; }
+  virtual LinkActionKind getKind()const { return actionURI; }
+  const GString *getURI()const { return uri; }
 
 private:
 
@@ -238,14 +238,14 @@ class LinkNamed: public LinkAction {
 public:
 
   // Build a LinkNamed given the action name.
-  LinkNamed(Object *nameObj);
+  LinkNamed(const Object *nameObj);
 
   virtual ~LinkNamed();
 
-  virtual GBool isOk() { return name != NULL; }
+  virtual GBool isOk()const { return name != NULL; }
 
-  virtual LinkActionKind getKind() { return actionNamed; }
-  GString *getName() { return name; }
+  virtual LinkActionKind getKind()const { return actionNamed; }
+  const GString *getName()const { return name; }
 
 private:
 
@@ -259,16 +259,16 @@ private:
 class LinkMovie: public LinkAction {
 public:
 
-  LinkMovie(Object *annotObj, Object *titleObj);
+  LinkMovie(const Object *annotObj, const Object *titleObj);
 
   virtual ~LinkMovie();
 
-  virtual GBool isOk() { return annotRef.num >= 0 || title != NULL; }
+  virtual GBool isOk()const { return annotRef.num >= 0 || title != NULL; }
 
-  virtual LinkActionKind getKind() { return actionMovie; }
-  GBool hasAnnotRef() { return annotRef.num >= 0; }
-  Ref *getAnnotRef() { return &annotRef; }
-  GString *getTitle() { return title; }
+  virtual LinkActionKind getKind()const { return actionMovie; }
+  const GBool hasAnnotRef()const { return annotRef.num >= 0; }
+  const Ref *getAnnotRef()const { return &annotRef; }
+  const GString *getTitle()const { return title; }
 
 private:
 
@@ -284,17 +284,17 @@ class LinkUnknown: public LinkAction {
 public:
 
   // Build a LinkUnknown with the specified action type.
-  LinkUnknown(char *actionA);
+  LinkUnknown(const char *actionA);
 
   // Destructor.
   virtual ~LinkUnknown();
 
   // Was the LinkUnknown create successfully?
-  virtual GBool isOk() { return action != NULL; }
+  virtual GBool isOk()const { return action != NULL; }
 
   // Accessors.
-  virtual LinkActionKind getKind() { return actionUnknown; }
-  GString *getAction() { return action; }
+  virtual LinkActionKind getKind()const { return actionUnknown; }
+  const GString *getAction()const { return action; }
 
 private:
 
@@ -309,23 +309,23 @@ class Link {
 public:
 
   // Construct a link, given its dictionary.
-  Link(Dict *dict, GString *baseURI);
+  Link(const Dict *dict, const GString *baseURI);
 
   // Destructor.
   ~Link();
 
   // Was the link created successfully?
-  GBool isOk() { return ok; }
+  GBool isOk()const { return ok; }
 
   // Check if point is inside the link rectangle.
-  GBool inRect(double x, double y)
+  GBool inRect(double x, double y)const
     { return x1 <= x && x <= x2 && y1 <= y && y <= y2; }
 
   // Get action.
-  LinkAction *getAction() { return action; }
+  const LinkAction *getAction()const { return action; }
 
   // Get the link rectangle.
-  void getRect(double *xa1, double *ya1, double *xa2, double *ya2)
+  void getRect(double *xa1, double *ya1, double *xa2, double *ya2)const
     { *xa1 = x1; *ya1 = y1; *xa2 = x2; *ya2 = y2; }
 
 private:
@@ -344,21 +344,21 @@ class Links {
 public:
 
   // Extract links from array of annotations.
-  Links(Object *annots, GString *baseURI);
+  Links(const Object *annots, const GString *baseURI);
 
   // Destructor.
   ~Links();
 
   // Iterate through list of links.
-  int getNumLinks() { return numLinks; }
-  Link *getLink(int i) { return links[i]; }
+  int getNumLinks()const { return numLinks; }
+  const Link *getLink(int i)const { return links[i]; }
 
   // If point <x>,<y> is in a link, return the associated action;
   // else return NULL.
-  LinkAction *find(double x, double y);
+  const LinkAction *find(double x, double y)const;
 
   // Return true if <x>,<y> is in a link.
-  GBool onLink(double x, double y);
+  GBool onLink(double x, double y)const;
 
 private:
 

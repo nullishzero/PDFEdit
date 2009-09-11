@@ -34,7 +34,7 @@ struct UnicodeMapExt {
 
 //------------------------------------------------------------------------
 
-UnicodeMap *UnicodeMap::parse(GString *encodingNameA) {
+UnicodeMap *UnicodeMap::parse(const GString *encodingNameA) {
   FILE *f;
   UnicodeMap *map;
   UnicodeMapRange *range;
@@ -121,7 +121,7 @@ UnicodeMap::UnicodeMap(GString *encodingNameA) {
 #endif
 }
 
-UnicodeMap::UnicodeMap(char *encodingNameA, GBool unicodeOutA,
+UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
 		       UnicodeMapRange *rangesA, int lenA) {
   encodingName = new GString(encodingNameA);
   unicodeOut = unicodeOutA;
@@ -136,7 +136,7 @@ UnicodeMap::UnicodeMap(char *encodingNameA, GBool unicodeOutA,
 #endif
 }
 
-UnicodeMap::UnicodeMap(char *encodingNameA, GBool unicodeOutA,
+UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
 		       UnicodeMapFunc funcA) {
   encodingName = new GString(encodingNameA);
   unicodeOut = unicodeOutA;
@@ -188,11 +188,11 @@ void UnicodeMap::decRefCnt() {
   }
 }
 
-GBool UnicodeMap::match(GString *encodingNameA) {
+GBool UnicodeMap::match(const GString *encodingNameA)const {
   return !encodingName->cmp(encodingNameA);
 }
 
-int UnicodeMap::mapUnicode(Unicode u, char *buf, int bufSize) {
+int UnicodeMap::mapUnicode(Unicode u, char *buf, int bufSize)const {
   int a, b, m, n, i, j;
   Guint code;
 
@@ -259,7 +259,7 @@ UnicodeMapCache::~UnicodeMapCache() {
   }
 }
 
-UnicodeMap *UnicodeMapCache::getUnicodeMap(GString *encodingName) {
+UnicodeMap *UnicodeMapCache::getUnicodeMap(const GString *encodingName) {
   UnicodeMap *map;
   int i, j;
 

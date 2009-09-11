@@ -232,8 +232,7 @@ using namespace debug;
 		currTrailer = boost::shared_ptr<Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		XRef::getTrailerDict()->copy(currTrailer.get());
 	}
-	Object * trailer = getTrailerDict(); 
-	::Object * prev = trailer->dictUpdate(key, clonedObject);
+	::Object * prev = getTrailerDict()->dictUpdate(key, clonedObject);
 	gfree(clonedObject);
 
 	// update doesn't store key if key, value has been already in the 
@@ -403,7 +402,7 @@ using namespace debug;
 	return obj;
 }
 
-RefState CXref::knowsRef(const ::Ref& ref)
+RefState CXref::knowsRef(const ::Ref& ref)const
 {
 using namespace debug;
 
@@ -487,7 +486,7 @@ using namespace debug;
 	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "name="<<name);
-	Dict * trailer = getTrailerDict()->getDict();
+	const Dict * trailer = getTrailerDict()->getDict();
 
 	// lookupNF doesn't create deep copy, so 
 	// we have to get value and then make deep copy
@@ -569,7 +568,7 @@ using namespace debug;
 	return retObj;
 }
 
-::Object * CXref::fetch(int num, int gen, ::Object *obj)
+::Object * CXref::fetch(int num, int gen, ::Object *obj)const
 {
 	using namespace debug;
 

@@ -501,7 +501,7 @@ public:
 	 * XRef::fetch method.
 	 * 
 	 */ 
-	virtual ::Object * fetch(int num, int gen, ::Object * obj)
+	virtual ::Object * fetch(int num, int gen, ::Object * obj)const
 	{
 		// the newest revision may contain changes, so uses
 		// CXref implementation
@@ -525,7 +525,7 @@ public:
 	 * @see RefState
 	 * @return Reference state.
 	 */
-	virtual RefState knowsRef(const ::Ref& ref)
+	virtual RefState knowsRef(const ::Ref& ref)const
 	{
 		// if we are in newest revision, delegates to CXref
 		if(utils::isLatestRevision(*this))
@@ -542,7 +542,7 @@ public:
 	 * changed trailer. 
 	 * Otherwise delegates to XRef implementation.
 	 */
-	virtual Object *getTrailerDict()
+	virtual const Object *getTrailerDict()const
 	{
 		if(utils::isLatestRevision(*this))
 			return CXref::getTrailerDict();
@@ -557,7 +557,7 @@ public:
 	 * @see RefState
 	 * @return Reference state.
 	 */
-	virtual RefState knowsRef(const IndiRef& ref);
+	virtual RefState knowsRef(const IndiRef& ref)const;
 	
 	/** Registers new reference.
 	 *

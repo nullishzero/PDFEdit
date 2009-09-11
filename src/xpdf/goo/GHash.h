@@ -38,15 +38,15 @@ public:
   void replace(GString *key, int val, GBool delKey);
   void replace(GString *key, int val);
   void replace(const GString *key, int val);
-  void *lookup(GString *key);
-  int lookupInt(GString *key);
-  void *lookup(char *key);
-  int lookupInt(char *key);
-  void *remove(GString *key);
-  int removeInt(GString *key);
-  void *remove(char *key);
-  int removeInt(char *key);
-  int getLength() { return len; }
+  void *lookup(const GString *key)const;
+  int lookupInt(const GString *key)const;
+  void *lookup(const char *key)const;
+  int lookupInt(const char *key)const;
+  void *remove(const GString *key);
+  int removeInt(const GString *key);
+  void *remove(const char *key);
+  int removeInt(const char *key);
+  int getLength()const { return len; }
   void startIter(GHashIter **iter);
   GBool getNext(GHashIter **iter, GString **key, void **val);
   GBool getNext(GHashIter **iter, GString **key, int *val);
@@ -55,10 +55,10 @@ public:
 private:
 
   void expand();
-  GHashBucket *find(GString *key, int *h);
-  GHashBucket *find(char *key, int *h);
-  int hash(GString *key);
-  int hash(char *key);
+  GHashBucket *find(const GString *key, int *h)const;
+  GHashBucket *find(const char *key, int *h)const;
+  int hash(const GString *key)const;
+  int hash(const char *key)const;
 
   GBool deleteKeys;		// set if key strings should be deleted
   int size;			// number of buckets

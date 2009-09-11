@@ -48,7 +48,7 @@ using namespace utils;
 //
 //
 //
-CStream::CStream (boost::weak_ptr<CPdf> p, ::Object& o, const IndiRef& rf) : IProperty (p,rf), parser (NULL), tmpObj (NULL)
+CStream::CStream (boost::weak_ptr<CPdf> p, const ::Object& o, const IndiRef& rf) : IProperty (p,rf), parser (NULL), tmpObj (NULL)
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 	// Make sure it is a stream
@@ -58,9 +58,9 @@ CStream::CStream (boost::weak_ptr<CPdf> p, ::Object& o, const IndiRef& rf) : IPr
 	
 	// Get the dictionary and init CDict with it
 	boost::shared_ptr< ::Object> objDict(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
-	::Dict* dict = o.streamGetDict ();
+	const ::Dict* dict = o.streamGetDict ();
 	assert (NULL != dict);
-	objDict->initDict (dict);
+	objDict->initDict ((Dict *)dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, *objDict, dictionary.value);
 
 	// Set pdf and ref
@@ -75,7 +75,7 @@ CStream::CStream (boost::weak_ptr<CPdf> p, ::Object& o, const IndiRef& rf) : IPr
 //
 //
 //
-CStream::CStream (::Object& o) : parser (NULL), tmpObj (NULL)
+CStream::CStream (const ::Object& o) : parser (NULL), tmpObj (NULL)
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 	// Make sure it is a stream
@@ -85,9 +85,9 @@ CStream::CStream (::Object& o) : parser (NULL), tmpObj (NULL)
 	
 	// Get the dictionary and init CDict with it
 	boost::shared_ptr< ::Object> objDict(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
-	::Dict* dict = o.streamGetDict();
+	const ::Dict* dict = o.streamGetDict();
 	assert (NULL != dict);
-	objDict->initDict (dict);
+	objDict->initDict ((Dict *)dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, *objDict, dictionary.value);
 
 	// Save the contents of the container

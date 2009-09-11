@@ -42,8 +42,8 @@ static int getCharFromFile(void *data) {
 
 //------------------------------------------------------------------------
 
-CMap *CMap::parse(CMapCache *cache, GString *collectionA,
-		  GString *cMapNameA) {
+CMap *CMap::parse(CMapCache *cache, const GString *collectionA,
+		  const GString *cMapNameA) {
   FILE *f;
   CMap *cmap;
   PSTokenizer *pst;
@@ -184,7 +184,7 @@ CMap::CMap(GString *collectionA, GString *cMapNameA, int wModeA) {
 #endif
 }
 
-void CMap::useCMap(CMapCache *cache, char *useName) {
+void CMap::useCMap(CMapCache *cache, const char *useName) {
   GString *useNameStr;
   CMap *subCMap;
 
@@ -198,7 +198,7 @@ void CMap::useCMap(CMapCache *cache, char *useName) {
   subCMap->decRefCnt();
 }
 
-void CMap::copyVector(CMapVectorEntry *dest, CMapVectorEntry *src) {
+void CMap::copyVector(CMapVectorEntry *dest, const CMapVectorEntry *src) {
   int i, j;
 
   for (i = 0; i < 256; ++i) {
@@ -323,11 +323,11 @@ void CMap::decRefCnt() {
   }
 }
 
-GBool CMap::match(GString *collectionA, GString *cMapNameA) {
+GBool CMap::match(const GString *collectionA, const GString *cMapNameA)const {
   return !collection->cmp(collectionA) && !cMapName->cmp(cMapNameA);
 }
 
-CID CMap::getCID(char *s, int len, int *nUsed) {
+CID CMap::getCID(const char *s, int len, int *nUsed)const {
   CMapVectorEntry *vec;
   int n, i;
 
@@ -374,7 +374,7 @@ CMapCache::~CMapCache() {
   }
 }
 
-CMap *CMapCache::getCMap(GString *collection, GString *cMapName) {
+CMap *CMapCache::getCMap(const GString *collection, const GString *cMapName) {
   CMap *cmap;
   int i, j;
 

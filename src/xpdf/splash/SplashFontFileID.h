@@ -24,7 +24,7 @@ public:
 
   SplashFontFileID();
   virtual ~SplashFontFileID();
-  virtual GBool matches(SplashFontFileID *id) = 0;
+  virtual GBool matches(const SplashFontFileID *id)const = 0;
 };
 
 #endif

@@ -443,7 +443,8 @@ namespace {
  		if (state->getFont()) {
 			TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 			assert(txtOp);
-			txtOp->setFontData(state->getFont());
+			// TODO - can we use const GfxFont *?
+			txtOp->setFontData((GfxFont *)state->getFont());
 			std::string rawStr;
 			txtOp->getRawText(rawStr);
 			StateUpdater::printTextUpdate (state, rawStr, rc);
@@ -508,7 +509,8 @@ namespace {
 
 		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 		assert(txtOp);
-		txtOp->setFontData(state->getFont());
+		// TODO can we use const GfxFont *?
+		txtOp->setFontData((GfxFont *)state->getFont());
 		std::string rawStr;
 		txtOp->getRawText(rawStr);
 		StateUpdater::printTextUpdate (state, rawStr, rc);
@@ -585,7 +587,8 @@ namespace {
 		
 		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 		assert(txtOp);
-		txtOp->setFontData(state->getFont());
+		// TODO can we use const GfxFont *?
+		txtOp->setFontData((GfxFont *)state->getFont());
 		// return changed state
 		return state;
 	}
@@ -748,7 +751,7 @@ namespace {
 GfxState*
 StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc)
 {
-	GfxFont *font;
+	const GfxFont *font;
 	int wMode;
 	double riseX, riseY;
 	CharCode code;
@@ -756,7 +759,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 	double x, y, dx, dy,/* dx2, dy2,*/ curX, curY, tdx, tdy, lineX, lineY;
 	double originX = 0, originY, tOriginX, tOriginY;
 	double oldCTM[6], newCTM[6];
-	double *mat = NULL;
+	const double *mat = NULL;
 	//Dict *resDict = NULL;
 	char *p;
 	int len = 0, n = 0, uLen = 0,/* nChars = 0, nSpaces = 0,*/ i = 0;
@@ -814,7 +817,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		  // Try to find out the height and width of this letter
 		  //
 		  boost::shared_ptr< ::Object> charProc(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
-		  static_cast<Gfx8BitFont*>(font)->getCharProc (code, charProc.get());
+		  static_cast<const Gfx8BitFont*>(font)->getCharProc (code, charProc.get());
 		  if (charProc->isStream())
 		  {
 			  // Make parser

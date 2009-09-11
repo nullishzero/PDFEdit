@@ -47,7 +47,7 @@ using namespace boost;
 //
 // Protected constructor
 //
-CArray::CArray (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProperty (p,rf) 
+CArray::CArray (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf) : IProperty (p,rf) 
 {
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pArray,Value&> (*this, o, value);
@@ -56,7 +56,7 @@ CArray::CArray (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProper
 //
 // Protected constructor
 //
-CArray::CArray (Object& o)
+CArray::CArray (const Object& o)
 {
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pArray,Value&> (*this, o, value);

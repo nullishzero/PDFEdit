@@ -28,10 +28,10 @@ class LinkAction;
 class Outline {
 public:
 
-  Outline(Object *outlineObj, XRef *xref);
+  Outline(const Object *outlineObj, XRef *xref);
   ~Outline();
 
-  GList *getItems() { return items; }
+  const GList *getItems()const { return items; }
 
 private:
 
@@ -44,21 +44,21 @@ private:
 class OutlineItem {
 public:
 
-  OutlineItem(Dict *dict, XRef *xrefA);
+  OutlineItem(const Dict *dict, XRef *xrefA);
   ~OutlineItem();
 
-  static GList *readItemList(Object *firstItemRef, Object *lastItemRef,
+  static GList *readItemList(const Object *firstItemRef, const Object *lastItemRef,
 			     XRef *xrefA);
 
   void open();
   void close();
 
-  Unicode *getTitle() { return title; }
-  int getTitleLength() { return titleLen; }
-  LinkAction *getAction() { return action; }
-  GBool isOpen() { return startsOpen; }
-  GBool hasKids() { return firstRef.isRef(); }
-  GList *getKids() { return kids; }
+  const Unicode *getTitle()const { return title; }
+  int getTitleLength()const { return titleLen; }
+  const LinkAction *getAction()const { return action; }
+  GBool isOpen()const { return startsOpen; }
+  GBool hasKids()const { return firstRef.isRef(); }
+  const GList *getKids()const { return kids; }
 
 private:
 

@@ -102,14 +102,14 @@ public:
     { initObj(objName); name = copyString(nameA); return this; }
   Object *initNull()
     { initObj(objNull); return this; }
-  Object *initArray(XRef *xref);
+  Object *initArray(const XRef *xref);
   Object *initArray(Array *array);
-  Object *initDict(XRef *xref);
+  Object *initDict(const XRef *xref);
   Object *initDict(Dict *dictA);
   Object *initStream(Stream *streamA);
   Object *initRef(int numA, int genA)
     { initObj(objRef); ref.num = numA; ref.gen = genA; return this; }
-  Object *initCmd(char *cmdA)
+  Object *initCmd(const char *cmdA)
     { initObj(objCmd); cmd = copyString(cmdA); return this; }
   Object *initError()
     { initObj(objError); return this; }
@@ -117,88 +117,88 @@ public:
     { initObj(objEOF); return this; }
 
   // Copy an object.
-  Object *copy(Object *obj);
+  Object *copy(Object *obj)const;
 
   // If object is a Ref, fetch and return the referenced object.
   // Otherwise, return a copy of the object.
-  Object *fetch(XRef *xref, Object *obj);
+  Object *fetch(const XRef *xref, Object *obj)const;
 
   // Free object contents.
   void free();
 
   // Type checking.
-  ObjType getType() { return type; }
-  GBool isBool() { return type == objBool; }
-  GBool isInt() { return type == objInt; }
-  GBool isReal() { return type == objReal; }
-  GBool isNum() { return type == objInt || type == objReal; }
-  GBool isString() { return type == objString; }
-  GBool isName() { return type == objName; }
-  GBool isNull() { return type == objNull; }
-  GBool isArray() { return type == objArray; }
-  GBool isDict() { return type == objDict; }
-  GBool isStream() { return type == objStream; }
-  GBool isRef() { return type == objRef; }
-  GBool isCmd() { return type == objCmd; }
-  GBool isError() { return type == objError; }
-  GBool isEOF() { return type == objEOF; }
-  GBool isNone() { return type == objNone; }
+  ObjType getType()const { return type; }
+  GBool isBool()const { return type == objBool; }
+  GBool isInt()const { return type == objInt; }
+  GBool isReal()const { return type == objReal; }
+  GBool isNum()const { return type == objInt || type == objReal; }
+  GBool isString()const { return type == objString; }
+  GBool isName()const { return type == objName; }
+  GBool isNull()const { return type == objNull; }
+  GBool isArray()const { return type == objArray; }
+  GBool isDict()const { return type == objDict; }
+  GBool isStream()const { return type == objStream; }
+  GBool isRef()const { return type == objRef; }
+  GBool isCmd()const { return type == objCmd; }
+  GBool isError()const { return type == objError; }
+  GBool isEOF()const { return type == objEOF; }
+  GBool isNone()const { return type == objNone; }
 
   // Special type checking.
-  GBool isName(const char *nameA)
+  GBool isName(const char *nameA)const
     { return type == objName && !strcmp(name, nameA); }
-  GBool isDict(const char *dictType);
-  GBool isStream(const char *dictType);
-  GBool isCmd(const char *cmdA)
+  GBool isDict(const char *dictType)const;
+  GBool isStream(const char *dictType)const;
+  GBool isCmd(const char *cmdA)const
     { return type == objCmd && !strcmp(cmd, cmdA); }
 
   // Accessors.  NB: these assume object is of correct type.
-  GBool getBool() { return booln; }
-  int getInt() { return intg; }
-  double getReal() { return real; }
-  double getNum() { return type == objInt ? (double)intg : real; }
-  GString *getString() { return string; }
-  char *getName() { return name; }
-  Array *getArray() { return array; }
-  Dict *getDict() { return dict; }
-  Stream *getStream() { return stream; }
-  Ref getRef() { return ref; }
-  int getRefNum() { return ref.num; }
-  int getRefGen() { return ref.gen; }
-  char *getCmd() { return cmd; }
+  GBool getBool()const { return booln; }
+  int getInt()const { return intg; }
+  double getReal()const { return real; }
+  double getNum()const { return type == objInt ? (double)intg : real; }
+  const GString *getString()const { return string; }
+  const char *getName()const { return name; }
+  const Array *getArray()const { return array; }
+  const Dict *getDict()const  { return dict; }
+  Stream *getStream()const { return stream; }
+  Ref getRef()const { return ref; }
+  int getRefNum()const { return ref.num; }
+  int getRefGen()const { return ref.gen; }
+  char *getCmd()const { return cmd; }
 
   // Array accessors.
-  int arrayGetLength();
-  void arrayAdd(Object *elem);
-  Object *arrayGet(int i, Object *obj);
-  Object *arrayGetNF(int i, Object *obj);
+  int arrayGetLength()const;
+  void arrayAdd(const Object *elem)const;
+  Object *arrayGet(int i, Object *obj)const;
+  Object *arrayGetNF(int i, Object *obj)const;
 
   // Dict accessors.
-  int dictGetLength();
-  void dictAdd(char *key, Object *val);
-  Object * dictUpdate(char *key, Object *val);
-  GBool dictIs(const char *dictType);
-  Object *dictLookup(const char *key, Object *obj);
-  Object *dictLookupNF(const char *key, Object *obj);
-  char *dictGetKey(int i);
-  Object *dictGetVal(int i, Object *obj);
-  Object *dictGetValNF(int i, Object *obj);
-  Object *dictDel(char *key);
+  int dictGetLength()const;
+  void dictAdd(char *key, const Object *val)const;
+  Object *dictUpdate(char *key, const Object *val)const;
+  GBool dictIs(const char *dictType)const;
+  Object *dictLookup(const char *key, Object *obj)const;
+  Object *dictLookupNF(const char *key, Object *obj)const;
+  char *dictGetKey(int i)const;
+  Object *dictGetVal(int i, Object *obj)const;
+  Object *dictGetValNF(int i, Object *obj)const;
+  Object *dictDel(const char *key)const;
 
   // Stream accessors.
-  GBool streamIs(const char *dictType);
-  void streamReset();
-  void streamClose();
-  int streamGetChar();
-  int streamLookChar();
-  char *streamGetLine(char *buf, int size);
-  Guint streamGetPos();
-  void streamSetPos(Guint pos, int dir = 0);
-  Dict *streamGetDict();
+  GBool streamIs(const char *dictType)const;
+  void streamReset()const;
+  void streamClose()const;
+  int streamGetChar()const;
+  int streamLookChar()const;
+  char *streamGetLine(char *buf, int size)const;
+  Guint streamGetPos()const;
+  void streamSetPos(Guint pos, int dir = 0)const;
+  const Dict *streamGetDict()const;
 
   // Output.
-  char *getTypeName();
-  void print(FILE *f = stdout);
+  const char *getTypeName()const;
+  void print(FILE *f = stdout)const;
 
   // Memory testing.
   static void memCheck(FILE *f);
@@ -206,7 +206,7 @@ public:
 private:
 
   ObjType type;			// object type
-  union {			// value for each type:
+  mutable union {		// value for each type:
     GBool booln;		//   boolean
     int intg;			//   integer
     double real;		//   real
@@ -231,16 +231,16 @@ private:
 
 #include "xpdf/Array.h"
 
-inline int Object::arrayGetLength()
+inline int Object::arrayGetLength()const
   { return array->getLength(); }
 
-inline void Object::arrayAdd(Object *elem)
+inline void Object::arrayAdd(const Object *elem)const
   { array->add(elem); }
 
-inline Object *Object::arrayGet(int i, Object *obj)
+inline Object *Object::arrayGet(int i, Object *obj)const
   { return array->get(i, obj); }
 
-inline Object *Object::arrayGetNF(int i, Object *obj)
+inline Object *Object::arrayGetNF(int i, Object *obj)const
   { return array->getNF(i, obj); }
 
 //------------------------------------------------------------------------
@@ -249,37 +249,37 @@ inline Object *Object::arrayGetNF(int i, Object *obj)
 
 #include "xpdf/Dict.h"
 
-inline int Object::dictGetLength()
+inline int Object::dictGetLength()const
   { return dict->getLength(); }
 
-inline void Object::dictAdd(char *key, Object *val)
+inline void Object::dictAdd(char *key, const Object *val)const
   { dict->add(key, val); }
 
-inline Object * Object::dictUpdate(char *key, Object *val)
+inline Object * Object::dictUpdate(char *key, const Object *val)const
   { return dict->update(key, val); }
 
-inline GBool Object::dictIs(const char *dictType)
+inline GBool Object::dictIs(const char *dictType)const
   { return dict->is(dictType); }
 
-inline GBool Object::isDict(const char *dictType)
+inline GBool Object::isDict(const char *dictType)const
   { return type == objDict && dictIs(dictType); }
 
-inline Object *Object::dictLookup(const char *key, Object *obj)
+inline Object *Object::dictLookup(const char *key, Object *obj)const
   { return dict->lookup(key, obj); }
 
-inline Object *Object::dictLookupNF(const char *key, Object *obj)
+inline Object *Object::dictLookupNF(const char *key, Object *obj)const
   { return dict->lookupNF(key, obj); }
 
-inline char *Object::dictGetKey(int i)
+inline char *Object::dictGetKey(int i)const
   { return dict->getKey(i); }
 
-inline Object *Object::dictGetVal(int i, Object *obj)
+inline Object *Object::dictGetVal(int i, Object *obj)const
   { return dict->getVal(i, obj); }
 
-inline Object *Object::dictGetValNF(int i, Object *obj)
+inline Object *Object::dictGetValNF(int i, Object *obj)const
   { return dict->getValNF(i, obj); }
 
-inline Object *Object::dictDel(char *key)
+inline Object *Object::dictDel(const char *key)const
   { return dict->del(key); }
 
 //------------------------------------------------------------------------
@@ -288,34 +288,34 @@ inline Object *Object::dictDel(char *key)
 
 #include "xpdf/Stream.h"
 
-inline GBool Object::streamIs(const char *dictType)
+inline GBool Object::streamIs(const char *dictType)const
   { return stream->getDict()->is(dictType); }
 
-inline GBool Object::isStream(const char *dictType)
+inline GBool Object::isStream(const char *dictType)const
   { return type == objStream && streamIs(dictType); }
 
-inline void Object::streamReset()
+inline void Object::streamReset()const
   { stream->reset(); }
 
-inline void Object::streamClose()
+inline void Object::streamClose()const
   { stream->close(); }
 
-inline int Object::streamGetChar()
+inline int Object::streamGetChar()const
   { return stream->getChar(); }
 
-inline int Object::streamLookChar()
+inline int Object::streamLookChar()const
   { return stream->lookChar(); }
 
-inline char *Object::streamGetLine(char *buf, int size)
+inline char *Object::streamGetLine(char *buf, int size)const
   { return stream->getLine(buf, size); }
 
-inline Guint Object::streamGetPos()
+inline Guint Object::streamGetPos()const
   { return stream->getPos(); }
 
-inline void Object::streamSetPos(Guint pos, int dir)
+inline void Object::streamSetPos(Guint pos, int dir)const
   { stream->setPos(pos, dir); }
 
-inline Dict *Object::streamGetDict()
+inline const Dict *Object::streamGetDict()const
   { return stream->getDict(); }
 
 #endif

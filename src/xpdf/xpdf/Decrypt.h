@@ -39,7 +39,7 @@ public:
   // the owner password was correct.  Either or both of the passwords
   // may be NULL, which is treated as an empty string.
   static GBool makeFileKey(int encVersion, int encRevision, int keyLength,
-			   GString *ownerKey, GString *userKey,
+			   const GString *ownerKey, const GString *userKey,
 			   int permissions, GString *fileID,
 			   GString *ownerPassword, GString *userPassword,
 			   Guchar *fileKey, GBool encryptMetadata,
@@ -48,7 +48,7 @@ public:
 private:
 
   static GBool makeFileKey2(int encVersion, int encRevision, int keyLength,
-			    GString *ownerKey, GString *userKey,
+			    const GString *ownerKey, const GString *userKey,
 			    int permissions, GString *fileID,
 			    GString *userPassword, Guchar *fileKey,
 			    GBool encryptMetadata);
@@ -84,15 +84,15 @@ struct DecryptContext
 class DecryptStream: public FilterStream {
 public:
 
-  DecryptStream(Stream *strA, Guchar *fileKey,
+  DecryptStream(Stream *strA, const Guchar *fileKey,
 		CryptAlgorithm algoA, int keyLength,
 		int objNum, int objGen);
   virtual ~DecryptStream();
-  virtual StreamKind getKind() { return strWeird; }
+  virtual StreamKind getKind()const { return strWeird; }
   virtual void reset();
   virtual int getChar();
   virtual int lookChar();
-  virtual GBool isBinary(GBool last);
+  virtual GBool isBinary(GBool last)const;
   virtual Stream *getUndecodedStream() { return this; }
   virtual Stream *clone();
 

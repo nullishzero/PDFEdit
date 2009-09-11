@@ -502,8 +502,8 @@ void FoFiTrueType::convertToType1(char *psName, char **newEncoding,
   delete ff;
 }
 
-void FoFiTrueType::convertToCIDType2(char *psName,
-				     Gushort *cidMap, int nCIDs,
+void FoFiTrueType::convertToCIDType2(const char *psName,
+				     const Gushort *cidMap, int nCIDs,
 				     GBool needVerticalMetrics,
 				     FoFiOutputFunc outputFunc,
 				     void *outputStream) {
@@ -632,7 +632,7 @@ void FoFiTrueType::convertToCIDType2(char *psName,
 		56);
 }
 
-void FoFiTrueType::convertToCIDType0(char *psName,
+void FoFiTrueType::convertToCIDType0(const char *psName,
 				     FoFiOutputFunc outputFunc,
 				     void *outputStream) {
   FoFiType1C *ff;
@@ -653,7 +653,7 @@ void FoFiTrueType::convertToCIDType0(char *psName,
   delete ff;
 }
 
-void FoFiTrueType::convertToType0(char *psName, Gushort *cidMap, int nCIDs,
+void FoFiTrueType::convertToType0(const char *psName, const Gushort *cidMap, int nCIDs,
 				  GBool needVerticalMetrics,
 				  FoFiOutputFunc outputFunc,
 				  void *outputStream) {
@@ -736,7 +736,7 @@ void FoFiTrueType::convertToType0(char *psName, Gushort *cidMap, int nCIDs,
   (*outputFunc)(outputStream, "FontName currentdict end definefont pop\n", 40);
 }
 
-void FoFiTrueType::convertToType0(char *psName,
+void FoFiTrueType::convertToType0(const char *psName,
 				  FoFiOutputFunc outputFunc,
 				  void *outputStream) {
   FoFiType1C *ff;

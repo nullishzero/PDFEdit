@@ -42,7 +42,7 @@ namespace pdfobjects {
 // Protected constructor, called when we have parsed an object
 //
 template<PropertyType Tp>
-CObjectSimple<Tp>::CObjectSimple (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf) : IProperty (p,rf), value(Value())
+CObjectSimple<Tp>::CObjectSimple (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf) : IProperty (p,rf), value(Value())
 {
 	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
@@ -55,7 +55,7 @@ CObjectSimple<Tp>::CObjectSimple (boost::weak_ptr<CPdf> p, Object& o, const Indi
 // Protected constructor, called when we have parsed an object
 //
 template<PropertyType Tp>
-CObjectSimple<Tp>::CObjectSimple (Object& o) : value(Value())
+CObjectSimple<Tp>::CObjectSimple (const Object& o) : value(Value())
 {
 	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	

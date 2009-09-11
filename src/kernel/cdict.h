@@ -96,14 +96,14 @@ public:
 	 * @param o		Xpdf object. 
 	 * @param rf	Indirect id and gen id.
 	 */
-	CDict (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
+	CDict (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf);
 
 	/**
 	 * Constructor.
 	 *
 	 * @param o		Xpdf object. 
 	 */
-	CDict (Object& o);
+	CDict (const Object& o);
 
 
 public:	
@@ -426,7 +426,7 @@ namespace utils {
  * @param obj	Xpdf object which holds the value.
  * @param val	Variable where the value will be stored.
  */
-template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, ::Object& obj, T val);
+template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, const ::Object& obj, T val);
 
 /**
  * This function is a slower equivalent to complexValueFromXpdfObj. But on the
@@ -485,7 +485,7 @@ unsigned char* bufferFromStream(Stream& str, size_t dictLength, size_t& size);
  * to find out how to decode). Nevertheless this operation may be considered 
  * harmfull for later usage of given the object in the xpdf code paths!
  */
-unsigned char* convertStreamToDecodedData (Object& obj, size_t& size);
+unsigned char* convertStreamToDecodedData (const Object& obj, size_t& size);
 
 /** Function to be used for data extracting from the given stream object.
  * Note that implementation can apply additional filters to the stream
@@ -507,7 +507,7 @@ unsigned char* convertStreamToDecodedData (Object& obj, size_t& size);
  * @return Buffer (size bytes) with data (must be deallocated by caller) or 
  * NULL on error.
  */
-typedef unsigned char* (*stream_data_extractor)(Object& obj, size_t& size);
+typedef unsigned char* (*stream_data_extractor)(const Object& obj, size_t& size);
 
 /** Makes a valid pdf indirect object representation of stream object.
  * @param streamObject Xpdf object representing stream.
@@ -529,7 +529,7 @@ typedef unsigned char* (*stream_data_extractor)(Object& obj, size_t& size);
  * 
  * @return number of bytes used in outputBuf or 0 if problem occures.
  */
-size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
+size_t streamToCharBuffer (const Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
 		stream_data_extractor extractor);
 	
 /**

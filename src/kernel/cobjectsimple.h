@@ -130,7 +130,7 @@ public:
 	 * @param o Xpdf object. 
 	 * @param rf Indirect id and gen id.
 	 */
-	CObjectSimple (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
+	CObjectSimple (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf);
 	
 	/**
 	 * Constructor.
@@ -138,7 +138,7 @@ public:
 	 *
 	 * @param o Xpdf object. 
 	 */
-	CObjectSimple (Object& o);
+	CObjectSimple (const Object& o);
 public:	
 
 	/**
@@ -421,7 +421,7 @@ makeStringPdfValid (GString * str)
  *
  * @return Pointer to newly created object.
  */
-IProperty* createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, ::Object& obj,const IndiRef& ref);
+IProperty* createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, const ::Object& obj,const IndiRef& ref);
 
 /**
  * Creates CObject* from xpdf object.
@@ -430,7 +430,7 @@ IProperty* createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, ::Object& obj,cons
  *
  * @return Pointer to newly created object.
  */
-IProperty* createObjFromXpdfObj (::Object& obj);
+IProperty* createObjFromXpdfObj (const ::Object& obj);
 
 /**
  * Save real xpdf object value to val.
@@ -438,7 +438,7 @@ IProperty* createObjFromXpdfObj (::Object& obj);
  * @param obj Xpdf object which holds the value.
  * @param val Variable where the value will be stored.
  */
-template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (::Object& obj, T val);
+template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (const ::Object& obj, T val);
 
 /**
  * Create xpdf Object which represents value.

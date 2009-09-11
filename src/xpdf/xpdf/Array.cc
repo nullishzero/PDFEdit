@@ -5,7 +5,9 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 // Changes:
-// Michal Hocko   - public clone method for deep copy of Array
+// Michal Hocko   
+// 	- public clone method for deep copy of Array
+//	- const where possible 
 //
 //========================================================================
 
@@ -25,7 +27,7 @@
 // Array
 //------------------------------------------------------------------------
 
-Array::Array(XRef *xrefA) {
+Array::Array(const XRef *xrefA) {
   xref = xrefA;
   elems = NULL;
   size = length = 0;
@@ -70,7 +72,7 @@ Array * Array::clone()const
    return result;
 }
 
-void Array::add(Object *elem) {
+void Array::add(const Object *elem) {
   if (length == size) {
     if (length == 0) {
       size = 8;
@@ -83,7 +85,7 @@ void Array::add(Object *elem) {
   ++length;
 }
 
-Object *Array::get(int i, Object *obj) {
+Object *Array::get(int i, Object *obj)const {
   if (i < 0 || i >= length) {
 #ifdef DEBUG_MEM
     abort();
@@ -94,7 +96,7 @@ Object *Array::get(int i, Object *obj) {
   return elems[i].fetch(xref, obj);
 }
 
-Object *Array::getNF(int i, Object *obj) {
+Object *Array::getNF(int i, Object *obj)const {
   if (i < 0 || i >= length) {
 #ifdef DEBUG_MEM
     abort();

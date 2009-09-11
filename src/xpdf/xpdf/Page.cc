@@ -60,7 +60,7 @@ void PDFRectangle::clipTo(PDFRectangle *rect) {
 // PageAttrs
 //------------------------------------------------------------------------
 
-PageAttrs::PageAttrs(PageAttrs *attrs, Dict *dict) {
+PageAttrs::PageAttrs(const PageAttrs *attrs, const Dict *dict) {
   Object obj1;
 
   // get old/default values
@@ -148,7 +148,7 @@ PageAttrs::~PageAttrs() {
   resources.free();
 }
 
-GBool PageAttrs::readBox(Dict *dict, char *key, PDFRectangle *box) {
+GBool PageAttrs::readBox(const Dict *dict, const char *key, PDFRectangle *box) {
   PDFRectangle tmp;
   double t;
   Object obj1, obj2;
@@ -205,7 +205,7 @@ GBool PageAttrs::readBox(Dict *dict, char *key, PDFRectangle *box) {
 // Page
 //------------------------------------------------------------------------
 
-Page::Page(XRef *xrefA, int numA, Dict *pageDict, PageAttrs *attrsA) {
+Page::Page(XRef *xrefA, int numA, const Dict *pageDict, PageAttrs *attrsA) {
   ok = gTrue;
   xref = xrefA;
   num = numA;
@@ -247,7 +247,7 @@ Page::~Page() {
   contents.free();
 }
 
-Links *Page::getLinks(Catalog *catalog) {
+Links *Page::getLinks(const Catalog *catalog)const {
   Links *links;
   Object obj;
 
@@ -258,9 +258,9 @@ Links *Page::getLinks(Catalog *catalog) {
 
 void Page::display(OutputDev *out, double hDPI, double vDPI,
 		   int rotate, GBool useMediaBox, GBool crop,
-		   GBool printing, Catalog *catalog,
+		   GBool printing, const Catalog *catalog,
 		   GBool (*abortCheckCbk)(void *data),
-		   void *abortCheckCbkData) {
+		   void *abortCheckCbkData)const {
   displaySlice(out, hDPI, vDPI, rotate, useMediaBox, crop,
 	       -1, -1, -1, -1, printing, catalog,
 	       abortCheckCbk, abortCheckCbkData);
@@ -269,16 +269,16 @@ void Page::display(OutputDev *out, double hDPI, double vDPI,
 void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
 			int rotate, GBool useMediaBox, GBool crop,
 			int sliceX, int sliceY, int sliceW, int sliceH,
-			GBool printing, Catalog *catalog,
+			GBool printing, const Catalog *catalog,
 			GBool (*abortCheckCbk)(void *data),
-			void *abortCheckCbkData) {
+			void *abortCheckCbkData)const {
 #ifndef PDF_PARSER_ONLY
-  PDFRectangle *mediaBox, *cropBox;
+  const PDFRectangle *mediaBox, *cropBox;
   PDFRectangle box;
   Gfx *gfx;
   Object obj;
   Annots *annotList;
-  Dict *acroForm;
+  const Dict *acroForm;
   int i;
 
   if (!out->checkPageSlice(this, hDPI, vDPI, rotate, useMediaBox, crop,
@@ -309,7 +309,7 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
   }
 
   gfx = new Gfx(xref, out, num, attrs->getResourceDict(),
-		hDPI, vDPI, &box, crop ? cropBox : (PDFRectangle *)NULL,
+		hDPI, vDPI, &box, crop ? cropBox : (const PDFRectangle *)NULL,
 		rotate, abortCheckCbk, abortCheckCbkData);
   contents.fetch(xref, &obj);
   if (!obj.isNull()) {
@@ -350,8 +350,8 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
 void Page::makeBox(double hDPI, double vDPI, int rotate,
 		   GBool useMediaBox, GBool upsideDown,
 		   double sliceX, double sliceY, double sliceW, double sliceH,
-		   PDFRectangle *box, GBool *crop) {
-  PDFRectangle *mediaBox, *cropBox, *baseBox;
+		   PDFRectangle *box, GBool *crop)const {
+  const PDFRectangle *mediaBox, *cropBox, *baseBox;
   double kx, ky;
 
   mediaBox = getMediaBox();
@@ -409,7 +409,7 @@ void Page::makeBox(double hDPI, double vDPI, int rotate,
   }
 }
 
-void Page::processLinks(OutputDev *out, Catalog *catalog) {
+void Page::processLinks(OutputDev *out, const Catalog *catalog)const  {
   Links *links;
   int i;
 

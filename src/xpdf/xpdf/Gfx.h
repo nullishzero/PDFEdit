@@ -82,16 +82,16 @@ struct Operator {
 class GfxResources {
 public:
 
-  GfxResources(XRef *xref, Dict *resDict, GfxResources *nextA);
+  GfxResources(XRef *xref, const Dict *resDict, GfxResources *nextA);
   ~GfxResources();
 
-  GfxFont *lookupFont(const char *name);
-  GBool lookupXObject(char *name, Object *obj);
-  GBool lookupXObjectNF(char *name, Object *obj);
-  void lookupColorSpace(char *name, Object *obj);
-  GfxPattern *lookupPattern(char *name);
-  GfxShading *lookupShading(char *name);
-  GBool lookupGState(char *name, Object *obj);
+  GfxFont *lookupFont(const char *name)const;
+  GBool lookupXObject(const char *name, Object *obj)const;
+  GBool lookupXObjectNF(const char *name, Object *obj)const;
+  void lookupColorSpace(const char *name, Object *obj)const;
+  GfxPattern *lookupPattern(const char *name)const;
+  GfxShading *lookupShading(const char *name)const;
+  GBool lookupGState(const char *name, Object *obj)const;
 
   GfxResources *getNext() { return next; }
 
@@ -114,22 +114,22 @@ class Gfx {
 public:
 
   // Constructor for regular output.
-  Gfx(XRef *xrefA, OutputDev *outA, int pageNum, Dict *resDict,
-      double hDPI, double vDPI, PDFRectangle *box,
-      PDFRectangle *cropBox, int rotate,
+  Gfx(XRef *xrefA, OutputDev *outA, int pageNum, const Dict *resDict,
+      double hDPI, double vDPI, const PDFRectangle *box,
+      const PDFRectangle *cropBox, int rotate,
       GBool (*abortCheckCbkA)(void *data) = NULL,
       void *abortCheckCbkDataA = NULL);
 
   // Constructor for a sub-page object.
-  Gfx(XRef *xrefA, OutputDev *outA, Dict *resDict,
-      PDFRectangle *box, PDFRectangle *cropBox,
+  Gfx(XRef *xrefA, OutputDev *outA, const Dict *resDict,
+      const PDFRectangle *box, const PDFRectangle *cropBox,
       GBool (*abortCheckCbkA)(void *data) = NULL,
       void *abortCheckCbkDataA = NULL);
 
   ~Gfx();
 
   // Interpret a stream or array of streams.
-  void display(Object *obj, GBool topLevel = gTrue);
+  void display(const Object *obj, GBool topLevel = gTrue);
 
   // Display an annotation, given its appearance (a Form XObject),
   // border style, and bounding box (in default user space).
@@ -176,9 +176,9 @@ private:
 WARN_UNUSED_RESULT
   int go(GBool topLevel); 
 
-  void execOp(Object *cmd, Object args[], int numArgs);
-  Operator *findOp(char *name);
-  GBool checkArg(Object *arg, TchkType type);
+  void execOp(const Object *cmd, Object args[], int numArgs);
+  Operator *findOp(const char *name);
+  GBool checkArg(const Object *arg, TchkType type);
   int getPos();
 
   // graphics state operators
@@ -242,7 +242,7 @@ WARN_UNUSED_RESULT
   void doFunctionShFill1(GfxFunctionShading *shading,
 			 double x0, double y0,
 			 double x1, double y1,
-			 GfxColor *colors, int depth);
+			 const GfxColor *colors, int depth);
   void doAxialShFill(GfxAxialShading *shading);
   void doRadialShFill(GfxRadialShading *shading);
   void doGouraudTriangleShFill(GfxGouraudTriangleShading *shading);
@@ -282,18 +282,18 @@ WARN_UNUSED_RESULT
   void opMoveShowText(Object args[], int numArgs);
   void opMoveSetShowText(Object args[], int numArgs);
   void opShowSpaceText(Object args[], int numArgs);
-  void doShowText(GString *s);
+  void doShowText(const GString *s);
 
   // XObject operators
   void opXObject(Object args[], int numArgs);
   void doImage(Object *ref, Stream *str, GBool inlineImg);
-  void doForm(Object *str);
-  void doForm1(Object *str, Dict *resDict, double *matrix, double *bbox,
+  void doForm(const Object *str);
+  void doForm1(const Object *str, const Dict *resDict, const double *matrix, const double *bbox,
 	       GBool transpGroup = gFalse, GBool softMask = gFalse,
-	       GfxColorSpace *blendingColorSpace = NULL,
+	       const GfxColorSpace *blendingColorSpace = NULL,
 	       GBool isolated = gFalse, GBool knockout = gFalse,
 	       GBool alpha = gFalse, Function *transferFunc = NULL,
-	       GfxColor *backdropColor = NULL);
+	       const GfxColor *backdropColor = NULL);
 
   // in-line image operators
   void opBeginImage(Object args[], int numArgs);
@@ -314,7 +314,7 @@ WARN_UNUSED_RESULT
   void opEndMarkedContent(Object args[], int numArgs);
   void opMarkPoint(Object args[], int numArgs);
 
-  void pushResources(Dict *resDict);
+  void pushResources(const Dict *resDict);
   void popResources();
 };
 

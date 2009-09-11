@@ -157,7 +157,7 @@ Catalog::~Catalog() {
 
 GString *Catalog::readMetadata() {
   GString *s;
-  Dict *dict;
+  const Dict *dict;
   Object obj;
   int c;
 
@@ -179,7 +179,7 @@ GString *Catalog::readMetadata() {
   return s;
 }
 
-int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start,
+int Catalog::readPageTree(const Dict *pagesDict, PageAttrs *attrs, int start,
 			  char *alreadyRead) {
   Object kids;
   Object kid;
@@ -259,7 +259,7 @@ int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start,
   return -1;
 }
 
-int Catalog::findPage(int num, int gen) {
+int Catalog::findPage(int num, int gen)const {
   int i;
 
   for (i = 0; i < numPages; ++i) {
@@ -269,7 +269,7 @@ int Catalog::findPage(int num, int gen) {
   return 0;
 }
 
-LinkDest *Catalog::findDest(GString *name) {
+LinkDest *Catalog::findDest(const GString *name)const {
   LinkDest *dest;
   Object obj1, obj2;
   GBool found;
@@ -313,7 +313,7 @@ LinkDest *Catalog::findDest(GString *name) {
   return dest;
 }
 
-Object *Catalog::findDestInTree(Object *tree, GString *name, Object *obj) {
+Object *Catalog::findDestInTree(const Object *tree, const GString *name, Object *obj)const {
   Object names, name1;
   Object kids, kid, limits, low, high;
   GBool done, found;

@@ -25,7 +25,7 @@ class Parser {
 public:
 
   // Constructor.
-  Parser(XRef *xrefA, Lexer *lexerA, GBool allowStreamsA);
+  Parser(const XRef *xrefA, Lexer *lexerA, GBool allowStreamsA);
 
   // Destructor.
   ~Parser();
@@ -34,15 +34,15 @@ public:
   // Returns pointer to the given obj or NULL if not able to parse
   // (given obj is initialized to objError in such a case)
 WARN_UNUSED_RESULT 
-  Object *getObj(Object *obj, Guchar *fileKey = NULL,
+  Object *getObj(Object *obj, const Guchar *fileKey = NULL,
 		 CryptAlgorithm encAlgorithm = cryptRC4, int keyLength = 0,
 		 int objNum = 0, int objGen = 0);
 
   // Get stream.
-  Stream *getStream() { return lexer->getStream(); }
+  Stream *getStream()const { return lexer->getStream(); }
 
   // Get current position in file.
-  int getPos() { return lexer->getPos(); }
+  int getPos()const { return lexer->getPos(); }
 
   // End of actual stream
   bool eofOfActualStream () const { return (1 == endOfActStream); }
@@ -52,14 +52,14 @@ WARN_UNUSED_RESULT
 
 private:
 
-  XRef *xref;			// the xref table for this PDF file
+  const XRef *xref;		// the xref table for this PDF file
   Lexer *lexer;			// input stream
   GBool allowStreams;		// parse stream objects?
   Object buf1, buf2;		// next two tokens
   int inlineImg;		// set when inline image data is encountered
   size_t endOfActStream; // 1 means end of act stream
 
-  Stream *makeStream(Object *dict, Guchar *fileKey,
+  Stream *makeStream(const Object *dict, const Guchar *fileKey,
 		     CryptAlgorithm encAlgorithm, int keyLength,
 		     int objNum, int objGen);
   void shift();

@@ -262,7 +262,7 @@ Operator Gfx::opTab[] = {
 // GfxResources
 //------------------------------------------------------------------------
 
-GfxResources::GfxResources(XRef *xref, Dict *resDict, GfxResources *nextA) {
+GfxResources::GfxResources(XRef *xref, const Dict *resDict, GfxResources *nextA) {
   Object obj1, obj2;
   Ref r;
 
@@ -321,9 +321,9 @@ GfxResources::~GfxResources() {
   gStateDict.free();
 }
 
-GfxFont *GfxResources::lookupFont(const char *name) {
+GfxFont *GfxResources::lookupFont(const char *name)const {
   GfxFont *font;
-  GfxResources *resPtr;
+  const GfxResources *resPtr;
 
   for (resPtr = this; resPtr; resPtr = resPtr->next) {
     if (resPtr->fonts) {
@@ -335,8 +335,8 @@ GfxFont *GfxResources::lookupFont(const char *name) {
   return NULL;
 }
 
-GBool GfxResources::lookupXObject(char *name, Object *obj) {
-  GfxResources *resPtr;
+GBool GfxResources::lookupXObject(const char *name, Object *obj)const {
+  const GfxResources *resPtr;
 
   for (resPtr = this; resPtr; resPtr = resPtr->next) {
     if (resPtr->xObjDict.isDict()) {
@@ -349,8 +349,8 @@ GBool GfxResources::lookupXObject(char *name, Object *obj) {
   return gFalse;
 }
 
-GBool GfxResources::lookupXObjectNF(char *name, Object *obj) {
-  GfxResources *resPtr;
+GBool GfxResources::lookupXObjectNF(const char *name, Object *obj)const {
+  const GfxResources *resPtr;
 
   for (resPtr = this; resPtr; resPtr = resPtr->next) {
     if (resPtr->xObjDict.isDict()) {
@@ -363,8 +363,8 @@ GBool GfxResources::lookupXObjectNF(char *name, Object *obj) {
   return gFalse;
 }
 
-void GfxResources::lookupColorSpace(char *name, Object *obj) {
-  GfxResources *resPtr;
+void GfxResources::lookupColorSpace(const char *name, Object *obj)const {
+  const GfxResources *resPtr;
 
   for (resPtr = this; resPtr; resPtr = resPtr->next) {
     if (resPtr->colorSpaceDict.isDict()) {
@@ -377,8 +377,8 @@ void GfxResources::lookupColorSpace(char *name, Object *obj) {
   obj->initNull();
 }
 
-GfxPattern *GfxResources::lookupPattern(char *name) {
-  GfxResources *resPtr;
+GfxPattern *GfxResources::lookupPattern(const char *name)const {
+  const GfxResources *resPtr;
   GfxPattern *pattern;
   Object obj;
 
@@ -396,8 +396,8 @@ GfxPattern *GfxResources::lookupPattern(char *name) {
   return NULL;
 }
 
-GfxShading *GfxResources::lookupShading(char *name) {
-  GfxResources *resPtr;
+GfxShading *GfxResources::lookupShading(const char *name)const {
+  const GfxResources *resPtr;
   GfxShading *shading;
   Object obj;
 
@@ -415,8 +415,8 @@ GfxShading *GfxResources::lookupShading(char *name) {
   return NULL;
 }
 
-GBool GfxResources::lookupGState(char *name, Object *obj) {
-  GfxResources *resPtr;
+GBool GfxResources::lookupGState(const char *name, Object *obj)const {
+  const GfxResources *resPtr;
 
   for (resPtr = this; resPtr; resPtr = resPtr->next) {
     if (resPtr->gStateDict.isDict()) {
@@ -434,9 +434,9 @@ GBool GfxResources::lookupGState(char *name, Object *obj) {
 // Gfx
 //------------------------------------------------------------------------
 
-Gfx::Gfx(XRef *xrefA, OutputDev *outA, int pageNum, Dict *resDict,
-	 double hDPI, double vDPI, PDFRectangle *box,
-	 PDFRectangle *cropBox, int rotate,
+Gfx::Gfx(XRef *xrefA, OutputDev *outA, int pageNum, const Dict *resDict,
+	 double hDPI, double vDPI, const PDFRectangle *box,
+	 const PDFRectangle *cropBox, int rotate,
 	 GBool (*abortCheckCbkA)(void *data),
 	 void *abortCheckCbkDataA) {
   int i;
@@ -477,8 +477,8 @@ Gfx::Gfx(XRef *xrefA, OutputDev *outA, int pageNum, Dict *resDict,
   }
 }
 
-Gfx::Gfx(XRef *xrefA, OutputDev *outA, Dict *resDict,
-	 PDFRectangle *box, PDFRectangle *cropBox,
+Gfx::Gfx(XRef *xrefA, OutputDev *outA, const Dict *resDict,
+	 const PDFRectangle *box, const PDFRectangle *cropBox,
 	 GBool (*abortCheckCbkA)(void *data),
 	 void *abortCheckCbkDataA) {
   int i;
@@ -531,7 +531,7 @@ Gfx::~Gfx() {
   }
 }
 
-void Gfx::display(Object *obj, GBool topLevel) {
+void Gfx::display(const Object *obj, GBool topLevel) {
   Object obj2;
   int i;
 
@@ -651,9 +651,9 @@ malformedErr:
   return -1;
 }
 
-void Gfx::execOp(Object *cmd, Object args[], int numArgs) {
+void Gfx::execOp(const Object *cmd, Object args[], int numArgs) {
   Operator *op;
-  char *name;
+  const char *name;
   Object *argPtr;
   int i;
 
@@ -698,7 +698,7 @@ void Gfx::execOp(Object *cmd, Object args[], int numArgs) {
   (this->*op->func)(argPtr, numArgs);
 }
 
-Operator *Gfx::findOp(char *name) {
+Operator *Gfx::findOp(const char *name) {
   int a, b, m, cmp;
 
   a = -1;
@@ -719,7 +719,7 @@ Operator *Gfx::findOp(char *name) {
   return &opTab[a];
 }
 
-GBool Gfx::checkArg(Object *arg, TchkType type) {
+GBool Gfx::checkArg(const Object *arg, TchkType type) {
   switch (type) {
   case tchkBool:   return arg->isBool();
   case tchkInt:    return arg->isInt();
@@ -761,7 +761,7 @@ void Gfx::opConcat(Object args[], int numArgs) {
 }
 
 void Gfx::opSetDash(Object args[], int numArgs) {
-  Array *a;
+  const Array *a;
   int length;
   Object obj;
   double *dash;
@@ -998,7 +998,7 @@ void Gfx::doSoftMask(Object *str, GBool alpha,
 		     GfxColorSpace *blendingColorSpace,
 		     GBool isolated, GBool knockout,
 		     Function *transferFunc, GfxColor *backdropColor) {
-  Dict *dict, *resDict;
+  const Dict *dict, *resDict;
   double m[6], bbox[4];
   Object obj1, obj2;
   int i;
@@ -1552,7 +1552,7 @@ void Gfx::opCloseEOFillStroke(Object args[], int numArgs) {
 }
 
 void Gfx::doPatternFill(GBool eoFill) {
-  GfxPattern *pattern;
+  const GfxPattern *pattern;
 
   // this is a bit of a kludge -- patterns can be really slow, so we
   // skip them if we're only doing text extraction, since they almost
@@ -1579,7 +1579,7 @@ void Gfx::doPatternFill(GBool eoFill) {
 }
 
 void Gfx::doPatternStroke() {
-  GfxPattern *pattern;
+  const GfxPattern *pattern;
 
   // this is a bit of a kludge -- patterns can be really slow, so we
   // skip them if we're only doing text extraction, since they almost
@@ -1613,7 +1613,7 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
   double xMin, yMin, xMax, yMax, x, y, x1, y1;
   double cxMin, cyMin, cxMax, cyMax;
   int xi0, yi0, xi1, yi1, xi, yi;
-  double *ctm, *btm, *ptm;
+  const double *ctm, *btm, *ptm;
   double m[6], ictm[6], m1[6], imb[6];
   double det;
   double xstep, ystep;
@@ -1787,9 +1787,9 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
 
 void Gfx::doShadingPatternFill(GfxShadingPattern *sPat,
 			       GBool stroke, GBool eoFill) {
-  GfxShading *shading;
+  const GfxShading *shading;
   GfxPath *savedPath;
-  double *ctm, *btm, *ptm;
+  const double *ctm, *btm, *ptm;
   double m[6], ictm[6], m1[6];
   double xMin, yMin, xMax, yMax;
   double det;
@@ -1999,11 +1999,11 @@ void Gfx::doFunctionShFill(GfxFunctionShading *shading) {
 void Gfx::doFunctionShFill1(GfxFunctionShading *shading,
 			    double x0, double y0,
 			    double x1, double y1,
-			    GfxColor *colors, int depth) {
+			    const GfxColor *colors, int depth) {
   GfxColor fillColor;
   GfxColor color0M, color1M, colorM0, colorM1, colorMM;
   GfxColor colors2[4];
-  double *matrix;
+  const double *matrix;
   double xM, yM;
   int nComps, i, j;
 
@@ -2359,7 +2359,7 @@ void Gfx::doRadialShFill(GfxRadialShading *shading) {
   double sz, xz, yz, sMin, sMax;
   GBool enclosed;
   int ia, ib, k, n;
-  double *ctm;
+  const double *ctm;
   double theta, alpha, angle, t;
 
   if (out->useShadedFills() &&
@@ -3093,7 +3093,7 @@ void Gfx::opMoveSetShowText(Object args[], int numArgs) {
 }
 
 void Gfx::opShowSpaceText(Object args[], int numArgs) {
-  Array *a;
+  const Array *a;
   Object obj;
   int wMode;
   int i;
@@ -3132,8 +3132,8 @@ void Gfx::opShowSpaceText(Object args[], int numArgs) {
   out->endStringOp(state);
 }
 
-void Gfx::doShowText(GString *s) {
-  GfxFont *font;
+void Gfx::doShowText(const GString *s) {
+  const GfxFont *font;
   int wMode;
   double riseX, riseY;
   CharCode code;
@@ -3141,9 +3141,9 @@ void Gfx::doShowText(GString *s) {
   double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, lineX, lineY;
   double originX, originY, tOriginX, tOriginY;
   double oldCTM[6], newCTM[6];
-  double *mat;
+  const double *mat;
   Object charProc;
-  Dict *resDict;
+  const Dict *resDict;
   Parser *oldParser;
   char *p;
   int len, n, uLen, nChars, nSpaces, i;
@@ -3310,7 +3310,7 @@ void Gfx::doShowText(GString *s) {
 //------------------------------------------------------------------------
 
 void Gfx::opXObject(Object args[], int numArgs) {
-  char *name;
+  const char *name;
   Object obj1, obj2, obj3, refObj;
 #if OPI_SUPPORT
   Object opiDict;
@@ -3366,7 +3366,7 @@ void Gfx::opXObject(Object args[], int numArgs) {
 }
 
 void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
-  Dict *dict, *maskDict;
+  const Dict *dict, *maskDict;
   int width, height;
   int bits, maskBits;
   StreamColorSpaceMode csMode;
@@ -3683,14 +3683,14 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
   error(getPos(), "Bad image parameters");
 }
 
-void Gfx::doForm(Object *str) {
-  Dict *dict;
+void Gfx::doForm(const Object *str) {
+  const Dict *dict;
   GBool transpGroup, isolated, knockout;
   GfxColorSpace *blendingColorSpace;
   Object matrixObj, bboxObj;
   double m[6], bbox[4];
   Object resObj;
-  Dict *resDict;
+  const Dict *resDict;
   Object obj1, obj2, obj3;
   int i;
 
@@ -3777,12 +3777,12 @@ void Gfx::doForm(Object *str) {
   resObj.free();
 }
 
-void Gfx::doForm1(Object *str, Dict *resDict, double *matrix, double *bbox,
+void Gfx::doForm1(const Object *str, const Dict *resDict, const double *matrix, const double *bbox,
 		  GBool transpGroup, GBool softMask,
-		  GfxColorSpace *blendingColorSpace,
+		  const GfxColorSpace *blendingColorSpace,
 		  GBool isolated, GBool knockout,
 		  GBool alpha, Function *transferFunc,
-		  GfxColor *backdropColor) {
+		  const GfxColor *backdropColor) {
   Parser *oldParser;
   double oldBaseMatrix[6];
   int i;
@@ -4014,11 +4014,11 @@ void Gfx::opMarkPoint(Object args[], int numArgs) {
 
 void Gfx::drawAnnot(Object *str, AnnotBorderStyle *borderStyle,
 		    double xMin, double yMin, double xMax, double yMax) {
-  Dict *dict, *resDict;
+  const Dict *dict, *resDict;
   Object matrixObj, bboxObj, resObj;
   Object obj1;
   double m[6], bbox[4], ictm[6];
-  double *ctm;
+  const double *ctm;
   double formX0, formY0, formX1, formY1;
   double annotX0, annotY0, annotX1, annotY1;
   double det, x, y, sx, sy;
@@ -4187,7 +4187,7 @@ void Gfx::restoreState() {
   out->restoreState(state);
 }
 
-void Gfx::pushResources(Dict *resDict) {
+void Gfx::pushResources(const Dict *resDict) {
   res = new GfxResources(xref, resDict, res);
 }
 

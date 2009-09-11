@@ -134,37 +134,37 @@ public:
 
   GfxColorSpace();
   virtual ~GfxColorSpace();
-  virtual GfxColorSpace *copy() = 0;
-  virtual GfxColorSpaceMode getMode() = 0;
+  virtual GfxColorSpace *copy()const = 0;
+  virtual GfxColorSpaceMode getMode()const = 0;
 
   // Construct a color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Object *csObj);
+  static GfxColorSpace *parse(const Object *csObj);
 
   // Convert to gray, RGB, or CMYK.
-  virtual void getGray(GfxColor *color, GfxGray *gray) = 0;
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb) = 0;
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk) = 0;
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const = 0;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const = 0;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const = 0;
 
   // Return the number of color components.
-  virtual int getNComps() = 0;
+  virtual int getNComps()const = 0;
 
   // Get this color space's default color.
-  virtual void getDefaultColor(GfxColor *color) = 0;
+  virtual void getDefaultColor(GfxColor *color)const = 0;
 
   // Return the default ranges for each component, assuming an image
   // with a max pixel value of <maxImgPixel>.
   virtual void getDefaultRanges(double *decodeLow, double *decodeRange,
-				int maxImgPixel);
+				int maxImgPixel)const;
 
   // Returns true if painting operations in this color space never
   // mark the page (e.g., the "None" colorant).
-  virtual GBool isNonMarking() { return gFalse; }
+  virtual GBool isNonMarking()const { return gFalse; }
 
   // Return the number of color space modes
   static int getNumColorSpaceModes();
 
   // Return the name of the <idx>th color space mode.
-  static char *getColorSpaceModeName(int idx);
+  static const char *getColorSpaceModeName(int idx);
 
 private:
 };
@@ -178,15 +178,15 @@ public:
 
   GfxDeviceGrayColorSpace();
   virtual ~GfxDeviceGrayColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csDeviceGray; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csDeviceGray; }
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 1; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 1; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
 private:
 };
@@ -200,27 +200,27 @@ public:
 
   GfxCalGrayColorSpace();
   virtual ~GfxCalGrayColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csCalGray; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csCalGray; }
 
   // Construct a CalGray color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 1; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 1; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
   // CalGray-specific access.
-  double getWhiteX() { return whiteX; }
-  double getWhiteY() { return whiteY; }
-  double getWhiteZ() { return whiteZ; }
-  double getBlackX() { return blackX; }
-  double getBlackY() { return blackY; }
-  double getBlackZ() { return blackZ; }
-  double getGamma() { return gamma; }
+  double getWhiteX()const { return whiteX; }
+  double getWhiteY()const { return whiteY; }
+  double getWhiteZ()const { return whiteZ; }
+  double getBlackX()const { return blackX; }
+  double getBlackY()const { return blackY; }
+  double getBlackZ()const { return blackZ; }
+  double getGamma()const { return gamma; }
 
 private:
 
@@ -238,15 +238,15 @@ public:
 
   GfxDeviceRGBColorSpace();
   virtual ~GfxDeviceRGBColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csDeviceRGB; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csDeviceRGB; }
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 3; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 3; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
 private:
 };
@@ -260,30 +260,30 @@ public:
 
   GfxCalRGBColorSpace();
   virtual ~GfxCalRGBColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csCalRGB; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csCalRGB; }
 
   // Construct a CalRGB color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 3; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 3; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
   // CalRGB-specific access.
-  double getWhiteX() { return whiteX; }
-  double getWhiteY() { return whiteY; }
-  double getWhiteZ() { return whiteZ; }
-  double getBlackX() { return blackX; }
-  double getBlackY() { return blackY; }
-  double getBlackZ() { return blackZ; }
-  double getGammaR() { return gammaR; }
-  double getGammaG() { return gammaG; }
-  double getGammaB() { return gammaB; }
-  double *getMatrix() { return mat; }
+  double getWhiteX()const { return whiteX; }
+  double getWhiteY()const { return whiteY; }
+  double getWhiteZ()const { return whiteZ; }
+  double getBlackX()const { return blackX; }
+  double getBlackY()const { return blackY; }
+  double getBlackZ()const { return blackZ; }
+  double getGammaR()const { return gammaR; }
+  double getGammaG()const { return gammaG; }
+  double getGammaB()const { return gammaB; }
+  const double *getMatrix()const { return mat; }
 
 private:
 
@@ -302,15 +302,15 @@ public:
 
   GfxDeviceCMYKColorSpace();
   virtual ~GfxDeviceCMYKColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csDeviceCMYK; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csDeviceCMYK; }
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 4; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 4; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
 private:
 };
@@ -324,33 +324,33 @@ public:
 
   GfxLabColorSpace();
   virtual ~GfxLabColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csLab; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csLab; }
 
   // Construct a Lab color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 3; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 3; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
   virtual void getDefaultRanges(double *decodeLow, double *decodeRange,
-				int maxImgPixel);
+				int maxImgPixel)const;
 
   // Lab-specific access.
-  double getWhiteX() { return whiteX; }
-  double getWhiteY() { return whiteY; }
-  double getWhiteZ() { return whiteZ; }
-  double getBlackX() { return blackX; }
-  double getBlackY() { return blackY; }
-  double getBlackZ() { return blackZ; }
-  double getAMin() { return aMin; }
-  double getAMax() { return aMax; }
-  double getBMin() { return bMin; }
-  double getBMax() { return bMax; }
+  double getWhiteX()const { return whiteX; }
+  double getWhiteY()const { return whiteY; }
+  double getWhiteZ()const { return whiteZ; }
+  double getBlackX()const { return blackX; }
+  double getBlackY()const { return blackY; }
+  double getBlackZ()const { return blackZ; }
+  double getAMin()const { return aMin; }
+  double getAMax()const { return aMax; }
+  double getBMin()const { return bMin; }
+  double getBMax()const { return bMax; }
 
 private:
 
@@ -368,26 +368,26 @@ class GfxICCBasedColorSpace: public GfxColorSpace {
 public:
 
   GfxICCBasedColorSpace(int nCompsA, GfxColorSpace *altA,
-			Ref *iccProfileStreamA);
+			const Ref *iccProfileStreamA);
   virtual ~GfxICCBasedColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csICCBased; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csICCBased; }
 
   // Construct an ICCBased color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return nComps; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return nComps; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
   virtual void getDefaultRanges(double *decodeLow, double *decodeRange,
-				int maxImgPixel);
+				int maxImgPixel)const;
 
   // ICCBased-specific access.
-  GfxColorSpace *getAlt() { return alt; }
+  const GfxColorSpace *getAlt()const { return alt; }
 
 private:
 
@@ -407,27 +407,27 @@ public:
 
   GfxIndexedColorSpace(GfxColorSpace *baseA, int indexHighA);
   virtual ~GfxIndexedColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csIndexed; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csIndexed; }
 
   // Construct a Lab color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 1; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 1; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
   virtual void getDefaultRanges(double *decodeLow, double *decodeRange,
-				int maxImgPixel);
+				int maxImgPixel)const;
 
   // Indexed-specific access.
-  GfxColorSpace *getBase() { return base; }
-  int getIndexHigh() { return indexHigh; }
-  Guchar *getLookup() { return lookup; }
-  GfxColor *mapColorToBase(GfxColor *color, GfxColor *baseColor);
+  const GfxColorSpace *getBase()const { return base; }
+  int getIndexHigh()const { return indexHigh; }
+  const Guchar *getLookup()const { return lookup; }
+  GfxColor *mapColorToBase(const GfxColor *color, GfxColor *baseColor)const;
 
 private:
 
@@ -446,25 +446,25 @@ public:
   GfxSeparationColorSpace(GString *nameA, GfxColorSpace *altA,
 			  Function *funcA);
   virtual ~GfxSeparationColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csSeparation; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csSeparation; }
 
   // Construct a Separation color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 1; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 1; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
-  virtual GBool isNonMarking() { return nonMarking; }
+  virtual GBool isNonMarking()const { return nonMarking; }
 
   // Separation-specific access.
-  GString *getName() { return name; }
-  GfxColorSpace *getAlt() { return alt; }
-  Function *getFunc() { return func; }
+  const GString *getName()const { return name; }
+  const GfxColorSpace *getAlt()const { return alt; }
+  Function *getFunc()const { return (Function *)func; }
 
 private:
 
@@ -483,25 +483,25 @@ public:
 
   GfxDeviceNColorSpace(int nCompsA, GfxColorSpace *alt, Function *func);
   virtual ~GfxDeviceNColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csDeviceN; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csDeviceN; }
 
   // Construct a DeviceN color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return nComps; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return nComps; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
-  virtual GBool isNonMarking() { return nonMarking; }
+  virtual GBool isNonMarking()const { return nonMarking; }
 
   // DeviceN-specific access.
-  GString *getColorantName(int i) { return names[i]; }
-  GfxColorSpace *getAlt() { return alt; }
-  Function *getTintTransformFunc() { return func; }
+  const GString *getColorantName(int i)const { return names[i]; }
+  const GfxColorSpace *getAlt()const { return alt; }
+  Function *getTintTransformFunc()const { return (Function *)func; }
 
 private:
 
@@ -522,18 +522,18 @@ public:
 
   GfxPatternColorSpace(GfxColorSpace *underA);
   virtual ~GfxPatternColorSpace();
-  virtual GfxColorSpace *copy();
-  virtual GfxColorSpaceMode getMode() { return csPattern; }
+  virtual GfxColorSpace *copy()const;
+  virtual GfxColorSpaceMode getMode()const { return csPattern; }
 
   // Construct a Pattern color space.  Returns NULL if unsuccessful.
-  static GfxColorSpace *parse(Array *arr);
+  static GfxColorSpace *parse(const Array *arr);
 
-  virtual void getGray(GfxColor *color, GfxGray *gray);
-  virtual void getRGB(GfxColor *color, GfxRGB *rgb);
-  virtual void getCMYK(GfxColor *color, GfxCMYK *cmyk);
+  virtual void getGray(const GfxColor *color, GfxGray *gray)const;
+  virtual void getRGB(const GfxColor *color, GfxRGB *rgb)const;
+  virtual void getCMYK(const GfxColor *color, GfxCMYK *cmyk)const;
 
-  virtual int getNComps() { return 0; }
-  virtual void getDefaultColor(GfxColor *color);
+  virtual int getNComps()const { return 0; }
+  virtual void getDefaultColor(GfxColor *color)const;
 
   // Pattern-specific access.
   GfxColorSpace *getUnder() { return under; }
@@ -554,11 +554,11 @@ public:
   GfxPattern(int typeA);
   virtual ~GfxPattern();
 
-  static GfxPattern *parse(Object *obj);
+  static GfxPattern *parse(const Object *obj);
 
-  virtual GfxPattern *copy() = 0;
+  virtual GfxPattern *copy()const = 0;
 
-  int getType() { return type; }
+  int getType()const { return type; }
 
 private:
 
@@ -572,27 +572,27 @@ private:
 class GfxTilingPattern: public GfxPattern {
 public:
 
-  static GfxTilingPattern *parse(Object *patObj);
+  static GfxTilingPattern *parse(const Object *patObj);
   virtual ~GfxTilingPattern();
 
-  virtual GfxPattern *copy();
+  virtual GfxPattern *copy()const;
 
-  int getPaintType() { return paintType; }
-  int getTilingType() { return tilingType; }
-  double *getBBox() { return bbox; }
-  double getXStep() { return xStep; }
-  double getYStep() { return yStep; }
-  Dict *getResDict()
+  int getPaintType()const { return paintType; }
+  int getTilingType()const { return tilingType; }
+  const double *getBBox()const { return bbox; }
+  double getXStep()const { return xStep; }
+  double getYStep()const { return yStep; }
+  const Dict *getResDict()const
     { return resDict.isDict() ? resDict.getDict() : (Dict *)NULL; }
-  double *getMatrix() { return matrix; }
+  const double *getMatrix()const { return matrix; }
   Object *getContentStream() { return &contentStream; }
 
 private:
 
   GfxTilingPattern(int paintTypeA, int tilingTypeA,
-		   double *bboxA, double xStepA, double yStepA,
-		   Object *resDictA, double *matrixA,
-		   Object *contentStreamA);
+		   const double *bboxA, double xStepA, double yStepA,
+		   const Object *resDictA, const double *matrixA,
+		   const Object *contentStreamA);
 
   int paintType;
   int tilingType;
@@ -610,17 +610,17 @@ private:
 class GfxShadingPattern: public GfxPattern {
 public:
 
-  static GfxShadingPattern *parse(Object *patObj);
+  static GfxShadingPattern *parse(const Object *patObj);
   virtual ~GfxShadingPattern();
 
-  virtual GfxPattern *copy();
+  virtual GfxPattern *copy()const;
 
   GfxShading *getShading() { return shading; }
-  double *getMatrix() { return matrix; }
+  const double *getMatrix()const { return matrix; }
 
 private:
 
-  GfxShadingPattern(GfxShading *shadingA, double *matrixA);
+  GfxShadingPattern(GfxShading *shadingA, const double *matrixA);
 
   GfxShading *shading;
   double matrix[6];
@@ -634,24 +634,24 @@ class GfxShading {
 public:
 
   GfxShading(int typeA);
-  GfxShading(GfxShading *shading);
+  GfxShading(const GfxShading *shading);
   virtual ~GfxShading();
 
-  static GfxShading *parse(Object *obj);
+  static GfxShading *parse(const Object *obj);
 
-  virtual GfxShading *copy() = 0;
+  virtual GfxShading *copy()const = 0;
 
-  int getType() { return type; }
-  GfxColorSpace *getColorSpace() { return colorSpace; }
-  GfxColor *getBackground() { return &background; }
-  GBool getHasBackground() { return hasBackground; }
-  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA)
+  int getType()const { return type; }
+  const GfxColorSpace *getColorSpace()const { return colorSpace; }
+  const GfxColor *getBackground()const { return &background; }
+  GBool getHasBackground()const { return hasBackground; }
+  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA)const
     { *xMinA = xMin; *yMinA = yMin; *xMaxA = xMax; *yMaxA = yMax; }
-  GBool getHasBBox() { return hasBBox; }
+  GBool getHasBBox()const { return hasBBox; }
 
 protected:
 
-  GBool init(Dict *dict);
+  GBool init(const Dict *dict);
 
   int type;
   GfxColorSpace *colorSpace;
@@ -672,19 +672,19 @@ public:
 		     double x1A, double y1A,
 		     double *matrixA,
 		     Function **funcsA, int nFuncsA);
-  GfxFunctionShading(GfxFunctionShading *shading);
+  GfxFunctionShading(const GfxFunctionShading *shading);
   virtual ~GfxFunctionShading();
 
-  static GfxFunctionShading *parse(Dict *dict);
+  static GfxFunctionShading *parse(const Dict *dict);
 
-  virtual GfxShading *copy();
+  virtual GfxShading *copy()const;
 
-  void getDomain(double *x0A, double *y0A, double *x1A, double *y1A)
+  void getDomain(double *x0A, double *y0A, double *x1A, double *y1A)const
     { *x0A = x0; *y0A = y0; *x1A = x1; *y1A = y1; }
-  double *getMatrix() { return matrix; }
-  int getNFuncs() { return nFuncs; }
-  Function *getFunc(int i) { return funcs[i]; }
-  void getColor(double x, double y, GfxColor *color);
+  const double *getMatrix()const { return matrix; }
+  int getNFuncs()const { return nFuncs; }
+  Function *getFunc(int i)const { return funcs[i]; }
+  void getColor(double x, double y, GfxColor *color)const;
 
 private:
 
@@ -706,22 +706,22 @@ public:
 		  double t0A, double t1A,
 		  Function **funcsA, int nFuncsA,
 		  GBool extend0A, GBool extend1A);
-  GfxAxialShading(GfxAxialShading *shading);
+  GfxAxialShading(const GfxAxialShading *shading);
   virtual ~GfxAxialShading();
 
-  static GfxAxialShading *parse(Dict *dict);
+  static GfxAxialShading *parse(const Dict *dict);
 
-  virtual GfxShading *copy();
+  virtual GfxShading *copy()const;
 
   void getCoords(double *x0A, double *y0A, double *x1A, double *y1A)
     { *x0A = x0; *y0A = y0; *x1A = x1; *y1A = y1; }
-  double getDomain0() { return t0; }
-  double getDomain1() { return t1; }
-  GBool getExtend0() { return extend0; }
-  GBool getExtend1() { return extend1; }
-  int getNFuncs() { return nFuncs; }
-  Function *getFunc(int i) { return funcs[i]; }
-  void getColor(double t, GfxColor *color);
+  double getDomain0()const { return t0; }
+  double getDomain1()const { return t1; }
+  GBool getExtend0()const { return extend0; }
+  GBool getExtend1()const { return extend1; }
+  int getNFuncs()const { return nFuncs; }
+  Function *getFunc(int i)const { return funcs[i]; }
+  void getColor(double t, GfxColor *color)const;
 
 private:
 
@@ -744,23 +744,23 @@ public:
 		   double t0A, double t1A,
 		   Function **funcsA, int nFuncsA,
 		   GBool extend0A, GBool extend1A);
-  GfxRadialShading(GfxRadialShading *shading);
+  GfxRadialShading(const GfxRadialShading *shading);
   virtual ~GfxRadialShading();
 
-  static GfxRadialShading *parse(Dict *dict);
+  static GfxRadialShading *parse(const Dict *dict);
 
-  virtual GfxShading *copy();
+  virtual GfxShading *copy()const;
 
   void getCoords(double *x0A, double *y0A, double *r0A,
 		 double *x1A, double *y1A, double *r1A)
     { *x0A = x0; *y0A = y0; *r0A = r0; *x1A = x1; *y1A = y1; *r1A = r1; }
-  double getDomain0() { return t0; }
-  double getDomain1() { return t1; }
-  GBool getExtend0() { return extend0; }
-  GBool getExtend1() { return extend1; }
-  int getNFuncs() { return nFuncs; }
-  Function *getFunc(int i) { return funcs[i]; }
-  void getColor(double t, GfxColor *color);
+  double getDomain0()const { return t0; }
+  double getDomain1()const { return t1; }
+  GBool getExtend0()const { return extend0; }
+  GBool getExtend1()const { return extend1; }
+  int getNFuncs()const { return nFuncs; }
+  Function *getFunc(int i)const { return funcs[i]; }
+  void getColor(double t, GfxColor *color)const;
 
 private:
 
@@ -787,17 +787,17 @@ public:
 			    GfxGouraudVertex *verticesA, int nVerticesA,
 			    int (*trianglesA)[3], int nTrianglesA,
 			    Function **funcsA, int nFuncsA);
-  GfxGouraudTriangleShading(GfxGouraudTriangleShading *shading);
+  GfxGouraudTriangleShading(const GfxGouraudTriangleShading *shading);
   virtual ~GfxGouraudTriangleShading();
 
-  static GfxGouraudTriangleShading *parse(int typeA, Dict *dict, Stream *str);
+  static GfxGouraudTriangleShading *parse(int typeA, const Dict *dict, Stream *str);
 
-  virtual GfxShading *copy();
+  virtual GfxShading *copy()const;
 
-  int getNTriangles() { return nTriangles; }
+  int getNTriangles()const { return nTriangles; }
   void getTriangle(int i, double *x0, double *y0, GfxColor *color0,
 		   double *x1, double *y1, GfxColor *color1,
-		   double *x2, double *y2, GfxColor *color2);
+		   double *x2, double *y2, GfxColor *color2)const;
 
 private:
 
@@ -824,15 +824,15 @@ public:
 
   GfxPatchMeshShading(int typeA, GfxPatch *patchesA, int nPatchesA,
 		      Function **funcsA, int nFuncsA);
-  GfxPatchMeshShading(GfxPatchMeshShading *shading);
+  GfxPatchMeshShading(const GfxPatchMeshShading *shading);
   virtual ~GfxPatchMeshShading();
 
-  static GfxPatchMeshShading *parse(int typeA, Dict *dict, Stream *str);
+  static GfxPatchMeshShading *parse(int typeA, const Dict *dict, Stream *str);
 
-  virtual GfxShading *copy();
+  virtual GfxShading *copy()const;
 
-  int getNPatches() { return nPatches; }
-  GfxPatch *getPatch(int i) { return &patches[i]; }
+  int getNPatches()const { return nPatches; }
+  GfxPatch *getPatch(int i)const { return &patches[i]; }
 
 private:
 
@@ -850,42 +850,42 @@ class GfxImageColorMap {
 public:
 
   // Constructor.
-  GfxImageColorMap(int bitsA, Object *decode, GfxColorSpace *colorSpaceA);
+  GfxImageColorMap(int bitsA, const Object *decode, GfxColorSpace *colorSpaceA);
 
   // Destructor.
   ~GfxImageColorMap();
 
   // Return a copy of this color map.
-  GfxImageColorMap *copy() { return new GfxImageColorMap(this); }
+  GfxImageColorMap *copy()const { return new GfxImageColorMap(this); }
 
   // Is color map valid?
-  GBool isOk() { return ok; }
+  GBool isOk()const { return ok; }
 
   // Get the color space.
-  GfxColorSpace *getColorSpace() { return colorSpace; }
+  const GfxColorSpace *getColorSpace()const { return colorSpace; }
 
   // Get stream decoding info.
-  int getNumPixelComps() { return nComps; }
-  int getBits() { return bits; }
+  int getNumPixelComps()const { return nComps; }
+  int getBits()const { return bits; }
 
   // Get decode table.
-  double getDecodeLow(int i) { return decodeLow[i]; }
-  double getDecodeHigh(int i) { return decodeLow[i] + decodeRange[i]; }
+  double getDecodeLow(int i)const { return decodeLow[i]; }
+  double getDecodeHigh(int i)const { return decodeLow[i] + decodeRange[i]; }
 
   // Convert an image pixel to a color.
-  void getGray(Guchar *x, GfxGray *gray);
-  void getRGB(Guchar *x, GfxRGB *rgb);
-  void getCMYK(Guchar *x, GfxCMYK *cmyk);
-  void getColor(Guchar *x, GfxColor *color);
+  void getGray(const Guchar *x, GfxGray *gray)const;
+  void getRGB(const Guchar *x, GfxRGB *rgb)const;
+  void getCMYK(const Guchar *x, GfxCMYK *cmyk)const;
+  void getColor(const Guchar *x, GfxColor *color)const;
 
 private:
 
-  GfxImageColorMap(GfxImageColorMap *colorMap);
+  GfxImageColorMap(const GfxImageColorMap *colorMap);
 
   GfxColorSpace *colorSpace;	// the image color space
   int bits;			// bits per component
   int nComps;			// number of components in a pixel
-  GfxColorSpace *colorSpace2;	// secondary color space
+  const GfxColorSpace *colorSpace2;	// secondary color space
   int nComps2;			// number of components in colorSpace2
   GfxColorComp *		// lookup table
     lookup[gfxColorMaxComps];
@@ -910,17 +910,17 @@ public:
   ~GfxSubpath();
 
   // Copy.
-  GfxSubpath *copy() { return new GfxSubpath(this); }
+  GfxSubpath *copy()const { return new GfxSubpath(this); }
 
   // Get points.
-  int getNumPoints() { return n; }
-  double getX(int i) { return x[i]; }
-  double getY(int i) { return y[i]; }
-  GBool getCurve(int i) { return curve[i]; }
+  int getNumPoints()const { return n; }
+  double getX(int i)const { return x[i]; }
+  double getY(int i)const { return y[i]; }
+  GBool getCurve(int i)const { return curve[i]; }
 
   // Get last point.
-  double getLastX() { return x[n-1]; }
-  double getLastY() { return y[n-1]; }
+  double getLastX()const { return x[n-1]; }
+  double getLastY()const { return y[n-1]; }
 
   // Add a line segment.
   void lineTo(double x1, double y1);
@@ -931,7 +931,7 @@ public:
 
   // Close the subpath.
   void close();
-  GBool isClosed() { return closed; }
+  GBool isClosed()const { return closed; }
 
   // Add (<dx>, <dy>) to each point in the subpath.
   void offset(double dx, double dy);
@@ -945,7 +945,7 @@ private:
   int size;			// size of x/y arrays
   GBool closed;			// set if path is closed
 
-  GfxSubpath(GfxSubpath *subpath);
+  GfxSubpath(const GfxSubpath *subpath);
 };
 
 class GfxPath {
@@ -958,22 +958,22 @@ public:
   ~GfxPath();
 
   // Copy.
-  GfxPath *copy()
+  GfxPath *copy()const
     { return new GfxPath(justMoved, firstX, firstY, subpaths, n, size); }
 
   // Is there a current point?
-  GBool isCurPt() { return n > 0 || justMoved; }
+  GBool isCurPt()const { return n > 0 || justMoved; }
 
   // Is the path non-empty, i.e., is there at least one segment?
-  GBool isPath() { return n > 0; }
+  GBool isPath()const { return n > 0; }
 
   // Get subpaths.
-  int getNumSubpaths() { return n; }
-  GfxSubpath *getSubpath(int i) { return subpaths[i]; }
+  int getNumSubpaths()const { return n; }
+  GfxSubpath *getSubpath(int i)const { return subpaths[i]; }
 
   // Get last point on last subpath.
-  double getLastX() { return (0 < n) ? subpaths[n-1]->getLastX() : 0; }
-  double getLastY() { return (0 < n) ? subpaths[n-1]->getLastY() : 0; }
+  double getLastX()const { return (0 < n) ? subpaths[n-1]->getLastX() : 0; }
+  double getLastY()const { return (0 < n) ? subpaths[n-1]->getLastY() : 0; }
 
   // Move the current point.
   void moveTo(double x, double y);
@@ -1003,7 +1003,7 @@ private:
   int size;			// size of subpaths array
 
   GfxPath(GBool justMoved1, double firstX1, double firstY1,
-	  GfxSubpath **subpaths1, int n1, int size1);
+	  GfxSubpath **const subpaths1, int n1, int size1);
 };
 
 //------------------------------------------------------------------------
@@ -1016,99 +1016,99 @@ public:
   // Construct a default GfxState, for a device with resolution <hDPI>
   // x <vDPI>, page box <pageBox>, page rotation <rotateA>, and
   // coordinate system specified by <upsideDown>.
-  GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
+  GfxState(double hDPIA, double vDPIA, const PDFRectangle *pageBox,
 	   int rotateA, GBool upsideDown);
 
   // Destructor.
   ~GfxState();
 
   // Copy.
-  GfxState *copy(bool onlyOnePath = true) { return new GfxState(this, onlyOnePath); }
+  GfxState *copy(bool onlyOnePath = true)const { return new GfxState(this, onlyOnePath); }
 
   // Accessors.
-  double getHDPI() { return hDPI; }
-  double getVDPI() { return vDPI; }
-  double *getCTM() { return ctm; }
-  double getX1() { return px1; }
-  double getY1() { return py1; }
-  double getX2() { return px2; }
-  double getY2() { return py2; }
-  double getPageWidth() { return pageWidth; }
-  double getPageHeight() { return pageHeight; }
-  int getRotate() { return rotate; }
-  GfxColor *getFillColor() { return &fillColor; }
-  GfxColor *getStrokeColor() { return &strokeColor; }
-  void getFillGray(GfxGray *gray)
+  double getHDPI()const { return hDPI; }
+  double getVDPI()const { return vDPI; }
+  const double *getCTM()const { return ctm; }
+  double getX1()const { return px1; }
+  double getY1()const { return py1; }
+  double getX2()const { return px2; }
+  double getY2()const { return py2; }
+  double getPageWidth()const { return pageWidth; }
+  double getPageHeight()const { return pageHeight; }
+  int getRotate()const { return rotate; }
+  const GfxColor *getFillColor()const { return &fillColor; }
+  const GfxColor *getStrokeColor()const { return &strokeColor; }
+  void getFillGray(GfxGray *gray)const
     { fillColorSpace->getGray(&fillColor, gray); }
-  void getStrokeGray(GfxGray *gray)
+  void getStrokeGray(GfxGray *gray)const
     { strokeColorSpace->getGray(&strokeColor, gray); }
-  void getFillRGB(GfxRGB *rgb)
+  void getFillRGB(GfxRGB *rgb)const
     { fillColorSpace->getRGB(&fillColor, rgb); }
-  void getStrokeRGB(GfxRGB *rgb)
+  void getStrokeRGB(GfxRGB *rgb)const
     { strokeColorSpace->getRGB(&strokeColor, rgb); }
-  void getFillCMYK(GfxCMYK *cmyk)
+  void getFillCMYK(GfxCMYK *cmyk)const
     { fillColorSpace->getCMYK(&fillColor, cmyk); }
-  void getStrokeCMYK(GfxCMYK *cmyk)
+  void getStrokeCMYK(GfxCMYK *cmyk)const
     { strokeColorSpace->getCMYK(&strokeColor, cmyk); }
-  GfxColorSpace *getFillColorSpace() { return fillColorSpace; }
-  GfxColorSpace *getStrokeColorSpace() { return strokeColorSpace; }
-  GfxPattern *getFillPattern() { return fillPattern; }
-  GfxPattern *getStrokePattern() { return strokePattern; }
-  GfxBlendMode getBlendMode() { return blendMode; }
-  double getFillOpacity() { return fillOpacity; }
-  double getStrokeOpacity() { return strokeOpacity; }
-  GBool getFillOverprint() { return fillOverprint; }
-  GBool getStrokeOverprint() { return strokeOverprint; }
-  Function **getTransfer() { return transfer; }
-  double getLineWidth() { return lineWidth; }
-  void getLineDash(double **dash, int *length, double *start)
+  const GfxColorSpace *getFillColorSpace()const { return fillColorSpace; }
+  const GfxColorSpace *getStrokeColorSpace()const { return strokeColorSpace; }
+  const GfxPattern *getFillPattern()const { return fillPattern; }
+  const GfxPattern *getStrokePattern()const { return strokePattern; }
+  GfxBlendMode getBlendMode()const { return blendMode; }
+  double getFillOpacity()const { return fillOpacity; }
+  double getStrokeOpacity()const { return strokeOpacity; }
+  GBool getFillOverprint()const { return fillOverprint; }
+  GBool getStrokeOverprint()const { return strokeOverprint; }
+  Function **getTransfer()const { return (Function **)transfer; }
+  double getLineWidth()const { return lineWidth; }
+  void getLineDash(double **dash, int *length, double *start)const
     { *dash = lineDash; *length = lineDashLength; *start = lineDashStart; }
-  int getFlatness() { return flatness; }
-  int getLineJoin() { return lineJoin; }
-  int getLineCap() { return lineCap; }
-  double getMiterLimit() { return miterLimit; }
-  GBool getStrokeAdjust() { return strokeAdjust; }
-  GfxFont *getFont() { return font; }
-  double getFontSize() { return fontSize; }
-  double *getTextMat() { return textMat; }
-  double getCharSpace() { return charSpace; }
-  double getWordSpace() { return wordSpace; }
-  double getHorizScaling() { return horizScaling; }
-  double getLeading() { return leading; }
-  double getRise() { return rise; }
-  int getRender() { return render; }
+  int getFlatness()const { return flatness; }
+  int getLineJoin()const { return lineJoin; }
+  int getLineCap()const { return lineCap; }
+  double getMiterLimit()const { return miterLimit; }
+  GBool getStrokeAdjust()const { return strokeAdjust; }
+  const GfxFont *getFont()const { return font; }
+  double getFontSize()const { return fontSize; }
+  const double *getTextMat()const { return textMat; }
+  double getCharSpace()const { return charSpace; }
+  double getWordSpace()const { return wordSpace; }
+  double getHorizScaling()const { return horizScaling; }
+  double getLeading()const { return leading; }
+  double getRise()const { return rise; }
+  int getRender()const { return render; }
   GfxPath *getPath() { return path; }
   void setPath(GfxPath *pathA);
-  double getCurX() { return curX; }
-  double getCurY() { return curY; }
-  void getClipBBox(double *xMin, double *yMin, double *xMax, double *yMax)
+  double getCurX()const { return curX; }
+  double getCurY()const { return curY; }
+  void getClipBBox(double *xMin, double *yMin, double *xMax, double *yMax)const
     { *xMin = clipXMin; *yMin = clipYMin; *xMax = clipXMax; *yMax = clipYMax; }
-  void getUserClipBBox(double *xMin, double *yMin, double *xMax, double *yMax);
-  double getLineX() { return lineX; }
-  double getLineY() { return lineY; }
+  void getUserClipBBox(double *xMin, double *yMin, double *xMax, double *yMax)const;
+  double getLineX()const { return lineX; }
+  double getLineY()const { return lineY; }
 
   // Is there a current point/path?
-  GBool isCurPt() { return path->isCurPt(); }
-  GBool isPath() { return path->isPath(); }
+  GBool isCurPt()const { return path->isCurPt(); }
+  GBool isPath()const { return path->isPath(); }
 
   // Transforms.
-  void transform(double x1, double y1, double *x2, double *y2)
+  void transform(double x1, double y1, double *x2, double *y2)const
     { *x2 = ctm[0] * x1 + ctm[2] * y1 + ctm[4];
       *y2 = ctm[1] * x1 + ctm[3] * y1 + ctm[5]; }
-  void transformDelta(double x1, double y1, double *x2, double *y2)
+  void transformDelta(double x1, double y1, double *x2, double *y2)const
     { *x2 = ctm[0] * x1 + ctm[2] * y1;
       *y2 = ctm[1] * x1 + ctm[3] * y1; }
-  void textTransform(double x1, double y1, double *x2, double *y2)
+  void textTransform(double x1, double y1, double *x2, double *y2)const
     { *x2 = textMat[0] * x1 + textMat[2] * y1 + textMat[4];
       *y2 = textMat[1] * x1 + textMat[3] * y1 + textMat[5]; }
-  void textTransformDelta(double x1, double y1, double *x2, double *y2)
+  void textTransformDelta(double x1, double y1, double *x2, double *y2)const
     { *x2 = textMat[0] * x1 + textMat[2] * y1;
       *y2 = textMat[1] * x1 + textMat[3] * y1; }
-  double transformWidth(double w);
-  double getTransformedLineWidth()
+  double transformWidth(double w)const;
+  double getTransformedLineWidth()const
     { return transformWidth(lineWidth); }
-  double getTransformedFontSize();
-  void getFontTransMat(double *m11, double *m12, double *m21, double *m22);
+  double getTransformedFontSize()const;
+  void getFontTransMat(double *m11, double *m12, double *m21, double *m22)const;
 
   // Change state parameters.
   void setCTM(double a, double b, double c,
@@ -1118,8 +1118,8 @@ public:
   void shiftCTM(double tx, double ty);
   void setFillColorSpace(GfxColorSpace *colorSpace);
   void setStrokeColorSpace(GfxColorSpace *colorSpace);
-  void setFillColor(GfxColor *color) { fillColor = *color; }
-  void setStrokeColor(GfxColor *color) { strokeColor = *color; }
+  void setFillColor(const GfxColor *color) { fillColor = *color; }
+  void setStrokeColor(const GfxColor *color) { strokeColor = *color; }
   void setFillPattern(GfxPattern *pattern);
   void setStrokePattern(GfxPattern *pattern);
   void setBlendMode(GfxBlendMode mode) { blendMode = mode; }
@@ -1183,7 +1183,7 @@ public:
   GBool hasSaves() { return saved != NULL; }
 
   // Misc
-  GBool parseBlendMode(Object *obj, GfxBlendMode *mode);
+  GBool parseBlendMode(const Object *obj, GfxBlendMode *mode);
 
 private:
 
@@ -1238,7 +1238,7 @@ private:
 
   GfxState *saved;		// next GfxState on stack
 
-  GfxState(GfxState *state, bool onlyOnePath = true);
+  GfxState(const GfxState *state, bool onlyOnePath = true);
 };
 
 #endif

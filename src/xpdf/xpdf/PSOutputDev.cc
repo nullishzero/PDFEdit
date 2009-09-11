@@ -854,7 +854,7 @@ public:
   DeviceNRecoder(Stream *strA, int widthA, int heightA,
 		 GfxImageColorMap *colorMapA);
   virtual ~DeviceNRecoder();
-  virtual StreamKind getKind() { return strWeird; }
+  virtual StreamKind getKind()const { return strWeird; }
   virtual void reset();
   virtual Stream * clone();
   virtual int getChar()
@@ -862,8 +862,8 @@ public:
   virtual int lookChar()
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx]; }
   virtual GString *getPSFilter(int psLevel, char *indent) { return NULL; }
-  virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
-  virtual GBool isEncoder() { return gTrue; }
+  virtual GBool isBinary(GBool last = gTrue)const { return gTrue; }
+  virtual GBool isEncoder()const { return gTrue; }
 
 private:
 
@@ -953,7 +953,7 @@ extern "C" {
 typedef void (*SignalFunc)(int);
 }
 
-static void outputToFile(void *stream, char *data, int len) {
+static void outputToFile(void *stream, const char *data, int len) {
   fwrite(data, 1, len, (FILE *)stream);
 }
 
@@ -1049,7 +1049,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
 		       int firstPage, int lastPage, PSOutMode modeA,
 		       int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
 		       GBool manualCtrlA) {
-  Page *page;
+  const Page *page;
   PDFRectangle *box;
 
   // initialize
@@ -1228,7 +1228,7 @@ PSOutputDev::~PSOutputDev() {
 }
 
 void PSOutputDev::writeHeader(int firstPage, int lastPage,
-			      PDFRectangle *mediaBox, PDFRectangle *cropBox,
+			      const PDFRectangle *mediaBox, const PDFRectangle *cropBox,
 			      int pageRotate) {
   Object info, obj1;
   double x1, y1, x2, y2;
@@ -1355,8 +1355,8 @@ void PSOutputDev::writeXpdfProcset() {
 
 void PSOutputDev::writeDocSetup(Catalog *catalog,
 				int firstPage, int lastPage) {
-  Page *page;
-  Dict *resDict;
+  const Page *page;
+  const Dict *resDict;
   Annots *annots;
   Object obj1, obj2;
   int pg, i;
@@ -1445,7 +1445,7 @@ void PSOutputDev::writeTrailer() {
   }
 }
 
-void PSOutputDev::setupResources(Dict *resDict) {
+void PSOutputDev::setupResources(const Dict *resDict) {
   Object xObjDict, xObjRef, xObj, patDict, patRef, pat, resObj;
   Ref ref0, ref1;
   GBool skip;
@@ -1542,7 +1542,7 @@ void PSOutputDev::setupResources(Dict *resDict) {
   patDict.free();
 }
 
-void PSOutputDev::setupFonts(Dict *resDict) {
+void PSOutputDev::setupFonts(const Dict *resDict) {
   Object obj1, obj2;
   Ref r;
   GfxFontDict *gfxFontDict;
@@ -1572,19 +1572,19 @@ void PSOutputDev::setupFonts(Dict *resDict) {
   obj1.free();
 }
 
-void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
+void PSOutputDev::setupFont(GfxFont *font, const Dict *parentResDict) {
   Ref fontFileID;
-  GString *name;
-  PSFontParam *fontParam;
+  const GString *name;
+  const PSFontParam *fontParam;
   GString *psName;
   char buf[16];
   GBool subst;
   UnicodeMap *uMap;
-  char *charName;
+  const char *charName;
   double xs, ys;
   int code;
   double w1, w2;
-  double *fm;
+  const double *fm;
   int i, j;
 
   // check if font is already set up
@@ -1825,10 +1825,10 @@ void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
   delete psName;
 }
 
-void PSOutputDev::setupEmbeddedType1Font(Ref *id, GString *psName) {
+void PSOutputDev::setupEmbeddedType1Font(const Ref *id, const GString *psName) {
   static char hexChar[17] = "0123456789abcdef";
   Object refObj, strObj, obj1, obj2, obj3;
-  Dict *dict;
+  const Dict *dict;
   int length1, length2, length3;
   int c;
   int start[4];
@@ -1959,7 +1959,7 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GString *psName) {
 
 //~ This doesn't handle .pfb files or binary eexec data (which only
 //~ happens in pfb files?).
-void PSOutputDev::setupExternalType1Font(GString *fileName, GString *psName) {
+void PSOutputDev::setupExternalType1Font(const GString *fileName, const GString *psName) {
   FILE *fontFile;
   int c;
   int i;
@@ -1999,8 +1999,8 @@ void PSOutputDev::setupExternalType1Font(GString *fileName, GString *psName) {
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupEmbeddedType1CFont(GfxFont *font, Ref *id,
-					  GString *psName) {
+void PSOutputDev::setupEmbeddedType1CFont(GfxFont *font, const Ref *id,
+					  const GString *psName) {
   char *fontBuf;
   int fontLen;
   FoFiType1C *ffT1C;
@@ -2039,8 +2039,8 @@ void PSOutputDev::setupEmbeddedType1CFont(GfxFont *font, Ref *id,
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupEmbeddedOpenTypeT1CFont(GfxFont *font, Ref *id,
-					       GString *psName) {
+void PSOutputDev::setupEmbeddedOpenTypeT1CFont(GfxFont *font, const Ref *id,
+					       const GString *psName) {
   char *fontBuf;
   int fontLen;
   FoFiTrueType *ffTT;
@@ -2081,7 +2081,7 @@ void PSOutputDev::setupEmbeddedOpenTypeT1CFont(GfxFont *font, Ref *id,
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupEmbeddedTrueTypeFont(GfxFont *font, Ref *id,
+void PSOutputDev::setupEmbeddedTrueTypeFont(GfxFont *font, const Ref *id,
 					    GString *psName) {
   char *fontBuf;
   int fontLen;
@@ -2142,7 +2142,7 @@ void PSOutputDev::setupEmbeddedTrueTypeFont(GfxFont *font, Ref *id,
 }
 
 void PSOutputDev::setupExternalTrueTypeFont(GfxFont *font, GString *psName) {
-  GString *fileName;
+  const GString *fileName;
   char *fontBuf;
   int fontLen;
   FoFiTrueType *ffTT;
@@ -2203,8 +2203,8 @@ void PSOutputDev::setupExternalTrueTypeFont(GfxFont *font, GString *psName) {
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupEmbeddedCIDType0Font(GfxFont *font, Ref *id,
-					    GString *psName) {
+void PSOutputDev::setupEmbeddedCIDType0Font(GfxFont *font, const Ref *id,
+					    const GString *psName) {
   char *fontBuf;
   int fontLen;
   FoFiType1C *ffT1C;
@@ -2248,7 +2248,7 @@ void PSOutputDev::setupEmbeddedCIDType0Font(GfxFont *font, Ref *id,
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupEmbeddedCIDTrueTypeFont(GfxFont *font, Ref *id,
+void PSOutputDev::setupEmbeddedCIDTrueTypeFont(GfxFont *font, const Ref *id,
 					       GString *psName,
 					       GBool needVerticalMetrics) {
   char *fontBuf;
@@ -2304,8 +2304,8 @@ void PSOutputDev::setupEmbeddedCIDTrueTypeFont(GfxFont *font, Ref *id,
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupEmbeddedOpenTypeCFFFont(GfxFont *font, Ref *id,
-					       GString *psName) {
+void PSOutputDev::setupEmbeddedOpenTypeCFFFont(GfxFont *font, const Ref *id,
+					       const GString *psName) {
   char *fontBuf;
   int fontLen;
   FoFiTrueType *ffTT;
@@ -2352,14 +2352,14 @@ void PSOutputDev::setupEmbeddedOpenTypeCFFFont(GfxFont *font, Ref *id,
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupType3Font(GfxFont *font, GString *psName,
-				 Dict *parentResDict) {
-  Dict *resDict;
-  Dict *charProcs;
+void PSOutputDev::setupType3Font(GfxFont *font, const GString *psName,
+				 const Dict *parentResDict) {
+  const Dict *resDict;
+  const Dict *charProcs;
   Object charProc;
   Gfx *gfx;
   PDFRectangle box;
-  double *m;
+  const double *m;
   GString *buf;
   int i;
 
@@ -2445,7 +2445,7 @@ void PSOutputDev::setupType3Font(GfxFont *font, GString *psName,
   writePS("%%EndResource\n");
 }
 
-void PSOutputDev::setupImages(Dict *resDict) {
+void PSOutputDev::setupImages(const Dict *resDict) {
   Object xObjDict, xObj, xObjRef, subtypeObj;
   int i;
 
@@ -2622,7 +2622,7 @@ void PSOutputDev::setupImage(Ref id, Stream *str) {
   delete str;
 }
 
-void PSOutputDev::setupForms(Dict *resDict) {
+void PSOutputDev::setupForms(const Dict *resDict) {
   Object xObjDict, xObj, xObjRef, subtypeObj;
   int i;
 
@@ -2653,8 +2653,8 @@ void PSOutputDev::setupForms(Dict *resDict) {
   xObjDict.free();
 }
 
-void PSOutputDev::setupForm(Ref id, Object *strObj) {
-  Dict *dict, *resDict;
+void PSOutputDev::setupForm(Ref id, const Object *strObj) {
+  const Dict *dict, *resDict;
   Object matrixObj, bboxObj, resObj, obj1;
   double m[6], bbox[4];
   PDFRectangle box;
@@ -2712,7 +2712,7 @@ void PSOutputDev::setupForm(Ref id, Object *strObj) {
 
   // get resources
   dict->lookup("Resources", &resObj);
-  resDict = resObj.isDict() ? resObj.getDict() : (Dict *)NULL;
+  resDict = resObj.isDict() ? resObj.getDict() : (const Dict *)NULL;
 
   writePSFmt("/f_{0:d}_{1:d} {{\n", id.num, id.gen);
   writePS("q\n");
@@ -2733,11 +2733,11 @@ void PSOutputDev::setupForm(Ref id, Object *strObj) {
   resObj.free();
 }
 
-GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
+GBool PSOutputDev::checkPageSlice(const Page *page, double hDPI, double vDPI,
 				  int rotateA, GBool useMediaBox, GBool crop,
 				  int sliceX, int sliceY,
 				  int sliceW, int sliceH,
-				  GBool printing, Catalog *catalog,
+				  GBool printing, const Catalog *catalog,
 				  GBool (*abortCheckCbk)(void *data),
 				  void *abortCheckCbkData) {
 #if HAVE_SPLASH
@@ -3228,7 +3228,7 @@ void PSOutputDev::updateStrokeColorSpace(GfxState *state) {
 
 void PSOutputDev::updateFillColor(GfxState *state) {
   GfxColor color;
-  GfxColor *colorPtr;
+  const GfxColor *colorPtr;
   GfxGray gray;
   GfxCMYK cmyk;
   GfxSeparationColorSpace *sepCS;
@@ -3291,7 +3291,7 @@ void PSOutputDev::updateFillColor(GfxState *state) {
 
 void PSOutputDev::updateStrokeColor(GfxState *state) {
   GfxColor color;
-  GfxColor *colorPtr;
+  const GfxColor *colorPtr;
   GfxGray gray;
   GfxCMYK cmyk;
   GfxSeparationColorSpace *sepCS;
@@ -3367,7 +3367,7 @@ void PSOutputDev::addProcessColor(double c, double m, double y, double k) {
   }
 }
 
-void PSOutputDev::addCustomColor(GfxSeparationColorSpace *sepCS) {
+void PSOutputDev::addCustomColor(const GfxSeparationColorSpace *sepCS) {
   PSOutCustomColor *cc;
   GfxColor color;
   GfxCMYK cmyk;
@@ -3431,7 +3431,7 @@ void PSOutputDev::updateFont(GfxState *state) {
 }
 
 void PSOutputDev::updateTextMat(GfxState *state) {
-  double *mat;
+  const double *mat;
 
   mat = state->getTextMat();
   if (fabs(mat[0] * mat[3] - mat[1] * mat[2]) < 0.00001) {
@@ -3509,9 +3509,9 @@ void PSOutputDev::eoFill(GfxState *state) {
   writePS("f*\n");
 }
 
-void PSOutputDev::tilingPatternFill(GfxState *state, Object *str,
-				    int paintType, Dict *resDict,
-				    double *mat, double *bbox,
+void PSOutputDev::tilingPatternFill(GfxState *state, const Object *str,
+				    int paintType, const Dict *resDict,
+				    const double *mat, const double *bbox,
 				    int x0, int y0, int x1, int y1,
 				    double xStep, double yStep) {
   PDFRectangle box;
@@ -3576,7 +3576,7 @@ void PSOutputDev::tilingPatternFill(GfxState *state, Object *str,
 GBool PSOutputDev::functionShadedFill(GfxState *state,
 				      GfxFunctionShading *shading) {
   double x0, y0, x1, y1;
-  double *mat;
+  const double *mat;
   int i;
 
   if (level == psLevel2Sep || level == psLevel3Sep) {
@@ -3982,8 +3982,8 @@ void PSOutputDev::doPath(GfxPath *path) {
   }
 }
 
-void PSOutputDev::drawString(GfxState *state, GString *s) {
-  GfxFont *font;
+void PSOutputDev::drawString(GfxState *state, const GString *s) {
+  const GfxFont *font;
   int wMode;
   Gushort *codeToGID;
   GString *s2;
@@ -5213,17 +5213,17 @@ void PSOutputDev::doImageL3(Object *ref, GfxImageColorMap *colorMap,
   }
 }
 
-void PSOutputDev::dumpColorSpaceL2(GfxColorSpace *colorSpace,
+void PSOutputDev::dumpColorSpaceL2(const GfxColorSpace *colorSpace,
 				   GBool genXform, GBool updateColors,
 				   GBool map01) {
-  GfxCalGrayColorSpace *calGrayCS;
-  GfxCalRGBColorSpace *calRGBCS;
-  GfxLabColorSpace *labCS;
-  GfxIndexedColorSpace *indexedCS;
-  GfxSeparationColorSpace *separationCS;
-  GfxDeviceNColorSpace *deviceNCS;
-  GfxColorSpace *baseCS;
-  Guchar *lookup, *p;
+  const GfxCalGrayColorSpace *calGrayCS;
+  const GfxCalRGBColorSpace *calRGBCS;
+  const GfxLabColorSpace *labCS;
+  const GfxIndexedColorSpace *indexedCS;
+  const GfxSeparationColorSpace *separationCS;
+  const GfxDeviceNColorSpace *deviceNCS;
+  const GfxColorSpace *baseCS;
+  const Guchar *lookup, *p;
   double x[gfxColorMaxComps], y[gfxColorMaxComps];
   double low[gfxColorMaxComps], range[gfxColorMaxComps];
   GfxColor color;
@@ -6099,7 +6099,7 @@ void PSOutputDev::writePSChar(char c) {
   }
 }
 
-void PSOutputDev::writePS(char *s) {
+void PSOutputDev::writePS(const char *s) {
   if (t3String) {
     t3String->append(s);
   } else {
@@ -6122,8 +6122,8 @@ void PSOutputDev::writePSFmt(const char *fmt, ...) {
   va_end(args);
 }
 
-void PSOutputDev::writePSString(GString *s) {
-  Guchar *p;
+void PSOutputDev::writePSString(const GString *s) {
+  const Guchar *p;
   int n, line;
   char buf[8];
 
@@ -6151,8 +6151,8 @@ void PSOutputDev::writePSString(GString *s) {
   writePSChar(')');
 }
 
-void PSOutputDev::writePSName(char *s) {
-  char *p;
+void PSOutputDev::writePSName(const char *s) {
+  const char *p;
   char c;
 
   p = s;
@@ -6168,7 +6168,7 @@ void PSOutputDev::writePSName(char *s) {
   }
 }
 
-GString *PSOutputDev::filterPSName(GString *name) {
+GString *PSOutputDev::filterPSName(const GString *name) {
   GString *name2;
   char buf[8];
   int i;
@@ -6200,7 +6200,7 @@ GString *PSOutputDev::filterPSName(GString *name) {
 }
 
 // Write a DSC-compliant <textline>.
-void PSOutputDev::writePSTextLine(GString *s) {
+void PSOutputDev::writePSTextLine(const GString *s) {
   int i, j, step;
   int c;
 

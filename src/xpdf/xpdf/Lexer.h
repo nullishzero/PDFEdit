@@ -31,11 +31,11 @@ public:
 
   // Construct a lexer for a single stream.  Deletes the stream when
   // lexer is deleted.
-  Lexer(XRef *xref, Stream *str);
+  Lexer(const XRef *xref, Stream *str);
 
   // Construct a lexer for a stream or array of streams (assumes obj
   // is either a stream or array of streams).
-  Lexer(XRef *xref, Object *obj);
+  Lexer(const XRef *xref, const Object *obj);
 
   // Destructor.
   ~Lexer();
@@ -50,12 +50,12 @@ public:
   void skipChar() { getChar(); }
 
   // Get stream.
-  Stream *getStream()
+  Stream *getStream()const
     { return curStr.isNone() ? (Stream *)NULL : curStr.getStream(); }
 
   // Get current position in file.  This is only used for error
   // messages, so it returns an int instead of a Guint.
-  int getPos()
+  int getPos()const
     { return curStr.isNone() ? -1 : (int)curStr.streamGetPos(); }
 
   // Set position in file.

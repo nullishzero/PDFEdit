@@ -26,7 +26,7 @@
 // LinkAction
 //------------------------------------------------------------------------
 
-LinkAction *LinkAction::parseDest(Object *obj) {
+LinkAction *LinkAction::parseDest(const Object *obj) {
   LinkAction *action;
 
   action = new LinkGoTo(obj);
@@ -37,7 +37,7 @@ LinkAction *LinkAction::parseDest(Object *obj) {
   return action;
 }
 
-LinkAction *LinkAction::parseAction(Object *obj, GString *baseURI) {
+LinkAction *LinkAction::parseAction(const Object *obj, const GString *baseURI) {
   LinkAction *action;
   Object obj2, obj3, obj4;
 
@@ -105,7 +105,7 @@ LinkAction *LinkAction::parseAction(Object *obj, GString *baseURI) {
   return action;
 }
 
-GString *LinkAction::getFileSpecName(Object *fileSpecObj) {
+GString *LinkAction::getFileSpecName(const Object *fileSpecObj) {
   GString *name;
   Object obj1;
 
@@ -193,7 +193,7 @@ GString *LinkAction::getFileSpecName(Object *fileSpecObj) {
 // LinkDest
 //------------------------------------------------------------------------
 
-LinkDest::LinkDest(Array *a) {
+LinkDest::LinkDest(const Array *a) {
   Object obj1, obj2;
 
   // initialize fields
@@ -391,7 +391,7 @@ LinkDest::LinkDest(Array *a) {
   obj1.free();
 }
 
-LinkDest::LinkDest(LinkDest *dest) {
+LinkDest::LinkDest(const LinkDest *dest) {
   kind = dest->kind;
   pageIsRef = dest->pageIsRef;
   if (pageIsRef)
@@ -413,7 +413,7 @@ LinkDest::LinkDest(LinkDest *dest) {
 // LinkGoTo
 //------------------------------------------------------------------------
 
-LinkGoTo::LinkGoTo(Object *destObj) {
+LinkGoTo::LinkGoTo(const Object *destObj) {
   dest = NULL;
   namedDest = NULL;
 
@@ -448,7 +448,7 @@ LinkGoTo::~LinkGoTo() {
 // LinkGoToR
 //------------------------------------------------------------------------
 
-LinkGoToR::LinkGoToR(Object *fileSpecObj, Object *destObj) {
+LinkGoToR::LinkGoToR(const Object *fileSpecObj, const Object *destObj) {
   dest = NULL;
   namedDest = NULL;
 
@@ -489,7 +489,7 @@ LinkGoToR::~LinkGoToR() {
 // LinkLaunch
 //------------------------------------------------------------------------
 
-LinkLaunch::LinkLaunch(Object *actionObj) {
+LinkLaunch::LinkLaunch(const Object *actionObj) {
   Object obj1, obj2;
 
   fileName = NULL;
@@ -543,7 +543,7 @@ LinkLaunch::~LinkLaunch() {
 // LinkURI
 //------------------------------------------------------------------------
 
-LinkURI::LinkURI(Object *uriObj, GString *baseURI) {
+LinkURI::LinkURI(const Object *uriObj, const GString *baseURI) {
   GString *uri2;
   int n;
   char c;
@@ -587,7 +587,7 @@ LinkURI::~LinkURI() {
 // LinkNamed
 //------------------------------------------------------------------------
 
-LinkNamed::LinkNamed(Object *nameObj) {
+LinkNamed::LinkNamed(const Object *nameObj) {
   name = NULL;
   if (nameObj->isName()) {
     name = new GString(nameObj->getName());
@@ -604,7 +604,7 @@ LinkNamed::~LinkNamed() {
 // LinkMovie
 //------------------------------------------------------------------------
 
-LinkMovie::LinkMovie(Object *annotObj, Object *titleObj) {
+LinkMovie::LinkMovie(const Object *annotObj, const Object *titleObj) {
   annotRef.num = -1;
   title = NULL;
   if (annotObj->isRef()) {
@@ -626,7 +626,7 @@ LinkMovie::~LinkMovie() {
 // LinkUnknown
 //------------------------------------------------------------------------
 
-LinkUnknown::LinkUnknown(char *actionA) {
+LinkUnknown::LinkUnknown(const char *actionA) {
   action = new GString(actionA);
 }
 
@@ -638,7 +638,7 @@ LinkUnknown::~LinkUnknown() {
 // Link
 //------------------------------------------------------------------------
 
-Link::Link(Dict *dict, GString *baseURI) {
+Link::Link(const Dict *dict, const GString *baseURI) {
   Object obj1, obj2;
   double t;
 
@@ -722,7 +722,7 @@ Link::~Link() {
 // Links
 //------------------------------------------------------------------------
 
-Links::Links(Object *annots, GString *baseURI) {
+Links::Links(const Object *annots, const GString *baseURI) {
   Link *link;
   Object obj1, obj2;
   int size;
@@ -762,7 +762,7 @@ Links::~Links() {
   gfree(links);
 }
 
-LinkAction *Links::find(double x, double y) {
+const LinkAction *Links::find(double x, double y)const {
   int i;
 
   for (i = numLinks - 1; i >= 0; --i) {
@@ -773,7 +773,7 @@ LinkAction *Links::find(double x, double y) {
   return NULL;
 }
 
-GBool Links::onLink(double x, double y) {
+GBool Links::onLink(double x, double y)const {
   int i;
 
   for (i = 0; i < numLinks; ++i) {

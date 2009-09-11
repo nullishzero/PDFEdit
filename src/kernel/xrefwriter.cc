@@ -403,7 +403,7 @@ bool typeSafeTrailerEntry(const char *name, ::Object &value, XRef &xref)
 	return CXref::changeTrailer(name, value);
 }
 
-RefState XRefWriter::knowsRef(const IndiRef& ref)
+RefState XRefWriter::knowsRef(const IndiRef& ref)const
 {
 	::Ref xpdfRef={ref.num, ref.gen};
 	// otherwise use XRef directly
@@ -561,7 +561,7 @@ void XRefWriter::saveChanges(bool newRevision)
  */
 size_t getPrevFromTrailer(Object * trailer)
 {
-	Dict * trailerDict = NULL;
+	const Dict * trailerDict = NULL;
 	if(trailer->isDict())
 		trailerDict = trailer->getDict();
 	else if(trailer->isStream())

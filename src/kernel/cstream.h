@@ -111,13 +111,13 @@ public:
 	 * @param o		Xpdf object. 
 	 * @param rf	Indirect id and gen id.
 	 */
-	CStream (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
+	CStream (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf);
 
 	/**
 	 * Constructor. Stream will not be associated with a pdf.
 	 * @param o	Xpdf object. 
 	 */
-	CStream (Object& o);
+	CStream (const Object& o);
 
 
 public:	
@@ -513,7 +513,7 @@ makeStreamPdfValid (Iter it, Iter end, std::string& out)
  * @param obj Stream object.
  */
 template<typename T>
-void parseStreamToContainer (T& container, ::Object& obj);
+void parseStreamToContainer (T& container, const ::Object& obj);
 
 
 	

@@ -27,7 +27,7 @@
 // Object
 //------------------------------------------------------------------------
 
-char *objTypeNames[numObjTypes] = {
+const char *objTypeNames[numObjTypes] = {
   "boolean",
   "integer",
   "real",
@@ -135,20 +135,20 @@ cloneerror:
    return NULL;
 }
 
-Object *Object::initArray(XRef *xref) {
+Object *Object::initArray(const XRef *xref) {
   initObj(objArray);
   array = new Array(xref);
   return this;
 }
 
-Object *Object::initArray(Array *array) {
+Object *Object::initArray(Array *arrayA) {
   initObj(objArray);
-  this->array = array;
+  array = arrayA;
   array->incRef();
   return this;
 }
 
-Object *Object::initDict(XRef *xref) {
+Object *Object::initDict(const XRef *xref) {
   initObj(objDict);
   dict = new Dict(xref);
   return this;
@@ -167,7 +167,7 @@ Object *Object::initStream(Stream *streamA) {
   return this;
 }
 
-Object *Object::copy(Object *obj) {
+Object *Object::copy(Object *obj)const {
   *obj = *this;
   switch (type) {
   case objString:
@@ -197,7 +197,7 @@ Object *Object::copy(Object *obj) {
   return obj;
 }
 
-Object *Object::fetch(XRef *xref, Object *obj) {
+Object *Object::fetch(const XRef *xref, Object *obj)const {
   return (type == objRef && xref) ?
          xref->fetch(ref.num, ref.gen, obj) : copy(obj);
 }
@@ -237,11 +237,11 @@ void Object::free() {
   type = objNone;
 }
 
-char *Object::getTypeName() {
+const char *Object::getTypeName()const {
   return objTypeNames[type];
 }
 
-void Object::print(FILE *f) {
+void Object::print(FILE *f)const {
   Object obj;
   int i;
 

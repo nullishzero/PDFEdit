@@ -90,14 +90,14 @@ public:
 	 * @param o		Xpdf object. 
 	 * @param rf	Indirect id and gen id.
 	 */
-	CArray (boost::weak_ptr<CPdf> p, Object& o, const IndiRef& rf);
+	CArray (boost::weak_ptr<CPdf> p, const Object& o, const IndiRef& rf);
 
 	/**
 	 * Constructor.
 	 *
 	 * @param o		Xpdf object. 
 	 */
-	CArray (Object& o);
+	CArray (const Object& o);
 
 
 public:	
@@ -353,7 +353,7 @@ namespace utils {
  * @param obj	Xpdf object which holds the value.
  * @param val	Variable where the value will be stored.
  */
-template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, ::Object& obj, T val);
+template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, const ::Object& obj, T val);
 
 //=========================================================
 // To string functions

@@ -32,7 +32,7 @@ extern "C" int unlink(char *filename);
 
 //------------------------------------------------------------------------
 
-static void fileWrite(void *stream, char *data, int len) {
+static void fileWrite(void *stream, const char *data, int len) {
   fwrite(data, 1, len, (FILE *)stream);
 }
 

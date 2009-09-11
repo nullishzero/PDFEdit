@@ -276,14 +276,14 @@ public:
 
   JPXStream(Stream *strA);
   virtual ~JPXStream();
-  virtual StreamKind getKind() { return strJPX; }
+  virtual StreamKind getKind()const { return strJPX; }
   virtual void reset();
   virtual void close();
   virtual int getChar();
   virtual Stream * clone();
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, char *indent);
-  virtual GBool isBinary(GBool last = gTrue);
+  virtual GString *getPSFilter(int psLevel, const char *indent)const;
+  virtual GBool isBinary(GBool last = gTrue)const;
   virtual void getImageParams(int *bitsPerComponent,
 			      StreamColorSpaceMode *csMode);
 

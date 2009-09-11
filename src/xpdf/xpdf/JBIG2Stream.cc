@@ -1254,11 +1254,11 @@ int JBIG2Stream::lookChar() {
   return EOF;
 }
 
-GString *JBIG2Stream::getPSFilter(int psLevel, char *indent) {
+GString *JBIG2Stream::getPSFilter(int psLevel, const char *indent)const {
   return NULL;
 }
 
-GBool JBIG2Stream::isBinary(GBool last) {
+GBool JBIG2Stream::isBinary(GBool last)const {
   return str->isBinary(gTrue);
 }
 

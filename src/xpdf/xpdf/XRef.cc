@@ -50,7 +50,7 @@ public:
 
   // Create an object stream, using object number <objStrNum>,
   // generation 0.
-  ObjectStream(XRef *xref, int objStrNumA);
+  ObjectStream(const XRef *xref, int objStrNumA);
 
   ~ObjectStream();
 
@@ -69,7 +69,7 @@ private:
   int *objNums;			// the object numbers (length = nObjects)
 };
 
-ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
+ObjectStream::ObjectStream(const XRef *xref, int objStrNumA) {
   Stream *str;
   Parser *parser;
   int *offsets;
@@ -230,7 +230,7 @@ XRef::XRef(BaseStream *strA):entries(NULL), streamEnds(NULL), objStr(NULL) {
     initInternals(pos);
 }
 
-void XRef::setErrCode(int err)
+void XRef::setErrCode(int err)const
 {
   errCode = err;
   ok = (errCode == errNone)?gTrue:gFalse;
@@ -295,7 +295,8 @@ void XRef::initInternals(Guint pos)
 
   // now set the trailer dictionary's xref pointer so we can fetch
   // indirect objects from it
-  getTrailerDict()->getDict()->setXRef(this);
+  Dict *d = (Dict *)getTrailerDict()->getDict();
+  d->setXRef(this);
 }
 
 void XRef::destroyInternals()
@@ -569,7 +570,7 @@ malformedErr:
 }
 
 GBool XRef::readXRefStream(Stream *xrefStr, Guint *pos) {
-  Dict *dict;
+  const Dict *dict;
   int w[3];
   GBool more;
   Object obj, obj2, idx;
@@ -653,7 +654,7 @@ GBool XRef::readXRefStream(Stream *xrefStr, Guint *pos) {
   // XPDF don't care about older trailers and it always uses the
   // most recent one
   if (trailerDict.isNone()) {
-    trailerDict.initDict(dict);
+    trailerDict.initDict((Dict *)dict);
   }
 
   return more;
@@ -864,7 +865,7 @@ malformedErr:
 }
 
 void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-			 Guchar *fileKeyA, int keyLengthA, int encVersionA,
+			 const Guchar *fileKeyA, int keyLengthA, int encVersionA,
 			 CryptAlgorithm encAlgorithmA) {
   int i;
 
@@ -883,23 +884,23 @@ void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
   encAlgorithm = encAlgorithmA;
 }
 
-GBool XRef::okToPrint(GBool ignoreOwnerPW) {
+GBool XRef::okToPrint(GBool ignoreOwnerPW)const {
   return (!ignoreOwnerPW && ownerPasswordOk) || (permFlags & permPrint);
 }
 
-GBool XRef::okToChange(GBool ignoreOwnerPW) {
+GBool XRef::okToChange(GBool ignoreOwnerPW)const {
   return (!ignoreOwnerPW && ownerPasswordOk) || (permFlags & permChange);
 }
 
-GBool XRef::okToCopy(GBool ignoreOwnerPW) {
+GBool XRef::okToCopy(GBool ignoreOwnerPW)const {
   return (!ignoreOwnerPW && ownerPasswordOk) || (permFlags & permCopy);
 }
 
-GBool XRef::okToAddNotes(GBool ignoreOwnerPW) {
+GBool XRef::okToAddNotes(GBool ignoreOwnerPW)const {
   return (!ignoreOwnerPW && ownerPasswordOk) || (permFlags & permNotes);
 }
 
-Object *XRef::fetch(int num, int gen, Object *obj) {
+Object *XRef::fetch(int num, int gen, Object *obj)const {
   XRefEntry *e;
   Parser *parser;
   Object obj1, obj2, obj3;
@@ -942,7 +943,7 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
       delete parser;
       goto err_damaged;
     }
-    if (!parser->getObj(obj, useEncrypt ? fileKey : (Guchar *)NULL,
+    if (!parser->getObj(obj, useEncrypt ? fileKey : (const Guchar *)NULL,
 		   encAlgorithm, keyLength, num, gen)) 
       failed = gTrue;
 
@@ -990,7 +991,7 @@ Object *XRef::getDocInfoNF(Object *obj) {
   return getTrailerDict()->dictLookupNF("Info", obj);
 }
 
-GBool XRef::getStreamEnd(Guint streamStart, Guint *streamEnd) {
+GBool XRef::getStreamEnd(Guint streamStart, Guint *streamEnd)const {
   int a, b, m;
 
   if (streamEndsLen == 0 ||
@@ -1013,9 +1014,9 @@ GBool XRef::getStreamEnd(Guint streamStart, Guint *streamEnd) {
   return gTrue;
 }
 
-Guint XRef::strToUnsigned(char *s) {
+Guint XRef::strToUnsigned(const char *s)const {
   Guint x;
-  char *p;
+  const char *p;
   int i;
 
   x = 0;
@@ -1025,7 +1026,7 @@ Guint XRef::strToUnsigned(char *s) {
   return x;
 }
 
-int getRootFromTrailer(Object *trailer, Ref &ref)
+int getRootFromTrailer(const Object *trailer, Ref &ref)
 {
 	Object o;
 	trailer->dictLookupNF("Root", &o);
@@ -1037,7 +1038,7 @@ int getRootFromTrailer(Object *trailer, Ref &ref)
 	return -1;
 }
 
-int XRef::getRootNum()
+int XRef::getRootNum()const
 {
 	Ref r;
 	if(!getRootFromTrailer(getTrailerDict(), r))
@@ -1045,7 +1046,7 @@ int XRef::getRootNum()
 	return -1;
 }
 
-int XRef::getRootGen()
+int XRef::getRootGen()const
 {
 	Ref r;
 	if(!getRootFromTrailer(getTrailerDict(), r))
@@ -1053,7 +1054,7 @@ int XRef::getRootGen()
 	return -1;
 }
 
-RefState XRef::knowsRef(const Ref &ref)
+RefState XRef::knowsRef(const Ref &ref)const
 {
    // boundary checking
    if(ref.num<0 || ref.num>size)

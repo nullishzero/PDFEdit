@@ -48,7 +48,7 @@ enum PSFileType {
   psGeneric			// write to a generic stream
 };
 
-typedef void (*PSOutputFunc)(void *stream, char *data, int len);
+typedef void (*PSOutputFunc)(void *stream, const char *data, int len);
 
 class PSOutputDev: public OutputDev {
 public:
@@ -106,7 +106,7 @@ public:
 
   // Write the document-level header.
   void writeHeader(int firstPage, int lastPage,
-		   PDFRectangle *mediaBox, PDFRectangle *cropBox,
+		   const PDFRectangle *mediaBox, const PDFRectangle *cropBox,
 		   int pageRotate);
 
   // Write the Xpdf procset.
@@ -127,10 +127,10 @@ public:
   // returns false, the page display is aborted.  Typically, an
   // OutputDev will use some alternate means to display the page
   // before returning false.
-  virtual GBool checkPageSlice(Page *page, double hDPI, double vDPI,
+  virtual GBool checkPageSlice(const Page *page, double hDPI, double vDPI,
 			       int rotate, GBool useMediaBox, GBool crop,
 			       int sliceX, int sliceY, int sliceW, int sliceH,
-			       GBool printing, Catalog *catalog,
+			       GBool printing, const Catalog *catalog,
 			       GBool (*abortCheckCbk)(void *data) = NULL,
 			       void *abortCheckCbkData = NULL);
 
@@ -176,9 +176,9 @@ public:
   virtual void stroke(GfxState *state);
   virtual void fill(GfxState *state);
   virtual void eoFill(GfxState *state);
-  virtual void tilingPatternFill(GfxState *state, Object *str,
-				 int paintType, Dict *resDict,
-				 double *mat, double *bbox,
+  virtual void tilingPatternFill(GfxState *state, const Object *str,
+				 int paintType, const Dict *resDict,
+				 const double *mat, const double *bbox,
 				 int x0, int y0, int x1, int y1,
 				 double xStep, double yStep);
   virtual GBool functionShadedFill(GfxState *state,
@@ -192,7 +192,7 @@ public:
   virtual void clipToStrokePath(GfxState *state);
 
   //----- text drawing
-  virtual void drawString(GfxState *state, GString *s);
+  virtual void drawString(GfxState *state, const GString *s);
   virtual void endTextObject(GfxState *state);
 
   //----- image drawing
@@ -248,26 +248,26 @@ private:
 	    int firstPage, int lastPage, PSOutMode modeA,
 	    int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
 	    GBool manualCtrlA);
-  void setupResources(Dict *resDict);
-  void setupFonts(Dict *resDict);
-  void setupFont(GfxFont *font, Dict *parentResDict);
-  void setupEmbeddedType1Font(Ref *id, GString *psName);
-  void setupExternalType1Font(GString *fileName, GString *psName);
-  void setupEmbeddedType1CFont(GfxFont *font, Ref *id, GString *psName);
-  void setupEmbeddedOpenTypeT1CFont(GfxFont *font, Ref *id, GString *psName);
-  void setupEmbeddedTrueTypeFont(GfxFont *font, Ref *id, GString *psName);
+  void setupResources(const Dict *resDict);
+  void setupFonts(const Dict *resDict);
+  void setupFont(GfxFont *font, const Dict *parentResDict);
+  void setupEmbeddedType1Font(const Ref *id, const GString *psName);
+  void setupExternalType1Font(const GString *fileName, const GString *psName);
+  void setupEmbeddedType1CFont(GfxFont *font, const Ref *id, const GString *psName);
+  void setupEmbeddedOpenTypeT1CFont(GfxFont *font, const Ref *id, const GString *psName);
+  void setupEmbeddedTrueTypeFont(GfxFont *font, const Ref *id, GString *psName);
   void setupExternalTrueTypeFont(GfxFont *font, GString *psName);
-  void setupEmbeddedCIDType0Font(GfxFont *font, Ref *id, GString *psName);
-  void setupEmbeddedCIDTrueTypeFont(GfxFont *font, Ref *id, GString *psName,
+  void setupEmbeddedCIDType0Font(GfxFont *font, const Ref *id, const GString *psName);
+  void setupEmbeddedCIDTrueTypeFont(GfxFont *font, const Ref *id, GString *psName,
 				    GBool needVerticalMetrics);
-  void setupEmbeddedOpenTypeCFFFont(GfxFont *font, Ref *id, GString *psName);
-  void setupType3Font(GfxFont *font, GString *psName, Dict *parentResDict);
-  void setupImages(Dict *resDict);
+  void setupEmbeddedOpenTypeCFFFont(GfxFont *font, const Ref *id, const GString *psName);
+  void setupType3Font(GfxFont *font, const GString *psName, const Dict *parentResDict);
+  void setupImages(const Dict *resDict);
   void setupImage(Ref id, Stream *str);
-  void setupForms(Dict *resDict);
-  void setupForm(Ref id, Object *strObj);
+  void setupForms(const Dict *resDict);
+  void setupForm(Ref id, const Object *strObj);
   void addProcessColor(double c, double m, double y, double k);
-  void addCustomColor(GfxSeparationColorSpace *sepCS);
+  void addCustomColor(const GfxSeparationColorSpace *sepCS);
   void doPath(GfxPath *path);
   void doImageL1(Object *ref, GfxImageColorMap *colorMap,
 		 GBool invert, GBool inlineImg,
@@ -285,7 +285,7 @@ private:
 		 Stream *str, int width, int height, int len,
 		 int *maskColors, Stream *maskStr,
 		 int maskWidth, int maskHeight, GBool maskInvert);
-  void dumpColorSpaceL2(GfxColorSpace *colorSpace,
+  void dumpColorSpaceL2(const GfxColorSpace *colorSpace,
 			GBool genXform, GBool updateColors,
 			GBool map01);
 #if OPI_SUPPORT
@@ -297,12 +297,12 @@ private:
 #endif
   void cvtFunction(Function *func);
   void writePSChar(char c);
-  void writePS(char *s);
+  void writePS(const char *s);
   void writePSFmt(const char *fmt, ...);
-  void writePSString(GString *s);
-  void writePSName(char *s);
-  GString *filterPSName(GString *name);
-  void writePSTextLine(GString *s);
+  void writePSString(const GString *s);
+  void writePSName(const char *s);
+  GString *filterPSName(const GString *name);
+  void writePSTextLine(const GString *s);
 
   PSLevel level;		// PostScript level (1, 2, separation)
   PSOutMode mode;		// PostScript mode (PS, EPS, form)

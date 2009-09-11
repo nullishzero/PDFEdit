@@ -81,41 +81,41 @@ public:
   virtual ~XRef();
 
   // Is xref table valid?
-  virtual GBool isOk() { return ok; }
+  virtual GBool isOk()const { return ok; }
 
   // sets error code and ok accordingly
   // if err == errNone then ok is set to true
-  virtual void setErrCode(int err);
+  virtual void setErrCode(int err)const;
 
   // Get the error code (if isOk() returns false).
-  virtual int getErrorCode() { return errCode; }
+  virtual int getErrorCode()const { return errCode; }
 
   // Set the encryption parameters.
   virtual void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-  		     Guchar *fileKeyA, int keyLengthA, int encVersionA,
+  		     const Guchar *fileKeyA, int keyLengthA, int encVersionA,
 		     CryptAlgorithm encAlgorithmA);
 
   // Is the file encrypted?
   virtual GBool isEncrypted()const { return encrypted; }
 
   // Check various permissions.
-  virtual GBool okToPrint(GBool ignoreOwnerPW = gFalse);
-  virtual GBool okToChange(GBool ignoreOwnerPW = gFalse);
-  virtual GBool okToCopy(GBool ignoreOwnerPW = gFalse);
-  virtual GBool okToAddNotes(GBool ignoreOwnerPW = gFalse);
+  virtual GBool okToPrint(GBool ignoreOwnerPW = gFalse)const;
+  virtual GBool okToChange(GBool ignoreOwnerPW = gFalse)const;
+  virtual GBool okToCopy(GBool ignoreOwnerPW = gFalse)const;
+  virtual GBool okToAddNotes(GBool ignoreOwnerPW = gFalse)const;
   
   // Get catalog object.
-  virtual Object *getCatalog(Object *obj) { return fetch(getRootNum(), getRootGen(), obj); }
+  virtual Object *getCatalog(Object *obj)const { return fetch(getRootNum(), getRootGen(), obj); }
   
   // Fetch an indirect reference.
-  virtual Object *fetch(int num, int gen, Object *obj);
+  virtual Object *fetch(int num, int gen, Object *obj)const;
   
   // Return the document's Info dictionary (if any).
   virtual Object *getDocInfo(Object *obj);
   virtual Object *getDocInfoNF(Object *obj);
   
   // Return the number of objects in the xref table.
-  virtual int getNumObjects() 
+  virtual int getNumObjects()const
   { 
      int count=0;
      for(int i=0; i<size; i++)
@@ -130,23 +130,23 @@ public:
    * @param ref Reference to examine.
    *
    */
-  virtual RefState knowsRef(const Ref &ref);
+  virtual RefState knowsRef(const Ref &ref)const;
 
   // Return the offset of the last xref table.
-  virtual Guint getLastXRefPos() { return lastXRefPos; }
+  virtual Guint getLastXRefPos()const { return lastXRefPos; }
 
   // Return the catalog object reference.
-  virtual int getRootNum();
-  virtual int getRootGen();
+  virtual int getRootNum()const;
+  virtual int getRootGen()const;
 
   // Get end position for a stream in a damaged file.
   // Returns false if unknown or file is not damaged.
-  virtual GBool getStreamEnd(Guint streamStart, Guint *streamEnd);
+  virtual GBool getStreamEnd(Guint streamStart, Guint *streamEnd)const;
 
   // Direct access.
-  virtual int getSize() { return size; }
-  virtual XRefEntry *getEntry(int i) { return &entries[i]; }
-  virtual Object *getTrailerDict() { return &trailerDict; }
+  virtual int getSize()const { return size; }
+  virtual XRefEntry *getEntry(int i)const { return &entries[i]; }
+  virtual const Object *getTrailerDict()const { return &trailerDict; }
 
   virtual const char *getPDFVersion()const {return pdfVersion.getCString(); }
 private:
@@ -161,8 +161,8 @@ protected:
 				//   at beginning of file)
   XRefEntry *entries;		// xref entries
   int size;			// size of <entries> array
-  GBool ok;			// true if xref table is valid
-  int errCode;			// error code (if <ok> is false)
+  mutable GBool ok;		// true if xref table is valid
+  mutable int errCode;		// error code (if <ok> is false)
   Guint lastXRefPos;		// offset of last xref table
   Guint eofPos;                 // %%EOF marker position or safe position to 
                                 //   store new data 
@@ -172,7 +172,7 @@ protected:
   Guint *streamEnds;		// 'endstream' positions - only used in
 				//   damaged files
   int streamEndsLen;		// number of valid entries in streamEnds
-  ObjectStream *objStr;		// cached object stream
+  mutable ObjectStream *objStr;	// cached object stream
   GBool useEncrypt;		// true if we want to decrypt content
   // TODO where is this field initialized ???
   GBool encrypted;		// Flag whether document is encrypted.
@@ -194,7 +194,7 @@ protected:
   GBool readXRefStreamSection(Stream *xrefStr, int *w, int first, int n);
   GBool readXRefStream(Stream *xrefStr, Guint *pos);
   GBool constructXRef();
-  Guint strToUnsigned(char *s);
+  Guint strToUnsigned(const char *s)const;
 };
 
 #endif

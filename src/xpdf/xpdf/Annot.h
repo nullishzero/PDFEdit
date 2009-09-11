@@ -63,7 +63,7 @@ private:
 class Annot {
 public:
 
-  Annot(XRef *xrefA, Dict *acroForm, Dict *dict, Ref *refA);
+  Annot(XRef *xrefA, const Dict *acroForm, const Dict *dict, const Ref *refA);
   ~Annot();
   GBool isOk() { return ok; }
 
@@ -74,27 +74,27 @@ public:
 
   AnnotBorderStyle *getBorderStyle() { return borderStyle; }
 
-  GBool match(Ref *refA)
+  GBool match(const Ref *refA)const
     { return ref.num == refA->num && ref.gen == refA->gen; }
 
-  void generateFieldAppearance(Dict *field, Dict *annot, Dict *acroForm);
+  void generateFieldAppearance(const Dict *field, const Dict *annot, const Dict *acroForm);
 
 private:
  
-  void setColor(Array *a, GBool fill, int adjust);
-  void drawText(GString *text, GString *da, GfxFontDict *fontDict,
+  void setColor(const Array *a, GBool fill, int adjust);
+  void drawText(const GString *text, const GString *da, const GfxFontDict *fontDict,
 		GBool multiline, int comb, int quadding,
 		GBool txField, GBool forceZapfDingbats);
-  void drawListBox(GString **text, GBool *selection,
+  void drawListBox(GString *const *text, const GBool *selection,
 		   int nOptions, int topIdx,
 		   GString *da, GfxFontDict *fontDict, GBool quadding);
-  void getNextLine(GString *text, int start,
-		   GfxFont *font, double fontSize, double wMax,
+  void getNextLine(const GString *text, int start,
+		   const GfxFont *font, double fontSize, double wMax,
 		   int *end, double *width, int *next);
   void drawCircle(double cx, double cy, double r, GBool fill);
   void drawCircleTopLeft(double cx, double cy, double r);
   void drawCircleBottomRight(double cx, double cy, double r);
-  Object *fieldLookup(Dict *field, char *key, Object *obj);
+  Object *fieldLookup(const Dict *field, const char *key, Object *obj)const;
 
   XRef *xref;			// the xref table for this PDF file
   Ref ref;			// object ref identifying this annotation
@@ -117,23 +117,23 @@ class Annots {
 public:
 
   // Build a list of Annot objects.
-  Annots(XRef *xref, Catalog *catalog, Object *annotsObj);
+  Annots(XRef *xref, const Catalog *catalog, const Object *annotsObj);
 
   ~Annots();
 
   // Iterate through list of annotations.
-  int getNumAnnots() { return nAnnots; }
-  Annot *getAnnot(int i) { return annots[i]; }
+  int getNumAnnots()const { return nAnnots; }
+  Annot *getAnnot(int i)const { return annots[i]; }
 
   // (Re)generate the appearance streams for all annotations belonging
   // to a form field.
-  void generateAppearances(Dict *acroForm);
+  void generateAppearances(const Dict *acroForm);
 
 private:
 
-  void scanFieldAppearances(Dict *node, Ref *ref, Dict *parent,
-			    Dict *acroForm);
-  Annot *findAnnot(Ref *ref);
+  void scanFieldAppearances(const Dict *node, const Ref *ref, const Dict *parent,
+			    const Dict *acroForm);
+  Annot *findAnnot(const Ref *ref)const;
 
   Annot **annots;
   int nAnnots;

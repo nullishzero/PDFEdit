@@ -442,17 +442,17 @@ static SplashOutFontSubst splashOutSubstFonts[16] = {
 class SplashOutFontFileID: public SplashFontFileID {
 public:
 
-  SplashOutFontFileID(Ref *rA) { r = *rA; substIdx = -1; }
+  SplashOutFontFileID(const Ref *rA) { r = *rA; substIdx = -1; }
 
   ~SplashOutFontFileID() {}
 
-  GBool matches(SplashFontFileID *id) {
+  GBool matches(const SplashFontFileID *id)const {
     return ((SplashOutFontFileID *)id)->r.num == r.num &&
            ((SplashOutFontFileID *)id)->r.gen == r.gen;
   }
 
   void setSubstIdx(int substIdxA) { substIdx = substIdxA; }
-  int getSubstIdx() { return substIdx; }
+  int getSubstIdx()const { return substIdx; }
 
 private:
 
@@ -472,13 +472,13 @@ struct T3FontCacheTag {
 class T3FontCache {
 public:
 
-  T3FontCache(Ref *fontID, double m11A, double m12A,
+  T3FontCache(const Ref *fontID, double m11A, double m12A,
 	      double m21A, double m22A,
 	      int glyphXA, int glyphYA, int glyphWA, int glyphHA,
 	      GBool aa, GBool validBBoxA);
   ~T3FontCache();
-  GBool matches(Ref *idA, double m11A, double m12A,
-		double m21A, double m22A)
+  GBool matches(const Ref *idA, double m11A, double m12A,
+		double m21A, double m22A)const
     { return fontID.num == idA->num && fontID.gen == idA->gen &&
 	     m11 == m11A && m12 == m12A && m21 == m21A && m22 == m22A; }
 
@@ -494,7 +494,7 @@ public:
   T3FontCacheTag *cacheTags;	// cache tags, i.e., char codes
 };
 
-T3FontCache::T3FontCache(Ref *fontIDA, double m11A, double m12A,
+T3FontCache::T3FontCache(const Ref *fontIDA, double m11A, double m12A,
 			 double m21A, double m22A,
 			 int glyphXA, int glyphYA, int glyphWA, int glyphHA,
 			 GBool validBBoxA, GBool aa) {
@@ -704,7 +704,7 @@ void SplashOutputDev::startDoc(XRef *xrefA) {
 
 void SplashOutputDev::startPage(int pageNum, GfxState *state) {
   int w, h;
-  double *ctm;
+  const double *ctm;
   SplashCoord mat[6];
   SplashColor color;
 
@@ -801,7 +801,7 @@ void SplashOutputDev::updateAll(GfxState *state) {
 void SplashOutputDev::updateCTM(GfxState *state, double m11, double m12,
 				double m21, double m22,
 				double m31, double m32) {
-  double *ctm;
+  const double *ctm;
   SplashCoord mat[6];
 
   ctm = state->getCTM();
@@ -961,22 +961,23 @@ void SplashOutputDev::updateFont(GfxState *state) {
 }
 
 void SplashOutputDev::doUpdateFont(GfxState *state) {
-  GfxFont *gfxFont;
+  const GfxFont *gfxFont;
   GfxFontType fontType;
   SplashOutFontFileID *id;
   SplashFontFile *fontFile;
   FoFiTrueType *ff;
   Ref embRef;
   Object refObj, strObj;
-  GString *tmpFileName, *fileName, *substName;
+  GString *tmpFileName, *substName; 
+  const GString *fileName;
   FILE *tmpFile;
   Gushort *codeToGID;
   DisplayFontParam *dfp;
   CharCodeToUnicode *ctu;
-  double *textMat;
+  const double *textMat;
   double m11, m12, m21, m22, w1, w2, fontSize;
   SplashCoord mat[4];
-  char *name;
+  const char *name;
   Unicode uBuf[8];
   int c, substIdx, n, code, cmap;
 
@@ -1427,9 +1428,9 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
 GBool SplashOutputDev::beginType3Char(GfxState *state, double x, double y,
 				      double dx, double dy,
 				      CharCode code, Unicode *u, int uLen) {
-  GfxFont *gfxFont;
-  Ref *fontID;
-  double *ctm, *bbox;
+  const GfxFont *gfxFont;
+  const Ref *fontID;
+  const double *ctm, *bbox;
   T3FontCache *t3Font;
   T3GlyphStack *t3gs;
   GBool validBBox;
@@ -1552,7 +1553,7 @@ GBool SplashOutputDev::beginType3Char(GfxState *state, double x, double y,
 
 void SplashOutputDev::endType3Char(GfxState *state) {
   T3GlyphStack *t3gs;
-  double *ctm;
+  const double *ctm;
 
   if (t3GlyphStack->cacheTag) {
     memcpy(t3GlyphStack->cacheData, bitmap->getDataPtr(),
@@ -1578,7 +1579,7 @@ void SplashOutputDev::type3D0(GfxState *state, double wx, double wy) {
 
 void SplashOutputDev::type3D1(GfxState *state, double wx, double wy,
 			      double llx, double lly, double urx, double ury) {
-  double *ctm;
+  const double *ctm;
   T3FontCache *t3Font;
   SplashColor color;
   double xt, yt, xMin, xMax, yMin, yMax, x1, y1;
@@ -1729,7 +1730,7 @@ GBool SplashOutputDev::imageMaskSrc(void *data, SplashColorPtr line) {
 void SplashOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
 				    int width, int height, GBool invert,
 				    GBool inlineImg) {
-  double *ctm;
+  const double *ctm;
   SplashCoord mat[6];
   SplashOutImageMaskData imgMaskData;
 
@@ -1963,7 +1964,7 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 				int width, int height,
 				GfxImageColorMap *colorMap,
 				int *maskColors, GBool inlineImg) {
-  double *ctm;
+  const double *ctm;
   SplashCoord mat[6];
   SplashOutImageData imgData;
   SplashColorMode srcMode;
@@ -2159,7 +2160,7 @@ void SplashOutputDev::drawMaskedImage(GfxState *state, Object *ref,
 				      int maskHeight, GBool maskInvert) {
   GfxImageColorMap *maskColorMap;
   Object maskDecode, decodeLow, decodeHigh;
-  double *ctm;
+  const double *ctm;
   SplashCoord mat[6];
   SplashOutMaskedImageData imgData;
   SplashOutImageMaskData imgMaskData;
@@ -2302,7 +2303,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
 					  Stream *maskStr,
 					  int maskWidth, int maskHeight,
 					  GfxImageColorMap *maskColorMap) {
-  double *ctm;
+  const double *ctm;
   SplashCoord mat[6];
   SplashOutImageData imgData;
   SplashOutImageData imgMaskData;
@@ -2426,7 +2427,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
   str->close();
 }
 
-void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
+void SplashOutputDev::beginTransparencyGroup(GfxState *state, const double *bbox,
 					     GfxColorSpace *blendingColorSpace,
 					     GBool isolated, GBool knockout,
 					     GBool forSoftMask) {
@@ -2549,7 +2550,7 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
 }
 
 void SplashOutputDev::endTransparencyGroup(GfxState *state) {
-  double *ctm;
+  const double *ctm;
 
   // restore state
   delete splash;
@@ -2560,7 +2561,7 @@ void SplashOutputDev::endTransparencyGroup(GfxState *state) {
   updateCTM(state, 0, 0, 0, 0, 0, 0);
 }
 
-void SplashOutputDev::paintTransparencyGroup(GfxState *state, double *bbox) {
+void SplashOutputDev::paintTransparencyGroup(GfxState *state, const double *bbox) {
   SplashBitmap *tBitmap;
   SplashTransparencyGroup *transpGroup;
   GBool isolated;
@@ -2585,9 +2586,9 @@ void SplashOutputDev::paintTransparencyGroup(GfxState *state, double *bbox) {
   delete tBitmap;
 }
 
-void SplashOutputDev::setSoftMask(GfxState *state, double *bbox,
+void SplashOutputDev::setSoftMask(GfxState *state, const double *bbox,
 				  GBool alpha, Function *transferFunc,
-				  GfxColor *backdropColor) {
+				  const GfxColor *backdropColor) {
   SplashBitmap *softMask, *tBitmap;
   Splash *tSplash;
   SplashTransparencyGroup *transpGroup;

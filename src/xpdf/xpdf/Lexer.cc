@@ -46,7 +46,7 @@ static char specialChars[256] = {
 // Lexer
 //------------------------------------------------------------------------
 
-Lexer::Lexer(XRef *xref, Stream *str) {
+Lexer::Lexer(const XRef *xref, Stream *str) {
   Object obj;
 
   curStr.initStream(str);
@@ -57,7 +57,7 @@ Lexer::Lexer(XRef *xref, Stream *str) {
   curStr.streamReset();
 }
 
-Lexer::Lexer(XRef *xref, Object *obj) {
+Lexer::Lexer(const XRef *xref, const Object *obj) {
   Object obj2;
 
   if (obj->isStream()) {
@@ -65,7 +65,7 @@ Lexer::Lexer(XRef *xref, Object *obj) {
     freeArray = gTrue;
     streams->add(obj->copy(&obj2));
   } else {
-    streams = obj->getArray();
+    streams = (Array *)obj->getArray();
     freeArray = gFalse;
   }
   strPtr = 0;

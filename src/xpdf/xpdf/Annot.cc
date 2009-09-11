@@ -84,7 +84,7 @@ AnnotBorderStyle::~AnnotBorderStyle() {
 // Annot
 //------------------------------------------------------------------------
 
-Annot::Annot(XRef *xrefA, Dict *acroForm, Dict *dict, Ref *refA) {
+Annot::Annot(XRef *xrefA, const Dict *acroForm, const Dict *dict, const Ref *refA) {
   Object apObj, asObj, obj1, obj2, obj3;
   AnnotBorderType borderType;
   double borderWidth;
@@ -283,9 +283,9 @@ Annot::~Annot() {
   }
 }
 
-void Annot::generateFieldAppearance(Dict *field, Dict *annot, Dict *acroForm) {
+void Annot::generateFieldAppearance(const Dict *field, const Dict *annot, const Dict *acroForm) {
   Object mkObj, ftObj, appearDict, drObj, obj1, obj2, obj3;
-  Dict *mkDict;
+  const Dict *mkDict;
   MemStream *appearStream;
   GfxFontDict *fontDict;
   GBool hasCaption;
@@ -652,7 +652,7 @@ void Annot::generateFieldAppearance(Dict *field, Dict *annot, Dict *acroForm) {
 // have 1, 3, or 4 elements).  If <adjust> is +1, color is brightened;
 // if <adjust> is -1, color is darkened; otherwise color is not
 // modified.
-void Annot::setColor(Array *a, GBool fill, int adjust) {
+void Annot::setColor(const Array *a, GBool fill, int adjust) {
   Object obj1;
   double color[4];
   int nComps, i;
@@ -697,7 +697,7 @@ void Annot::setColor(Array *a, GBool fill, int adjust) {
 }
 
 // Draw the variable text or caption for a field.
-void Annot::drawText(GString *text, GString *da, GfxFontDict *fontDict,
+void Annot::drawText(const GString *text, const GString *da, const GfxFontDict *fontDict,
 		     GBool multiline, int comb, int quadding,
 		     GBool txField, GBool forceZapfDingbats) {
   GList *daToks;
@@ -1057,7 +1057,7 @@ void Annot::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 }
 
 // Draw the variable text or caption for a field.
-void Annot::drawListBox(GString **text, GBool *selection,
+void Annot::drawListBox(GString *const *text, const GBool *selection,
 			int nOptions, int topIdx,
 			GString *da, GfxFontDict *fontDict, GBool quadding) {
   GList *daToks;
@@ -1254,8 +1254,8 @@ void Annot::drawListBox(GString **text, GBool *selection,
 // *end = one past the last character to be included
 // *width = width of the characters start .. end-1
 // *next = index of first character on the following line
-void Annot::getNextLine(GString *text, int start,
-			GfxFont *font, double fontSize, double wMax,
+void Annot::getNextLine(const GString *text, int start,
+			const GfxFont *font, double fontSize, double wMax,
 			int *end, double *width, int *next) {
   double w, dw;
   int j, k, c;
@@ -1391,8 +1391,8 @@ void Annot::drawCircleBottomRight(double cx, double cy, double r) {
 }
 
 // Look up an inheritable field dictionary entry.
-Object *Annot::fieldLookup(Dict *field, char *key, Object *obj) {
-  Dict *dict;
+Object *Annot::fieldLookup(const Dict *field, const char *key, Object *obj)const {
+  const Dict *dict;
   Object parent;
 
   dict = field;
@@ -1432,8 +1432,8 @@ void Annot::draw(Gfx *gfx, GBool printing) {
 // Annots
 //------------------------------------------------------------------------
 
-Annots::Annots(XRef *xref, Catalog *catalog, Object *annotsObj) {
-  Dict *acroForm;
+Annots::Annots(XRef *xref, const Catalog *catalog, const Object *annotsObj) {
+  const Dict *acroForm;
   Annot *annot;
   Object obj1;
   Ref ref;
@@ -1481,7 +1481,7 @@ Annots::~Annots() {
   gfree(annots);
 }
 
-void Annots::generateAppearances(Dict *acroForm) {
+void Annots::generateAppearances(const Dict *acroForm) {
   Object obj1, obj2;
   Ref ref;
   int i;
@@ -1504,8 +1504,8 @@ void Annots::generateAppearances(Dict *acroForm) {
   obj1.free();
 }
 
-void Annots::scanFieldAppearances(Dict *node, Ref *ref, Dict *parent,
-				  Dict *acroForm) {
+void Annots::scanFieldAppearances(const Dict *node, const Ref *ref, const Dict *parent,
+				  const Dict *acroForm) {
   Annot *annot;
   Object obj1, obj2;
   Ref ref2;
@@ -1544,7 +1544,7 @@ void Annots::scanFieldAppearances(Dict *node, Ref *ref, Dict *parent,
   }
 }
 
-Annot *Annots::findAnnot(Ref *ref) {
+Annot *Annots::findAnnot(const Ref *ref)const {
   int i;
 
   for (i = 0; i < nAnnots; ++i) {

@@ -243,7 +243,7 @@ public:
 	 * @param objStream Stream object.
 	 * @return Appropriate filter stream writer (never NULL).
 	 */
-	static boost::shared_ptr<FilterStreamWriter> getInstance(Object& objStream);
+	static boost::shared_ptr<FilterStreamWriter> getInstance(const Object& objStream);
 
 	/** Adds new filter writer to the registered.
 	 * @param streamwriter Filter stream writer implementation.
@@ -272,7 +272,7 @@ public:
 	 * @param obj Object to be written.
 	 * @return true if able, false otherwise.
 	 */
-	virtual bool supportObject(Object& obj)const =0;
+	virtual bool supportObject(const Object& obj)const =0;
 
 	/** Writes given stream object to the output stream.
 	 * Implementation has to follow pdf specification in format of the data
@@ -283,7 +283,7 @@ public:
 	 * @param ref Indirect reference for object (NULL for direct object).
 	 * @param outStream Output stream where to put data.
 	 */
-	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const =0;
+	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream)const =0;
 };
 
 /** Stream writer implementation with no filters.
@@ -299,11 +299,11 @@ public:
 	/** Checks whether given object is supported.
 	 * @return allways true as it can write all stream objects.
 	 */
-	virtual bool supportObject(UNUSED_PARAM Object& obj)const;
+	virtual bool supportObject(UNUSED_PARAM const Object& obj)const;
 
 	/** Extracts stream data without any decoding.
 	 */
-	static unsigned char * null_extractor(Object&obj, size_t& size);
+	static unsigned char * null_extractor(const Object&obj, size_t& size);
 
 	/** Writes given stream object to the stream.
 	 * @param obj Stream object.
@@ -312,7 +312,7 @@ public:
 	 *
 	 * Uses streamToCharBuffer with null_extractor extractor.
 	 */
-	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const;
+	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream)const;
 };
 
 /** Implementation of FlateDecode filter stream writer.
@@ -328,7 +328,7 @@ class ZlibFilterStreamWriter: public FilterStreamWriter
 	 *
 	 * Only for internal use of ZlibFilterStreamWriter class.
 	 */
-	static void update_dict(Object& obj);
+	static void update_dict(const Object& obj);
 public:
 	static boost::shared_ptr<ZlibFilterStreamWriter> getInstance();
 
@@ -336,7 +336,7 @@ public:
 	 * @param obj Stream object.
 	 * @return true if no filter FlateDecode are used.
 	 */
-	virtual bool supportObject(Object& obj)const;
+	virtual bool supportObject(const Object& obj)const;
 
 	/** Compress given buffer with deflate method.
 	 * @param in Input buffer.
@@ -358,9 +358,9 @@ public:
 	 * updates given stream object's dictionary to contain proper filter 
 	 * data.
 	 */
-	static unsigned char* deflate(Object& obj, size_t& size);
+	static unsigned char* deflate(const Object& obj, size_t& size);
 
-	virtual void compress(Object& obj, Ref* ref, StreamWriter& outStream)const;
+	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream)const;
 };
 
 /** Interface for pdf content writer.
@@ -480,7 +480,7 @@ public:
 	 *
 	 * @return stream position where it is safe to store data for new revision.
 	 */
-	virtual size_t writeTrailer(Object & trailer, const PrevSecInfo &prevSection, StreamWriter & stream, size_t off=0)=0;
+	virtual size_t writeTrailer(const Object & trailer, const PrevSecInfo &prevSection, StreamWriter & stream, size_t off=0)=0;
 
 	/** Resets internal data collected in writeContent method.
 	 *
@@ -621,7 +621,7 @@ public:
 	 *
 	 * @return stream position of pdf end of file %%EOF marker.
 	 */
-	virtual size_t writeTrailer(Object & trailer, const PrevSecInfo &prevSection, StreamWriter & stream, size_t off=0);
+	virtual size_t writeTrailer(const Object & trailer, const PrevSecInfo &prevSection, StreamWriter & stream, size_t off=0);
 
 	/** Resets all collected data.
 	 *

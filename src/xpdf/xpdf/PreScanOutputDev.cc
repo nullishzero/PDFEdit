@@ -69,7 +69,7 @@ void PreScanOutputDev::eoClip(GfxState *state) {
 
 void PreScanOutputDev::beginStringOp(GfxState *state) {
   int render;
-  GfxFont *font;
+  const GfxFont *font;
   double m11, m12, m21, m22;
   Ref embRef;
   DisplayFontParam *dfp;
@@ -216,15 +216,15 @@ void PreScanOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
 }
 
 void PreScanOutputDev::beginTransparencyGroup(
-			   GfxState *state, double *bbox,
-			   GfxColorSpace *blendingColorSpace,
+			   GfxState *state, const double *bbox,
+			   const GfxColorSpace *blendingColorSpace,
 			   GBool isolated, GBool knockout,
 			   GBool forSoftMask) {
   transparency = gTrue;
   gdi = gFalse;
 }
 
-void PreScanOutputDev::check(GfxColorSpace *colorSpace, GfxColor *color,
+void PreScanOutputDev::check(const GfxColorSpace *colorSpace, const GfxColor *color,
 			     double opacity, GfxBlendMode blendMode) {
   GfxRGB rgb;
 

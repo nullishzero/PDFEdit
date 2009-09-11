@@ -119,20 +119,20 @@ GString::GString(const char *sA, int lengthA) {
   s[length] = '\0';
 }
 
-GString::GString(GString *str, int idx, int lengthA) {
+GString::GString(const GString *str, int idx, int lengthA) {
   s = NULL;
   resize(length = lengthA);
   memcpy(s, str->getCString() + idx, length);
   s[length] = '\0';
 }
 
-GString::GString(GString *str) {
+GString::GString(const GString *str) {
   s = NULL;
   resize(length = str->getLength());
   memcpy(s, str->getCString(), length + 1);
 }
 
-GString::GString(GString *str1, GString *str2) {
+GString::GString(const GString *str1, const GString *str2) {
   int n1 = str1->getLength();
   int n2 = str2->getLength();
 
@@ -187,7 +187,7 @@ GString *GString::append(char c) {
   return this;
 }
 
-GString *GString::append(GString *str) {
+GString *GString::append(const GString *str) {
   int n = str->getLength();
 
   resize(length + n);
@@ -639,7 +639,7 @@ GString *GString::lowerCase() {
   return this;
 }
 
-int GString::cmp(GString *str) {
+int GString::cmp(const GString *str)const {
   int n1, n2, i, x;
   char *p1, *p2;
 
@@ -654,7 +654,7 @@ int GString::cmp(GString *str) {
   return n1 - n2;
 }
 
-int GString::cmpN(GString *str, int n) {
+int GString::cmpN(const GString *str, int n)const {
   int n1, n2, i, x;
   char *p1, *p2;
 
@@ -674,7 +674,7 @@ int GString::cmpN(GString *str, int n) {
   return n1 - n2;
 }
 
-int GString::cmp(const char *sA) {
+int GString::cmp(const char *sA)const {
   int n1, i, x;
   const char *p1, *p2;
 
@@ -694,7 +694,7 @@ int GString::cmp(const char *sA) {
   return 0;
 }
 
-int GString::cmpN(const char *sA, int n) {
+int GString::cmpN(const char *sA, int n)const {
   int n1, i, x;
   const char *p1, *p2;
 

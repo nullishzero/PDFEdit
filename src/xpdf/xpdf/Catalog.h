@@ -36,42 +36,42 @@ public:
   ~Catalog();
 
   // Is catalog valid?
-  GBool isOk() { return ok; }
+  GBool isOk()const { return ok; }
 
   // Get number of pages.
-  int getNumPages() { return numPages; }
+  int getNumPages()const { return numPages; }
 
   // Get a page.
-  Page *getPage(int i) { return pages[i-1]; }
+  const Page *getPage(int i)const { return pages[i-1]; }
 
   // Get the reference for a page object.
-  Ref *getPageRef(int i) { return &pageRefs[i-1]; }
+  const Ref *getPageRef(int i)const { return &pageRefs[i-1]; }
 
   // Return base URI, or NULL if none.
-  GString *getBaseURI() { return baseURI; }
+  const GString *getBaseURI()const { return baseURI; }
 
   // Return the contents of the metadata stream, or NULL if there is
   // no metadata.
   GString *readMetadata();
 
   // Return the structure tree root object.
-  Object *getStructTreeRoot() { return &structTreeRoot; }
+  const Object *getStructTreeRoot()const { return &structTreeRoot; }
 
   // Find a page, given its object ID.  Returns page number, or 0 if
   // not found.
-  int findPage(int num, int gen);
+  int findPage(int num, int gen)const;
 
   // Find a named destination.  Returns the link destination, or
   // NULL if <name> is not a destination.
-  LinkDest *findDest(GString *name);
+  LinkDest *findDest(const GString *name)const;
 
-  Object *getDests() { return &dests; }
+  const Object *getDests()const { return &dests; }
 
-  Object *getNameTree() { return &nameTree; }
+  const Object *getNameTree()const { return &nameTree; }
 
-  Object *getOutline() { return &outline; }
+  const Object *getOutline()const { return &outline; }
 
-  Object *getAcroForm() { return &acroForm; }
+  const Object *getAcroForm()const { return &acroForm; }
 
 private:
 
@@ -89,9 +89,9 @@ private:
   Object acroForm;		// AcroForm dictionary
   GBool ok;			// true if catalog is valid
 
-  int readPageTree(Dict *pages, PageAttrs *attrs, int start,
+  int readPageTree(const Dict *pages, PageAttrs *attrs, int start,
 		   char *alreadyRead);
-  Object *findDestInTree(Object *tree, GString *name, Object *obj);
+  Object *findDestInTree(const Object *tree, const GString *name, Object *obj)const;
 };
 
 #endif

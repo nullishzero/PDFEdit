@@ -78,7 +78,7 @@ objHasParent (const IProperty& ip)
 //
 template<typename T>
 void 
-parseStreamToContainer (T& container, ::Object& obj)
+parseStreamToContainer (T& container, const ::Object& obj)
 {
 	assert (container.empty());
 	if (!obj.isStream())
@@ -89,7 +89,7 @@ parseStreamToContainer (T& container, ::Object& obj)
 
 	// Get stream length
 	boost::shared_ptr< ::Object> xpdfDict(XPdfObjectFactory::getInstance(), xpdf::object_deleter()); 
-	xpdfDict->initDict (obj.streamGetDict());
+	xpdfDict->initDict ((Dict *)obj.streamGetDict());
 	boost::shared_ptr< ::Object> xpdfLen(XPdfObjectFactory::getInstance(), xpdf::object_deleter()); 
 	xpdfDict->dictLookup ("Length", xpdfLen.get());
 	assert (xpdfLen->isInt ());
@@ -122,7 +122,7 @@ parseStreamToContainer (T& container, ::Object& obj)
 	//\TODO is it really ok?
 	rawstr->close ();
 }
-template void parseStreamToContainer<CStream::Buffer> (CStream::Buffer& container, ::Object& obj);
+template void parseStreamToContainer<CStream::Buffer> (CStream::Buffer& container, const ::Object& obj);
 
 
 //
@@ -168,7 +168,7 @@ using namespace debug;
 
 	// gets all bytes from xpdf string object, makes string valid (to some
 	// escaping)
-	::GString * s=stringObject.getString(); 
+	const ::GString * s=stringObject.getString(); 
 	string str;
 	for(int i=0; i<s->getLength(); i++)
 		str.append(1, s->getChar(i));

@@ -8,6 +8,7 @@
 // Michal Hocko   
 // 	- public clone method for deep copy of Array
 // 	- getXRef added
+// 	- const wehere possible
 //
 //========================================================================
 
@@ -32,7 +33,7 @@ class Array {
 public:
 
   // Constructor.
-  Array(XRef *xrefA);
+  Array(const XRef *xrefA);
 
   // Destructor.
   ~Array();
@@ -44,20 +45,20 @@ public:
   int decRef() { return --ref; }
 
   // Get number of elements.
-  int getLength() { return length; }
+  int getLength()const { return length; }
 
   // Add an element.
-  void add(Object *elem);
+  void add(const Object *elem);
 
   // Accessors.
-  Object *get(int i, Object *obj);
-  Object *getNF(int i, Object *obj);
+  Object *get(int i, Object *obj)const;
+  Object *getNF(int i, Object *obj)const;
 
-  XRef *getXRef() {return xref;}
+  const XRef *getXRef()const {return xref;}
 
 private:
 
-  XRef *xref;			// the xref table for this PDF file
+  const XRef *xref;		// the xref table for this PDF file
   Object *elems;		// array of elements
   int size;			// size of <elems> array
   int length;			// number of elements in array

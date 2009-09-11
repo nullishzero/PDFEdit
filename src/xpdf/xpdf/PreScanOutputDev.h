@@ -36,14 +36,14 @@ public:
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  virtual GBool upsideDown() { return gTrue; }
+  virtual GBool upsideDown()const { return gTrue; }
 
   // Does this device use drawChar() or drawString()?
-  virtual GBool useDrawChar() { return gTrue; }
+  virtual GBool useDrawChar()const { return gTrue; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  virtual GBool interpretType3Chars() { return gTrue; }
+  virtual GBool interpretType3Chars()const { return gTrue; }
 
   //----- initialization and control
 
@@ -90,8 +90,8 @@ public:
 				   GfxImageColorMap *maskColorMap);
 
   //----- transparency groups and soft masks
-  virtual void beginTransparencyGroup(GfxState *state, double *bbox,
-				      GfxColorSpace *blendingColorSpace,
+  virtual void beginTransparencyGroup(GfxState *state, const double *bbox,
+				      const GfxColorSpace *blendingColorSpace,
 				      GBool isolated, GBool knockout,
 				      GBool forSoftMask);
 
@@ -99,26 +99,26 @@ public:
 
   // Returns true if the operations performed since the last call to
   // clearStats() are all monochrome (black or white).
-  GBool isMonochrome() { return mono; }
+  GBool isMonochrome()const { return mono; }
 
   // Returns true if the operations performed since the last call to
   // clearStats() are all gray.
-  GBool isGray() { return gray; }
+  GBool isGray()const { return gray; }
 
   // Returns true if the operations performed since the last call to
   // clearStats() included any transparency.
-  GBool usesTransparency() { return transparency; }
+  GBool usesTransparency()const { return transparency; }
 
   // Returns true if the operations performed since the last call to
   // clearStats() are all rasterizable by GDI calls in GDIOutputDev.
-  GBool isAllGDI() { return gdi; }
+  GBool isAllGDI()const { return gdi; }
 
   // Clear the stats used by the above functions.
   void clearStats();
 
 private:
 
-  void check(GfxColorSpace *colorSpace, GfxColor *color,
+  void check(const GfxColorSpace *colorSpace, const GfxColor *color,
 	     double opacity, GfxBlendMode blendMode);
 
   GBool mono;

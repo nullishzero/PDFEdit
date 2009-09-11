@@ -21,7 +21,7 @@
 #include "xpdf/XRef.h"
 #include "xpdf/Error.h"
 
-Parser::Parser(XRef *xrefA, Lexer *lexerA, GBool allowStreamsA) {
+Parser::Parser(const XRef *xrefA, Lexer *lexerA, GBool allowStreamsA) {
   xref = xrefA;
   lexer = lexerA;
   inlineImg = 0;
@@ -37,7 +37,7 @@ Parser::~Parser() {
   delete lexer;
 }
 
-Object *Parser::getObj(Object *obj, Guchar *fileKey,
+Object *Parser::getObj(Object *obj, const Guchar *fileKey,
 		       CryptAlgorithm encAlgorithm, int keyLength,
 		       int objNum, int objGen) {
   char *key;
@@ -45,7 +45,8 @@ Object *Parser::getObj(Object *obj, Guchar *fileKey,
   Object obj2;
   int num;
   DecryptStream *decrypt;
-  GString *s, *s2;
+  const GString *s; 
+  GString *s2;
   int c;
 
   // refill buffer after inline image data
@@ -161,7 +162,7 @@ err:
   return NULL;
 }
 
-Stream *Parser::makeStream(Object *dict, Guchar *fileKey,
+Stream *Parser::makeStream(const Object *dict, const Guchar *fileKey,
 			   CryptAlgorithm encAlgorithm, int keyLength,
 			   int objNum, int objGen) {
   Object obj;

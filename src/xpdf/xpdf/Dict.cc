@@ -6,7 +6,9 @@
 //
 //
 // Changes: 
-// Michal Hocko   - public clone method for deep copy of Dict
+// Michal Hocko   
+// 	- public clone method for deep copy of Dict
+//      - const where possible
 //
 //========================================================================
 
@@ -27,7 +29,7 @@
 // Dict
 //------------------------------------------------------------------------
 
-Dict::Dict(XRef *xrefA) {
+Dict::Dict(const XRef *xrefA) {
   xref = xrefA;
   entries = NULL;
   size = length = 0;
@@ -75,7 +77,7 @@ Dict * Dict::clone()const
    return result;
 }
 
-void Dict::add(char *key, Object *val) 
+void Dict::add(char *key, const Object *val) 
 {
   int pos = length;
   
@@ -128,7 +130,7 @@ Object * Dict::del(const char * key)
 }
 
 
-inline DictEntry *Dict::find(const char *key) {
+inline DictEntry *Dict::find(const char *key)const {
   int i;
 
   for (i = 0; i < length; ++i) 
@@ -139,29 +141,29 @@ inline DictEntry *Dict::find(const char *key) {
   return NULL;
 }
 
-GBool Dict::is(const char *type) {
+GBool Dict::is(const char *type)const {
   DictEntry *e;
 
   return (e = find("Type")) && e->val->isName(type);
 }
 
-Object *Dict::lookup(const char *key, Object *obj) {
+Object *Dict::lookup(const char *key, Object *obj)const {
   DictEntry *e;
 
   return (e = find(key)) ? e->val->fetch(xref, obj) : obj->initNull();
 }
 
-Object *Dict::lookupNF(const char *key, Object *obj) {
+Object *Dict::lookupNF(const char *key, Object *obj)const {
   DictEntry *e;
 
   return (e = find(key)) ? e->val->copy(obj) : obj->initNull();
 }
 
-char *Dict::getKey(int i) {
+char *Dict::getKey(int i)const {
   return entries[i].key;
 }
 
-Object *Dict::getVal(int i, Object *obj) {
+Object *Dict::getVal(int i, Object *obj)const {
 
   // boundary checks
   if(i<0 || i>=length)
@@ -173,7 +175,7 @@ Object *Dict::getVal(int i, Object *obj) {
   return entry->val->fetch(xref, obj);
 }
 
-Object *Dict::getValNF(int i, Object *obj) {
+Object *Dict::getValNF(int i, Object *obj)const {
 
   // boundary checks
   if(i<0 || i>=length)
@@ -184,7 +186,7 @@ Object *Dict::getValNF(int i, Object *obj) {
   return entry->val->copy(obj);
 }
 
-Object * Dict::update(char * key, Object * val)
+Object * Dict::update(char * key, const Object * val)
 {
   DictEntry * entry=find(key);
   if(!entry)

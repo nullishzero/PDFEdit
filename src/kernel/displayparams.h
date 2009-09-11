@@ -85,7 +85,7 @@ typedef struct DisplayParams
 	 * @see convertPdfPosToPixmapPos
 	 */
 	void convertPixmapPosToPdfPos( double fromX, double fromY, double & toX, double & toY ) const {
-		double * ctm /*[6]*/;
+		const double * ctm /*[6]*/;
 		double h;
 		PDFRectangle pdfRect ( pageRect.xleft, pageRect.yleft, pageRect.xright, pageRect.yright );
 		GfxState state (hDpi, vDpi, &pdfRect, rotate, upsideDown );

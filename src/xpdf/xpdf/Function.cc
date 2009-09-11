@@ -33,9 +33,9 @@ Function::Function() {
 Function::~Function() {
 }
 
-Function *Function::parse(Object *funcObj) {
+Function *Function::parse(const Object *funcObj) {
   Function *func;
-  Dict *dict;
+  const Dict *dict;
   int funcType;
   Object obj1;
 
@@ -78,7 +78,7 @@ Function *Function::parse(Object *funcObj) {
   return func;
 }
 
-GBool Function::init(Dict *dict) {
+GBool Function::init(const Dict *dict) {
   Object obj1, obj2;
   int i;
 
@@ -171,7 +171,7 @@ IdentityFunction::IdentityFunction() {
 IdentityFunction::~IdentityFunction() {
 }
 
-void IdentityFunction::transform(double *in, double *out) {
+void IdentityFunction::transform(const double *in, double *out)const {
   int i;
 
   for (i = 0; i < funcMaxOutputs; ++i) {
@@ -183,7 +183,7 @@ void IdentityFunction::transform(double *in, double *out) {
 // SampledFunction
 //------------------------------------------------------------------------
 
-SampledFunction::SampledFunction(Object *funcObj, Dict *dict) {
+SampledFunction::SampledFunction(const Object *funcObj, const Dict *dict) {
   Stream *str;
   int sampleBits;
   double sampleMul;
@@ -361,14 +361,14 @@ SampledFunction::~SampledFunction() {
   }
 }
 
-SampledFunction::SampledFunction(SampledFunction *func) {
+SampledFunction::SampledFunction(const SampledFunction *func) {
   memcpy(this, func, sizeof(SampledFunction));
   samples = (double *)gmallocn(nSamples, sizeof(double));
   memcpy(samples, func->samples, nSamples * sizeof(double));
   sBuf = (double *)gmallocn(1 << m, sizeof(double));
 }
 
-void SampledFunction::transform(double *in, double *out) {
+void SampledFunction::transform(const double *in, double *out)const {
   double x;
   int e[funcMaxInputs][2];
   double efrac0[funcMaxInputs];
@@ -425,7 +425,7 @@ void SampledFunction::transform(double *in, double *out) {
 // ExponentialFunction
 //------------------------------------------------------------------------
 
-ExponentialFunction::ExponentialFunction(Object *funcObj, Dict *dict) {
+ExponentialFunction::ExponentialFunction(const Object *funcObj, const Dict *dict) {
   Object obj1, obj2;
   int i;
 
@@ -512,11 +512,11 @@ ExponentialFunction::ExponentialFunction(Object *funcObj, Dict *dict) {
 ExponentialFunction::~ExponentialFunction() {
 }
 
-ExponentialFunction::ExponentialFunction(ExponentialFunction *func) {
+ExponentialFunction::ExponentialFunction(const ExponentialFunction *func) {
   memcpy(this, func, sizeof(ExponentialFunction));
 }
 
-void ExponentialFunction::transform(double *in, double *out) {
+void ExponentialFunction::transform(const double *in, double *out)const {
   double x;
   int i;
 
@@ -544,7 +544,7 @@ void ExponentialFunction::transform(double *in, double *out) {
 // StitchingFunction
 //------------------------------------------------------------------------
 
-StitchingFunction::StitchingFunction(Object *funcObj, Dict *dict) {
+StitchingFunction::StitchingFunction(const Object *funcObj, const Dict *dict) {
   Object obj1, obj2;
   int i;
 
@@ -643,7 +643,7 @@ StitchingFunction::StitchingFunction(Object *funcObj, Dict *dict) {
   obj1.free();
 }
 
-StitchingFunction::StitchingFunction(StitchingFunction *func) {
+StitchingFunction::StitchingFunction(const StitchingFunction *func) {
   int i;
 
   k = func->k;
@@ -676,7 +676,7 @@ StitchingFunction::~StitchingFunction() {
   gfree(scale);
 }
 
-void StitchingFunction::transform(double *in, double *out) {
+void StitchingFunction::transform(const double *in, double *out)const {
   double x;
   int i;
 
@@ -998,7 +998,7 @@ void PSStack::pop() {
   ++sp;
 }
 
-PostScriptFunction::PostScriptFunction(Object *funcObj, Dict *dict) {
+PostScriptFunction::PostScriptFunction(const Object *funcObj, const Dict *dict) {
   Stream *str;
   int codePtr;
   GString *tok;
@@ -1048,7 +1048,7 @@ PostScriptFunction::PostScriptFunction(Object *funcObj, Dict *dict) {
   return;
 }
 
-PostScriptFunction::PostScriptFunction(PostScriptFunction *func) {
+PostScriptFunction::PostScriptFunction(const PostScriptFunction *func) {
   memcpy(this, func, sizeof(PostScriptFunction));
   code = (PSObject *)gmallocn(codeSize, sizeof(PSObject));
   memcpy(code, func->code, codeSize * sizeof(PSObject));
@@ -1060,7 +1060,7 @@ PostScriptFunction::~PostScriptFunction() {
   delete codeString;
 }
 
-void PostScriptFunction::transform(double *in, double *out) {
+void PostScriptFunction::transform(const double *in, double *out)const {
   PSStack *stack;
   int i;
 
@@ -1259,7 +1259,7 @@ void PostScriptFunction::resizeCode(int newSize) {
   }
 }
 
-void PostScriptFunction::exec(PSStack *stack, int codePtr) {
+void PostScriptFunction::exec(PSStack *stack, int codePtr)const {
   int i1, i2;
   double r1, r2;
   GBool b1, b2;

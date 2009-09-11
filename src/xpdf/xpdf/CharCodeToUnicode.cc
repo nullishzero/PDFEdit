@@ -54,8 +54,8 @@ static int getCharFromFile(void *data) {
 
 //------------------------------------------------------------------------
 
-CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GString *fileName,
-							GString *collection) {
+CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(const GString *fileName,
+							const GString *collection) {
   FILE *f;
   Unicode *mapA;
   CharCode size, mapLenA;
@@ -96,7 +96,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GString *fileName,
 }
 
 CharCodeToUnicode *CharCodeToUnicode::parseUnicodeToUnicode(
-						    GString *fileName) {
+						    const GString *fileName) {
   FILE *f;
   Unicode *mapA;
   CharCodeToUnicodeString *sMapA;
@@ -187,7 +187,7 @@ CharCodeToUnicode *CharCodeToUnicode::make8BitToUnicode(Unicode *toUnicode) {
   return new CharCodeToUnicode(NULL, toUnicode, 256, gTrue, NULL, 0, 0);
 }
 
-CharCodeToUnicode *CharCodeToUnicode::parseCMap(GString *buf, int nBits) {
+CharCodeToUnicode *CharCodeToUnicode::parseCMap(const GString *buf, int nBits) {
   CharCodeToUnicode *ctu;
   char *p;
 
@@ -197,7 +197,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCMap(GString *buf, int nBits) {
   return ctu;
 }
 
-void CharCodeToUnicode::mergeCMap(GString *buf, int nBits) {
+void CharCodeToUnicode::mergeCMap(const GString *buf, int nBits) {
   char *p;
 
   p = buf->getCString();
@@ -428,11 +428,11 @@ void CharCodeToUnicode::decRefCnt() {
   }
 }
 
-GBool CharCodeToUnicode::match(GString *tagA) {
+GBool CharCodeToUnicode::match(const GString *tagA)const {
   return tag && !tag->cmp(tagA);
 }
 
-void CharCodeToUnicode::setMapping(CharCode c, Unicode *u, int len) {
+void CharCodeToUnicode::setMapping(CharCode c, const Unicode *u, int len) {
   int i, j;
 
   if (len == 1) {
@@ -460,7 +460,7 @@ void CharCodeToUnicode::setMapping(CharCode c, Unicode *u, int len) {
   }
 }
 
-int CharCodeToUnicode::mapToUnicode(CharCode c, Unicode *u, int size) {
+int CharCodeToUnicode::mapToUnicode(CharCode c, Unicode *u, int size)const {
   int i, j;
 
   if (c >= mapLen) {
@@ -504,7 +504,7 @@ CharCodeToUnicodeCache::~CharCodeToUnicodeCache() {
   gfree(cache);
 }
 
-CharCodeToUnicode *CharCodeToUnicodeCache::getCharCodeToUnicode(GString *tag) {
+CharCodeToUnicode *CharCodeToUnicodeCache::getCharCodeToUnicode(const GString *tag)const {
   CharCodeToUnicode *ctu;
   int i, j;
 

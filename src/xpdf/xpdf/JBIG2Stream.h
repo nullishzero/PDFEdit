@@ -35,14 +35,14 @@ public:
 
   JBIG2Stream(Stream *strA, Object *globalsStreamA);
   virtual ~JBIG2Stream();
-  virtual StreamKind getKind() { return strJBIG2; }
+  virtual StreamKind getKind()const { return strJBIG2; }
   virtual void reset();
   virtual void close();
   virtual int getChar();
   virtual int lookChar();
   virtual Stream * clone();
-  virtual GString *getPSFilter(int psLevel, char *indent);
-  virtual GBool isBinary(GBool last = gTrue);
+  virtual GString *getPSFilter(int psLevel, const char *indent)const;
+  virtual GBool isBinary(GBool last = gTrue)const;
 
 private:
 

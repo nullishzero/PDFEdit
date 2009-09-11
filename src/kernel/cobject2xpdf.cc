@@ -123,7 +123,7 @@ namespace {
 				// characters
 				val.clear();
 				size_t len = obj.getString()->getLength();
-				GString * xpdfString=obj.getString();
+				const GString * xpdfString=obj.getString();
 				for(size_t i=0; i< len; ++i)
 				{
 					char c = xpdfString->getChar(static_cast<int>(i));
@@ -401,9 +401,9 @@ namespace {
 		case objStream:
 			obj.streamReset ();
 			{
-				Dict* dict = obj.streamGetDict ();
+				const Dict* dict = obj.streamGetDict ();
 				assert (NULL != dict);
-				o->initDict (dict);
+				o->initDict ((Dict*)dict);
 				std::string str;
 				complexXpdfObjToString (*o, str);
 				oss << str;
@@ -602,7 +602,7 @@ getStringFromXpdfStream (std::string& str, ::Object& obj)
 // Creates CObject from xpdf object.
 // 
 IProperty*
-createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, Object& obj,const IndiRef& ref)
+createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, const Object& obj,const IndiRef& ref)
 {
 	switch (obj.getType ())
 	{
@@ -644,7 +644,7 @@ createObjFromXpdfObj (boost::shared_ptr<CPdf> pdf, Object& obj,const IndiRef& re
 }
 
 IProperty*
-createObjFromXpdfObj (Object& obj)
+createObjFromXpdfObj (const Object& obj)
 {
 	switch (obj.getType ())
 	{
@@ -712,9 +712,9 @@ template Object* simpleValueToXpdfObj<pRef,const IndiRef&> (const IndiRef& val);
 //
 template <PropertyType Tp,typename T> 
 void
-simpleValueFromXpdfObj (Object& obj, T val)
+simpleValueFromXpdfObj (const Object& obj, T val)
 {
-	typename ProcessorTraitSimple<Object&, T, Tp>::xpdfReadProcessor rp;
+	typename ProcessorTraitSimple<const Object&, T, Tp>::xpdfReadProcessor rp;
 	rp (obj,val);
 }
 
@@ -723,7 +723,7 @@ simpleValueFromXpdfObj (Object& obj, T val)
 //
 template <> 
 inline void
-simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) 
+simpleValueFromXpdfObj<pNull,NullType&> (const Object&, NullType&) 
 {
 	/*assert (!"operation not permitted...");*//*THIS IS FORBIDDEN IN THE CALLER*/
 }
@@ -734,20 +734,20 @@ simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&)
 //
 template <PropertyType Tp,typename T> 
 inline void
-complexValueFromXpdfObj (IProperty& ip, Object& obj, T val)
+complexValueFromXpdfObj (IProperty& ip, const Object& obj, T val)
 {
-	typename ProcessorTraitComplex<Object&, T, Tp>::xpdfReadProcessor rp;
+	typename ProcessorTraitComplex<const Object&, T, Tp>::xpdfReadProcessor rp;
 	rp (ip, obj, val);
 }
 
 template void complexValueFromXpdfObj<pArray, CArray::Value&> 
 		(IProperty& ip, 
-		 Object& obj, 
+		 const Object& obj, 
 		 CArray::Value& val);
 
 template void complexValueFromXpdfObj<pDict, CDict::Value&>
 		(IProperty& ip, 
-		 Object& obj, 
+		 const Object& obj, 
 		 CDict::Value& val);
 
 
@@ -923,7 +923,7 @@ unsigned char* bufferFromStream(Stream& str, size_t dictLength, size_t& size)
 	return buffer;
 }
 
-unsigned char* convertStreamToDecodedData(Object& obj, size_t& size)
+unsigned char* convertStreamToDecodedData(const Object& obj, size_t& size)
 {
 	Object lenObj;
 	obj.streamGetDict()->lookup("Length", &lenObj);
@@ -943,7 +943,7 @@ unsigned char* convertStreamToDecodedData(Object& obj, size_t& size)
 	const char * fieldsToRemove[] = {"Filter", "DecodeParams", "F", "FFilter", "FDecodeParams", "DL", NULL};
 	for(int i=0; fieldsToRemove[i]; ++i)
 	{
-		Object * entry = obj.streamGetDict()->del(fieldsToRemove[i]);
+		Object * entry = obj.getStream()->getBaseStream()->dictDel(fieldsToRemove[i]);
 		if(entry)
 		{
 			utilsPrintDbg(debug::DBG_DBG, "Removing "<< fieldsToRemove[i] <<" entry from the stream");
@@ -954,7 +954,7 @@ unsigned char* convertStreamToDecodedData(Object& obj, size_t& size)
 	return buffer;
 }
 
-size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
+size_t streamToCharBuffer (const Object & streamObject, Ref* ref, CharBuffer & outputBuf, 
 		stream_data_extractor extractor)
 {
 	utilsPrintDbg(debug::DBG_DBG, "");
@@ -1022,7 +1022,7 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	// initDict increases streamDict's reference thus we need to
 	// decrease it back by free
 	shared_ptr< ::Object> streamDictObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
-	streamDictObj->initDict(streamObject.streamGetDict());
+	streamDictObj->initDict((Dict *)streamObject.streamGetDict());
 	std::string dict;
 	xpdfObjToString(*streamDictObj, dict);
 

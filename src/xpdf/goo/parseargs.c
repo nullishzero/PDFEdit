@@ -39,8 +39,8 @@ GBool parseArgs(ArgDesc *args, int *argc, char *argv[]) {
   return ok;
 }
 
-void printUsage(char *program, char *otherArgs, ArgDesc *args) {
-  ArgDesc *arg;
+void printUsage(const char *program, const char *otherArgs, const ArgDesc *args) {
+  const ArgDesc *arg;
   char *typ;
   int w, w1;
 
@@ -147,7 +147,7 @@ static GBool grabArg(ArgDesc *arg, int i, int *argc, char *argv[]) {
   return ok;
 }
 
-GBool isInt(char *s) {
+GBool isInt(const char *s) {
   if (*s == '-' || *s == '+')
     ++s;
   while (isdigit(*s & 0xff))
@@ -157,7 +157,7 @@ GBool isInt(char *s) {
   return gTrue;
 }
 
-GBool isFP(char *s) {
+GBool isFP(const char *s) {
   int n;
 
   if (*s == '-' || *s == '+')

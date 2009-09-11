@@ -32,7 +32,7 @@ FoFiBase::~FoFiBase() {
   }
 }
 
-char *FoFiBase::readFile(char *fileName, int *fileLen) {
+char *FoFiBase::readFile(const char *fileName, int *fileLen) {
   FILE *f;
   char *buf;
   int n;
@@ -54,7 +54,7 @@ char *FoFiBase::readFile(char *fileName, int *fileLen) {
   return buf;
 }
 
-int FoFiBase::getS8(int pos, GBool *ok) {
+int FoFiBase::getS8(int pos, GBool *ok)const {
   int x;
 
   if (pos < 0 || pos >= len) {
@@ -68,7 +68,7 @@ int FoFiBase::getS8(int pos, GBool *ok) {
   return x;
 }
 
-int FoFiBase::getU8(int pos, GBool *ok) {
+int FoFiBase::getU8(int pos, GBool *ok)const {
   if (pos < 0 || pos >= len) {
     *ok = gFalse;
     return 0;
@@ -76,7 +76,7 @@ int FoFiBase::getU8(int pos, GBool *ok) {
   return file[pos];
 }
 
-int FoFiBase::getS16BE(int pos, GBool *ok) {
+int FoFiBase::getS16BE(int pos, GBool *ok)const {
   int x;
 
   if (pos < 0 || pos+1 >= len) {
@@ -91,7 +91,7 @@ int FoFiBase::getS16BE(int pos, GBool *ok) {
   return x;
 }
 
-int FoFiBase::getU16BE(int pos, GBool *ok) {
+int FoFiBase::getU16BE(int pos, GBool *ok)const {
   int x;
 
   if (pos < 0 || pos+1 >= len) {
@@ -103,7 +103,7 @@ int FoFiBase::getU16BE(int pos, GBool *ok) {
   return x;
 }
 
-int FoFiBase::getS32BE(int pos, GBool *ok) {
+int FoFiBase::getS32BE(int pos, GBool *ok)const {
   int x;
 
   if (pos < 0 || pos+3 >= len) {
@@ -120,7 +120,7 @@ int FoFiBase::getS32BE(int pos, GBool *ok) {
   return x;
 }
 
-Guint FoFiBase::getU32BE(int pos, GBool *ok) {
+Guint FoFiBase::getU32BE(int pos, GBool *ok)const {
   Guint x;
 
   if (pos < 0 || pos+3 >= len) {
@@ -134,7 +134,7 @@ Guint FoFiBase::getU32BE(int pos, GBool *ok) {
   return x;
 }
 
-Guint FoFiBase::getUVarBE(int pos, int size, GBool *ok) {
+Guint FoFiBase::getUVarBE(int pos, int size, GBool *ok)const {
   Guint x;
   int i;
 
@@ -149,7 +149,7 @@ Guint FoFiBase::getUVarBE(int pos, int size, GBool *ok) {
   return x;
 }
 
-GBool FoFiBase::checkRegion(int pos, int size) {
+GBool FoFiBase::checkRegion(int pos, int size)const {
   return pos >= 0 &&
          pos + size >= pos &&
          pos + size <= len;

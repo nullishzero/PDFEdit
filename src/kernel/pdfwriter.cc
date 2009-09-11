@@ -58,10 +58,10 @@ namespace utils
  * @return Number of the filters present in the stream or -1 if some of
  * them is not correct.
  */
-int getFiltersFromStream(Object &obj, std::vector<std::string>& filters)
+int getFiltersFromStream(const Object &obj, std::vector<std::string>& filters)
 {
 	assert(obj.isStream());
-	Dict * streamDict = obj.streamGetDict();
+	const Dict * streamDict = obj.streamGetDict();
 	Object filter;
 	streamDict->lookup("Filter", &filter);
 	if(filter.isNull())
@@ -73,7 +73,7 @@ int getFiltersFromStream(Object &obj, std::vector<std::string>& filters)
 	}
 	if(filter.isArray())
 	{
-		Array * array = filter.getArray();
+		const Array * array = filter.getArray();
 		int count=0;
 		for(int i=0; i<array->getLength();++i, ++count)
 		{
@@ -139,13 +139,13 @@ boost::shared_ptr<NullFilterStreamWriter> NullFilterStreamWriter::getInstance()
 	return instance;
 }
 
-bool NullFilterStreamWriter::supportObject(UNUSED_PARAM Object& obj)const
+bool NullFilterStreamWriter::supportObject(UNUSED_PARAM const Object& obj)const
 {
 	assert(obj.isStream());
 	return true;
 }
 
-unsigned char * NullFilterStreamWriter::null_extractor(Object&obj, size_t& size)
+unsigned char * NullFilterStreamWriter::null_extractor(const Object&obj, size_t& size)
 {
 	assert(obj.isStream());
 	boost::shared_ptr< ::Object> lenghtObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
@@ -170,7 +170,7 @@ unsigned char * NullFilterStreamWriter::null_extractor(Object&obj, size_t& size)
 	return buffer;
 }
 
-void NullFilterStreamWriter::compress(Object& obj, Ref* ref, StreamWriter& outStream)const
+void NullFilterStreamWriter::compress(const Object& obj, Ref* ref, StreamWriter& outStream)const
 {
 	assert(obj.isStream());
 	CharBuffer charBuffer;
@@ -183,7 +183,7 @@ void NullFilterStreamWriter::compress(Object& obj, Ref* ref, StreamWriter& outSt
 	outStream.putLine(charBuffer.get(), size);
 }
 
-void ZlibFilterStreamWriter::update_dict(Object& obj)
+void ZlibFilterStreamWriter::update_dict(const Object& obj)
 {
 	assert(obj.isStream());
 	Object filterArray, filterName;
@@ -202,7 +202,7 @@ boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::getInstance()
 	return instance;
 }
 
-bool ZlibFilterStreamWriter::supportObject(Object& obj)const
+bool ZlibFilterStreamWriter::supportObject(const Object& obj)const
 {
 	assert(obj.isStream());
 	std::vector<std::string> filters; 
@@ -290,7 +290,7 @@ out_error:
 	return NULL;
 }
 
-unsigned char* ZlibFilterStreamWriter::deflate(Object& obj, size_t& size)
+unsigned char* ZlibFilterStreamWriter::deflate(const Object& obj, size_t& size)
 {
 	assert(obj.isStream());
 	unsigned char *rawBuffer, *deflateBuff = NULL;
@@ -321,7 +321,7 @@ out:
 	return deflateBuff;
 }
 
-void ZlibFilterStreamWriter::compress(Object& obj, Ref* ref, StreamWriter& outStream)const
+void ZlibFilterStreamWriter::compress(const Object& obj, Ref* ref, StreamWriter& outStream)const
 {
 	CharBuffer charBuffer;
 	assert(obj.isStream());
@@ -376,7 +376,7 @@ void FilterStreamWriter::setDefaultStreamWriter(const boost::shared_ptr<FilterSt
  * @param filters Container of supported filter writers.
  * @return Appropriate filter writer or NULL.
  */
-boost::shared_ptr<FilterStreamWriter> lookupFilterStreamWriter(Object& obj, 
+boost::shared_ptr<FilterStreamWriter> lookupFilterStreamWriter(const Object& obj, 
 		FilterStreamWriter::WritersList& filters)
 {
 	FilterStreamWriter::WritersList::const_iterator i;
@@ -389,7 +389,7 @@ boost::shared_ptr<FilterStreamWriter> lookupFilterStreamWriter(Object& obj,
 	return boost::shared_ptr<FilterStreamWriter>();
 }
 
-boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::getInstance(Object& objStream)
+boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::getInstance(const Object& objStream)
 {
 	if(!objStream.isStream())
 		throw ElementBadTypeException("");
@@ -415,7 +415,7 @@ boost::shared_ptr<FilterStreamWriter> FilterStreamWriter::getInstance(Object& ob
  * Given xpdf object data (like stream or string) can contain unprintable or 
  * 0 bytes.
  */
-void writeObject(::Object & obj, StreamWriter & stream, ::Ref* ref, bool indirect)
+void writeObject(const ::Object & obj, StreamWriter & stream, ::Ref* ref, bool indirect)
 {
 using namespace boost;
 using namespace std;
@@ -566,7 +566,7 @@ void stripXRefStreamFields(Object &trailer)
 	}
 }
 
-size_t OldStylePdfWriter::writeTrailer(Object & trailer,const PrevSecInfo &prevSection, StreamWriter & stream, size_t off)
+size_t OldStylePdfWriter::writeTrailer(const Object & trailer,const PrevSecInfo &prevSection, StreamWriter & stream, size_t off)
 {
 	using namespace std;
 	using namespace debug;

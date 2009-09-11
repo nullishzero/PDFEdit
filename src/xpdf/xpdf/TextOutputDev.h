@@ -47,26 +47,26 @@ typedef void (*TextOutputFunc)(void *stream, char *text, int len);
 class TextFontInfo {
 public:
 
-  TextFontInfo(GfxState *state);
+  TextFontInfo(const GfxState *state);
   ~TextFontInfo();
 
-  GBool matches(GfxState *state);
+  GBool matches(const GfxState *state)const;
 
 #if TEXTOUT_WORD_LIST
   // Get the font name (which may be NULL).
-  GString *getFontName() { return fontName; }
+  GString *getFontName()const { return fontName; }
 
   // Get font descriptor flags.
-  GBool isFixedWidth() { return flags & fontFixedWidth; }
-  GBool isSerif() { return flags & fontSerif; }
-  GBool isSymbolic() { return flags & fontSymbolic; }
-  GBool isItalic() { return flags & fontItalic; }
-  GBool isBold() { return flags & fontBold; }
+  GBool isFixedWidth()const { return flags & fontFixedWidth; }
+  GBool isSerif()const { return flags & fontSerif; }
+  GBool isSymbolic()const { return flags & fontSymbolic; }
+  GBool isItalic()const { return flags & fontItalic; }
+  GBool isBold()const { return flags & fontBold; }
 #endif
 
 private:
 
-  GfxFont *gfxFont;
+  const GfxFont *gfxFont;
 #if TEXTOUT_WORD_LIST
   GString *fontName;
   int flags;
@@ -95,44 +95,44 @@ public:
 	       double dx, double dy, Unicode u);
 
   // Merge <word> onto the end of <this>.
-  void merge(TextWord *word);
+  void merge(const TextWord *word);
 
   // Compares <this> to <word>, returning -1 (<), 0 (=), or +1 (>),
   // based on a primary-axis comparison, e.g., x ordering if rot=0.
-  int primaryCmp(TextWord *word);
+  int primaryCmp(const TextWord *word)const ;
 
   // Return the distance along the primary axis between <this> and
   // <word>.
-  double primaryDelta(TextWord *word);
+  double primaryDelta(const TextWord *word)const;
 
   static int cmpYX(const void *p1, const void *p2);
 
   // Get the TextFontInfo object associated with this word.
-  TextFontInfo *getFontInfo() { return font; }
+  const TextFontInfo *getFontInfo()const { return font; }
 
   // Get the next TextWord on the linked list.
   TextWord *getNext() { return next; }
 
 #if TEXTOUT_WORD_LIST
-  int getLength() { return len; }
-  Unicode getChar(int idx) { return text[idx]; }
-  GString *getText();
-  GString *getFontName() { return font->fontName; }
-  void getColor(double *r, double *g, double *b)
+  int getLength()const { return len; }
+  Unicode getChar(int idx)const { return text[idx]; }
+  const GString *getText()const;
+  const GString *getFontName()const { return font->fontName; }
+  void getColor(double *r, double *g, double *b)const
     { *r = colorR; *g = colorG; *b = colorB; }
-  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA)
+  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA)const
     { *xMinA = xMin; *yMinA = yMin; *xMaxA = xMax; *yMaxA = yMax; }
   void getCharBBox(int charIdx, double *xMinA, double *yMinA,
-		   double *xMaxA, double *yMaxA);
-  double getFontSize() { return fontSize; }
-  int getRotation() { return rot; }
-  int getCharPos() { return charPos; }
-  int getCharLen() { return charLen; }
-  GBool getSpaceAfter() { return spaceAfter; }
+		   double *xMaxA, double *yMaxA)const;
+  double getFontSize()const { return fontSize; }
+  int getRotation()const { return rot; }
+  int getCharPos()const { return charPos; }
+  int getCharLen()const { return charLen; }
+  GBool getSpaceAfter()const { return spaceAfter; }
 #endif
 
-  GBool isUnderlined() { return underlined; }
-  Link *getLink() { return link; }
+  GBool isUnderlined()const { return underlined; }
+  const Link *getLink()const { return link; }
 
 private:
 
@@ -162,7 +162,7 @@ private:
 #endif
 
   GBool underlined;
-  Link *link;
+  const Link *link;
 
   friend class TextPool;
   friend class TextLine;
@@ -427,7 +427,7 @@ public:
   // Add a character to the current word.
   void addChar(GfxState *state, double x, double y,
 	       double dx, double dy,
-	       CharCode c, int nBytes, Unicode *u, int uLen);
+	       CharCode c, int nBytes, const Unicode *u, int uLen);
 
   // End the current word, sorting it into the list of words.
   void endWord();
@@ -439,7 +439,7 @@ public:
   void addUnderline(double x0, double y0, double x1, double y1);
 
   // Add a hyperlink.
-  void addLink(int xMin, int yMin, int xMax, int yMax, Link *link);
+  void addLink(int xMin, int yMin, int xMax, int yMax, const Link *link);
 
   // Coalesce strings that look like parts of the same line.
   void coalesce(GBool physLayout, GBool doHTML);
@@ -467,11 +467,11 @@ public:
   // false.
   GBool findCharRange(int pos, int length,
 		      double *xMin, double *yMin,
-		      double *xMax, double *yMax);
+		      double *xMax, double *yMax)const;
 
   // Dump contents of page to a file.
   void dump(void *outputStream, TextOutputFunc outputFunc,
-	    GBool physLayout);
+	    GBool physLayout)const;
 
   // Get the head of the linked list of TextFlows.
   TextFlow *getFlows() { return flows; }
@@ -487,8 +487,8 @@ public:
 private:
 
   void clear();
-  void assignColumns(TextLineFrag *frags, int nFrags, int rot);
-  int dumpFragment(Unicode *text, int len, UnicodeMap *uMap, GString *s);
+  void assignColumns(TextLineFrag *frags, int nFrags, int rot)const;
+  int dumpFragment(const Unicode *text, int len, UnicodeMap *uMap, GString *s)const;
 
   GBool rawOrder;		// keep text in content stream order
 
@@ -543,7 +543,7 @@ public:
   // <physLayoutA> is true, the original physical layout of the text
   // is maintained.  If <rawOrder> is true, the text is kept in
   // content stream order.
-  TextOutputDev(char *fileName, GBool physLayoutA,
+  TextOutputDev(const char *fileName, GBool physLayoutA,
 		GBool rawOrderA, GBool append);
 
   // Create a TextOutputDev which will write to a generic stream.  If
@@ -557,23 +557,23 @@ public:
   virtual ~TextOutputDev();
 
   // Check if file was successfully created.
-  virtual GBool isOk() { return ok; }
+  virtual GBool isOk()const { return ok; }
 
   //---- get info about output device
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  virtual GBool upsideDown() { return gTrue; }
+  virtual GBool upsideDown()const { return gTrue; }
 
   // Does this device use drawChar() or drawString()?
-  virtual GBool useDrawChar() { return gTrue; }
+  virtual GBool useDrawChar()const { return gTrue; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  virtual GBool interpretType3Chars() { return gFalse; }
+  virtual GBool interpretType3Chars()const { return gFalse; }
 
   // Does this device need non-text content?
-  virtual GBool needNonText() { return gFalse; }
+  virtual GBool needNonText()const { return gFalse; }
 
   //----- initialization and control
 
@@ -587,12 +587,12 @@ public:
   virtual void updateFont(GfxState *state);
 
   //----- text drawing
-  virtual void beginString(GfxState *state, GString *s);
+  virtual void beginString(GfxState *state, const GString *s);
   virtual void endString(GfxState *state);
   virtual void drawChar(GfxState *state, double x, double y,
 			double dx, double dy,
 			double originX, double originY,
-			CharCode c, int nBytes, Unicode *u, int uLen);
+			CharCode c, int nBytes, const Unicode *u, int uLen);
 
   //----- path painting
   virtual void stroke(GfxState *state);
@@ -600,7 +600,7 @@ public:
   virtual void eoFill(GfxState *state);
 
   //----- link borders
-  virtual void processLink(Link *link, Catalog *catalog);
+  virtual void processLink(const Link *link, const Catalog *catalog);
 
   //----- special access
 
@@ -627,7 +627,7 @@ public:
   // false.
   GBool findCharRange(int pos, int length,
 		      double *xMin, double *yMin,
-		      double *xMax, double *yMax);
+		      double *xMax, double *yMax)const;
 
 #if TEXTOUT_WORD_LIST
   // Build a flat word list, in content stream order (if

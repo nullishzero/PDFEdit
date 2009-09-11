@@ -21,7 +21,7 @@
 
 //------------------------------------------------------------------------
 
-Outline::Outline(Object *outlineObj, XRef *xref) {
+Outline::Outline(const Object *outlineObj, XRef *xref) {
   Object first, last;
 
   items = NULL;
@@ -43,9 +43,9 @@ Outline::~Outline() {
 
 //------------------------------------------------------------------------
 
-OutlineItem::OutlineItem(Dict *dict, XRef *xrefA) {
+OutlineItem::OutlineItem(const Dict *dict, XRef *xrefA) {
   Object obj1;
-  GString *s;
+  const GString *s;
   int i;
 
   xref = xrefA;
@@ -111,12 +111,12 @@ OutlineItem::~OutlineItem() {
   nextRef.free();
 }
 
-GList *OutlineItem::readItemList(Object *firstItemRef, Object *lastItemRef,
+GList *OutlineItem::readItemList(const Object *firstItemRef, const Object *lastItemRef,
 				 XRef *xrefA) {
   GList *items;
   OutlineItem *item;
   Object obj;
-  Object *p;
+  const Object *p;
 
   items = new GList();
   p = firstItemRef;

@@ -50,42 +50,42 @@ public:
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  virtual GBool upsideDown() = 0;
+  virtual GBool upsideDown()const = 0;
 
   // Does this device use drawChar() or drawString()?
-  virtual GBool useDrawChar() = 0;
+  virtual GBool useDrawChar()const = 0;
 
   // Does this device use tilingPatternFill()?  If this returns false,
   // tiling pattern fills will be reduced to a series of other drawing
   // operations.
-  virtual GBool useTilingPatternFill() { return gFalse; }
+  virtual GBool useTilingPatternFill()const { return gFalse; }
 
   // Does this device use functionShadedFill(), axialShadedFill(), and
   // radialShadedFill()?  If this returns false, these shaded fills
   // will be reduced to a series of other drawing operations.
-  virtual GBool useShadedFills() { return gFalse; }
+  virtual GBool useShadedFills()const { return gFalse; }
 
   // Does this device use drawForm()?  If this returns false,
   // form-type XObjects will be interpreted (i.e., unrolled).
-  virtual GBool useDrawForm() { return gFalse; }
+  virtual GBool useDrawForm()const { return gFalse; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  virtual GBool interpretType3Chars() = 0;
+  virtual GBool interpretType3Chars()const = 0;
 
   // Does this device need non-text content?
-  virtual GBool needNonText() { return gTrue; }
+  virtual GBool needNonText()const { return gTrue; }
 
   //----- initialization and control
 
   // Set default transform matrix.
-  virtual void setDefaultCTM(double *ctm);
+  virtual void setDefaultCTM(const double *ctm);
 
   // Check to see if a page slice should be displayed.  If this
   // returns false, the page display is aborted.  Typically, an
   // OutputDev will use some alternate means to display the page
   // before returning false.
-  virtual GBool checkPageSlice(UNUSED_PARAM Page *page, 
+  virtual GBool checkPageSlice(UNUSED_PARAM const Page *page, 
 		  UNUSED_PARAM double hDPI, 
 		  UNUSED_PARAM double vDPI,
 		  UNUSED_PARAM int rotate, 
@@ -96,7 +96,7 @@ public:
 		  UNUSED_PARAM int sliceW, 
 		  UNUSED_PARAM int sliceH,
 		  UNUSED_PARAM GBool printing, 
-		  UNUSED_PARAM Catalog *catalog,
+		  UNUSED_PARAM const Catalog *catalog,
 		  UNUSED_PARAM GBool (*abortCheckCbk)(void *data) = NULL,
 		  UNUSED_PARAM void *abortCheckCbkData = NULL)
     { return gTrue; }
@@ -167,11 +167,11 @@ public:
   virtual void fill(UNUSED_PARAM GfxState *state) {}
   virtual void eoFill(UNUSED_PARAM GfxState *state) {}
   virtual void tilingPatternFill(UNUSED_PARAM GfxState *state, 
-		  UNUSED_PARAM Object *str,
+		  UNUSED_PARAM const Object *str,
 		  UNUSED_PARAM int paintType, 
-		  UNUSED_PARAM Dict *resDict,
-		  UNUSED_PARAM double *mat, 
-		  UNUSED_PARAM double *bbox,
+		  UNUSED_PARAM const Dict *resDict,
+		  UNUSED_PARAM const double *mat, 
+		  UNUSED_PARAM const double *bbox,
 		  UNUSED_PARAM int x0, 
 		  UNUSED_PARAM int y0, 
 		  UNUSED_PARAM int x1, 
@@ -197,7 +197,7 @@ public:
   virtual void beginStringOp(UNUSED_PARAM GfxState *state) {}
   virtual void endStringOp(UNUSED_PARAM GfxState *state) {}
   virtual void beginString(UNUSED_PARAM GfxState *state, 
-		  UNUSED_PARAM GString *s) {}
+		  UNUSED_PARAM const GString *s) {}
   virtual void endString(UNUSED_PARAM GfxState *state) {}
   virtual void drawChar(UNUSED_PARAM GfxState *state, 
 		  UNUSED_PARAM double x, 
@@ -211,7 +211,7 @@ public:
 		  UNUSED_PARAM Unicode *u, 
 		  UNUSED_PARAM int uLen) {}
   virtual void drawString(UNUSED_PARAM GfxState *state, 
-		  UNUSED_PARAM GString *s) {}
+		  UNUSED_PARAM const GString *s) {}
   virtual GBool beginType3Char(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       CharCode code, Unicode *u, int uLen);
@@ -264,24 +264,24 @@ public:
 
   //----- transparency groups and soft masks
   virtual void beginTransparencyGroup(UNUSED_PARAM GfxState *state, 
-		  UNUSED_PARAM double *bbox, 
-		  UNUSED_PARAM GfxColorSpace *blendingColorSpace,
+		  UNUSED_PARAM const double *bbox, 
+		  UNUSED_PARAM const GfxColorSpace *blendingColorSpace,
 		  UNUSED_PARAM GBool isolated, 
 		  UNUSED_PARAM GBool knockout,
 		  UNUSED_PARAM GBool forSoftMask) {}
   virtual void endTransparencyGroup(UNUSED_PARAM GfxState *state) {}
   virtual void paintTransparencyGroup(UNUSED_PARAM GfxState *state, 
-		  UNUSED_PARAM double *bbox) {}
+		  UNUSED_PARAM const double *bbox) {}
   virtual void setSoftMask(UNUSED_PARAM GfxState *state, 
-		  UNUSED_PARAM double *bbox, 
+		  UNUSED_PARAM const double *bbox, 
 		  UNUSED_PARAM GBool alpha,
 		  UNUSED_PARAM Function *transferFunc, 
-		  UNUSED_PARAM GfxColor *backdropColor) {}
+		  UNUSED_PARAM const GfxColor *backdropColor) {}
   virtual void clearSoftMask(UNUSED_PARAM GfxState *state) {}
 
   //----- links
-  virtual void processLink(UNUSED_PARAM Link *link, 
-		  UNUSED_PARAM Catalog *catalog) {}
+  virtual void processLink(UNUSED_PARAM const Link *link, 
+		  UNUSED_PARAM const Catalog *catalog) {}
 
 #if 1 //~tmp: turn off anti-aliasing temporarily
   virtual GBool getVectorAntialias() { return gFalse; }

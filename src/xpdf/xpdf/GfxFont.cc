@@ -100,7 +100,7 @@ static StdFontMapEntry stdFontMap[] = {
 // GfxFont
 //------------------------------------------------------------------------
 
-GfxFont *GfxFont::makeFont(XRef *xref, char *tagA, Ref idA, Dict *fontDict) {
+GfxFont *GfxFont::makeFont(XRef *xref, const char *tagA, Ref idA, const Dict *fontDict) {
   GString *nameA;
   GfxFont *font;
   Object obj1;
@@ -136,7 +136,7 @@ GfxFont *GfxFont::makeFont(XRef *xref, char *tagA, Ref idA, Dict *fontDict) {
   return font;
 }
 
-GfxFont::GfxFont(char *tagA, Ref idA, GString *nameA) {
+GfxFont::GfxFont(const char *tagA, Ref idA, GString *nameA) {
   ok = gFalse;
   tag = new GString(tagA);
   id = idA;
@@ -162,7 +162,7 @@ GfxFont::~GfxFont() {
   }
 }
 
-void GfxFont::readFontDescriptor(XRef *xref, Dict *fontDict) {
+void GfxFont::readFontDescriptor(XRef *xref, const Dict *fontDict) {
   Object obj1, obj2, obj3, obj4;
   double t;
   int i;
@@ -304,8 +304,8 @@ void GfxFont::readFontDescriptor(XRef *xref, Dict *fontDict) {
   obj1.free();
 }
 
-CharCodeToUnicode *GfxFont::readToUnicodeCMap(Dict *fontDict, int nBits,
-					      CharCodeToUnicode *ctu) {
+CharCodeToUnicode *GfxFont::readToUnicodeCMap(const Dict *fontDict, int nBits,
+					      CharCodeToUnicode *ctu)const {
   GString *buf;
   Object obj1;
   int c;
@@ -343,7 +343,7 @@ void GfxFont::findExtFontFile() {
   }
 }
 
-char *GfxFont::readExtFontFile(int *len) {
+char *GfxFont::readExtFontFile(int *len)const {
   FILE *f;
   char *buf;
 
@@ -404,8 +404,8 @@ char *GfxFont::readEmbFontFile(XRef *xref, int *len) {
 // Gfx8BitFont
 //------------------------------------------------------------------------
 
-Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
-			 GfxFontType typeA, Dict *fontDict):
+Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
+			 GfxFontType typeA, const Dict *fontDict):
   GfxFont(tagA, idA, nameA)
 {
   GString *name2;
@@ -907,9 +907,9 @@ Gfx8BitFont::~Gfx8BitFont() {
   }
 }
 
-int Gfx8BitFont::getNextChar(char *s, int len, CharCode *code,
+int Gfx8BitFont::getNextChar(const char *s, int len, CharCode *code,
 			     Unicode *u, int uSize, int *uLen,
-			     double *dx, double *dy, double *ox, double *oy) {
+			     double *dx, double *dy, double *ox, double *oy)const {
   CharCode c;
 
   *code = c = (CharCode)(*s & 0xff);
@@ -1043,11 +1043,11 @@ Gushort *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
   return map;
 }
 
-Dict *Gfx8BitFont::getCharProcs() {
-  return charProcs.isDict() ? charProcs.getDict() : (Dict *)NULL;
+const Dict *Gfx8BitFont::getCharProcs()const {
+  return charProcs.isDict() ? charProcs.getDict() : (const Dict *)NULL;
 }
 
-Object *Gfx8BitFont::getCharProc(int code, Object *proc) {
+Object *Gfx8BitFont::getCharProc(int code, Object *proc)const {
   if (enc[code] && charProcs.isDict()) {
     charProcs.dictLookup(enc[code], proc);
   } else {
@@ -1056,7 +1056,7 @@ Object *Gfx8BitFont::getCharProc(int code, Object *proc) {
   return proc;
 }
 
-Dict *Gfx8BitFont::getResources() {
+const Dict *Gfx8BitFont::getResources()const {
   return resources.isDict() ? resources.getDict() : (Dict *)NULL;
 }
 
@@ -1074,11 +1074,11 @@ static int CDECL cmpWidthExcepV(const void *w1, const void *w2) {
          ((GfxFontCIDWidthExcepV *)w2)->first;
 }
 
-GfxCIDFont::GfxCIDFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
-		       Dict *fontDict):
+GfxCIDFont::GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
+		       const Dict *fontDict):
   GfxFont(tagA, idA, nameA)
 {
-  Dict *desFontDict;
+  const Dict *desFontDict;
   GString *collection, *cMapName;
   Object desFontDictObj;
   Object obj1, obj2, obj3, obj4, obj5, obj6;
@@ -1411,9 +1411,9 @@ GfxCIDFont::~GfxCIDFont() {
   }
 }
 
-int GfxCIDFont::getNextChar(char *s, int len, CharCode *code,
+int GfxCIDFont::getNextChar(const char *s, int len, CharCode *code,
 			    Unicode *u, int uSize, int *uLen,
-			    double *dx, double *dy, double *ox, double *oy) {
+			    double *dx, double *dy, double *ox, double *oy)const {
   CID cid;
   double w, h, vx, vy;
   int n, a, b, m;
@@ -1487,7 +1487,7 @@ int GfxCIDFont::getNextChar(char *s, int len, CharCode *code,
   return n;
 }
 
-int GfxCIDFont::getWMode() {
+int GfxCIDFont::getWMode()const {
   return cMap ? cMap->getWMode() : 0;
 }
 
@@ -1498,7 +1498,7 @@ CharCodeToUnicode *GfxCIDFont::getToUnicode() {
   return ctu;
 }
 
-GString *GfxCIDFont::getCollection() {
+const GString *GfxCIDFont::getCollection()const {
   return cMap ? cMap->getCollection() : (GString *)NULL;
 }
 
@@ -1506,7 +1506,7 @@ GString *GfxCIDFont::getCollection() {
 // GfxFontDict
 //------------------------------------------------------------------------
 
-GfxFontDict::GfxFontDict(XRef *xref, Ref *fontDictRef, Dict *fontDict) {
+GfxFontDict::GfxFontDict(XRef *xref, const Ref *fontDictRef, const Dict *fontDict) {
   int i;
   Object obj1, obj2;
   Ref r;
@@ -1556,7 +1556,7 @@ GfxFontDict::~GfxFontDict() {
   gfree(fonts);
 }
 
-GfxFont *GfxFontDict::lookup(const char *tag) {
+GfxFont *GfxFontDict::lookup(const char *tag)const {
   int i;
 
   for (i = 0; i < numFonts; ++i) {

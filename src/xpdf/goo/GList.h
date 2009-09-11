@@ -36,13 +36,13 @@ public:
   //----- general
 
   // Get the number of elements.
-  int getLength() { return length; }
+  int getLength()const { return length; }
 
   //----- ordered list support
 
   // Return the <i>th element.
   // Assumes 0 <= i < length.
-  void *get(int i) { return data[i]; }
+  void *get(int i)const { return data[i]; }
 
   // Append an element to the end of the list.
   void append(void *p);

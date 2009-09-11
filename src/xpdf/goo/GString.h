@@ -34,14 +34,14 @@ public:
   GString(const char *sA, int lengthA);
 
   // Create a string from <lengthA> chars at <idx> in <str>.
-  GString(GString *str, int idx, int lengthA);
+  GString(const GString *str, int idx, int lengthA);
 
   // Copy a string.
-  GString(GString *str);
-  GString *copy() { return new GString(this); }
+  GString(const GString *str);
+  GString *copy()const { return new GString(this); }
 
   // Concatenate two strings.
-  GString(GString *str1, GString *str2);
+  GString(const GString *str1, const GString *str2);
 
   // Convert an integer to a string.
   static GString *fromInt(int x);
@@ -74,13 +74,13 @@ public:
   ~GString();
 
   // Get length.
-  int getLength() { return length; }
+  int getLength()const { return length; }
 
   // Get C string.
-  char *getCString() { return s; }
+  char *getCString()const { return s; }
 
   // Get <i>th character.
-  char getChar(int i) { return s[i]; }
+  char getChar(int i)const { return s[i]; }
 
   // Change <i>th character.
   void setChar(int i, char c) { s[i] = c; }
@@ -90,7 +90,7 @@ public:
 
   // Append a character or string.
   GString *append(char c);
-  GString *append(GString *str);
+  GString *append(const GString *str);
   GString *append(const char *str);
   GString *append(const char *str, int lengthA);
 
@@ -112,10 +112,10 @@ public:
   GString *lowerCase();
 
   // Compare two strings:  -1:<  0:=  +1:>
-  int cmp(GString *str);
-  int cmpN(GString *str, int n);
-  int cmp(const char *sA);
-  int cmpN(const char *sA, int n);
+  int cmp(const GString *str)const;
+  int cmpN(const GString *str, int n)const;
+  int cmp(const char *sA)const;
+  int cmpN(const char *sA, int n)const;
 
 private:
 

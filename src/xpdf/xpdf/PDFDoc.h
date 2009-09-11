@@ -76,14 +76,14 @@ public:
     { return catalog->getPage(page)->getRotate(); }
 
   // Get number of pages.
-  int getNumPages() { return catalog->getNumPages(); }
+  int getNumPages()const { return catalog->getNumPages(); }
 
   // Return the contents of the metadata stream, or NULL if there is
   // no metadata.
-  GString *readMetadata() { return catalog->readMetadata(); }
+  const GString *readMetadata() { return catalog->readMetadata(); }
 
   // Return the structure tree root object.
-  Object *getStructTreeRoot() { return catalog->getStructTreeRoot(); }
+  const Object *getStructTreeRoot() { return catalog->getStructTreeRoot(); }
 
   // Display a page.
   void displayPage(OutputDev *out, int page,

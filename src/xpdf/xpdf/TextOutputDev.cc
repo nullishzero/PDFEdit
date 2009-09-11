@@ -157,19 +157,19 @@ public:
 class TextLink {
 public:
 
-  TextLink(int xMinA, int yMinA, int xMaxA, int yMaxA, Link *linkA)
+  TextLink(int xMinA, int yMinA, int xMaxA, int yMaxA, const Link *linkA)
     { xMin = xMinA; yMin = yMinA; xMax = xMaxA; yMax = yMaxA; link = linkA; }
   ~TextLink() {}
 
   int xMin, yMin, xMax, yMax;
-  Link *link;
+  const Link *link;
 };
 
 //------------------------------------------------------------------------
 // TextFontInfo
 //------------------------------------------------------------------------
 
-TextFontInfo::TextFontInfo(GfxState *state) {
+TextFontInfo::TextFontInfo(const GfxState *state) {
   gfxFont = state->getFont();
 #if TEXTOUT_WORD_LIST
   fontName = (gfxFont && gfxFont->getOrigName())
@@ -187,7 +187,7 @@ TextFontInfo::~TextFontInfo() {
 #endif
 }
 
-GBool TextFontInfo::matches(GfxState *state) {
+GBool TextFontInfo::matches(const GfxState *state)const {
   return state->getFont() == gfxFont;
 }
 
@@ -197,7 +197,7 @@ GBool TextFontInfo::matches(GfxState *state) {
 
 TextWord::TextWord(GfxState *state, int rotA, double x0, double y0,
 		   int charPosA, TextFontInfo *fontA, double fontSizeA) {
-  GfxFont *gfxFont;
+  const GfxFont *gfxFont;
   double x, y, ascent, descent;
 
   rot = rotA;
@@ -330,7 +330,7 @@ void TextWord::addChar(GfxState *state, double x, double y,
   ++len;
 }
 
-void TextWord::merge(TextWord *word) {
+void TextWord::merge(const TextWord *word) {
   int i;
 
   if (word->xMin < xMin) {
@@ -359,7 +359,7 @@ void TextWord::merge(TextWord *word) {
   charLen += word->charLen;
 }
 
-inline int TextWord::primaryCmp(TextWord *word) {
+inline int TextWord::primaryCmp(const TextWord *word)const {
   double cmp;
 
   cmp = 0; // make gcc happy
@@ -380,7 +380,7 @@ inline int TextWord::primaryCmp(TextWord *word) {
   return cmp < 0 ? -1 : cmp > 0 ? 1 : 0;
 }
 
-double TextWord::primaryDelta(TextWord *word) {
+double TextWord::primaryDelta(const TextWord *word)const {
   double delta;
 
   delta = 0; // make gcc happy
@@ -415,7 +415,7 @@ int TextWord::cmpYX(const void *p1, const void *p2) {
 
 #if TEXTOUT_WORD_LIST
 
-GString *TextWord::getText() {
+GString *TextWord::getText()const {
   GString *s;
   UnicodeMap *uMap;
   char buf[8];
@@ -434,7 +434,7 @@ GString *TextWord::getText() {
 }
 
 void TextWord::getCharBBox(int charIdx, double *xMinA, double *yMinA,
-			   double *xMaxA, double *yMaxA) {
+			   double *xMaxA, double *yMaxA)const {
   if (charIdx < 0 || charIdx >= len) {
     return;
   }
@@ -1837,9 +1837,9 @@ void TextPage::clear() {
 }
 
 void TextPage::updateFont(GfxState *state) {
-  GfxFont *gfxFont;
-  double *fm;
-  char *name;
+  const GfxFont *gfxFont;
+  const double *fm;
+  const char *name;
   int code, mCode, letterCode, anyCode;
   double w;
   int i;
@@ -1905,7 +1905,7 @@ void TextPage::updateFont(GfxState *state) {
 }
 
 void TextPage::beginWord(GfxState *state, double x0, double y0) {
-  double *fontm;
+  const double *fontm;
   double m[4], m2[4];
   int rot;
 
@@ -1941,7 +1941,7 @@ void TextPage::beginWord(GfxState *state, double x0, double y0) {
 
 void TextPage::addChar(GfxState *state, double x, double y,
 		       double dx, double dy,
-		       CharCode c, int nBytes, Unicode *u, int uLen) {
+		       CharCode c, int nBytes, const Unicode *u, int uLen) {
   double x1, y1, w1, h1, dx2, dy2, base, sp, delta;
   GBool overlap;
   int i;
@@ -2105,7 +2105,7 @@ void TextPage::addUnderline(double x0, double y0, double x1, double y1) {
   underlines->append(new TextUnderline(x0, y0, x1, y1));
 }
 
-void TextPage::addLink(int xMin, int yMin, int xMax, int yMax, Link *link) {
+void TextPage::addLink(int xMin, int yMin, int xMax, int yMax, const Link *link) {
   links->append(new TextLink(xMin, yMin, xMax, yMax, link));
 }
 
@@ -3354,7 +3354,7 @@ GString *TextPage::getText(double xMin, double yMin,
 
 GBool TextPage::findCharRange(int pos, int length,
 			      double *xMin, double *yMin,
-			      double *xMax, double *yMax) {
+			      double *xMax, double *yMax)const {
   TextBlock *blk;
   TextLine *line;
   TextWord *word;
@@ -3442,7 +3442,7 @@ GBool TextPage::findCharRange(int pos, int length,
 }
 
 void TextPage::dump(void *outputStream, TextOutputFunc outputFunc,
-		    GBool physLayout) {
+		    GBool physLayout)const {
   UnicodeMap *uMap;
   TextFlow *flow;
   TextBlock *blk;
@@ -3629,7 +3629,7 @@ void TextPage::dump(void *outputStream, TextOutputFunc outputFunc,
   uMap->decRefCnt();
 }
 
-void TextPage::assignColumns(TextLineFrag *frags, int nFrags, GBool oneRot) {
+void TextPage::assignColumns(TextLineFrag *frags, int nFrags, GBool oneRot)const {
   TextLineFrag *frag0, *frag1;
   int rot, col1, col2, i, j, k;
 
@@ -3725,8 +3725,8 @@ void TextPage::assignColumns(TextLineFrag *frags, int nFrags, GBool oneRot) {
   }
 }
 
-int TextPage::dumpFragment(Unicode *text, int len, UnicodeMap *uMap,
-			   GString *s) {
+int TextPage::dumpFragment(const Unicode *text, int len, UnicodeMap *uMap,
+			   GString *s)const {
   char lre[8], rle[8], popdf[8], buf[8];
   int lreLen, rleLen, popdfLen, n;
   int nCols, i, j, k;
@@ -3820,7 +3820,7 @@ static void outputToFile(void *stream, char *text, int len) {
   fwrite(text, 1, len, (FILE *)stream);
 }
 
-TextOutputDev::TextOutputDev(char *fileName, GBool physLayoutA,
+TextOutputDev::TextOutputDev(const char *fileName, GBool physLayoutA,
 			     GBool rawOrderA, GBool append) {
   text = NULL;
   physLayout = physLayoutA;
@@ -3893,7 +3893,7 @@ void TextOutputDev::updateFont(GfxState *state) {
   text->updateFont(state);
 }
 
-void TextOutputDev::beginString(GfxState *state, GString *s) {
+void TextOutputDev::beginString(GfxState *state, const GString *s) {
 }
 
 void TextOutputDev::endString(GfxState *state) {
@@ -3902,7 +3902,7 @@ void TextOutputDev::endString(GfxState *state) {
 void TextOutputDev::drawChar(GfxState *state, double x, double y,
 			     double dx, double dy,
 			     double originX, double originY,
-			     CharCode c, int nBytes, Unicode *u, int uLen) {
+			     CharCode c, int nBytes, const Unicode *u, int uLen) {
   text->addChar(state, x, y, dx, dy, c, nBytes, u, uLen);
 }
 
@@ -4006,7 +4006,7 @@ void TextOutputDev::eoFill(GfxState *state) {
   fill(state);
 }
 
-void TextOutputDev::processLink(Link *link, Catalog *catalog) {
+void TextOutputDev::processLink(const Link *link, const Catalog *catalog) {
   double x1, y1, x2, y2;
   int xMin, yMin, xMax, yMax, x, y;
 
@@ -4071,7 +4071,7 @@ GString *TextOutputDev::getText(double xMin, double yMin,
 
 GBool TextOutputDev::findCharRange(int pos, int length,
 				   double *xMin, double *yMin,
-				   double *xMax, double *yMax) {
+				   double *xMax, double *yMax)const {
   return text->findCharRange(pos, length, xMin, yMin, xMax, yMax);
 }
 
