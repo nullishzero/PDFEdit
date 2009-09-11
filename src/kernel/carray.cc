@@ -337,16 +337,15 @@ CArray::_makeXpdfObject () const
 	if(pdf)
 		xref = pdf->getCXref();
 	arrayObj->initArray(xref);
-	::Array * array = arrayObj->getArray();
 
 	Value::const_iterator it = value.begin();
 	for (; it != value.end(); ++it)
 	{
 		Object * propObj = (*it)->_makeXpdfObject();
-		array->add(propObj);
+		arrayObj->arrayAdd(propObj);
 		gfree(propObj);
 	}
-	assert(static_cast<unsigned int>(array->getLength()) == getPropertyCount());
+	assert(static_cast<unsigned int>(arrayObj->arrayGetLength()) == getPropertyCount());
 	return arrayObj;
 }
 

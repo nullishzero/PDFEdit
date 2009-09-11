@@ -369,17 +369,16 @@ CDict::_makeXpdfObject () const
 	if(pdf)
 		xref = pdf->getCXref();
 	dictObj->initDict(xref);
-	::Dict * dict = dictObj->getDict();
 
 	Value::const_iterator it = value.begin();
 	for (; it != value.end(); ++it)
 	{
 		shared_ptr<IProperty> prop = it->second;
 		Object * propObj = prop->_makeXpdfObject();
-		dict->add(copyString((it->first).c_str()), propObj);
+		dictObj->dictAdd(copyString((it->first).c_str()), propObj);
 		gfree(propObj);
 	}
-	assert(static_cast<unsigned int>(dict->getLength()) == getPropertyCount());
+	assert(static_cast<unsigned int>(dictObj->dictGetLength()) == getPropertyCount());
 
 	return dictObj;
 }

@@ -190,8 +190,7 @@ void ZlibFilterStreamWriter::update_dict(Object& obj)
 	filterName.initName("FlateDecode");
 	filterArray.initArray(obj.getDict()->getXRef());
 	filterArray.arrayAdd(&filterName);
-	Dict * dict = obj.streamGetDict();
-	dict->add(copyString("Filter"), &filterArray);
+	obj.getStream()->getBaseStream()->dictAdd(copyString("Filter"), &filterArray);
 }
 
 boost::shared_ptr<ZlibFilterStreamWriter> ZlibFilterStreamWriter::getInstance()
@@ -713,7 +712,7 @@ size_t OldStylePdfWriter::writeTrailer(Object & trailer,const PrevSecInfo &prevS
 		// trailers and the first one never contains Prev. However
 		// this can be problem if we had incremental update from 
 		// other party which uses stream trailers for all.
-		Object * prev=trailer.getDict()->del("Prev");
+		Object * prev=trailer.dictDel("Prev");
 		if(prev)
 			xpdf::freeXpdfObject(prev);
 		utilsPrintDbg(DBG_DBG, "No previous xref section. Removing Trailer::Prev.");
@@ -722,7 +721,7 @@ size_t OldStylePdfWriter::writeTrailer(Object & trailer,const PrevSecInfo &prevS
 		Object newPrev;
 		newPrev.initInt(prevSection.xrefPos);
 		char * key=copyString("Prev");
-		Object * originalPrev=trailer.getDict()->update(key, &newPrev);
+		Object * originalPrev=trailer.dictUpdate(key, &newPrev);
 		if(originalPrev)
 		{
 			// value has been set to something different, we have to deallocate it
@@ -739,7 +738,7 @@ size_t OldStylePdfWriter::writeTrailer(Object & trailer,const PrevSecInfo &prevS
 	// to the additional objects in xref stream. PDF>=1.5 capable readers
 	// reads both of them and so we have to remove XRefStm for later 
 	// revisions to prevent from confusions.
-	Object * xrefStm = trailer.getDict()->del("XRefStm");
+	Object * xrefStm = trailer.dictDel("XRefStm");
 	if(xrefStm)
 	{
 		utilsPrintDbg(DBG_DBG, "Removing old Trailer::XRefStm.");
@@ -758,7 +757,7 @@ size_t OldStylePdfWriter::writeTrailer(Object & trailer,const PrevSecInfo &prevS
 	Object newSize;
 	newSize.initInt(std::max(prevSection.entriesNum, (size_t)(maxObjNum + 1)));
 	char * key=copyString("Size");
-	Object * originalSize=trailer.getDict()->update(key, &newSize);
+	Object * originalSize=trailer.dictUpdate(key, &newSize);
 	if(originalSize)
 	{
 		// value has been set to something different, we have to deallocate it

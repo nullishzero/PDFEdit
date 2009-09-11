@@ -966,8 +966,7 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	
 	// gets buffer len from stream dictionary Length field
 	boost::shared_ptr< ::Object> lenghtObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
-	Dict *streamDict = streamObject.streamGetDict();
-	streamDict->lookup("Length", lenghtObj.get());
+ 	streamObject.streamGetDict()->lookup("Length", lenghtObj.get());
 	if(!lenghtObj->isInt())
 	{
 		utilsPrintDbg(debug::DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj->getType());
@@ -1013,7 +1012,7 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 		lenghtObj->initInt(realBufferLen);
 		// don't need to give copyString(Length) because we are sure, that
 		// this entry already exists
-		Object* oldLen = streamDict->update("Length", lenghtObj.get());
+ 		Object* oldLen = streamObject.getStream()->getBaseStream()->dictUpdate("Length", lenghtObj.get());
 		if(oldLen)
 			freeXpdfObject(oldLen);
 	}
@@ -1023,7 +1022,7 @@ size_t streamToCharBuffer (Object & streamObject, Ref* ref, CharBuffer & outputB
 	// initDict increases streamDict's reference thus we need to
 	// decrease it back by free
 	shared_ptr< ::Object> streamDictObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
-	streamDictObj->initDict(streamDict);
+	streamDictObj->initDict(streamObject.streamGetDict());
 	std::string dict;
 	xpdfObjToString(*streamDictObj, dict);
 

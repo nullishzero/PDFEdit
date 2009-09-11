@@ -232,8 +232,8 @@ using namespace debug;
 		currTrailer = boost::shared_ptr<Object>(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 		XRef::getTrailerDict()->copy(currTrailer.get());
 	}
-	Dict * trailer = getTrailerDict()->getDict(); 
-	::Object * prev = trailer->update(key, clonedObject);
+	Object * trailer = getTrailerDict(); 
+	::Object * prev = trailer->dictUpdate(key, clonedObject);
 	gfree(clonedObject);
 
 	// update doesn't store key if key, value has been already in the 
