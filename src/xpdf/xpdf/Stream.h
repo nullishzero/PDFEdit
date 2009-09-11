@@ -14,6 +14,7 @@
 //                All descendants implement this method
 //              - All filter stream using StremPredictor stores PredictorContext
 //                to enable cloning
+//              - dictionary modificator access methods
 //
 //========================================================================
 
@@ -177,9 +178,23 @@ public:
   virtual Guint getStart() = 0;
   virtual void moveStart(int delta) = 0;
 
+  // Dict accessors.
+  void dictAdd(char *key, Object *val);
+  Object *dictUpdate(char *key, Object *val);
+  Object *dictDel(char *key);
+
 protected:
   Object dict;
 };
+
+inline void BaseStream::dictAdd(char *key, Object *val)
+  { dict.dictAdd(key, val); }
+
+inline Object *BaseStream::dictUpdate(char *key, Object *val)
+  { return dict.dictUpdate(key, val); }
+
+inline Object *BaseStream::dictDel(char *key)
+  { return dict.dictDel(key); }
 
 //------------------------------------------------------------------------
 // FilterStream
