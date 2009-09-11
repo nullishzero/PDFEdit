@@ -162,7 +162,7 @@ public:
   const Array *getArray()const { return array; }
   const Dict *getDict()const  { return dict; }
   Stream *getStream()const { return stream; }
-  Ref getRef()const { return ref; }
+  const Ref& getRef()const { return ref; }
   int getRefNum()const { return ref.num; }
   int getRefGen()const { return ref.gen; }
   char *getCmd()const { return cmd; }
