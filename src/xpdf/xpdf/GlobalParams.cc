@@ -252,7 +252,7 @@ public:
 
   WinFontList(char *winFontDirA);
   ~WinFontList();
-  WinFontInfo *find(GString *font);
+  WinFontInfo *find(const GString *font);
 
 private:
 
@@ -313,7 +313,7 @@ void WinFontList::add(WinFontInfo *fi) {
   fonts->append(fi);
 }
 
-WinFontInfo *WinFontList::find(GString *font) {
+WinFontInfo *WinFontList::find(const GString *font) {
   GString *name;
   GBool bold, italic;
   WinFontInfo *fi;
