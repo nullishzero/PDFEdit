@@ -142,7 +142,7 @@ void PreScanOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 				 int width, int height,
 				 GfxImageColorMap *colorMap,
 				 int *maskColors, GBool inlineImg) {
-  GfxColorSpace *colorSpace;
+  const GfxColorSpace *colorSpace;
   int i, j;
 
   colorSpace = colorMap->getColorSpace();
@@ -176,7 +176,7 @@ void PreScanOutputDev::drawMaskedImage(GfxState *state, Object *ref,
 				       Stream *maskStr,
 				       int maskWidth, int maskHeight,
 				       GBool maskInvert) {
-  GfxColorSpace *colorSpace;
+  const GfxColorSpace *colorSpace;
 
   colorSpace = colorMap->getColorSpace();
   if (colorSpace->getMode() == csIndexed) {
@@ -200,7 +200,7 @@ void PreScanOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
 					   Stream *maskStr,
 					   int maskWidth, int maskHeight,
 					   GfxImageColorMap *maskColorMap) {
-  GfxColorSpace *colorSpace;
+  const GfxColorSpace *colorSpace;
 
   colorSpace = colorMap->getColorSpace();
   if (colorSpace->getMode() == csIndexed) {
