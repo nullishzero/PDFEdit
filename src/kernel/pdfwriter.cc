@@ -550,7 +550,7 @@ using namespace boost;
  *
  * Get rid all entries which could come from xref stream dictionary.
  */
-void stripXRefStreamFields(Object &trailer)
+void stripXRefStreamFields(const Object &trailer)
 {
 	static const char *fieldsToRemove [] = {"Type", "Index", "W", "Length", "Filter", "DecodeParms", NULL};
 	for(int i=0; fieldsToRemove[i]; i++) 
@@ -559,7 +559,7 @@ void stripXRefStreamFields(Object &trailer)
 		if(trailer.dictLookupNF(fieldsToRemove[i], &o)->getType()!=objNull)
 		{
 			utilsPrintDbg(debug::DBG_INFO, "Removing "<<fieldsToRemove[i]<<" entry from trailer");
-			Object *old = trailer.getDict()->del(fieldsToRemove[i]);
+			Object *old = trailer.dictDel(fieldsToRemove[i]);
 			xpdf::freeXpdfObject(old);
 		}
 		o.free();
