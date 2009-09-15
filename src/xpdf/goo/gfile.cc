@@ -278,7 +278,7 @@ GString *appendToPath(GString *path, const char *fileName) {
 #endif
 }
 
-GString *grabPath(char *fileName) {
+GString *grabPath(const char *fileName) {
 #ifdef VMS
   //---------- VMS ----------
   char *p;
@@ -291,7 +291,7 @@ GString *grabPath(char *fileName) {
 
 #elif defined(__EMX__) || defined(WIN32)
   //---------- OS/2+EMX and Win32 ----------
-  char *p;
+  const char *p;
 
   if ((p = strrchr(fileName, '/')))
     return new GString(fileName, p - fileName);
