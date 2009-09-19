@@ -21,10 +21,20 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
+
 #include "common.h"
+#include <boost/shared_ptr.hpp>
+#include <kernel/pdfedit-core-dev.h>
+#include <kernel/cpdf.h>
 #include <kernel/cpage.h>
+#include <string>
+#include <boost/program_options.hpp>
 
 using namespace pdfobjects;
+using namespace std;
+using namespace boost;
+namespace po = program_options;
+
 void print_pages(const char *fname, PagePosList &pagePosList)
 {
 	boost::shared_ptr<CPdf> pdf;
@@ -67,36 +77,40 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	int opt;
-	PagePosList pagePosList;
-	while ((opt = getopt(argc, argv, "p:")) != -1 )
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("help", "Produce help message")
+		("file", po::value<string>(), "Input pdf file")
+		("range", po::value<string>(), "Page range")
+	;
+
+	po::variables_map vm;
+	try {
+		po::store(po::parse_command_line(argc, argv, desc), vm);
+		po::notify(vm);    
+	}catch(std::exception& e)
 	{
-		switch (opt)
-		{
-			case 'p':
-				if(add_page_range(pagePosList, optarg))
-				{
-					std::cerr << optarg 
-						<< " is not a valid page" 
-						<< std::endl;
-					exit(EXIT_FAILURE);
-				}
-				break;
-			default:
-				std::cerr << "Bad parameter" << std::endl; 
-		}
+		std::cout << "exception - " << e.what() << ". Please, check your parameters." << endl;
+		return 1;
 	}
-	if (optind >= argc)
+
+		if (!vm.count("file") || !vm.count("range")) 
+		{
+			cout << desc << endl;
+			return 1;
+		}
+	string file = vm["file"].as<string>(); 
+	string range = vm["range"].as<string>(); 
+	PagePosList pagePosList;
+	if(add_page_range(pagePosList, range.c_str()))
 	{
-		std::cerr << "Filename expected" << std::endl;
+		std::cerr << range 
+			<< " is not a valid page" 
+			<< std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	for(int i=optind;i<argc; ++i)
-	{
-		const char *fname = argv[i];
-		print_pages(fname, pagePosList);
-	}
+	print_pages(file.c_str(), pagePosList);
 
 	pdfedit_core_dev_destroy();
 	return 0;

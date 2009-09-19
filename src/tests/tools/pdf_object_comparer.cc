@@ -21,12 +21,20 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
-#include "common.h"
-#include "kernel/cobjectsimple.h"
-using namespace pdfobjects;
-using namespace utils;
 
-bool decodeStream = false;
+#include <boost/program_options.hpp>
+#include <boost/shared_ptr.hpp>
+#include <kernel/pdfedit-core-dev.h>
+#include <kernel/cpdf.h>
+#include <string>
+
+using namespace pdfobjects;
+using namespace pdfobjects::utils;
+using namespace std;
+using namespace boost;
+namespace po = program_options;
+
+typedef std::vector<pdfobjects::IndiRef> RefContainer;
 
 std::string appendRefsToContext(const std::string &prefix, const IndiRef &r1, const IndiRef &r2)
 {
@@ -325,28 +333,13 @@ int compare_object(boost::shared_ptr<CPdf> &pdf1, boost::shared_ptr<CPdf> &pdf2,
 	return propertyCmp(pdf1Prop, pdf2Prop, context);
 }
 
-void print_help()
-{
-using namespace std;
-	cout << 
-		"pdf_object_comparer [-h] [-d] (-r ref)+ file1 file2"<<
-		endl<<endl<<
-		"where"<<
-		"\t-h - prints this help"<<endl<<
-		"\t(-r ref)+ - references to be used for comparing. All pairs are"<<endl<<
-		"\t\tsplit among file1 and file2. If there is odd number of references,"<<endl<<
-		"\t\tthe last one is used for both files."<<endl<<endl<<
-		"Program will print all mismatching objects (defined by refs) from given documents"<<endl<<
-		"and returns the number of mismatches.";
-	// TODO document output format
-}
 
 // compares pairs of references for both files. If there is no pair
 // fo the reference then the same one is used for both files
 int compare_objects(const char*f1, const char*f2, RefContainer& refs)
 {
-	boost::shared_ptr<CPdf> pdf1 = openDocument(f1, CPdf::ReadOnly), 
-		pdf2 = openDocument(f2, CPdf::ReadOnly);
+	boost::shared_ptr<CPdf> pdf1 = pdfobjects::CPdf::getInstance(f1, CPdf::ReadOnly),
+		pdf2 = pdfobjects::CPdf::getInstance(f2, CPdf::ReadOnly);
 
 	RefContainer::iterator i;
 	std::cout<<"Comparing \""<<f1<<"\" and \""<<f2<<"\""<<std::endl;
@@ -370,40 +363,66 @@ int main(int argc, char ** argv)
 		return 1;
 	}
 
-	int opt;
-	RefContainer refs;
-	// TODO --deep or -d = follow references
-	while ((opt = getopt(argc, argv, "hr:")) != -1 )
+	typedef vector<string> RefsRepr;
+
+	po::options_description desc("pdf_object_comparer [-h] [-d] (-r ref)+ file1 file2\n\n"
+		"where\n"
+		"\t-h - prints this help\n"
+		"\t(-r ref)+ - references to be used for comparing. All pairs are\n"
+		"\t\tsplit among file1 and file2. If there is odd number of references,\n"
+		"\t\tthe last one is used for both files.\n"
+		"Program will print all mismatching objects (defined by refs) from given documents\n"
+		"and returns the number of mismatches.");
+
+	desc.add_options()
+		("help", "produce help message")
+		("file1", po::value<string>(), "First input pdf file")
+		("file2", po::value<string>(), "Second input pdf file")
+		("ref", po::value<vector<string> >(), "Reference to object which should be printed e.g. \"1 0\".")
+	;
+	
+	po::variables_map vm;
+	try {
+		po::store(po::parse_command_line(argc, argv, desc), vm);
+		po::notify(vm);    
+	}catch(std::exception& e)
 	{
-		switch (opt)
+		std::cout << "exception - " << e.what() << ". Please, check your parameters." << endl;
+		return 1;
+	}  
+
+		if (vm.count("help") || !vm.count("ref") || !vm.count("file1") || !vm.count("file2"))
 		{
-			case 'r':
-				if(add_ref(refs, optarg))
-				{
-					std::cerr << optarg 
-						<< " is not a valid reference" 
-						<< std::endl;
-					exit(EXIT_FAILURE);
-				}
-				break;
-			case 'h':
-				print_help();
-				exit(EXIT_SUCCESS);
-			default:
-				std::cerr << "Bad parameter" << std::endl; 
+			cout << desc << "\n";
+			return 1;
 		}
-	}
 
-	// we are expecting exactly 2 files which should be compared
-	if (argc - optind != 2 )
+	string file1 = vm["file1"].as<string>(); 
+	string file2 = vm["file2"].as<string>(); 
+	RefsRepr refs_repr = vm["ref"].as<RefsRepr>(); 
+
+	int ret = 0;
+	RefContainer refs;
+
+	try {
+		for (RefsRepr::const_iterator it = refs_repr.begin();
+				it != refs_repr.end();
+				++it)
+		{
+			IndiRef ref;
+			utils::simpleValueFromString(*it, ref);
+			if (isRefValid(&ref))
+				refs.push_back(ref);
+		}
+	
+		ret = compare_objects(file1.c_str(), file2.c_str(), refs);
+
+	}catch (std::exception& e)
 	{
-		std::cerr << "2 filenames expected" << std::endl;
-		exit(EXIT_FAILURE);
+		cout << e.what() << "\n";
+		cout << desc << "\n";
+		return 1;
 	}
-
-	const char *file1 = argv[optind];
-	const char *file2 = argv[optind+1];
-	int ret = compare_objects(file1, file2, refs);
 
 	pdfedit_core_dev_destroy();
 	return ret;

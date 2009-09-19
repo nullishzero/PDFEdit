@@ -21,11 +21,20 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
-#include "common.h"
+
+#include <boost/program_options.hpp>
+#include <boost/shared_ptr.hpp>
+#include <kernel/pdfedit-core-dev.h>
+#include <kernel/cpdf.h>
+#include <string>
 
 using namespace pdfobjects;
+using namespace std;
+using namespace boost;
+namespace po = program_options;
 
 bool decodeStream = false;
+typedef std::vector<pdfobjects::IndiRef> RefContainer;
 
 void getStringRepresentation(boost::shared_ptr<IProperty> &prop, std::string &str)
 {
@@ -43,7 +52,7 @@ void getStringRepresentation(boost::shared_ptr<IProperty> &prop, std::string &st
 
 void print_objects(const char *fname, RefContainer &refs)
 {
-	boost::shared_ptr<CPdf> pdf = openDocument(fname, CPdf::ReadOnly);
+	boost::shared_ptr<CPdf> pdf = pdfobjects::CPdf::getInstance(fname, CPdf::ReadOnly);
 
 	std::cout << "Document: \"" << fname << "\"" << std::endl;
 	RefContainer::const_iterator i;
@@ -64,39 +73,58 @@ int main(int argc, char ** argv)
 		return 1;
 	}
 
-	int opt;
-	RefContainer refs;
-	while ((opt = getopt(argc, argv, "dr:")) != -1 )
+	typedef vector<string> RefsRepr;
+	
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("help", "produce help message")
+		("file", po::value<string>(), "Input pdf file")
+		("ref", po::value<vector<string> >(), "Reference to object which should be printed e.g. \"1 0\".")
+		("decode", po::value<bool>()->default_value(false), "True if streams should be decoded too.")
+	;
+	
+	po::variables_map vm;
+	try {
+		po::store(po::parse_command_line(argc, argv, desc), vm);
+		po::notify(vm);    
+	}catch(std::exception& e)
 	{
-		switch (opt)
+		std::cout << "exception - " << e.what() << ". Please, check your parameters." << endl;
+		return 1;
+	}    
+
+		if (vm.count("help") || !vm.count("ref") || !vm.count("file") )
 		{
-			case 'r':
-				if(add_ref(refs, optarg))
-				{
-					std::cerr << optarg 
-						<< " is not a valid reference" 
-						<< std::endl;
-					exit(EXIT_FAILURE);
-				}
-				break;
-			case 'd':
-				decodeStream = true;
-				break;
-			default:
-				std::cerr << "Bad parameter" << std::endl; 
+			cout << desc << "\n";
+			return 1;
 		}
-	}
-	if (optind >= argc)
+
+	string input_file = vm["file"].as<string>(); 
+	decodeStream = vm["decode"].as<bool>(); ;
+
+	RefContainer refs;
+	RefsRepr refs_repr = vm["ref"].as<RefsRepr>(); 
+
+	try {
+		for (RefsRepr::const_iterator it = refs_repr.begin();
+				it != refs_repr.end();
+				++it)
+		{
+			IndiRef ref;
+			utils::simpleValueFromString(*it, ref);
+			if (isRefValid(&ref))
+				refs.push_back(ref);
+		}
+	
+		print_objects(input_file.c_str(), refs);
+
+	}catch (std::exception& e)
 	{
-		std::cerr << "Filename expected" << std::endl;
-		exit(EXIT_FAILURE);
+		cout << e.what() << "\n";
+		cout << desc << "\n";
+		return 1;
 	}
 
-	for(int i=optind;i<argc; ++i)
-	{
-		const char * fname = argv[i];
-		print_objects(fname, refs);
-	}
 	pdfedit_core_dev_destroy();
 	return 0;
 }

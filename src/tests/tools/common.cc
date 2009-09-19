@@ -90,16 +90,17 @@ int add_page_range(PagePosList &pagePos, const char *posStr)
 
 	size_t startLen = rangeStart-posStr;
 	size_t endLen = strlen(posStr)-startLen;
-	char start[startLen+1], end[endLen+1];
-	strncpy(start, posStr, startLen);
+	boost::scoped_array<char> start (new char[startLen+1]);
+	boost::scoped_array<char> end (new char[endLen+1]);
+	strncpy(start.get(), posStr, startLen);
 	start[startLen] = '\0';
-	strncpy(end, rangeStart+1, endLen);
+	strncpy(end.get(), rangeStart+1, endLen);
 	end[endLen] = '\0';
 
 	long startValue, endValue;
-	if(parseInt(start, startValue))
+	if(parseInt(start.get(), startValue))
 		return -1;
-	if(parseInt(end, endValue))
+	if(parseInt(end.get(), endValue))
 		return -1;
 	for (;startValue<=endValue; ++startValue)
 		add_to_range(pagePos, startValue);

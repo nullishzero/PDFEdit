@@ -22,14 +22,18 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
 #include <stdio.h>
+#include <boost/program_options.hpp>
 #include "kernel/pdfedit-core-dev.h"
 #include "kernel/delinearizator.h"
 #include "kernel/pdfwriter.h"
 #include "kernel/streamwriter.h"
 #include "kernel/cxref.h"
 
+using namespace std;
 using namespace pdfobjects;
 using namespace pdfobjects::utils;
+using namespace boost;
+namespace po = program_options;
 
 int delinearize(const char *input, const char *output)
 {
@@ -53,34 +57,33 @@ int main(int argc, char ** argv)
 		return 1;
 	}
 
-	int opt;
-	const char *input_file=NULL, *output_file=NULL;
-	while ((opt = getopt(argc, argv, "i:o:")) != -1 )
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("help", "produce help message")
+		("file", po::value<string>(), "Input pdf file")
+		("output", po::value<string>(), "Output pdf file")
+	;
+	
+	po::variables_map vm;
+	try {
+		po::store(po::parse_command_line(argc, argv, desc), vm);
+		po::notify(vm);    
+	}catch(std::exception& e)
 	{
-		switch(opt)
-		{
-			case 'i':
-				input_file = optarg;
-				break;
-			case 'o':
-				output_file = optarg;
-				break;
-			default:
-				std::cerr << "Bad parameter" << std::endl;
-		}
-	}
+		std::cout << "exception - " << e.what() << ". Please, check your parameters." << endl;
+		return 1;
+	}   
 
-	if(!input_file)
-	{
-		std::cerr << "Input file not specified"<< std::endl;
-		return 1;
-	}
-	if(!output_file)
-	{
-		std::cerr << "Output file not specified"<< std::endl;
-		return 1;
-	}
-	ret = delinearize(input_file, output_file);
+		if (vm.count("help") || !vm.count("file") || !vm.count("output"))
+		{
+			cout << desc << "\n";
+			return 1;
+		}
+
+	string input_file = vm["file"].as<string>(); 
+	string output_file = vm["output"].as<string>();
+
+	ret = delinearize(input_file.c_str(), output_file.c_str());
 
 	pdfedit_core_dev_destroy();
 	return ret;
