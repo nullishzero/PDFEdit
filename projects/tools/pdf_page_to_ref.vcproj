@@ -3,7 +3,8 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="pdf_page_to_ref"
-	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3be8}"
+	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181FE3BE8}"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -32,12 +33,14 @@
 	<References>
 	</References>
 	<Files>
-  
-    		<File
-    			RelativePath="../../src/tests/tools\pdf_page_to_ref.cc"
-    			>
-    		</File>
-        
+		<File
+			RelativePath="../../src/tests/tools\common.cc"
+			>
+		</File>
+		<File
+			RelativePath="../../src/tests/tools\pdf_page_to_ref.cc"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

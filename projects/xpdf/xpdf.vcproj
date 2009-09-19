@@ -24,6 +24,10 @@
 			ConfigurationType="4"
 			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
 			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -221,10 +225,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\xpdf\xpdf\Parser.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\xpdf\xpdf\PDFCore.cc"
 					>
 				</File>
 				<File
