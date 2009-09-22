@@ -801,16 +801,16 @@ GBool XRef::constructXRef() {
       if (num > 0) {
 	do {
 	  ++p;
-	} while (*p && isdigit(*p));
-	if (isspace(*p)) {
+	} while (*p && isdigit((unsigned char)*p));
+	if (isspace((int)*p)) {
 	  do {
 	    ++p;
 	  } while (*p && isspace(*p));
-	  if (isdigit(*p)) {
+	  if (isdigit((unsigned char)*p)) {
 	    gen = atoi(p);
 	    do {
 	      ++p;
-	    } while (*p && isdigit(*p));
+	    } while (*p && isdigit((unsigned char)*p));
 	    if (isspace(*p)) {
 	      do {
 		++p;
@@ -1020,7 +1020,7 @@ Guint XRef::strToUnsigned(const char *s)const {
   int i;
 
   x = 0;
-  for (p = s, i = 0; *p && isdigit(*p) && i < 10; ++p, ++i) {
+  for (p = s, i = 0; *p && isdigit((unsigned char)*p) && i < 10; ++p, ++i) {
     x = 10 * x + (*p - '0');
   }
   return x;
