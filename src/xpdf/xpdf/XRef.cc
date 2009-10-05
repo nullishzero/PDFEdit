@@ -802,7 +802,7 @@ GBool XRef::constructXRef() {
 	do {
 	  ++p;
 	} while (*p && isdigit((unsigned char)*p));
-	if (isspace((int)*p)) {
+	if (isspace((unsigned char)*p)) {
 	  do {
 	    ++p;
 	  } while (*p && isspace(*p));
