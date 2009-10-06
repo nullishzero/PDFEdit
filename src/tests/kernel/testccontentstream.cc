@@ -24,6 +24,7 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 #include "kernel/static.h"
+#include "xpdf/PDFDoc.h"
 #include "kernel/cstreamsxpdfreader.h"
 #include "tests/kernel/testmain.h"
 #include "tests/kernel/testcobject.h"

@@ -15,6 +15,10 @@ all: kernel tests $(GUI_TARGET)
 xpdf:
 	cd $(XPDFROOT) && $(MAKE) staticlib
 
+# Extra xpdf library for internal purposes (tests)
+xpdf-extra:
+	cd $(XPDFROOT) && $(MAKE) extralib
+
 # PDF editor
 pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
@@ -71,7 +75,7 @@ kernel: xpdf utils
 	cd $(KERNELROOT) && $(MAKE) staticlib
 
 # kernel tests
-tests: kernel
+tests: kernel xpdf-extra
 	cd $(TESTSROOT) && $(MAKE) 
 
 # internal rule for development which should be used when too many

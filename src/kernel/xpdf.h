@@ -45,7 +45,6 @@
 // has to be called
 #include <xpdf/GlobalParams.h>
 #include <xpdf/Catalog.h>
-#include <xpdf/PDFDoc.h>
 
 #include <assert.h>
 

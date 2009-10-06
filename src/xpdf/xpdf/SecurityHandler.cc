@@ -13,7 +13,10 @@
 #endif
 
 #include "goo/GString.h"
+#ifdef ENABLE_PLUGINS
 #include "xpdf/PDFDoc.h"
+#endif
+#include "xpdf/XRef.h"
 #include "xpdf/Decrypt.h"
 #include "xpdf/Error.h"
 #include "xpdf/GlobalParams.h"

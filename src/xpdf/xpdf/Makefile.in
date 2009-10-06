@@ -20,7 +20,6 @@ CXX_SRC = \
 	CMap.cc \
 	Catalog.cc \
 	CharCodeToUnicode.cc \
-	CoreOutputDev.cc \
 	Decrypt.cc \
 	Dict.cc \
 	Error.cc \
@@ -40,8 +39,6 @@ CXX_SRC = \
 	Object.cc \
 	Outline.cc \
 	OutputDev.cc \
-	PDFCore.cc \
-	PDFDoc.cc \
 	PDFDocEncoding.cc \
 	PSOutputDev.cc \
 	PSTokenizer.cc \
@@ -55,12 +52,6 @@ CXX_SRC = \
 	UnicodeMap.cc \
 	UnicodeTypeTable.cc \
 	XRef.cc \
-	pdftops.cc \
-	pdftotext.cc \
-	pdfinfo.cc \
-	pdffonts.cc \
-	pdftoppm.cc \
-	pdfimages.cc \
 	encrypt_utils.cc
 HEADERS = \
 	Annot.h \
@@ -72,7 +63,6 @@ HEADERS = \
 	CharCodeToUnicode.h \
 	CharTypes.h \
 	CompactFontTables.h \
-	CoreOutputDev.h \
 	Decrypt.h \
 	Dict.h \
 	Error.h \
@@ -95,7 +85,6 @@ HEADERS = \
 	Outline.h \
 	OutputDev.h \
 	PDFCore.h \
-	PDFDoc.h \
 	PDFDocEncoding.h \
 	PSOutputDev.h \
 	PSTokenizer.h \
@@ -151,12 +140,12 @@ NameToCharCode.o \
 Object.o \
 Outline.o \
 OutputDev.o \
-PDFDoc.o \
 PDFDocEncoding.o \
 PSOutputDev.o \
 PSTokenizer.o \
 Page.o \
 Parser.o \
+PreScanOutputDev.o \
 SecurityHandler.o \
 SplashOutputDev.o \
 Stream.o \
@@ -167,15 +156,29 @@ XRef.o \
 XpdfPluginAPI.o \
 encrypt_utils.o
 
+# All objects which are not a part of libxpdf but which are necessary for
+# libxpdf-extra
+LIBXPDF_EXTRA_OBJS = PDFDoc.o
+
 TARGET = $(LIBPREFIX)xpdf.a
 libxpdf: $(TARGET)
 
+TARGET_EXTRA = $(LIBPREFIX)xpdf-extra.a
+
 staticlib: libxpdf
+
+extralib: $(TARGET_EXTRA)
 
 $(TARGET): deps $(LIBXPDF_OBJS)
 	$(DEL_FILE) $(TARGET)
 	$(AR) $(TARGET) $(LIBXPDF_OBJS)
 	$(RANLIB) $(TARGET)
+
+# Extra library for internal purposes - not distributed
+$(TARGET_EXTRA): $(LIBXPDF_EXTRA_OBJS)
+	$(DEL_FILE) $(TARGET_EXTRA)
+	$(AR) $(TARGET_EXTRA) $(LIBXPDF_EXTRA_OBJS)
+	$(RANLIB) $(TARGET_EXTRA)
 
 #------------------------------------------------------------------------
 
@@ -200,7 +203,7 @@ uninstall-dev:
 
 clean:
 	$(DEL_FILE) *.o
-	$(DEL_FILE) $(TARGET) deps
+	$(DEL_FILE) $(TARGET) $(TARGET_EXTRA) deps
 
 #------------------------------------------------------------------------
 

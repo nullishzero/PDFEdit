@@ -5,7 +5,9 @@ REL_ADDR = ../../../
 include $(REL_ADDR)/Makefile.rules
 
 
-MANDATORY_LIBS    += $(CPPUNIT_LIBS) 
+# We have to add libxpdf here again here because libxpdf-extra depends
+# on some of its classes.
+MANDATORY_LIBS    += $(CPPUNIT_LIBS) -L$(XPDFROOT)/xpdf -lxpdf-extra -lxpdf
 MANDATORY_INCPATH += $(CPPUNITPATH)
 
 SOURCES = testcobjectsimple.cc \

@@ -20,11 +20,16 @@ all: libxpdf
 
 staticlib: libxpdf
 
+extralib: libxpdf-extra
+
 libxpdf:
 	cd goo && $(MAKE)
 	cd fofi && $(MAKE)
 	cd splash && $(MAKE)
 	cd xpdf && $(MAKE) staticlib
+
+libxpdf-extra:
+	cd xpdf && $(MAKE) extralib
 
 .PHONY: install-dev uninstall-dev
 install-dev:
