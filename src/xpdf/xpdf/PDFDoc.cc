@@ -279,7 +279,6 @@ GBool PDFDoc::checkEncryption(GString *ownerPassword, GString *userPassword) {
 
   // credentials must be correct and also required
   // it is not possible that secHdlr is set also when credentials are not correct
-  assert(!(secHdlr && !ret));
   if(ret && secHdlr) {
 	  setEncryptionCred(xref, secHdlr);
 	  delete secHdlr;
