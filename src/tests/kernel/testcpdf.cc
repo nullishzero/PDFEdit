@@ -1149,6 +1149,11 @@ public:
 			::Object *validVal;
 		};
 		boost::shared_ptr<CPdf> pdf1 = getTestCPdf(fname.c_str());
+		if (pdf1->getMode() == CPdf::ReadOnly)
+		{
+			printf("%s: Document is read only and it is not usable for this test\n", __FUNCTION__);
+			return;
+		}
 		boost::shared_ptr<CPdf> pdf2 = getTestCPdf(fname.c_str(), CPdf::Advanced);
 		XRefWriter *xref1 = dynamic_cast<XRefWriter *>(pdf1->getCXref());
 		XRefWriter *xref2 = dynamic_cast<XRefWriter *>(pdf2->getCXref());
