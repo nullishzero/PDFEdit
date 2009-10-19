@@ -11,6 +11,9 @@
 REL_ADDR = ../../../
 include $(REL_ADDR)/Makefile.rules
 
+CFLAGS   += $(EXTRA_XPDF_CFLAGS)
+CXXFLAGS += $(EXTRA_XPDF_CXXFLAGS)
+
 CXX_SRC = \
 	Splash.cc \
 	SplashBitmap.cc \

@@ -368,11 +368,11 @@ However you can influence compiler parameters with the following variables:
 	- CXX_EXTRA for CXX flags
 	  (-fmessage-length=0 -D_FORTIFY_SOURCE=2 -fno-strict-aliasing -fexceptions 
 	  will be used if not defined)
-	- EXTRA_UTILS_CFLAGS, EXTRA_KERNEL_CFLAGS, EXTRA_TESTS_CFLAGS used
-	  for CC flags for utils resp. kernel resp. tests directory (only
+	- EXTRA_UTILS_CFLAGS, EXTRA_KERNEL_CFLAGS, EXTRA_TESTS_CFLAGS, EXTRA_XPDF_CFLAGS 
+	  used for CC flags for utils resp. kernel resp. tests directory (only
 	  for internal/developers usage)
 	- EXTRA_UTILS_CXXFLAGS, EXTRA_KERNEL_CXXFLAGS, EXTRA_TESTS_CXXFLAGS,
-	  EXTRA_GUI_CXXFLAGS same like the above for CXX
+	  EXTRA_GUI_CXXFLAGS, EXTRA_XPDF_CXXFLAGS same like the above for CXX
 
 Installation
 ============
