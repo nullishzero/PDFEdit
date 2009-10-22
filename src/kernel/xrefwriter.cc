@@ -728,23 +728,50 @@ void XRefWriter::collectRevisions()
 		return;
 	}
 
+	bool hybrid_xref = false;
 	do
 	{
-		// process current trailer (store offset and get previous
-		// if present) - we are starting with the newest one cloned
-		// above
-		kernelPrintDbg(DBG_DBG, "XRef offset for "<<
-				revisions.size()<<" revision is "<<off);
-		revisions.insert(revisions.begin(), off);
+		// Take care about hybrid files which makes situation little bit more 
+		// complex, because these documents usually contain 2 sections to 
+		// describe one revision. The last (most recent one) has xref with no
+		// entries and trailer has /Prev pointing to the xref table and XRefStm
+		// pointing to the xref stream (PDFReference16.pdf: Chapter 3, 
+		// Compatibility with PDF 1.4). The pervious contains referred xrefs.
+		// This, however, doesn't mean that the document has 2 revisions so
+		// don't add them in such a case.
+		if (!hybrid_xref)
+		{
+			// process current trailer (store offset and get previous
+			// if present) - we are starting with the newest one cloned
+			// above
+			kernelPrintDbg(DBG_DBG, "XRef offset for "<<
+					revisions.size()<<" revision is "<<off);
+
+			revisions.insert(revisions.begin(), off);
+		}
 		off = getPrevFromTrailer(trailer);
 		if(isERR_OFFSET(off))
 			// no more previous trailers
 			break;
+		
+		hybrid_xref = false;
+		Object stm;
+		trailer->dictLookupNF("XRefStm", &stm);
+		if (stm.isInt())
+		{
+			kernelPrintDbg(DBG_INFO, "Document contains hybrid-file XREF.");
+			hybrid_xref = true;
+		}else if (!stm.isNull())
+		{
+			kernelPrintDbg(DBG_WARN, "Unexpected value for XRefStm trailer entry with type "
+					<< stm.getType());
+		}
+		stm.free();
 
 		// checks whether given offset is already in revisions, which 
 		// would mean corrupted referencies (because of cycle in 
 		// trailers)
-		if(std::find(revisions.begin(), revisions.end(), 
+		if(!hybrid_xref && std::find(revisions.begin(), revisions.end(), 
 					(size_t)off) != revisions.end())
 		{
 			kernelPrintDbg(DBG_ERR, "Trailer Prev points to already"
@@ -755,7 +782,9 @@ void XRefWriter::collectRevisions()
 
 		// off is the first byte of a cross reference section. 
 		// It can be either xref key word or beginning of the 
-		// xref stream object
+		// xref stream object - we have to process it even for
+		// hybrid_xref case becase this can contain reference to
+		// the previous revision
 		str->setPos(off);
 		Object parseObj; 
 		boost::shared_ptr< ::Object> obj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
