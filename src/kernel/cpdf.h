@@ -1874,7 +1874,6 @@ boost::shared_ptr<CType> getCObjectFromRef(const boost::shared_ptr<IProperty> &r
 	// gets reference value and dereferences indirect object
 	boost::shared_ptr<CPdf> pdf = refProp->getPdf().lock();
 	assert(pdf);
-	assert(hasValidRef(refProp));
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
