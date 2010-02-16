@@ -16,6 +16,7 @@ m4_include([config/macro.m4])
 m4_include([config/boost_base.m4])
 m4_include([config/cppunit.m4])
 m4_include([config/freetype2.m4])
+m4_include([config/ax_check_zlib.m4])
 
 m4_include([config/xpdf.m4])
 
@@ -45,6 +46,7 @@ AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
+AX_CHECK_ZLIB
 
 dnl Checks for boost
 AX_BOOST_BASE

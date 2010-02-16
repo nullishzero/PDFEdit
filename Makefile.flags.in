@@ -173,6 +173,7 @@ QOUTPUTDEVROOT  = $(SRCROOT)/kpdf-kde-3.3.2
 BOOSTFLAGS 	 = @BOOST_CPPFLAGS@
 CPPUNITFLAGS	 = @CPPUNIT_CFLAGS@
 FREETYPEFLAGS	 = @FT2_CFLAGS@
+ZLIBFLAGS	 = @ZLIB_CPPFLAGS@
 T1FLAGS		 = @t1_CFLAGS@
 XPDFLAGS 	 = -I$(XPDFROOT)/ 
 # This is required for qmake which always forces -I when specifying 
@@ -184,7 +185,7 @@ QOUTPUTDEVFLAGS  = -I$(QOUTPUTDEVPATH)
 
 # All necessary includes for building
 MANDATORY_INCPATH = -I. -I$(SRCROOT) $(XPDFLAGS) $(BOOSTFLAGS)\
-		   $(FREETYPEFLAGS) $(T1FLAGS)
+		   $(FREETYPEFLAGS) $(T1FLAGS) $(ZLIBFLAGS)
 # This is required for qmake which always forces -I when specifying 
 MANDATORY_PATHS	  = $(SRCROOT) $(XPDFLAGS) $(BOOSTFLAGS) $(FREETYPEFLAGS)
 
@@ -194,6 +195,7 @@ DIST_INCPATH	 = -I$(INCLUDE_PATH) -I$(INCLUDE_PATH)/xpdf $(BOOSTFLAGS) \
 
 FREETYPE_LIBS    = @FT2_LIBS@
 T1_LIBS		 = @t1_LIBS@
+ZLIB_LIBS	 = @ZLIB_LIBS@
 
 BOOST_LIBS 	 = @BOOST_LDFLAGS@
 
@@ -210,7 +212,7 @@ STANDARD_LDFLAGS = @LDFLAGS@
 
 # all necessary libraries
 MANDATORY_LIBS	 = $(BOOST_LIBS) $(PDFEDIT_LIBS) \
-		   $(FREETYPE_LIBS) $(T1_LIBS)
+		   $(FREETYPE_LIBS) $(T1_LIBS) $(ZLIB_LIBS)
 
 # All necessary libraries for 3rd party code depending on pdfedit-core-dev
 # TODO change to have only one library containing kernel, utils, xpdf, fofi,
