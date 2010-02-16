@@ -281,7 +281,7 @@ GString *appendToPath(GString *path, const char *fileName) {
 GString *grabPath(const char *fileName) {
 #ifdef VMS
   //---------- VMS ----------
-  char *p;
+  const char *p;
 
   if ((p = strrchr(fileName, ']')))
     return new GString(fileName, p + 1 - fileName);
@@ -303,7 +303,7 @@ GString *grabPath(const char *fileName) {
 
 #elif defined(ACORN)
   //---------- RISCOS ----------
-  char *p;
+  const char *p;
 
   if ((p = strrchr(fileName, '.')))
     return new GString(fileName, p - fileName);
@@ -311,7 +311,7 @@ GString *grabPath(const char *fileName) {
 
 #elif defined(MACOS)
   //---------- MacOS ----------
-  char *p;
+  const char *p;
 
   if ((p = strrchr(fileName, ':')))
     return new GString(fileName, p - fileName);
@@ -319,7 +319,7 @@ GString *grabPath(const char *fileName) {
 
 #else
   //---------- Unix ----------
-  char *p;
+  const char *p;
 
   if ((p = strrchr(fileName, '/')))
     return new GString(fileName, p - fileName);
