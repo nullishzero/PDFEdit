@@ -1,4 +1,6 @@
 XXXX-XX-XX PDF Editor 0.4.4
+	* xpdf code base updated to 3.02pl4 patch which fixes 
+	  several serious security vulnerabilities
 	* Bugs 320, 324, 329, 330, 334, 338, 343 fixed
 	* several potential memory leaks fixed
 	* Internal changes
