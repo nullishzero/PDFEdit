@@ -493,12 +493,19 @@ options and installation targets as described above.
 If you want to use this package following steps are required:
 * install pdfedit-core-dev package (either from distribution package if
   available or from sources as described above).
-* update your configure script or modify Makefile to set proper CXXFLAGS 
-  and LDFLAGS to contain proper include and library paths. You can use
-  EPREFIX/pdfedit-core-dev-config script 
-  e.g. this way in Makefile:
+* There are two possibilities to properly setup compiler and linker flags
+  to compile your application correctly.
+  - manual Makefile way
+    You should use EPREFIX/pdfedit-core-dev-config script 
+	e.g. this way in Makefile:
 	CXXFLAGS = $(shell pdfedit-core-dev-config --cflags)
 	LDFALGS = $(shell pdfedit-core-dev-config --libs)
+
+  - autoconf way
+    pdfedit source package comes with the config/pdfedit-core-dev.m4 autoconf
+    macro file which exports AX_PDFEDIT_CORE_DEV macro. Just call it and use
+    the exported variables PDFEDIT_CORE_DEV_CPPFLAGS and PDFEDIT_CODE_DEV_LDFLAGS 
+    in your Makefile. Read more about possible parameters directly in the file.
 * update your sources which are using pdfedit-core-dev:
 	- initialize library by:
 	if(pdfedit_core_dev_init())
