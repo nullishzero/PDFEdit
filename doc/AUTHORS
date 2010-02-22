@@ -22,5 +22,5 @@ Varun Hiremath	 	Debian package, available at http://packages.qa.debian.org/p/pd
 Pavel Sanda		Gentoo ebuild, available at Sun Overlay repository
 Lubomir Kundrak		NetBSD package, available at http://pkgsrc.se/wip/pdfedit
 
-Also thanks to Varun Hiremath and Martin Michlmayr for various small patches
+Also thanks to Varun Hiremath, Ron Kaminsky and Martin Michlmayr for various small patches
 and many other people for their suggestions and bug reports.

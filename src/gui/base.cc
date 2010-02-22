@@ -697,8 +697,13 @@ QString Base::loadFile(const QString &name) {
 }
 
 /** \copydoc saveToFile */
-bool Base::saveFile(const QString &name,const QString &content) {
+bool Base::saveFile(const QString &name, const QString &content) {
  return saveToFile(name,content);
+}
+
+/** \copydoc saveRawToFile */
+bool Base::saveRawFile(const QString &name, const QByteArray &content) {
+ return saveRawToFile(name, content);
 }
 
 /** Return list of all objects that are in current script interpreter */

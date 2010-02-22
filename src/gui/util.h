@@ -28,6 +28,7 @@
 */
 
 #include <string>
+#include <qcstring.h>
 
 class QColor;
 class QString;
@@ -64,6 +65,7 @@ QStringList explode(char separator,const QString &line,bool escape=false);
 QString htmlEnt(const QString &str);
 QString loadFromFile(const QString &name);
 bool saveToFile(const QString &name,const QString &content);
+bool saveRawToFile(const QString &name, const QByteArray &content);
 void printList(const QStringList &l);
 void escapeSlash(QString &line);
 void consoleLog(const QString &message,const QString &fileName);

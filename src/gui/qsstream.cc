@@ -35,6 +35,7 @@
 #include <qfile.h>
 #include <kernel/cobject.h>
 #include <qstring.h>
+#include <qcstring.h>
 
 namespace gui {
 
@@ -86,7 +87,10 @@ const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
  return b;
 }
 
-/** Call CStream::getDecodedStringRepresentation(ret); return ret */
+/**
+ Call CStream::getDecodedStringRepresentation(ret); 
+ return ret (as unicode)
+*/
 QString QSStream::getDecoded() {
  OP_BEGIN
   std::string text;
@@ -94,6 +98,21 @@ QString QSStream::getDecoded() {
   return util::convertToUnicode(text,util::PDF);
  OP_END("getDecoded")
  return QString::null;
+}
+
+/** 
+ Call CStream::getDecodedStringRepresentation(ret);
+ return ret (as raw bytes)
+*/
+QByteArray QSStream::getRawDecoded() {
+ OP_BEGIN
+  std::string text;
+  st->getDecodedStringRepresentation(text);
+  QByteArray res(text.size());
+  memcpy(res.data(), text.c_str(), text.size());
+  return res;
+ OP_END("getRawDecoded")
+ return QByteArray();
 }
 
 /**

@@ -333,6 +333,26 @@ bool saveToFile(const QString &name,const QString &content) {
  QCString qb=codec->fromUnicode(content);
  f.writeBlock(qb.data(),qb.length());
  f.close();
+
+ return true;
+}
+
+/**
+ Save raw bytes into file.
+ @param name Filename of file to write to. It will be overwritten.
+ @param content Buffer to write.
+ @return true in case of success, false in case of failure
+*/
+bool saveRawToFile(const QString &name, const QByteArray &content) {
+ QFile f(name);
+ if (!f.open(IO_WriteOnly)) {
+  //Failure
+  return false;
+ }
+
+ f.writeBlock(content.data(),content.size());
+
+ f.close();
  return true;
 }
 

@@ -174,7 +174,11 @@ public slots: //This will be all exported to scripting
  /*-
   Save string into file. File will be saved in utf-8 encoding.
  */
- bool saveFile(const QString &name,const QString &content);
+ bool saveFile(const QString &name, const QString &content);
+ /*-
+  Save bytes into file. File will be saved verbatim.
+ */
+ bool saveRawFile(const QString &name, const QByteArray &content);
  /*-
   Sets new debugging verbosity level. Accepts same parameter as -d option on commandline
   (either number or symbolic constant).

@@ -66,6 +66,8 @@ public slots:
  bool saveBuffer(const QString &fileName);
  /*- Return decoded text representation of this property */
  QString getDecoded();
+ /*- Return decoded raw bytes representation of this property */
+ QByteArray getRawDecoded();
  /*- Add property with given name to stream dictionary */
  void add(const QString &name,QSIProperty *ip);
  void add(const QString &name,QObject *ip);
