@@ -10,6 +10,8 @@ XXXX-XX-XX PDF Editor 0.4.4
 		- utils::isDescendant renamed to utils::isNodeDescendant
 		- CPdf methods signiture cleanup - const and references for
 		  parameters
+		- --enable-tools configure option added and tools moved to src
+		  (more in README)
 	* Added scripting API to modify stream dictionaries
 	* Raw object saving (thanks to Ron Kaminsky for patch)
 

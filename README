@@ -69,6 +69,13 @@ Our tests are based on CPPUNIT library, so it has to be present on your
 system. See detailed description about configure parameters if you have 
 some unusual installation.
 
+Tools
+-----
+All tools use boost-program-options library so it has to be installed on your
+system if you want to compile them (see later how to enable them). Some
+distributions use a separate package (e.g. Debian) but most others include
+it directly into boost package.
+
 Gui
 ---
 Make sure you have all needed libraries (qt3, boost and xlib) along with their 
@@ -189,6 +196,13 @@ uses this feature):
 	-kernel-tests - Compiles all kernel tests (in src/kernel/tests). 
 	 Disabled by default and intended for developers/testers only. Note
 	 that this requires to have CPPUNIT installed on your system.
+
+	-tools - Compiles all tools which are available in src/tools.  Disabled
+	 by default and intended for those interested in simple examples of
+	 pdfedit-core-dev library usage and those who need some simple tools for
+	 pdf manipulation/analyzes and don't want to use GUI or scripting
+	 (pdf_to_text, flattener, delinerizator, pdf_object_comparer, etc.).
+	 Note that you need also --enable-pdfedit-core-dev for tools.
 	
 	-doxygen-doc - generates also doxygen documentation useful for 
 	 programmers. Disabled by default. Note that doxygen has to be

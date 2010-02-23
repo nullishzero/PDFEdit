@@ -17,6 +17,7 @@ m4_include([config/boost_base.m4])
 m4_include([config/cppunit.m4])
 m4_include([config/freetype2.m4])
 m4_include([config/ax_check_zlib.m4])
+m4_include([config/ax_boost_program_options.m4])
 
 m4_include([config/xpdf.m4])
 
@@ -562,6 +563,34 @@ then
 	dnl TODO: if xsltproc and stylesheet is missing, docbook2html from jade can be used
 fi
 
+dnl Enable building tools?
+AC_ARG_ENABLE(tools,
+	      [AS_HELP_STRING([--enable-tools],
+			      [Enables tools building])],
+			      ,
+			      [enable_tools=no])
+AC_MSG_CHECKING(whether we want to build tools)
+if test "x$enable_tools" = "xyes"
+then
+	AC_MSG_RESULT(yes)
+	boost_program_options_required=yes
+	if test "x$enable_pdfedit_core_dev" != "xyes"
+	then
+		AC_MSG_ERROR(--enable pdfedit-core-dev is required for tools)
+	fi
+	TOOLS_TARGET="$TOOLS_TARGET tools"
+
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(TOOLS_TARGET)
+
+if test "x$boost_program_options_required" = "xyes"
+then
+	AC_MSG_CHECKING(for boost-program-options library)
+	AX_BOOST_PROGRAM_OPTIONS
+fi
+
 AC_CONFIG_FILES([Makefile.flags Makefile.rules])
 
 dnl
@@ -649,6 +678,7 @@ echo " Build advanced documentation  : $enable_advanced_doc"
 echo " Build kernel tests            : $enable_kernel_tests"
 echo " Build GUI                     : $enable_gui"
 echo " Build pdfedit-core-dev        : $enable_pdfedit_core_dev"
+echo " Build tools                   : $enable_tools"
 echo
 echo "Installation summary:"
 echo " Root directory                : $root_dir"
