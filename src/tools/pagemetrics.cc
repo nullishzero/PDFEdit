@@ -114,12 +114,12 @@ main(int argc, char ** argv)
 			return 1;
 		}
 	string file = vm["file"].as<string>(); 
-	size_t from = vm["from"].as<size_t>();
+	unsigned int from = vm["from"].as<unsigned int>();
 	string alg = vm["alg"].as<string>();
 	P p = vm["p"].as<P>();
-	size_t to = numeric_limits<size_t>::max();
+	unsigned int to = numeric_limits<unsigned int>::max();
 	if (vm.count("to")) 
-		to = vm["to"].as<size_t>();
+		to = vm["to"].as<unsigned int>();
 
 	// 
 	// pdf lib init & work
@@ -137,7 +137,7 @@ main(int argc, char ** argv)
 		to = std::min(to, pdf->getPageCount()+1);
 
 		// now the hard stuff comes
-		for (size_t i = from; i < to; ++i)
+		for (unsigned int i = from; i < to; ++i)
 		{
 			shared_ptr<CPage> page = pdf->getPage(i);
 			if (alg == stm::name)
