@@ -49,6 +49,8 @@ pdf_object_comparer: pdf_object_comparer.o $(UTILS_OBJS)
 pdf_to_text: pdf_to_text.o
 	$(LINK) $(LDFLAGS) -o pdf_to_text pdf_to_text.o $(TOOLS_LIBS)
 
+parse_object: parse_object.o
+	$(LINK) $(LDFLAGS) -o parse_object parse_object.o $(TOOLS_LIBS)
 clean: 
 	-rm $(UTILS_OBJS) || true
 	rm *.o $(TARGET)
