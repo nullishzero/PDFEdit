@@ -163,6 +163,7 @@ XPDFROOT 	= $(SRCROOT)/xpdf
 KERNELROOT 	= $(SRCROOT)/kernel
 UTILSROOT 	= $(SRCROOT)/utils
 TESTSROOT 	= $(SRCROOT)/tests/
+TOOLSROOT	= $(SRCROOT)/tools
 KERNELTESTSROOT = $(TESTSROOT)/kernel
 GUIROOT		= $(SRCROOT)/gui
 OSROOT		= $(SRCROOT)/os
@@ -241,6 +242,9 @@ GUI_TARGET	 = @GUI_TARGET@
 
 # configure parameter --enable-kernel-tests
 KERNEL_TESTS_TARGET = @KERNEL_TESTS_TARGET@
+
+# target for tools
+TOOLS_TARGET = @TOOLS_TARGET@
 
 # Cumulative target for all possible tests
 TEST_TARGETS = $(KERNEL_TESTS_TARGET)

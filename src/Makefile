@@ -9,7 +9,7 @@ include $(REL_ADDR)Makefile.rules
 
 # make PDF editor - source and documentation
 # targets are determined during configure
-all: kernel tests $(GUI_TARGET)
+all: kernel tests $(GUI_TARGET) $(TOOLS_TARGET)
 
 # XPdf
 xpdf:
@@ -74,6 +74,10 @@ $(QSAROOT)/Makefile.qsa: $(QSAROOT)/qsa.pro
 kernel: xpdf utils
 	cd $(KERNELROOT) && $(MAKE) staticlib
 
+# Tools
+tools: kernel 
+	cd $(TOOLSROOT) && $(MAKE)
+
 # kernel tests
 tests: kernel xpdf-extra
 	cd $(TESTSROOT) && $(MAKE) 
@@ -87,6 +91,7 @@ clean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
 	cd $(QSAROOT) && $(MAKE) clean || true
 	cd $(KERNELROOT) && $(MAKE) clean || true
+	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) clean || true
 	cd $(UTILSROOT) && $(MAKE) clean
 	cd $(XPDFROOT) && $(MAKE) clean || true
@@ -97,6 +102,7 @@ clean:
 dev-clean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
 	cd $(KERNELROOT) && $(MAKE) clean || true
+	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) clean || true
 	cd $(UTILSROOT) && $(MAKE) clean
 
@@ -106,6 +112,7 @@ distclean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui distclean || true
 	cd $(QSAROOT) && $(MAKE) distclean || true
 	cd $(KERNELROOT) && $(MAKE) distclean || true
+	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) distclean || true
 	cd $(UTILSROOT) && $(MAKE) distclean || true
 	cd $(XPDFROOT) && $(MAKE) distclean || true

@@ -1,7 +1,7 @@
 # includes basic rules for building 
 # REL_ADDR has to be defined, because Makefile.rules refers 
 # to the Makefile.flags
-REL_ADDR = ../../../
+REL_ADDR = ../../
 include $(REL_ADDR)/Makefile.rules
 
 # list of utils modules used by all targets
