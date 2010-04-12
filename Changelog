@@ -1,4 +1,4 @@
-XXXX-XX-XX PDF Editor 0.4.4
+2010-04-12 PDF Editor 0.4.4
 	* config/pdfedit-core-dev.m4 added for easier pdfedit-core-dev
 	  integration into 3rd party applications
 	* xpdf code base updated to 3.02pl4 patch which fixes 
