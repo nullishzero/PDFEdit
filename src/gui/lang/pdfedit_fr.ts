@@ -364,7 +364,7 @@ Une erreur est survenue lors du chargement du fichier</translation>
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>Filtre d&apos;encryption:</translation>
+        <translation type="obsolete">Filtre d&apos;encryption:</translation>
     </message>
     <message>
         <source>No page selected!</source>
@@ -726,7 +726,7 @@ Sélectionnez les transformations à utiliser</translation>
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>Le contenu crypté sera affiché comme des residus et de nombreuses opérations seront impossible</translation>
+        <translation type="obsolete">Le contenu crypté sera affiché comme des residus et de nombreuses opérations seront impossible</translation>
     </message>
     <message>
         <source>Rect was drawn.</source>
@@ -1108,6 +1108,26 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
         <source>How many pages</source>
         <translation>Combien de pages</translation>
     </message>
+    <message>
+        <source>Flattening failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flattened</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No pages in document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operation not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter password for %1:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1456,6 +1476,18 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
         <source>Script not found</source>
         <translation>Script introuvable</translation>
     </message>
+    <message>
+        <source>Flattening of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearization of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1509,6 +1541,10 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
         <source>No document opened</source>
         <translation>Pas de document ouvert</translation>
     </message>
+    <message>
+        <source>You must pick a different file than &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
@@ -1545,6 +1581,11 @@ S’il vous plaît regardez les spécifications du pdf pour plus de détails.</t
     <message>
         <source>Open file with pages to be inserted</source>
         <translation>Ouvrir le fichier avec les pages à insérer</translation>
+    </message>
+    <message>
+        <source>END</source>
+        <comment>end of document marker</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1812,6 +1853,17 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     </message>
 </context>
 <context>
+    <name>gui::PasswordDialog</name>
+    <message>
+        <source>Enter password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Loaded file</source>
@@ -1884,6 +1936,10 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
 %1</source>
         <translation>Une erreur est survenue lors de l&apos;enregistrement de la copie :
 %1</translation>
+    </message>
+    <message>
+        <source>Password entered for document is not valid</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2149,7 +2205,7 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
-        <translation>Enregistrer une &amp;copie...</translation>
+        <translation type="obsolete">Enregistrer une &amp;copie...</translation>
     </message>
     <message>
         <source>&amp;Page</source>
@@ -2415,6 +2471,11 @@ Cela permettra de préciser quelle partie de la fenêtre de l&apos;éditeur rece
         <source>Reload Page (show changes)</source>
         <comment>reloadpage</comment>
         <translation>Recharger la Page (afficher les changements)</translation>
+    </message>
+    <message>
+        <source>&amp;Copy current revision</source>
+        <comment>fcopyrevision</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

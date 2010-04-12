@@ -629,11 +629,11 @@
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>Entschlüsselungsfilter:</translation>
+        <translation type="obsolete">Entschlüsselungsfilter:</translation>
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>Verschlüsselter Inhalt wird als Datenmüll erscheinen und viele Operationen werden unmöglich sein</translation>
+        <translation type="obsolete">Verschlüsselter Inhalt wird als Datenmüll erscheinen und viele Operationen werden unmöglich sein</translation>
     </message>
     <message>
         <source>Error occured while loading file</source>
@@ -1102,6 +1102,26 @@ Daten: %3</translation>
         <source>How many pages</source>
         <translation>Wieviele Seiten</translation>
     </message>
+    <message>
+        <source>Flattening failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flattened</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No pages in document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operation not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter password for %1:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1438,6 +1458,18 @@ Daten: %3</translation>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
+    <message>
+        <source>Flattening of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearization of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1490,6 +1522,10 @@ Daten: %3</translation>
         <source>No document opened</source>
         <translation>Kein Dokument geöffnet</translation>
     </message>
+    <message>
+        <source>You must pick a different file than &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
@@ -1526,6 +1562,11 @@ Daten: %3</translation>
     <message>
         <source>&amp;Filename</source>
         <translation>&amp;Dateiname</translation>
+    </message>
+    <message>
+        <source>END</source>
+        <comment>end of document marker</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1792,6 +1833,17 @@ Daten: %3</translation>
     </message>
 </context>
 <context>
+    <name>gui::PasswordDialog</name>
+    <message>
+        <source>Enter password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Selection</source>
@@ -1860,6 +1912,10 @@ Daten: %3</translation>
 %1</source>
         <translation>Ein Fehler trat während des Speichern einer Kopie auf:
 %1</translation>
+    </message>
+    <message>
+        <source>Password entered for document is not valid</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2280,7 +2336,7 @@ Daten: %3</translation>
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
-        <translation>Speichern &amp;copy...</translation>
+        <translation type="obsolete">Speichern &amp;copy...</translation>
     </message>
     <message>
         <source>Save new &amp;revision</source>
@@ -2391,6 +2447,11 @@ Daten: %3</translation>
         <source>Save as text...</source>
         <comment>fsaveastext</comment>
         <translation>Als Text speichern...</translation>
+    </message>
+    <message>
+        <source>&amp;Copy current revision</source>
+        <comment>fcopyrevision</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

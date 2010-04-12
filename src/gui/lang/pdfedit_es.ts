@@ -363,7 +363,7 @@ Datos: %3
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>Filtro de cifrado:</translation>
+        <translation type="obsolete">Filtro de cifrado:</translation>
     </message>
     <message>
         <source>No page selected!</source>
@@ -722,7 +722,7 @@ Datos: %3
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>El contenido cifrado se mostrará difuso y muchas operaciones serán imposibles</translation>
+        <translation type="obsolete">El contenido cifrado se mostrará difuso y muchas operaciones serán imposibles</translation>
     </message>
     <message>
         <source>Rect was drawn.</source>
@@ -1103,6 +1103,26 @@ Datos: %3
         <source>How many pages</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Flattening failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flattened</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No pages in document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operation not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter password for %1:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1451,6 +1471,18 @@ Datos: %3
         <source>Script not found</source>
         <translation>Script no encontrado</translation>
     </message>
+    <message>
+        <source>Flattening of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearization of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1503,6 +1535,10 @@ Datos: %3
         <source>No document opened</source>
         <translation>Ningún documento abierto</translation>
     </message>
+    <message>
+        <source>You must pick a different file than &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
@@ -1539,6 +1575,11 @@ Datos: %3
     <message>
         <source>Open file with pages to be inserted</source>
         <translation>Abrir archivo con las páginas a insertarse</translation>
+    </message>
+    <message>
+        <source>END</source>
+        <comment>end of document marker</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1805,6 +1846,17 @@ Datos: %3
     </message>
 </context>
 <context>
+    <name>gui::PasswordDialog</name>
+    <message>
+        <source>Enter password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Loaded file</source>
@@ -1874,6 +1926,10 @@ Datos: %3
     <message>
         <source>Error occured while saving copy:
 %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password entered for document is not valid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2139,7 +2195,7 @@ Datos: %3
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
-        <translation>Guardar c&amp;opia...</translation>
+        <translation type="obsolete">Guardar c&amp;opia...</translation>
     </message>
     <message>
         <source>&amp;Page</source>
@@ -2404,6 +2460,11 @@ Datos: %3
     <message>
         <source>Reload Page (show changes)</source>
         <comment>reloadpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy current revision</source>
+        <comment>fcopyrevision</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

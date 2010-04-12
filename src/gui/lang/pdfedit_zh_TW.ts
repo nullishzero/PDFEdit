@@ -630,11 +630,11 @@
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>加密篩選器:</translation>
+        <translation type="obsolete">加密篩選器:</translation>
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>加密的內容會無法顯示而且有許多操作會不能執行</translation>
+        <translation type="obsolete">加密的內容會無法顯示而且有許多操作會不能執行</translation>
     </message>
     <message>
         <source>Error occured while loading file</source>
@@ -1103,6 +1103,26 @@ Data: %3
         <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Flattening failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flattened</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No pages in document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operation not implemented: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter password for %1:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1439,6 +1459,18 @@ Data: %3
         <source>Warning</source>
         <translation>警告</translation>
     </message>
+    <message>
+        <source>Flattening of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearization of encrypted documents is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1491,6 +1523,10 @@ Data: %3
         <source>No document opened</source>
         <translation>沒有文件被開啟</translation>
     </message>
+    <message>
+        <source>You must pick a different file than &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
@@ -1527,6 +1563,11 @@ Data: %3
     <message>
         <source>&amp;Filename</source>
         <translation>檔案名稱(&amp;F)</translation>
+    </message>
+    <message>
+        <source>END</source>
+        <comment>end of document marker</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1793,6 +1834,17 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::PasswordDialog</name>
+    <message>
+        <source>Enter password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Selection</source>
@@ -1862,6 +1914,10 @@ Data: %3
     <message>
         <source>Error occured while saving copy:
 %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password entered for document is not valid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2287,7 +2343,7 @@ Data: %3
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
-        <translation>儲存拷貝(&amp;C)...</translation>
+        <translation type="obsolete">儲存拷貝(&amp;C)...</translation>
     </message>
     <message>
         <source>Save new &amp;revision</source>
@@ -2392,6 +2448,11 @@ Data: %3
     <message>
         <source>Reload Page (show changes)</source>
         <comment>reloadpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy current revision</source>
+        <comment>fcopyrevision</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

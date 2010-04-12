@@ -359,7 +359,7 @@ Data: %3
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>Šifrovací filtr:</translation>
+        <translation type="obsolete">Šifrovací filtr:</translation>
     </message>
     <message>
         <source>No page selected!</source>
@@ -718,7 +718,7 @@ Data: %3
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
+        <translation type="obsolete">Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
     </message>
     <message>
         <source>Rect was drawn.</source>
@@ -1099,6 +1099,26 @@ Data: %3
         <source>How many pages</source>
         <translation>Kolik stran</translation>
     </message>
+    <message>
+        <source>Flattening failed!</source>
+        <translation>Zploštění selhalo!</translation>
+    </message>
+    <message>
+        <source>Flattened</source>
+        <translation>Zploštěný</translation>
+    </message>
+    <message>
+        <source>No pages in document</source>
+        <translation>V dokumentu nejsou žádné stránky</translation>
+    </message>
+    <message>
+        <source>Operation not implemented: %1</source>
+        <translation>Operace není podporována: %1</translation>
+    </message>
+    <message>
+        <source>Enter password for %1:</source>
+        <translation>Zadejte heslo pro %1:</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1436,6 +1456,18 @@ Režim zvýraznění</translation>
         <source>Script not found</source>
         <translation>Skript nenalezen</translation>
     </message>
+    <message>
+        <source>Flattening of encrypted documents is not supported</source>
+        <translation>Zplošťování šifrovaných dokumentů není podporováno</translation>
+    </message>
+    <message>
+        <source>Unknown error occured</source>
+        <translation>Nastala neznámá chyba</translation>
+    </message>
+    <message>
+        <source>Delinearization of encrypted documents is not supported</source>
+        <translation>Delinearizace šifrovaných dokumentů není podporována</translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1488,6 +1520,10 @@ Režim zvýraznění</translation>
         <source>No document opened</source>
         <translation>Není otevřen dokument</translation>
     </message>
+    <message>
+        <source>You must pick a different file than &apos;%1&apos;</source>
+        <translation>Musíte vybrat jiný soubor než &apos;%1&apos;</translation>
+    </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
@@ -1524,6 +1560,11 @@ Režim zvýraznění</translation>
     <message>
         <source>Open file with pages to be inserted</source>
         <translation>Otevřít soubor se stránkami k vložení</translation>
+    </message>
+    <message>
+        <source>END</source>
+        <comment>end of document marker</comment>
+        <translation>KONEC</translation>
     </message>
 </context>
 <context>
@@ -1786,6 +1827,17 @@ Režim zvýraznění</translation>
     </message>
 </context>
 <context>
+    <name>gui::PasswordDialog</name>
+    <message>
+        <source>Enter password</source>
+        <translation>Zadejte heslo</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation>Heslo:</translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Loaded file</source>
@@ -1854,6 +1906,10 @@ Režim zvýraznění</translation>
 %1</source>
         <translation>Při ukládání kopie došlo k chybě:
 %1</translation>
+    </message>
+    <message>
+        <source>Password entered for document is not valid</source>
+        <translation>Zadané heslo není platné pro tento dokument</translation>
     </message>
 </context>
 <context>
@@ -2114,7 +2170,7 @@ Režim zvýraznění</translation>
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
-        <translation>Uložit kopii...</translation>
+        <translation type="obsolete">Uložit kopii...</translation>
     </message>
     <message>
         <source>&amp;Page</source>
@@ -2380,6 +2436,11 @@ Režim zvýraznění</translation>
         <source>Reload Page (show changes)</source>
         <comment>reloadpage</comment>
         <translation>Obnovit stránku (ukázat změny)</translation>
+    </message>
+    <message>
+        <source>&amp;Copy current revision</source>
+        <comment>fcopyrevision</comment>
+        <translation>Zkopírovat aktuální revizi</translation>
     </message>
 </context>
 <context>
