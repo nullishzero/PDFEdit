@@ -12,8 +12,6 @@
 # one.
 ################################################################################
 
-EXTRA_REBUILD_FORCE_FILES=$(REL_ADDR)config.pro
-
 include ../../Makefile.flags
 
 QTMAKEFILE = Makefile.qt

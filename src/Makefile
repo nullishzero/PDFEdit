@@ -46,7 +46,7 @@ pdfedit-core-dev:
 # QT makefile is created (because of file expansion used in project
 # file)
 # For the same reason we have to generate localization files too
-$(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfedit.pro $(REL_ADDR)/config.pro
+$(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfedit.pro
 	$(SHELL) $(ROOT)/tools/generate_online_help.sh "$(DOCROOT)" "$(GUIROOT)"
 	$(SHELL) $(ROOT)/tools/generate_lang.sh "$(GUIROOT)" "$(LRELEASE)"
 	cd $(GUIROOT) && $(QMAKE) pdfedit.pro -o Makefile.qt
