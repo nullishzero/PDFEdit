@@ -2553,6 +2553,8 @@ void SplashOutputDev::endTransparencyGroup(GfxState *state) {
   const double *ctm;
 
   // restore state
+  if (!transpGroupStack)
+	  return;
   delete splash;
   bitmap = transpGroupStack->origBitmap;
   splash = transpGroupStack->origSplash;
@@ -2567,6 +2569,8 @@ void SplashOutputDev::paintTransparencyGroup(GfxState *state, const double *bbox
   GBool isolated;
   int tx, ty;
 
+  if (!transpGroupStack)
+	  return;
   tx = transpGroupStack->tx;
   ty = transpGroupStack->ty;
   tBitmap = transpGroupStack->tBitmap;
