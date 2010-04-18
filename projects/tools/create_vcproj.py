@@ -4,7 +4,7 @@
 import os,sys,re
 
 env = {
-  "tools_dir" : "../../src/tests/tools",  # relative to SolutionDir
+  "tools_dir" : "../../src/tools",  # relative to SolutionDir
   "vcproj_dir":".",
   "guids"     : [],
   "exclude"   : ["common.cc",]

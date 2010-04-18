@@ -3,7 +3,8 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="pdf_object_comparer"
-	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181fe3be5}"
+	ProjectGUID="{F4B0B7E4-A405-4EB1-A74F-765181FE3BE5}"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -21,25 +22,124 @@
 			ConfigurationType="1"
 			InheritedPropertySheets="$(SolutionDir)/vsprops/base.vsprops;$(SolutionDir)/vsprops/tools.vsprops;$(SolutionDir)/vsprops/debug.vsprops;$(SolutionDir)/vsprops/win32.vsprops"
 			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(SolutionDir)/vsprops/base.vsprops;$(SolutionDir)/vsprops/tools.vsprops;$(SolutionDir)/vsprops/release.vsprops;$(SolutionDir)/vsprops/win32.vsprops"
 			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
-</Configurations>
+	</Configurations>
 	<References>
 	</References>
 	<Files>
-  
-    		<File
-    			RelativePath="../../src/tests/tools\pdf_object_comparer.cc"
-    			>
-    		</File>
-        
+		<File
+			RelativePath="../../src/tools\pdf_object_comparer.cc"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
 </VisualStudioProject>
-  
