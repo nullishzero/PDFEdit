@@ -27,7 +27,7 @@
 /*
  * Enable multithreading support.
  */
-#define MULTITHREADED 1
+#undef MULTITHREADED
 
 /*
  * Enable C++ exceptions.
@@ -89,13 +89,13 @@
 /*
  * One of these is defined if using FreeType (version 1 or 2).
  */
-#undef HAVE_FREETYPE_H
+//#undef HAVE_FREETYPE_H
 //#define HAVE_FREETYPE_FREETYPE_H 1
 
 /*
  * This is defined if using FreeType version 2.
  */
-#undef FREETYPE2
+//#undef FREETYPE2
 //#define FREETYPE2
 
 /*
@@ -111,7 +111,7 @@
 /*
  * Defined if the Splash library is avaiable.
  */
-#undef HAVE_SPLASH
+//#undef HAVE_SPLASH
 
 /*
  * Enable support for CMYK output.
