@@ -108,7 +108,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="freetype221_D.lib"
-				AdditionalLibraryDirectories="&quot;G:\private\work\projects\pdfedit\sf-head\pdfedit\projects\libs&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
