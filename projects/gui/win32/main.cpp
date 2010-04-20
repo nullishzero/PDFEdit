@@ -113,12 +113,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 				return 1;
 
 
-		globalParams = new GlobalParams("notexistent");
-		globalParams->setEnableT1lib("no");
-		globalParams->setEnableFreeType("yes");
-		globalParams->setErrQuiet(gTrue);
-		globalParams->setAntialias("yes");
-		globalParams->setupBaseFonts(win_utils::cwd<std::string>().c_str());
+		GlobalParams::initGlobalParams(NULL)->setEnableT1lib("no");
+		GlobalParams::initGlobalParams(NULL)->setEnableFreeType("yes");
+		GlobalParams::initGlobalParams(NULL)->setErrQuiet(gFalse);
+		GlobalParams::initGlobalParams(NULL)->setAntialias("yes");
+		GlobalParams::initGlobalParams(NULL)->setupBaseFonts(win_utils::cwd<std::string>().c_str());
 
 		// file
 		std::wstring file (utils::convert(utils::params::instance().value("file",std::string("g:\\test.pdf"))));
