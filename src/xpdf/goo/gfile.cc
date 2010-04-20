@@ -152,7 +152,7 @@ GString *appendToPath(GString *path, const char *fileName) {
 #elif defined(WIN32)
   //---------- Win32 ----------
   GString *tmp;
-  char buf[256];
+  char buf[256] = {0};
   wchar_t wbuf[256];
 
   tmp = new GString(path);

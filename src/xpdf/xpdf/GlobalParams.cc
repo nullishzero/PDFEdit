@@ -199,13 +199,13 @@ WinFontInfo *WinFontInfo::make(GString *nameA, GBool boldA, GBool italicA,
   regName->append(" (TrueType)");
   n = sizeof(buf);
 #ifndef UNDER_CE
-	wchar_t* str = ASCItoWide (regName->getCString());
-  if (RegQueryValueEx(regKey, str, NULL, NULL,
+	//wchar_t* str = ASCItoWide (regName->getCString());
+ /* if (RegQueryValueEx(regKey, str, NULL, NULL,
 		      (LPBYTE)buf, &n) == ERROR_SUCCESS) {
-    fileNameA = new GString(winFontDir);
+ */   fileNameA = new GString(winFontDir);
     fileNameA->append('\\')->append(buf);
-  }
-	delete [] str;
+  //}
+	//delete [] str;
   delete regName;
 #endif
   if (!fileNameA) {
@@ -285,14 +285,14 @@ WinFontList::WinFontList(char *winFontDirA) {
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Fonts\\";
   }
 #ifndef UNDER_CE
-	wchar_t* str = ASCItoWide (path);
-  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, str, 0,
-		   KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
-		   &regKey) == ERROR_SUCCESS) {
+	//wchar_t* str = ASCItoWide (path);
+ // if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, str, 0,
+	//	   KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
+	//	   &regKey) == ERROR_SUCCESS) {
     EnumFonts(dc, NULL, &WinFontList::enumFunc1, (LPARAM)this);
-    RegCloseKey(regKey);
-  }
-	delete [] str;
+ //   RegCloseKey(regKey);
+ // }
+	//delete [] str;
 #endif
   ReleaseDC(NULL, dc);
 }
