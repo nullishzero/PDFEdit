@@ -1,21 +1,22 @@
 #include <windows.h>
 
-#define NO_CMAP
-#include "xpdf/GlobalParams.h"
-#undef NO_CMAP
-
-#include "kernel/cpdf.h"	
-#include "kernel/cpage.h"	
-#include "kernel/pdfedit-core-dev.h"
-#include "splash/Splash.h"	
-#include "splash/SplashBitmap.h"	
-#include "xpdf/SplashOutputDev.h"	
-
 #include "utils.h"
 #include "logger.h"
 #include "params.h"
 #include "widgets.h"
 #include "memory.h"
+
+// xpdf, pdfedit
+#define NO_CMAP
+#include "xpdf/GlobalParams.h"
+#undef NO_CMAP
+#include "kernel/pdfedit-core-dev.h"
+#include "kernel/cpdf.h"	
+#include "kernel/cpage.h"	
+#include "splash/Splash.h"	
+#include "splash/SplashBitmap.h"	
+#include "xpdf/SplashOutputDev.h"	
+
 
 namespace {
 	static const int YES = 1;
@@ -49,7 +50,8 @@ namespace {
 
 			// alter display params
 			pdfobjects::DisplayParams displayparams;
-			displayparams.hDpi = displayparams.vDpi = 25;
+			displayparams.hDpi = utils::params::instance().value("hdpi",0);
+			displayparams.vDpi = utils::params::instance().value("vdpi",0);
 
 			// display it = create internal splash bitmap
 			page->displayPage (splash, displayparams);
@@ -118,6 +120,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 		globalParams->setAntialias("yes");
 		globalParams->setupBaseFonts(win_utils::cwd<std::string>().c_str());
 
+		// file
+		std::wstring file (utils::convert(utils::params::instance().value("file",std::string("g:\\test.pdf"))));
+
 		// create ui
 		ui::test_widget<_display> ui (
 				hInstance,
@@ -126,7 +131,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 					utils::params::instance().value("y",0),
 					utils::params::instance().value("width",900),
 					utils::params::instance().value("height",530)),
-				_display (pdfobjects::CPdf::getInstance ("g:\\test.pdf", pdfobjects::CPdf::ReadOnly))
+					_display (pdfobjects::CPdf::getInstance (utils::convert(file).c_str(), pdfobjects::CPdf::ReadOnly)),
+				file
 			);
 		ui.show();
 
@@ -155,10 +161,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 			::DispatchMessage(&msg); 
 		}
 
+		logger << "Ending..." << std::endl;
 
 	}catch (std::exception& e)
 	{
-		std::cout << "exception - " << e.what();
+		logger << "Exception: " << e.what() << std::endl;
 	}
 
 	return 0;

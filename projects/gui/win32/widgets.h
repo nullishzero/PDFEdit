@@ -72,6 +72,8 @@ protected:
 	virtual LRESULT wnd_proc(HWND, UINT, WPARAM, LPARAM) = 0; 
 };
 
+#define TEST_WINDOW	L"WINDOW"
+
 
 // status widget
 template<typename Ftor>
@@ -82,7 +84,10 @@ class test_widget : public winwidget
 
 	// ctor & dtor
 public:
-	test_widget (HINSTANCE hInstance, const position& p, Ftor ftor, HWND parent_hwnd = (HWND)0)
+	test_widget (HINSTANCE hInstance, 
+				const position& p, 
+				Ftor ftor,
+				const std::wstring title = std::wstring (L"Pdf viewer (pdfedit)"))
 		: _display (ftor), _page (1)
 	{
 		
@@ -100,7 +105,7 @@ public:
 		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
 		wc.lpszMenuName  = NULL;
-		wc.lpszClassName = L"111";
+		wc.lpszClassName = TEST_WINDOW;
 		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 
 		if(!RegisterClassEx(&wc))
@@ -110,7 +115,7 @@ public:
 			return;
 		}
 		{
-			HWND hwnd = ::CreateWindowEx ( WS_EX_CLIENTEDGE, L"111", L"123", 
+			HWND hwnd = ::CreateWindowEx ( WS_EX_CLIENTEDGE, TEST_WINDOW, title.c_str(), 
 				WS_OVERLAPPEDWINDOW, p.x, p.y, p.w, p.h, NULL, 0, hInstance, 0);
 			init (hwnd);
 		}
