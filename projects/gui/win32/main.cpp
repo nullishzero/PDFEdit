@@ -50,8 +50,8 @@ namespace {
 
 			// alter display params
 			pdfobjects::DisplayParams displayparams;
-			displayparams.hDpi = utils::params::instance().value("hdpi",0);
-			displayparams.vDpi = utils::params::instance().value("vdpi",0);
+			displayparams.hDpi = utils::params::instance().value("hdpi",25);
+			displayparams.vDpi = utils::params::instance().value("vdpi",25);
 
 			// display it = create internal splash bitmap
 			page->displayPage (splash, displayparams);
