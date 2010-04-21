@@ -31,7 +31,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Zipping"
-				CommandLine="cd $(SolutionDir)\output &amp;&amp; 7z a  gui.win32.zip ..\libs\*.pfb gui.win32.exe config&#x0D;&#x0A;"
+				CommandLine="cd $(SolutionDir)\output &amp;&amp; 7z a  gui.win32.zip ..\libs\*.pfb gui.win32.exe ..\packaging\gui.installer\config&#x0D;&#x0A;"
 				AdditionalDependencies="$(SolutionDir)\output\gui.win32.zip"
 				Outputs="$(SolutionDir)\output\gui.win32.zip"
 			/>
