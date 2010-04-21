@@ -26,7 +26,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
+				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
