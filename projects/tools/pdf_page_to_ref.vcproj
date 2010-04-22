@@ -136,6 +136,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\src\tools\common.cc"
+			>
+		</File>
+		<File
 			RelativePath="../../src/tools\pdf_page_to_ref.cc"
 			>
 		</File>

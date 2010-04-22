@@ -62,6 +62,7 @@ pack_tools = {
               cd $bin_dir && copy *tool*exe $tmp_dir\\bin
               cd $tools_src_dir && copy *cc $tmp_dir\\src && copy *h $tmp_dir\\src
               copy $start_dir\\..\\readme $tmp_dir
+              copy $start_dir\\..\\libs\\*.pfb $tmp_dir\\bin
               7z a -r $output -x!*CVS* $tmp_dir\\*
               echo Done.  
             """,

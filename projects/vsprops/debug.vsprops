@@ -20,8 +20,9 @@
 	<Tool
 		Name="VCLinkerTool"
 		LinkIncremental="1"
-		IgnoreDefaultLibraryNames="msvcrt.lib"
+		IgnoreDefaultLibraryNames="msvcrt.lib; LIBCMTD.lib"
 		GenerateDebugInformation="true"
+		OptimizeReferences="2"
 	/>
 	<Tool
 		Name="VCResourceCompilerTool"

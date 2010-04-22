@@ -52,6 +52,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
+				OptimizeReferences="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -109,6 +110,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				IgnoreDefaultLibraryNames="LIBCMT.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

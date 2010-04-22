@@ -52,8 +52,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zlib.lib"
-				IgnoreDefaultLibraryNames="LIBCMTD.lib"
+				IgnoreDefaultLibraryNames="MSVCRT.lib;LIBCMTD.lib"
 				SubSystem="2"
 				EntryPointSymbol=""
 				RandomizedBaseAddress="1"

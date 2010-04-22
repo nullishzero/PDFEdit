@@ -42,6 +42,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				PreprocessorDefinitions="HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -54,6 +55,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="freetype221_D.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -95,6 +98,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H"
+				RuntimeLibrary="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -129,10 +133,11 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -148,6 +153,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				PreprocessorDefinitions="HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -160,6 +166,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="freetype221_D.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

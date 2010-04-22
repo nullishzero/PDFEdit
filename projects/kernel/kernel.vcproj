@@ -55,6 +55,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="zlib.lib"
 				AdditionalLibraryDirectories=""
 			/>
 			<Tool
@@ -76,7 +77,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\kernel.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\kernel.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -95,6 +96,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				UsePrecompiledHeader="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -107,6 +109,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="zlib.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
