@@ -5,7 +5,7 @@ import os,sys,re,traceback,copy,subprocess,string
 
 env = {
   "bin_dir" : "..\\output",
-  "products"  : ["tools",],
+  "products"  : ["tools","gui"],
   "platforms" : ["win32",],
 }
 
@@ -68,6 +68,21 @@ pack_tools = {
             """,
 }
 
+pack_gui= {
+  "class" : "Execute",
+  "cmd"   : """
+              md $tmp_dir
+              md $tmp_dir\\bin
+              md $tmp_dir\\src
+              cd $bin_dir && copy *gui*exe $tmp_dir\\bin
+              copy $start_dir\\..\\libs\\*.pfb $tmp_dir\\bin
+              copy $start_dir\\gui.installer\\config $tmp_dir\\bin
+              cd $gui_src_dir && copy *cpp $tmp_dir\\src && copy *h $tmp_dir\\src
+              7z a -r $output -x!*CVS* $tmp_dir\\*
+              echo Done.  
+            """,
+}
+
 
 #
 # products
@@ -78,13 +93,20 @@ product = {
   "start_dir": "",
   "bin_dir" : "",
   "tmp_dir" : "$start_dir\\temp\\",
-  "tools_src_dir" : "$start_dir\\..\\..\\src\\tests\\tools",
+  "tools_src_dir" : "$start_dir\\..\\..\\src\\tools",
+  "gui_src_dir" : "$start_dir\\..\\gui\\win32",
   "do"      : [],
 }
 
 tools_product = inherit(product, {
   "do"  : [
             pack_tools,
+          ]
+})
+
+gui_product = inherit(product, {
+  "do"  : [
+            pack_gui,
           ]
 })
 
