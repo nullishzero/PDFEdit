@@ -83,7 +83,7 @@ main(int argc, char ** argv)
 	// 
 	// parameter parsing
 	//
-	po::options_description desc("Allowed options");
+	po::options_description desc("Example:\npagemetrics-tool.exe --file=test.pdf --alg=sr --p=90\n\nAllowed options");
 	desc.add_options()
 		("help", "produce help message")
 		("file", po::value<string>(), "file")

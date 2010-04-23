@@ -65,7 +65,7 @@ main(int argc, char ** argv)
 	desc.add_options()
 		("help", "produce help message")
 		("file", po::value<string>(), "input file")
-		("what", po::value<Pages>(), "string to add")
+		("what", po::value<Pages>(), "pages to convert")
 	;
 
 	po::variables_map vm;
