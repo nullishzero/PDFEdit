@@ -48,7 +48,7 @@ public:
         /** Iterator type. */
         typedef typename Mapping::iterator Iterator;
 
-        /* Constant iterator type. */
+        /** Constant iterator type. */
         typedef typename Mapping::const_iterator ConstIterator;
 
         /** Empty constructor.
@@ -172,6 +172,15 @@ public:
                 return mapping.begin();
         }
 
+        /** Returns const iterator to first element.
+         *
+         * @return ConstIterator instance.
+         */
+	ConstIterator begin()const
+	{
+		return mapping.begin();
+	}
+
         /** Returns iterator to end iterator.
          *
          * @return Iterator instance.
@@ -180,5 +189,14 @@ public:
         {
                 return mapping.end();
         }
+
+        /** Returns const iterator to end iterator.
+         *
+         * @return ConstIterator instance.
+         */
+	ConstIterator end()const
+	{
+		return mapping.end();
+	}
 };
 #endif
