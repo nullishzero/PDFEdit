@@ -2949,6 +2949,7 @@ void Gfx::opSetFont(Object args[], int numArgs) {
   GfxFont *font;
 
   if (!(font = res->lookupFont(args[0].getName()))) {
+	  state->setFont (const_cast<GfxFont*> (state->getFont()), args[1].getNum());
     return;
   }
   if (printCommands) {
