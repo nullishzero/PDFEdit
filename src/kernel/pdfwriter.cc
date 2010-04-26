@@ -35,6 +35,9 @@
  */
 #define XREFROWLENGHT 21
 
+// size of the additional space for a xref entry for unexpected entries
+#define XREFFILLING 15
+
 const char * PDFHEADER="%PDF-";
 
 const char * TRAILER_KEYWORD="trailer";
@@ -647,8 +650,11 @@ size_t OldStylePdfWriter::writeTrailer(const Object & trailer,const PrevSecInfo 
 
 	// subsection offTable is created, we can dump it to the file
 	// xrefRow represents one line of xref offTable which is exactly XREFROWLENGHT
-	// lenght
-	char xrefRow[XREFROWLENGHT];
+	// lenght. We have to add some additional space in case we have a document
+	// which has generation number higher than 5 digits which is not strictly
+	// specification compliant but rather be anal in this than produce an invalid
+	// xref entry
+	char xrefRow[XREFROWLENGHT+XREFFILLING];
 	memset(xrefRow, '\0', sizeof(xrefRow));
 	utilsPrintDbg(DBG_DBG, "Writing "<<subSectionTable.size()<<" subsections");
 	
