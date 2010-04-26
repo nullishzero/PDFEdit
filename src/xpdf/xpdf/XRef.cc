@@ -812,7 +812,7 @@ GBool XRef::constructXRef() {
 
     // look for object
     } else if (isdigit((unsigned char)(*p))) {
-      num = atoi(p);
+      num = (int)atoll(p);
       if (num > 0) {
 	do {
 	  ++p;
@@ -822,7 +822,7 @@ GBool XRef::constructXRef() {
 	    ++p;
 	  } while (*p && isspace(*p));
 	  if (isdigit((unsigned char)*p)) {
-	    gen = atoi(p);
+	    gen = (int)atoll(p);
 	    do {
 	      ++p;
 	    } while (*p && isdigit((unsigned char)*p));
