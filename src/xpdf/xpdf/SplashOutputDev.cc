@@ -561,7 +561,7 @@ struct T3GlyphStack {
 struct SplashTransparencyGroup {
   int tx, ty;			// translation coordinates
   SplashBitmap *tBitmap;	// bitmap for transparency group
-  GfxColorSpace *blendingColorSpace;
+  const GfxColorSpace *blendingColorSpace;
   GBool isolated;
 
   //----- saved state
@@ -1373,7 +1373,7 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       double originX, double originY,
 			       CharCode code, int nBytes,
-			       Unicode *u, int uLen) {
+			       const Unicode *u, int uLen) {
   SplashPath *path;
   int render;
 
@@ -2428,7 +2428,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
 }
 
 void SplashOutputDev::beginTransparencyGroup(GfxState *state, const double *bbox,
-					     GfxColorSpace *blendingColorSpace,
+					     const GfxColorSpace *blendingColorSpace,
 					     GBool isolated, GBool knockout,
 					     GBool forSoftMask) {
   SplashTransparencyGroup *transpGroup;

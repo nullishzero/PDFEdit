@@ -417,7 +417,7 @@ public:
 	 *
 	 * @return reference current state.
 	 */
-	virtual RefState knowsRef(IndiRef& ref)const
+	virtual RefState knowsRef(const IndiRef& ref)const
 	{
 		::Ref xpdfRef={ref.num, ref.gen};
 		return knowsRef(xpdfRef);
@@ -474,7 +474,7 @@ public:
 	 *
 	 * @return Total number of objects.
 	 */
-	virtual int getNumObjects(); 
+	virtual int getNumObjects()const; 
 
 	/** Fetches object.
 	 * @param num Object number.

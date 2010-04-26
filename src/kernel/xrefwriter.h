@@ -598,7 +598,7 @@ public:
 	 * 
 	 * @return number of objects.
 	 */
-	virtual int getNumObjects() 
+	virtual int getNumObjects()const 
 	{ 
 		if(!revision)
 			return CXref::getNumObjects();

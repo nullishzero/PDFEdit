@@ -72,35 +72,35 @@ public:
   virtual ~PSOutputDev();
 
   // Check if file was successfully created.
-  virtual GBool isOk() { return ok; }
+  virtual GBool isOk()const { return ok; }
 
   //---- get info about output device
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  virtual GBool upsideDown() { return gFalse; }
+  virtual GBool upsideDown()const { return gFalse; }
 
   // Does this device use drawChar() or drawString()?
-  virtual GBool useDrawChar() { return gFalse; }
+  virtual GBool useDrawChar()const { return gFalse; }
 
   // Does this device use tilingPatternFill()?  If this returns false,
   // tiling pattern fills will be reduced to a series of other drawing
   // operations.
-  virtual GBool useTilingPatternFill() { return gTrue; }
+  virtual GBool useTilingPatternFill()const { return gTrue; }
 
   // Does this device use functionShadedFill(), axialShadedFill(), and
   // radialShadedFill()?  If this returns false, these shaded fills
   // will be reduced to a series of other drawing operations.
-  virtual GBool useShadedFills()
+  virtual GBool useShadedFills()const
     { return level >= psLevel2; }
 
   // Does this device use drawForm()?  If this returns false,
   // form-type XObjects will be interpreted (i.e., unrolled).
-  virtual GBool useDrawForm() { return preload; }
+  virtual GBool useDrawForm()const { return preload; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  virtual GBool interpretType3Chars() { return gFalse; }
+  virtual GBool interpretType3Chars()const { return gFalse; }
 
   //----- header/trailer (used only if manualCtrl is true)
 

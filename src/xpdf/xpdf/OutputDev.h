@@ -208,7 +208,7 @@ public:
 		  UNUSED_PARAM double originY,
 		  UNUSED_PARAM CharCode code, 
 		  UNUSED_PARAM int nBytes, 
-		  UNUSED_PARAM Unicode *u, 
+		  UNUSED_PARAM const Unicode *u, 
 		  UNUSED_PARAM int uLen) {}
   virtual void drawString(UNUSED_PARAM GfxState *state, 
 		  UNUSED_PARAM const GString *s) {}

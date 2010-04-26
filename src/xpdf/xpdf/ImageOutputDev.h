@@ -38,7 +38,7 @@ public:
   virtual ~ImageOutputDev();
 
   // Check if file was successfully created.
-  virtual GBool isOk() { return ok; }
+  virtual GBool isOk()const { return ok; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.

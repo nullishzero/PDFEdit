@@ -663,14 +663,14 @@ using namespace debug;
 	return obj;
 }
 
-int CXref::getNumObjects() 
+int CXref::getNumObjects()const
 { 
 	using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "");
 
 	size_t newSize=0;
-	RefStorage::Iterator begin, i;
+	RefStorage::ConstIterator begin, i;
 
 	for(i=newStorage.begin(); i!=newStorage.end(); ++i)
 		if(i->second==INITIALIZED_REF)

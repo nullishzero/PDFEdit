@@ -113,7 +113,7 @@ public:
   virtual void drawChar(GfxState *state, double x, double y,
 			double dx, double dy,
 			double originX, double originY,
-			CharCode code, int nBytes, Unicode *u, int uLen);
+			CharCode code, int nBytes, const Unicode *u, int uLen);
   virtual GBool beginType3Char(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       CharCode code, Unicode *u, int uLen);
@@ -146,7 +146,7 @@ public:
 
   //----- transparency groups and soft masks
   virtual void beginTransparencyGroup(GfxState *state, const double *bbox,
-				      GfxColorSpace *blendingColorSpace,
+				      const GfxColorSpace *blendingColorSpace,
 				      GBool isolated, GBool knockout,
 				      GBool forSoftMask);
   virtual void endTransparencyGroup(GfxState *state);
