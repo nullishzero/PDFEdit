@@ -269,8 +269,8 @@ using namespace debug;
 		}
 
 		// reference is never reused if generation number is MAXOBJGEN
-		// according specification
-		if(entries[i].gen>=MAXOBJGEN)
+		// according to specification
+		if(entries[i].gen>=MAXOBJGEN || entries[i].gen<0)
 		{
 			kernelPrintDbg(DBG_DBG, "Entry ["<<i<<", "<<entries[i].gen<<"] can't be reused. MAXOBJGEN reached.");
 			continue;
