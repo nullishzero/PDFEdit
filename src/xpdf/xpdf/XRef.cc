@@ -482,6 +482,7 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
       entries = (XRefEntry *)greallocn(entries, newSize, sizeof(XRefEntry));
       for (i = size; i < newSize; ++i) {
 	entries[i].offset = 0xffffffff;
+	entries[i].gen = 0;
 	entries[i].type = xrefEntryFree;
       }
       size = newSize;
@@ -602,6 +603,7 @@ GBool XRef::readXRefStream(Stream *xrefStr, Guint *pos) {
     entries = (XRefEntry *)greallocn(entries, newSize, sizeof(XRefEntry));
     for (i = size; i < newSize; ++i) {
       entries[i].offset = 0xffffffff;
+      entries[i].gen = 0;
       entries[i].type = xrefEntryFree;
     }
     size = newSize;
@@ -695,6 +697,7 @@ GBool XRef::readXRefStreamSection(Stream *xrefStr, int *w, int first, int n) {
     entries = (XRefEntry *)greallocn(entries, newSize, sizeof(XRefEntry));
     for (i = size; i < newSize; ++i) {
       entries[i].offset = 0xffffffff;
+      entries[i].gen = 0;
       entries[i].type = xrefEntryFree;
     }
     size = newSize;
@@ -838,6 +841,7 @@ GBool XRef::constructXRef() {
 		      greallocn(entries, newSize, sizeof(XRefEntry));
 		  for (i = size; i < newSize; ++i) {
 		    entries[i].offset = 0xffffffff;
+		    entries[i].gen = 0;
 		    entries[i].type = xrefEntryFree;
 		  }
 		  size = newSize;
