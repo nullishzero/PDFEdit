@@ -52,7 +52,7 @@ void print_pages(const char *fname, RefContainer &refs)
 	std::cerr << "Building page list: "; 
 	typedef std::vector<boost::shared_ptr<CPage> > PageList;
 	PageList pageList;
-	for(int i=1; i<= pdf->getPageCount(); ++i)
+	for(size_t i=1; i<= pdf->getPageCount(); ++i)
 		pageList.push_back(pdf->getPage(i));
 	std::cerr << "done" << std::endl;
 
