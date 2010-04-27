@@ -448,7 +448,8 @@ GBool XRef::readXRefTable(Parser *parser, Guint *pos) {
   Object obj, obj2;
   Guint pos2;
   Object * fetch;
-  int first, n, newSize, i;
+  int first, n, newSize;
+  Guint i;
 
   while (1) {
     if (!parser->getObj(&obj))
@@ -812,7 +813,7 @@ GBool XRef::constructXRef() {
 
     // look for object
     } else if (isdigit((unsigned char)(*p))) {
-      num = (int)atoll(p);
+      num = (int)atol(p);
       if (num > 0) {
 	do {
 	  ++p;
@@ -822,7 +823,7 @@ GBool XRef::constructXRef() {
 	    ++p;
 	  } while (*p && isspace(*p));
 	  if (isdigit((unsigned char)*p)) {
-	    gen = (int)atoll(p);
+	    gen = (int)atol(p);
 	    do {
 	      ++p;
 	    } while (*p && isdigit((unsigned char)*p));

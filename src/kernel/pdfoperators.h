@@ -181,8 +181,6 @@ public:
 
 }; // class TextSimpleOperator
 
-
-
 //==========================================================
 // Concrete implementations of CompositePdfOperator
 //==========================================================
@@ -266,7 +264,7 @@ public:
 	 * @param opEnd_ End operator name text representation.
 	 * @param im_ Stream representing inline image.
 	 */
-	InlineImageCompositePdfOperator (const char* opBegin, const char* opEnd, boost::shared_ptr<CInlineImage> im);
+	InlineImageCompositePdfOperator (boost::shared_ptr<CInlineImage> im, const char* opBegin = "BI", const char* opEnd = "EI");
 
 	
 	//
@@ -313,6 +311,17 @@ boost::shared_ptr<PdfOperator> createOperator(const std::string& name, PdfOperat
  * @throw NotImplementedException if given operator is inline image (BI).
  */
 boost::shared_ptr<PdfOperator> createOperator(const char *name, PdfOperator::Operands& operands);
+
+/** 
+ * Create translation operator.
+ */
+boost::shared_ptr<PdfOperator> createOperatorTranslation (double x, double y);
+
+/** 
+ * Create scaling operator.
+ */
+boost::shared_ptr<PdfOperator> createOperatorScale (double width, double height);
+
 
 /** Is an operator a composite. */
 inline bool 

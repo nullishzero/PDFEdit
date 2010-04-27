@@ -98,6 +98,16 @@ CStream::CStream (const ::Object& o) : parser (NULL), tmpObj (NULL)
 //
 //
 //
+CStream::CStream (const CDict& dict) : parser (NULL), tmpObj (NULL)
+{
+	kernelPrintDbg (debug::DBG_DBG,"");
+
+	dictionary.init (dict);
+}
+
+//
+//
+//
 CStream::CStream (bool makeReqEntries) : parser (NULL)
 {
 	kernelPrintDbg (debug::DBG_DBG,"");

@@ -119,6 +119,13 @@ public:
 	 */
 	CStream (const Object& o);
 
+	/**
+	 * Constructor. Stream will not be associated with a pdf.
+	 * @param dict	reference to a dictionary which will be associated with this stream
+	 * @param buffer reference to buffer associtated with this stream
+	 */
+	CStream (const CDict& dict);
+
 
 public:	
 	

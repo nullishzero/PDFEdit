@@ -27,12 +27,14 @@
 #include "kernel/static.h"
 
 #include "kernel/cpagecontents.h"
+#include "kernel/factories.h"
 #include "utils/observer.h"
 #include "kernel/cobject.h"
 #include "kernel/cpage.h"
 #include "kernel/cpdf.h"
 #include "kernel/cpagedisplay.h"
 #include "kernel/contentschangetag.h"
+#include "kernel/cinlineimage.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -502,6 +504,55 @@ CPageContents::addText (const std::string& what, const libs::Point& where)
     
 	addToBack (contents);
 }
+
+void 
+CPageContents::addInlineImage (const CStream::Buffer& what,
+							   const libs::Point& image_size,
+							   const libs::Point& where)
+{
+	init();
+
+	// create the array of PDF operators and add them to back of content streams
+	// q
+	// BI % Begin inline image object
+	// /W 17 % Width in samples
+	// /H 17 % Height in samples
+	// /CS /RGB % Color space
+	// /BPC 8 % Bits per component
+	// /F [/A85 /LZW] % Filters
+	// ID % Begin image data
+	// J1/gKA>.]AN&J?]-<HW]aRVcg*bb.\eKAdVV%/PcZ
+	// …Omitted data…
+	// R.s(4KE3&d&7hb*7[%Ct2HCqC~>
+	// EI
+	// Q
+	//
+    shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
+
+	// translate
+	q->push_back(createOperatorTranslation(where.x, where.y), getLastOperator(q));
+	// scale
+	q->push_back(createOperatorScale(image_size.x, image_size.y), getLastOperator(q));
+
+
+	CDict image_dict;
+	image_dict.addProperty ("W", CInt (image_size.x));
+	image_dict.addProperty ("H", CInt (image_size.y));
+	image_dict.addProperty ("CS", CName ("RGB"));
+	image_dict.addProperty ("BPC", CInt (8));
+	CInlineImage img (image_dict, what);
+	shared_ptr<CInlineImage> inline_image (new CInlineImage (image_dict, what));
+	shared_ptr<InlineImageCompositePdfOperator> BI(new InlineImageCompositePdfOperator (inline_image));
+    
+	q->push_back(BI,getLastOperator(q));
+    q->push_back(createOperator("Q", PdfOperator::Operands()), getLastOperator(q));
+    
+	std::vector<shared_ptr<PdfOperator> > contents;
+    contents.push_back(q);
+    
+	addToBack (contents);
+}
+
 
 
 

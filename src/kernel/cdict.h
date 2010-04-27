@@ -162,7 +162,14 @@ public:
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 
-	
+
+	/**
+	 * Simple shallow copy constructor (does not copy pointers).
+	 *
+	 * @param dict dictionary which will be copied
+	 */
+	void init (const CDict& dict);
+
 	/** 
 	 * Returns property count.
 	 * 

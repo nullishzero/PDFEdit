@@ -142,6 +142,15 @@ CDict::setPdf (boost::weak_ptr<CPdf> pdf)
 //
 //
 //
+void
+CDict::init (const CDict& dict)
+{
+	std::copy (dict.value.begin(), dict.value.end(), std::back_inserter (value));
+}
+
+//
+//
+//
 void 
 CDict::setIndiRef (const IndiRef& rf)
 {

@@ -161,7 +161,7 @@ GString *appendToPath(GString *path, const char *fileName) {
   wchar_t* str = ASCItoWide (tmp->getCString());
   DWORD ret = GetFullPathName(str, 256, wbuf, NULL);
   delete [] str;
-  for (int i=0; i<ret; ++i)
+  for (unsigned int i=0; i<ret; ++i)
 	  buf[i] = wbuf[i];
   delete tmp;
   path->clear();
@@ -375,7 +375,7 @@ GString *makePathAbsolute(GString *path) {
     delete [] str;
     return path;
   }
-  for (int i = 0; i < ret; ++i)
+  for (unsigned int i = 0; i < ret; ++i)
 	  buf[i] = wbuf[i];
   delete [] str;
   path->clear();

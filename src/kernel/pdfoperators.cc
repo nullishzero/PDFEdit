@@ -334,7 +334,7 @@ void TextSimpleOperator::getFontText(std::string& str)const
 	utilsPrintDbg(debug::DBG_INFO, "Textoperator uses font="<<fontData->getFontName());
  	CharCode code;
  	Unicode u;
- 	int uSize, uLen;
+ 	int uLen;
  	double dx, dy, originX, originY;
  	char * p=raw.getCString();
  	while(len>0)
@@ -372,8 +372,6 @@ void TextSimpleOperator::setFontData(GfxFont* gfxFont)
 		delete fontData;
 	fontData = new FontData(gfxFont);
 }
-
-
 
 //==========================================================
 // Concrete implementations of CompositePdfOperator
@@ -429,7 +427,7 @@ UnknownCompositePdfOperator::clone ()
 //
 //
 InlineImageCompositePdfOperator::InlineImageCompositePdfOperator 
-	(const char* opBegin, const char* opEnd, boost::shared_ptr<CInlineImage> im) 
+	(boost::shared_ptr<CInlineImage> im, const char* opBegin, const char* opEnd) 
 		: CompositePdfOperator (), _opBegin (opBegin), _opEnd (opEnd), _inlineimage (im)
 {
 	utilsPrintDbg (DBG_DBG, _opBegin << " " << _opEnd);
@@ -441,6 +439,18 @@ InlineImageCompositePdfOperator::InlineImageCompositePdfOperator
 void
 InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 {
+	// BI % Begin inline image object
+	// /W 17 % Width in samples
+	// /H 17 % Height in samples
+	// /CS /RGB % Color space
+	// /BPC 8 % Bits per component
+	// /F [/A85 /LZW] % Filters
+	// ID % Begin image data
+	// J1/gKA>.]AN&J?]-<HW]aRVcg*bb.\eKAdVV%/PcZ
+	// …Omitted data…
+	// R.s(4KE3&d&7hb*7[%Ct2HCqC~>
+	// EI
+
 	// Header
 	str += _opBegin; str += "\n";
 	// 
@@ -478,7 +488,7 @@ InlineImageCompositePdfOperator::clone ()
 	// Clone operands
 	shared_ptr<CInlineImage> imgclone = IProperty::getSmartCObjectPtr<CInlineImage> (_inlineimage->clone());
 	// Create clone
-	return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (_opBegin, _opEnd, imgclone));
+	return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (imgclone, _opBegin, _opEnd));
 }
 
 
@@ -528,6 +538,31 @@ boost::shared_ptr<PdfOperator> createOperator(const char *name, PdfOperator::Ope
 {
 	std::string n = name;
 	return createOperator(n, operands);
+}
+
+boost::shared_ptr<PdfOperator> createOperatorTranslation (double x, double y) 
+{
+	PdfOperator::Operands ops;
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (1)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (1)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (x)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (y)));
+	return createOperator("cm", ops);
+}
+
+
+boost::shared_ptr<PdfOperator> createOperatorScale (double width, double height) 
+{
+	PdfOperator::Operands ops;
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (width)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (height)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
+	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
+	return createOperator("cm", ops);
 }
 
 //

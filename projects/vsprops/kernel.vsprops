@@ -11,7 +11,7 @@
 		AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\src&quot;;&quot;$(SolutionDir)\..\src\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\xpdf&quot;;&quot;$(SolutionDir)\..\src\xpdf\splash&quot;;&quot;$(SolutionDir)\..\src\xpdf\goo&quot;;&quot;$(SolutionDir)\..\src\xpdf\fofi&quot;"
 		UsePrecompiledHeader="1"
 		PrecompiledHeaderThrough="static.h"
-		DisableSpecificWarnings="4100;4512;4706;4127"
+		DisableSpecificWarnings="4100;4512;4706;4127;4505;4250"
 	/>
 	<Tool
 		Name="VCLinkerTool"

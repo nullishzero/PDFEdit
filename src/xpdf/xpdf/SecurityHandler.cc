@@ -75,7 +75,6 @@ GBool SecurityHandler::checkEncryption(GString *ownerPassword,
 				       GString *userPassword) {
   void *authData;
   GBool ok;
-  int i;
 
   if (ownerPassword || userPassword) {
     authData = makeAuthData(ownerPassword, userPassword);
@@ -88,7 +87,7 @@ GBool SecurityHandler::checkEncryption(GString *ownerPassword,
   }
   /* Don't mix gui with low level stuff given values should
    * be enough.
-  for (i = 0; !ok && i < 3; ++i) {
+  for (int i = 0; !ok && i < 3; ++i) {
     if (!(authData = getAuthData())) {
       break;
     }

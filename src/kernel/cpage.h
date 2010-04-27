@@ -601,6 +601,13 @@ public:
 		_contents->addText (what, where);
 	}
 
+	void addInlineImage (const CStream::Buffer& what,
+  						 const libs::Point& dim,
+						 const libs::Point& where)
+	{
+			_check_validity();
+		_contents->addInlineImage (what, dim, where);
+	}
 	 //
 	 // Helper functions
 	 //

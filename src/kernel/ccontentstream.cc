@@ -247,7 +247,7 @@ namespace {
 			}
 			
 			shared_ptr<CInlineImage> inimg (getInlineImage (streamreader));
-			return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
+			return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (inimg, chcktp->name, chcktp->endTag));
 		}
 
 		// factory function for all other operators

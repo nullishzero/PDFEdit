@@ -815,7 +815,7 @@ using namespace utils;
 
 bool isEncrypted(const boost::shared_ptr<CPdf> &pdf)
 {
- 	return pdf->getCXref()->isEncrypted();
+ 	return (gTrue == pdf->getCXref()->isEncrypted());
 }
 
 } // end of utils namespace

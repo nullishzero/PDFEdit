@@ -65,6 +65,15 @@ public:
 	 */
 	CInlineImage (::Object& objDict, const CStream::Buffer& buffer);
 
+
+	/*
+	 * Constructor. It will not be associated with a pdf.
+	 *
+	 * @param dict dictionary which will be associated with this image
+	 * @param buffer Raw stream data which will be copied.
+	 */
+	CInlineImage (const CDict& dict, const CStream::Buffer& buf);
+
 	/**
 	 * Constructor. It will be associated with specified pdf.
 	 * 

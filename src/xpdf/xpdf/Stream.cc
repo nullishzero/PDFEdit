@@ -622,7 +622,7 @@ FileStream::~FileStream() {
 // Returns NULL if not able to read all data for buffer
 Stream * FileStream::clone()
 {
-   size_t l=length, s=start;
+   size_t l=length;
    // stores current position
    long currPos=ftell(f);
 

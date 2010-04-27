@@ -100,10 +100,21 @@ CInlineImage::CInlineImage (::Object& oDict, const CStream::Buffer& buf) : CStre
 //
 //
 //
+CInlineImage::CInlineImage (const CDict& dict, const CStream::Buffer& buf) : CStream (dict)
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+
+	// Set buffer, do not use setRawBuffer because CStream would be ... copied
+	std::copy (buf.begin(), buf.end(), std::back_inserter (this->buffer));
+}
+
+//
+//
+//
 CInlineImage::CInlineImage (boost::weak_ptr<CPdf> p, ::Object& oDict, const CStream::Buffer& buf, const IndiRef& rf) : CStream ()
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-	assert (objDict == oDict.getType());
+		assert (objDict == oDict.getType());
 
 	// Init dictionary, we do not have access to dictionary container
 	utils::dictFromXpdfObj (this->dictionary, oDict);
