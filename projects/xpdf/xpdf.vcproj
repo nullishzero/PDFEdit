@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H"
 				StringPooling="false"
-				SmallerTypeCheck="true"
+				SmallerTypeCheck="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
