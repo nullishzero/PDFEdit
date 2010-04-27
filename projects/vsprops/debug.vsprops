@@ -16,11 +16,13 @@
 		BrowseInformation="1"
 		BrowseInformationFile="$(OutDir)/bsc/"
 		DebugInformationFormat="3"
+		DisableSpecificWarnings="4290"
 	/>
 	<Tool
 		Name="VCLinkerTool"
+		AdditionalDependencies="msvcrtd.lib"
 		LinkIncremental="1"
-		IgnoreDefaultLibraryNames="msvcrt.lib; LIBCMTD.lib"
+		IgnoreDefaultLibraryNames="LIBCMTD.lib;msvcrt.lib"
 		GenerateDebugInformation="true"
 		OptimizeReferences="2"
 	/>

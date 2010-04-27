@@ -23,6 +23,7 @@
 			Name="Debug|Win32"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\xpdf.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops;$(SolutionDir)\vsprops\lib.vsprops"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -43,6 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H"
+				StringPooling="false"
+				SmallerTypeCheck="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
