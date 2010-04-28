@@ -813,7 +813,7 @@ GBool XRef::constructXRef() {
 
     // look for object
     } else if (isdigit((unsigned char)(*p))) {
-      num = (int)atol(p);
+      num = (int)strtoul(p, NULL, 10);
       if (num > 0) {
 	do {
 	  ++p;
@@ -823,7 +823,7 @@ GBool XRef::constructXRef() {
 	    ++p;
 	  } while (*p && isspace(*p));
 	  if (isdigit((unsigned char)*p)) {
-	    gen = (int)atol(p);
+	    gen = (int)strtoul(p, NULL, 10);
 	    do {
 	      ++p;
 	    } while (*p && isdigit((unsigned char)*p));
