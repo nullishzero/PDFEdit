@@ -545,7 +545,8 @@ CPageContents::addInlineImage (const CStream::Buffer& what,
 	shared_ptr<InlineImageCompositePdfOperator> BI(new InlineImageCompositePdfOperator (inline_image));
     
 	q->push_back(BI,getLastOperator(q));
-    q->push_back(createOperator("Q", PdfOperator::Operands()), getLastOperator(q));
+	PdfOperator::Operands o;
+    q->push_back(createOperator("Q", o), getLastOperator(q));
     
 	std::vector<shared_ptr<PdfOperator> > contents;
     contents.push_back(q);
