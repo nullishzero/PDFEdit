@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="gui.win32"
 	ProjectGUID="{1508D425-024A-4DB1-9B35-5F6268DC1004}"
 	RootNamespace="exe"
@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\config_debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\debug.vsprops;$(SolutionDir)\vsprops\win32.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -52,7 +52,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				IgnoreDefaultLibraryNames="MSVCRT.lib;LIBCMTD.lib"
+				IgnoreDefaultLibraryNames=""
 				SubSystem="2"
 				EntryPointSymbol=""
 				RandomizedBaseAddress="1"
@@ -83,7 +83,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\config_release.vsprops;$(SolutionDir)\vsprops\win32.vsprops"
+			InheritedPropertySheets="$(SolutionDir)\vsprops\base.vsprops;$(SolutionDir)\vsprops\release.vsprops;$(SolutionDir)\vsprops\win32.vsprops"
 			WholeProgramOptimization="0"
 			>
 			<Tool

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="xpdf"
 	ProjectGUID="{005F915C-B7B1-4448-AC1D-A99336E67078}"
 	RootNamespace="xpdf"
@@ -58,8 +58,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="freetype221_D.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -114,7 +112,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="freetype221_D.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 			/>
 			<Tool
@@ -169,8 +166,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="freetype221_D.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
