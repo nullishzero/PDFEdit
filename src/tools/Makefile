@@ -13,7 +13,7 @@ TOOLS_LIBS = $(MANDATORY_LIBS) $(BOOSTPROGRAMOPTIONS_LIBS)
 # sources for benchmark modules
 TARGET_SRCS = displaycs.cc pagemetrics.cc parse_object.cc pdf_object_printer.cc \
 	      pdf_page_from_ref.cc pdf_page_to_ref.cc flattener.cc delinearizator.cc \
-	      pdf_object_comparer.cc pdf_to_text.cc add_text.cc pdf_to_bmp.cc
+	      pdf_object_comparer.cc pdf_to_text.cc add_text.cc pdf_to_bmp.cc add_image.cc
 SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
 TARGET = displaycs pagemetrics parse_object pdf_object_printer \
