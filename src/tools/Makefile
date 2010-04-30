@@ -13,12 +13,12 @@ TOOLS_LIBS = $(MANDATORY_LIBS) $(BOOSTPROGRAMOPTIONS_LIBS)
 # sources for benchmark modules
 TARGET_SRCS = displaycs.cc pagemetrics.cc parse_object.cc pdf_object_printer.cc \
 	      pdf_page_from_ref.cc pdf_page_to_ref.cc flattener.cc delinearizator.cc \
-	      pdf_object_comparer.cc pdf_to_text.cc
+	      pdf_object_comparer.cc pdf_to_text.cc add_text.cc
 SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
 TARGET = displaycs pagemetrics parse_object pdf_object_printer \
 	 pdf_page_from_ref pdf_page_to_ref flattener pdf_object_comparer \
-	 pdf_to_text
+	 pdf_to_text add_text
 .PHONY: all clean
 all: $(TARGET)
 
@@ -51,6 +51,10 @@ pdf_to_text: pdf_to_text.o
 
 parse_object: parse_object.o
 	$(LINK) $(LDFLAGS) -o parse_object parse_object.o $(TOOLS_LIBS)
+
+add_text: add_text.o
+	$(LINK) $(LDFLAGS) -o add_text add_text.o $(TOOLS_LIBS)
+
 clean: 
 	-rm $(UTILS_OBJS) || true
 	rm *.o $(TARGET)

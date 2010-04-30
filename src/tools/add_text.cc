@@ -57,7 +57,7 @@ namespace {
 		void operator () (shared_ptr<CPage> page, const string& what, const Position& where)
 		{
 				if (where.size() != 2)
-					throw std::exception ("Invalid position specified!");
+					throw std::exception ();
 			libs::Point point (where[0], where[1]);
 			page->addText (what, point);
 		}
