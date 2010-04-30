@@ -19,7 +19,8 @@ SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
 TARGET = displaycs pagemetrics parse_object pdf_object_printer \
 	 pdf_page_from_ref pdf_page_to_ref flattener pdf_object_comparer \
-	 pdf_to_text add_text add_image pdf_to_bmp pdf_images replace_text
+	 pdf_to_text add_text add_image pdf_to_bmp pdf_images replace_text \
+	 delinearizator
 
 .PHONY: all clean
 all: $(TARGET)
