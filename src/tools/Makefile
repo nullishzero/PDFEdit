@@ -18,7 +18,8 @@ SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
 TARGET = displaycs pagemetrics parse_object pdf_object_printer \
 	 pdf_page_from_ref pdf_page_to_ref flattener pdf_object_comparer \
-	 pdf_to_text add_text
+	 pdf_to_text add_text add_image
+
 .PHONY: all clean
 all: $(TARGET)
 
@@ -54,6 +55,9 @@ parse_object: parse_object.o
 
 add_text: add_text.o
 	$(LINK) $(LDFLAGS) -o add_text add_text.o $(TOOLS_LIBS)
+
+add_image: add_image.o
+	$(LINK) $(LDFLAGS) -o add_image add_image.o $(TOOLS_LIBS) -lpng
 
 clean: 
 	-rm $(UTILS_OBJS) || true

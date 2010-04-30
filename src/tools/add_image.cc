@@ -139,7 +139,7 @@ namespace {
 						  buffer what)
 		{
 				if (where.size() != 2)
-					throw std::exception ("Invalid position specified!");
+					throw std::exception ();
 			libs::Point point (where[0], where[1]);
 
 			page->addInlineImage (what, image_dim, point);
