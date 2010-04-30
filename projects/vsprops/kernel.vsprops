@@ -14,10 +14,13 @@
 		DisableSpecificWarnings="4100;4512;4706;4127;4505;4250"
 	/>
 	<Tool
+		Name="VCLibrarianTool"
+		AdditionalDependencies="zdll.lib"
+	/>
+	<Tool
 		Name="VCLinkerTool"
 		AdditionalDependencies="zdll.lib cppunit_dll.lib"
 		OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
-		AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
 		GenerateDebugInformation="true"
 		RandomizedBaseAddress="1"
 		DataExecutionPrevention="0"

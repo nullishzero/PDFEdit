@@ -8,7 +8,7 @@
 		Name="VCLinkerTool"
 		AdditionalDependencies="zdll.lib xpdf-$(_Z_PLTFRM_)$(_Z_ARCH_).lib pdfedit-kernel-$(_Z_PLTFRM_)$(_Z_ARCH_).lib"
 		OutputFile="$(OutDir)\$(ProjectName)-tool.exe"
-		AdditionalLibraryDirectories="$(SolutionDir)\output\libs"
+		AdditionalLibraryDirectories="$(SolutionDir)\output\libs;$(SolutionDir)\libs"
 		GenerateDebugInformation="true"
 		RandomizedBaseAddress="1"
 		DataExecutionPrevention="0"

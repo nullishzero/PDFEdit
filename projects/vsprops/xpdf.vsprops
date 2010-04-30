@@ -11,6 +11,10 @@
 		DisableSpecificWarnings="4100;4706;4267;4244;4310;4127"
 	/>
 	<Tool
+		Name="VCLibrarianTool"
+		AdditionalDependencies="freetype221_D.lib"
+	/>
+	<Tool
 		Name="VCPreBuildEventTool"
 		Description="XPDF needs generated header file for each operating system. Generate it. Remove after first build (xpdf Property Page-&gt;Configuration Properties-&gt;Build Events-&gt;Pre-Build Event)"
 		CommandLine="copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"

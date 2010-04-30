@@ -20,9 +20,9 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="msvcrtd.lib"
+		AdditionalDependencies="msvcrtd.lib LIBCMTd.lib"
 		LinkIncremental="1"
-		IgnoreDefaultLibraryNames="LIBCMTD.lib;msvcrt.lib"
+		IgnoreDefaultLibraryNames="LIBCMT.lib;msvcrt.lib"
 		GenerateDebugInformation="true"
 		OptimizeReferences="2"
 	/>
