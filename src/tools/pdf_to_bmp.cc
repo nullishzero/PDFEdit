@@ -30,20 +30,29 @@
 
 #include <boost/program_options.hpp>
 #include <vector>
+
+#ifdef WIN32
 #include <windows.h>
+#endif
 
 using namespace pdfobjects;
 using namespace std;
 using namespace boost;
 namespace po = program_options;
 
+#ifndef WIN32
+#warning Sorry, only for WIN32!
+
+int main()
+{
+	std::cerr << "This tool is not implemented for non Windows environment :(" << std::endl;
+	return 1;
+}
+
+#else
+
 namespace {
 
-#ifndef WIN32
-===
-Sorry, only for WIN32!
-===
-#endif
 
 	// to bmp
 	static void save_bmp(const std::string& file, void* pbuf, BITMAPINFO& bmpInfo)
@@ -256,3 +265,4 @@ main(int argc, char ** argv)
 
 	return 0;
 }
+#endif
