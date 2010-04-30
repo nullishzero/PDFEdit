@@ -14,12 +14,12 @@ TOOLS_LIBS = $(MANDATORY_LIBS) $(BOOSTPROGRAMOPTIONS_LIBS)
 TARGET_SRCS = displaycs.cc pagemetrics.cc parse_object.cc pdf_object_printer.cc \
 	      pdf_page_from_ref.cc pdf_page_to_ref.cc flattener.cc delinearizator.cc \
 	      pdf_object_comparer.cc pdf_to_text.cc add_text.cc pdf_to_bmp.cc add_image.cc \
-	      pdf_images.cc
+	      pdf_images.cc replace_text.cc
 SOURCES = $(UTILS_SRCS) $(TARGET_SRCS)
 
 TARGET = displaycs pagemetrics parse_object pdf_object_printer \
 	 pdf_page_from_ref pdf_page_to_ref flattener pdf_object_comparer \
-	 pdf_to_text add_text add_image pdf_to_bmp pdf_images
+	 pdf_to_text add_text add_image pdf_to_bmp pdf_images replace_text
 
 .PHONY: all clean
 all: $(TARGET)
@@ -65,6 +65,9 @@ pdf_to_bmp: pdf_to_bmp.o
 
 pdf_images: pdf_images.o
 	$(LINK) $(LDFLAGS) -o pdf_images pdf_images.o $(TOOLS_LIBS)
+
+replace_text: replace_text.o
+	$(LINK) $(LDFLAGS) -o replace_text replace_text.o $(TOOLS_LIBS)
 
 clean: 
 	-rm $(UTILS_OBJS) || true
