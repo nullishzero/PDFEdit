@@ -54,12 +54,20 @@ namespace {
 	};
 
 	struct _add {
-		void operator () (shared_ptr<CPage> page, const string& what, const Position& where)
+		void operator () (shared_ptr<CPage> page, 
+						  const string& what, 
+						  const Position& where, 
+						  std::string font_id)
 		{
 				if (where.size() != 2)
 					throw std::exception ();
 			libs::Point point (where[0], where[1]);
-			page->addText (what, point);
+			static CPageFonts::SystemFontList fonts (CPageFonts::getSystemFonts ());
+			if (fonts.end() != std::find (fonts.begin(), fonts.end(), font_id))
+			{
+				font_id = page->addSystemType1Font (font_id);
+			}
+			page->addText (what, point, font_id);
 		}
 	};
 }
@@ -76,6 +84,8 @@ main(int argc, char ** argv)
 		("file", po::value<string>(), "file")
 		("what", po::value<string>(), "string to add")
 		("where", po::value<Pages>(), "which page(s) to add")
+		("font", po::value<string>()->default_value(string("Helvetica")), "which system font to use (default Helvetica")
+		("showfonts","show system fonts")
 		("p", po::value<Position>(), "position(e.g. --p 1 --p 1)")
 	;
 
@@ -89,6 +99,13 @@ main(int argc, char ** argv)
 		return 1;
 	}
 
+		if (vm.count("showfonts"))
+		{
+			CPageFonts::SystemFontList fonts (CPageFonts::getSystemFonts());
+			std::copy(fonts.begin(), fonts.end(), 
+						std::ostream_iterator<string>(std::cout, "\n"));
+			return 0;
+		}
 		if (!vm.count("file") || !vm.count("what") || !vm.count("p")) 
 		{
 			cout << desc << endl;
@@ -96,6 +113,7 @@ main(int argc, char ** argv)
 		}
 	string file = vm["file"].as<string>(); 
 	string what = vm["what"].as<string>();
+	string font_id = vm["font"].as<string>();
 	Pages pages = vm["where"].as<Pages>();
 	Position pos = vm["p"].as<Position>();
 	// 
@@ -122,6 +140,7 @@ main(int argc, char ** argv)
 			pdf = CPdf::getInstance (out.c_str(), CPdf::ReadWrite);
 		}
 
+
 		for (Pages::const_iterator it = pages.begin(); it != pages.end(); ++it)
 		{
 			// sane values
@@ -136,7 +155,7 @@ main(int argc, char ** argv)
 				}
 
 			shared_ptr<CPage> page = pdf->getPage(*it);
-			_add()(page, what, pos);
+			_add()(page, what, pos, font_id);
 
 			#ifdef WIN32
 			cout << "time passed:" << ::GetTickCount()-time << endl;

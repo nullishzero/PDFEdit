@@ -39,6 +39,7 @@
 #include <xpdf/Page.h>
 #include <xpdf/TextOutputDev.h>
 #include <xpdf/SplashOutputDev.h>
+#include <xpdf/BuiltinFontTables.h>
 // Note that GlobalParams::initGlobalParams has to be called before
 // we can use globalParams.
 // If we want to use fonts correctly, globalParams->setupBaseFonts(NULL)

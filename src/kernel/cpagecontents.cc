@@ -464,7 +464,9 @@ CPageContents::replaceText (const std::string& what, const std::string& with)
 //
 //
 void 
-CPageContents::addText (const std::string& what, const libs::Point& where)
+CPageContents::addText (const std::string& what, 
+						const libs::Point& where,
+						const std::string& font_id)
 {
 	init();
 
@@ -478,7 +480,9 @@ CPageContents::addText (const std::string& what, const libs::Point& where)
 	// ET
 	// Q
 	//
-	std::string fontName = "PDFEDIT_F1";
+	std::string fontName (font_id);
+	if (fontName.empty())
+		fontName = "PDFEDIT_F1";
     double fontSize = 15.0;
     shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
     shared_ptr<UnknownCompositePdfOperator> BT(new UnknownCompositePdfOperator("BT", "ET"));

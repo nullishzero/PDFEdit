@@ -595,10 +595,12 @@ public:
 	/**
 	 * Adds text to specified position.
 	 */
-	void addText (const std::string& what, const libs::Point& where)
+	void addText (const std::string& what, 
+				  const libs::Point& where, 
+				  const std::string& font_id)
 	{
 			_check_validity();
-		_contents->addText (what, where);
+		_contents->addText (what, where, font_id);
 	}
 
 	void addInlineImage (const CStream::Buffer& what,

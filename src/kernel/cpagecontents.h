@@ -215,7 +215,8 @@ public:
 	 * Adds text in to the page.
 	 */
 	void addText (const std::string& what, 
-				  const libs::Point& where);
+				  const libs::Point& where,
+				  const std::string& font_id);
 
 	/**
 	 * Adds simple image to the page.

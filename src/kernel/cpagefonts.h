@@ -49,6 +49,7 @@ class CPageFonts : public ICPageModule
 {
 	// Typedefs
 public:
+	typedef std::list<std::string> SystemFontList;
 	/** Type for list of fonts. */
 	typedef std::vector<std::pair<std::string, std::string> > FontList;
 
@@ -103,6 +104,17 @@ public:
 	 * @return The font ID of the added font.
 	 */
 	std::string addSystemType1Font (const std::string& fontname, bool winansienc = true);
+
+	/**
+	 * Get all system fonts which should be supported by all pdf viewers.
+	 */
+	static SystemFontList getSystemFonts () 
+	{
+		SystemFontList flist;
+		for (size_t i = 0; i < nBuiltinFonts; ++i)
+			flist.push_back (builtinFonts[i].name);
+		return flist;
+	};
 
 }; // class CPage
 
