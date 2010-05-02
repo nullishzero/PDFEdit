@@ -115,7 +115,7 @@ public:
 			return;
 		}
 		{
-			HWND hwnd = ::CreateWindowEx ( WS_EX_CLIENTEDGE, TEST_WINDOW, title.c_str(), 
+			hwnd = ::CreateWindowEx ( WS_EX_CLIENTEDGE, TEST_WINDOW, title.c_str(), 
 				WS_OVERLAPPEDWINDOW, p.x, p.y, p.w, p.h, NULL, 0, hInstance, 0);
 			init (hwnd);
 		}

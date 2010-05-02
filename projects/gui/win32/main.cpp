@@ -27,7 +27,12 @@ namespace {
 	// library wrapper
 	struct _pdf_lib {
 		bool _ok;
-		_pdf_lib (int argc, char ** argv) {_ok = (0 == pdfedit_core_dev_init(&argc, &argv));}
+		_pdf_lib (int argc, char ** argv) {
+			std::string cwd (".");
+			struct pdfedit_core_dev_init init = {0};
+			init.fontDir = cwd.c_str(); // ehm, but valid
+			_ok = (0 == pdfedit_core_dev_init(&argc, &argv, &init));
+		}
 		~_pdf_lib () {pdfedit_core_dev_destroy();}
 	};
 
