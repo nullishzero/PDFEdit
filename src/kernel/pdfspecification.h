@@ -56,6 +56,10 @@ namespace pdfobjects {
 		static const std::string CSTRING_PREFIX;  // "(";
 		/** Object String representation suffix string. */
 		static const std::string CSTRING_SUFFIX;  // ")";
+		/** Object Hexadecimal String representation prefix string. */
+		static const std::string CHEXSTRING_PREFIX;  // "<";
+		/** Object HexadecimalString representation suffix string. */
+		static const std::string CHEXSTRING_SUFFIX;  // ">";
 
 		/** Object Ref representation middle string. */
 		static const std::string CREF_MIDDLE;  // " ";

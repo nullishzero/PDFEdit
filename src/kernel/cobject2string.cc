@@ -208,6 +208,27 @@ simpleValueToString<pRef> (const IndiRef& ref, string& str)
 	str = oss.str ();
 }
 
+bool isBinaryString(const std::string& val)
+{
+	for(std::string::const_iterator i = val.begin(); i != val.end(); ++i)
+		if(!isprint(*i))
+			return true;
+	return false;
+}
+
+template<typename Iter>
+std::string makeHexString(Iter it, Iter end)
+{
+	std::string tmp;
+	for (; it != end; ++it)
+	{
+		char hexstr[4];
+		snprintf(hexstr, sizeof(hexstr), "%02x", (unsigned)(*it)&0xff);
+		tmp+=hexstr;
+	}
+	return tmp;
+}
+
 //
 // Special case for pString and pName
 //
@@ -220,8 +241,18 @@ simpleValueToString (const std::string& val, std::string& str)
 	switch (Tp)
 	{
 		case pString:
-			str = Specification::CSTRING_PREFIX + makeStringPdfValid (val.begin(), val.end()) + Specification::CSTRING_SUFFIX;
+		{
+			std::string validateStr = makeStringPdfValid (val.begin(), val.end());
+			if (!isBinaryString(val))
+				str = Specification::CSTRING_PREFIX + validateStr + Specification::CSTRING_SUFFIX;
+			else
+			{
+				str = Specification::CHEXSTRING_PREFIX 
+					+ makeHexString (validateStr.begin(), validateStr.end())
+					+ Specification::CHEXSTRING_SUFFIX;
+			}
 			break;
+		}
 
 		case pName:
 			str = Specification::CNAME_PREFIX + makeNamePdfValid (val.begin(), val.end());

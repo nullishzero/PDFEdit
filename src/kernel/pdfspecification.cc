@@ -40,6 +40,8 @@ namespace pdfobjects {
 	// String
 	const std::string Specification::CSTRING_PREFIX ("(");
 	const std::string Specification::CSTRING_SUFFIX (")");
+	const std::string Specification::CHEXSTRING_PREFIX ("<");
+	const std::string Specification::CHEXSTRING_SUFFIX (">");
 	// Ref
 	const std::string Specification::CREF_MIDDLE (" ");
 	const std::string Specification::CREF_SUFFIX (" R");
