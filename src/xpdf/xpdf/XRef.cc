@@ -756,6 +756,29 @@ GBool XRef::readXRefStreamSection(Stream *xrefStr, int *w, int first, int n) {
   return gTrue;
 }
 
+/** Returns the size of EOL marker preceding the given possition.
+ * @param pos Position at the begginning of the line.
+ * @param str Stream
+ *
+ * Stream will keep its current possition.
+ *
+ * @return length of the EOL (if any) preceeing pos.
+ */
+static int eolLength(Guint pos, BaseStream *str)
+{
+	Guint currPos = str->getPos();
+	str->setPos(pos-2);
+	int ch1 = str->getChar();
+	int ch2 = str->getChar();
+	int eoln = 0;
+	if (ch1 == '\r' && ch2 == '\n')
+		eoln = 2;
+	else if (ch2 == '\n')
+			eoln = 1;
+	str->setPos(currPos);
+	return eoln;
+}
+
 // Attempt to construct an xref table for a damaged file.
 GBool XRef::constructXRef() {
   Parser *parser = NULL;
@@ -865,7 +888,18 @@ GBool XRef::constructXRef() {
 	streamEnds = (Guint *)greallocn(streamEnds,
 					streamEndsSize, sizeof(int));
       }
-      streamEnds[streamEndsLen++] = pos;
+      // We are reading lines and the pdf specification says that:
+      // "The sequence of bytes that make up a stream lie between the stream
+      // and endstream keywords; the stream dictionary specifies the exact 
+      // number of bytes. It is recommended that there be an end-of-line 
+      // marker after the data and before endstream; this marker is not 
+      // included in the stream length."
+      // So we have to either add stream data that preceeds the keyword
+      // or decrease the lenght by the lenght of EOL marker if we are at 
+      // the beggining of line
+      streamEnds[streamEndsLen++] = pos + 
+	      (p-buf)?p-buf
+	      :-eolLength(pos, str);
     }
   }
 
