@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\freetype6.dll"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\freetype6.dll $(SolutionDir)\output\freetype6.dll"
 			/>
 		</Configuration>
 		<Configuration
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\freetype6.dll"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\freetype6.dll $(SolutionDir)\output\freetype6.dll"
 			/>
 		</Configuration>
 		<Configuration
@@ -182,7 +182,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\freetype6.dll"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\freetype6.dll $(SolutionDir)\output\freetype6.dll"
 			/>
 		</Configuration>
 		<Configuration
