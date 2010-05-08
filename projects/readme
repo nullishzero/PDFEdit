@@ -1,31 +1,38 @@
-Win32 pdfedit release
+Win32 pdfedit* release
 ---------------------------
-Pdfedit win32 release currently contains binary tools, its sources and this readme. Binaries are built using visual studio 2008. Follow the step by step procedure below to compile it for yourself. 
+The main purpose is to demonstrate the usage of the underlying pdfedit library. Currently, there are several tools which can be used from command line and proof of concept win32 GUI. 
 
-Note: This is beta release and the source code was neither unified nor polished. The purpose is to show how simple it is to write your pdf utility using our pdfedit kernel.
+Pdfedit Win32 release is beta. It also means that all executables are compiled in debug mode and therefore are slower and bigger; however, the functionality is the same.  
 
+We use Visual Studio 2008 for building and CRT is statically linked. This means that no dll hell/incorrect runtime environment problems occur but there is significant file size overhead.
 
-Step-by-step how to compile pdfedit tools from tools_library 
+Problems
 ---------------------------
+Please, feel free to report any problems on pdfedit-support@lists.sourceforge.net or visit https://sourceforge.net/projects/pdfedit/ for more information.
 
-   1) get BOOST (http://www.boost-consulting.com/products/free) with additional dependencies - program_options, filesystem, iostreams
-   2) get ZLIB (http://www.zlib.net/)
-   3) (for tests) get CPPUNIT (http://sourceforge.net/project/downloading.php?groupname=cppunit&filename=cppunit-1.12.0.tar.gz&use_mirror=surfnet)
-   4) set includes/library directories in Visual Studio in either 
-        Tools->Options->Project&Solutions->VC++ Directories->Include Files-> 
-        OR 
-        pdfedit->Property Pages->C/C++->General->Additional Include Directories
-   5) build solution using "Debug-Tools|Win32" configuration
 
-Step-by-step add on on how to compile pdfedi-gui tools from tools_library 
+Step-by-step instructions on how to compile pdfedit 
 ---------------------------
 
-   1) follow steps above
-   2) get freetype2 (http://www.freetype.org/freetype2/index.html) and compile it, add library to includes/library directory
-   5) build solution using "Debug-Win32Gui|Win32" configuration
+   0) get sources from cvs on https://sourceforge.net/projects/pdfedit/
+   
+   1) get BOOST (http://www.boost-consulting.com/products/free) with additional dependencies - program_options, filesystem and iostreams
+   
+   2) get FREETYPE2 - https://sourceforge.net/projects/freetype/files/freetype2/2.3.12/ft2312.zip/download, extract it to a directory
+   
+   3) get ZLIB - http://www.zlib.net/ and extract it to a directory
+   
+   4) OPTIONAL - get libpng for add_image tool from http://www.libpng.org/pub/png/libpng.html
+   
+   5) OPTIONAL - get cppunit for tests from https://sourceforge.net/apps/mediawiki/cppunit/index.php?title=Main_Page  
+
+   6) set include directories in Visual Studio for BOOST, FREETYPE2, ZLIB in either 
+        Tools->Options->Project&Solutions->VC++ Directories->Include files/Library files
+        
+   7) build solution using one of possible configuration
 
 
 Troubleshooting
 ---------------------------
 
-  1) ensure zlib, cppunit is linked against the same library type as pdfedit - default is "Multi-threaded Debug" 
+  1) if you want to compile it against library versions of zlib/freetype you have to use the same Runtime libraries (MT, MTd, ...)

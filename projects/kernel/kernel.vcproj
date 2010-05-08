@@ -71,6 +71,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\zlib1.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\zlib1.dll"
 			/>
 		</Configuration>
 		<Configuration
@@ -108,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="zlib.lib"
+				AdditionalDependencies="zlib1.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -124,6 +125,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\zlib1.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\zlib1.dll"
 			/>
 		</Configuration>
 		<Configuration

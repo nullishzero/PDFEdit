@@ -19,8 +19,9 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="zdll.lib cppunit_dll.lib"
+		AdditionalDependencies="zlib1.lib cppunit_dll.lib"
 		OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
+		AdditionalLibraryDirectories="$(SolutionDir)\libs"
 		GenerateDebugInformation="true"
 		RandomizedBaseAddress="1"
 		DataExecutionPrevention="0"

@@ -15,13 +15,13 @@
 		DisableSpecificWarnings="4100;4512;4706;4127"
 	/>
 	<Tool
-		Name="VCLinkerTool"
-		AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\output\libs&quot;"
+		Name="VCLibrarianTool"
+		AdditionalLibraryDirectories="$(SolutionDir)\output\libs;$(SolutionDir)\libs"
+		IgnoreDefaultLibraryNames=""
 	/>
 	<Tool
- 		Name="VCLibrarianTool"
- 		AdditionalLibraryDirectories="$(SolutionDir)\output\libs;$(SolutionDir)\libs"
- 		IgnoreDefaultLibraryNames=""
- 	/>
-	
+		Name="VCLinkerTool"
+		AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\output\libs&quot;"
+		OptimizeReferences="2"
+	/>
 </VisualStudioPropertySheet>

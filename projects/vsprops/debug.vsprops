@@ -24,10 +24,13 @@
 		LinkIncremental="1"
 		IgnoreDefaultLibraryNames="LIBCMT.lib;msvcrt.lib"
 		GenerateDebugInformation="true"
-		OptimizeReferences="2"
 	/>
 	<Tool
 		Name="VCResourceCompilerTool"
 		PreprocessorDefinitions="_DEBUG"
+	/>
+	<Tool
+		Name="VCManifestTool"
+		VerboseOutput="true"
 	/>
 </VisualStudioPropertySheet>

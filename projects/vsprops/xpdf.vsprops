@@ -12,7 +12,8 @@
 	/>
 	<Tool
 		Name="VCLibrarianTool"
-		AdditionalDependencies="freetype221_D.lib"
+		AdditionalDependencies="freetype.lib"
+		AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 	/>
 	<Tool
 		Name="VCPreBuildEventTool"

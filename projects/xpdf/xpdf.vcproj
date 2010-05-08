@@ -73,6 +73,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\freetype6.dll"
 			/>
 		</Configuration>
 		<Configuration
@@ -99,7 +100,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H"
-				RuntimeLibrary="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -112,7 +112,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
+				AdditionalLibraryDirectories=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -128,6 +128,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\freetype6.dll"
 			/>
 		</Configuration>
 		<Configuration
@@ -181,6 +182,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\freetype6.dll"
 			/>
 		</Configuration>
 		<Configuration
