@@ -56,10 +56,10 @@ class Execute:
 pack_tools = {
   "class" : "Execute",
   "cmd"   : """
-              md $tmp_dir
+              rd /Q /S $tmp_dir && md $tmp_dir
               md $tmp_dir\\bin
               md $tmp_dir\\src
-              cd $bin_dir && copy *tool*exe $tmp_dir\\bin
+              cd $bin_dir && copy *tool*exe $tmp_dir\\bin && copy *.dll $tmp_dir\\bin
               cd $tools_src_dir && copy *cc $tmp_dir\\src && copy *h $tmp_dir\\src
               copy $start_dir\\..\\readme $tmp_dir
               copy $start_dir\\..\\libs\\*.pfb $tmp_dir\\bin
@@ -71,12 +71,13 @@ pack_tools = {
 pack_gui= {
   "class" : "Execute",
   "cmd"   : """
-              md $tmp_dir
+              rd /Q /S $tmp_dir && md $tmp_dir
               md $tmp_dir\\bin
               md $tmp_dir\\src
-              cd $bin_dir && copy *gui*exe $tmp_dir\\bin
+              cd $bin_dir && copy *gui*exe $tmp_dir\\bin && copy *.dll $tmp_dir\\bin
               copy $start_dir\\..\\libs\\*.pfb $tmp_dir\\bin
               copy $start_dir\\gui.installer\\config $tmp_dir\\bin
+              copy $start_dir\\..\\readme $tmp_dir
               cd $gui_src_dir && copy *cpp $tmp_dir\\src && copy *h $tmp_dir\\src
               7z a -r $output -x!*CVS* $tmp_dir\\*
               echo Done.  
