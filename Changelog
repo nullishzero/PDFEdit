@@ -1,4 +1,4 @@
-XXXX-XX-XX PDF Editor 0.4.X
+2010-05-11 PDF Editor 0.4.5
 	* fix for a bug caused by xpdf code refactoring (const methods and
 	  parameters cleanup). 
 	* Bugs 348, 350, 351

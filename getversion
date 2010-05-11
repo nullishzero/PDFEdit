@@ -61,7 +61,7 @@
 #
 # Nothing is printed if no parameter is specified
 
-PACKAGE_VERSION=0.4.4.1
+PACKAGE_VERSION=0.4.5
 PACKAGE_RELEASE=""
 GETVERSION_DIR=`dirname $0`
 EXLUDE_FILES="version_exclude"
