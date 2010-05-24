@@ -1,7 +1,9 @@
+	* Bug 355 fixed
+
 2010-05-11 PDF Editor 0.4.5
 	* fix for a bug caused by xpdf code refactoring (const methods and
 	  parameters cleanup). 
-	* Bugs 348, 350, 351
+	* Bugs 348, 350, 351 fixed
 
 2010-04-13 PDF Editor 0.4.4.1
 	* Fix compilation problems

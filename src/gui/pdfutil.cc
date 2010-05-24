@@ -444,6 +444,31 @@ QString annotTypeName(boost::shared_ptr<CAnnotation> anot) {
 }
 
 /**
+ Tries to open PDF with desired mode, but will fall back to read only mode if the PDF cannot be opened in read-write mode
+ If the file cannot be opened, exception is thrown
+ @param filename Name of file for CPdf::getInstance
+ @param mode Open mode for CPdf::getInstance
+ @return Opened PDF
+*/
+boost::shared_ptr<CPdf> openPdfWithFallback(const QString &filename, CPdf::OpenMode mode) {
+ boost::shared_ptr<CPdf> pdf;
+ do {
+  try {
+   pdf = CPdf::getInstance(util::convertFromUnicode(filename,util::NAME).c_str(),mode);
+  } catch(PdfOpenException &e) {
+   // try to fallback to readonly mode
+   if (mode >= CPdf::ReadWrite) {
+    mode = CPdf::ReadOnly;
+    continue;
+   }
+   throw e;
+  }
+ } while(!pdf);
+ return pdf;
+}
+
+
+/**
  Get PDF instance - call CPdf::getInstance with appropriate parameters
  @param parent parent widget of dialog that may spawn
  @param filename Name of file for CPdf::getInstance
@@ -451,7 +476,7 @@ QString annotTypeName(boost::shared_ptr<CAnnotation> anot) {
  @param askPassword If true, password will be asked for if necessary
 */
 boost::shared_ptr<CPdf> getPdfInstance(QWidget *parent, const QString &filename, CPdf::OpenMode mode, bool askPassword) {
- boost::shared_ptr<CPdf> pdf=CPdf::getInstance(util::convertFromUnicode(filename,util::NAME).c_str(), mode);
+ boost::shared_ptr<CPdf> pdf=openPdfWithFallback(filename,mode);
  if (askPassword && pdf->needsCredentials()) {
   for(;;) {
    //Ask for password until we either get the right one or user gets bored with retrying

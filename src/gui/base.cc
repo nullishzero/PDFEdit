@@ -28,6 +28,7 @@
 */
 
 #include "passworddialog.h"
+#include "pdfutil.h"
 #include "base.h"
 #include "qtcompat.h"
 #include "qsannotation.h"
@@ -678,6 +679,7 @@ QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/, bool askPa
 /**
  Open PDF instance.
  Specific password solicitation (GUI, console) should be implemented in subclasses - BaseGUI ands BaseConsole
+ If the PDF cannot be opened in read-write mode, another attempt to open the file at least as read-only is done.
  @param filename filename to open
  @param openMode Mode in which to open the file (advanced, readonly and readwrite - default)
  @param askPassword if true, attempt to ask user for password would be made if document is encrypted
@@ -688,7 +690,7 @@ boost::shared_ptr<pdfobjects::CPdf> Base::getBasePdfInstance(const QString &file
  if (openMode=="readonly") mode=CPdf::ReadOnly;
  if (openMode=="readwrite") mode=CPdf::ReadWrite;
  //Basic mode without asking a password (we do not know how)
- return CPdf::getInstance(util::convertFromUnicode(filename,util::NAME).c_str(),mode);
+ return openPdfWithFallback(filename,mode);
 }
 
 /** \copydoc loadFromFile */

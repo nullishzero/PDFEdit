@@ -59,6 +59,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj);
 QString annotType(CAnnotation::AnnotType at);
 QString annotType(boost::shared_ptr<CAnnotation> anot);
 QString annotTypeName(boost::shared_ptr<CAnnotation> anot);
+boost::shared_ptr<CPdf> openPdfWithFallback(const QString &filename, CPdf::OpenMode mode);
 
 //Password-related functions
 boost::shared_ptr<CPdf> getPdfInstance(QWidget *parent, const QString &filename, CPdf::OpenMode mode, bool askPassword=true);
