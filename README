@@ -513,7 +513,7 @@ If you want to use this package following steps are required:
     You should use EPREFIX/pdfedit-core-dev-config script 
 	e.g. this way in Makefile:
 	CXXFLAGS = $(shell pdfedit-core-dev-config --cflags)
-	LDFALGS = $(shell pdfedit-core-dev-config --libs)
+	LDFLAGS = $(shell pdfedit-core-dev-config --libs)
 
   - autoconf way
     pdfedit source package comes with the config/pdfedit-core-dev.m4 autoconf

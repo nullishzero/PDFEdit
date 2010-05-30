@@ -29,16 +29,16 @@ displaycs: displaycs.o
 	$(LINK) $(LDFLAGS) -o displaycs displaycs.o $(TOOLS_LIBS)
 
 pagemetrics: pagemetrics.o 
-	$(LINK) $(LDFALGS) -o pagemetrics pagemetrics.o $(TOOLS_LIBS)
+	$(LINK) $(LDFLAGS) -o pagemetrics pagemetrics.o $(TOOLS_LIBS)
 
 pdf_object_printer: pdf_object_printer.o $(UTILS_OBJS)
-	$(LINK) $(LDFALGS) -o pdf_object_printer pdf_object_printer.o $(UTILS_OBJS) $(TOOLS_LIBS)
+	$(LINK) $(LDFLAGS) -o pdf_object_printer pdf_object_printer.o $(UTILS_OBJS) $(TOOLS_LIBS)
 
 pdf_page_from_ref: pdf_page_from_ref.o $(UTILS_OBJS)
-	$(LINK) $(LDFALGS) -o pdf_page_from_ref pdf_page_from_ref.o $(UTILS_OBJS) $(TOOLS_LIBS)
+	$(LINK) $(LDFLAGS) -o pdf_page_from_ref pdf_page_from_ref.o $(UTILS_OBJS) $(TOOLS_LIBS)
 
 pdf_page_to_ref: pdf_page_to_ref.o $(UTILS_OBJS)
-	$(LINK) $(LDFALGS) -o pdf_page_to_ref pdf_page_to_ref.o $(UTILS_OBJS) $(TOOLS_LIBS)
+	$(LINK) $(LDFLAGS) -o pdf_page_to_ref pdf_page_to_ref.o $(UTILS_OBJS) $(TOOLS_LIBS)
 
 delinearizator: delinearizator.o
 	$(LINK) $(LDFLAGS) -o delinearizator delinearizator.o $(TOOLS_LIBS)
