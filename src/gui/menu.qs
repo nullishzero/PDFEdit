@@ -160,11 +160,6 @@ function go(x) {
  } else {
     tpage=document.getPage(x);
  }
- csc=tpage.getContentStreamCount();
- //flush all content streams
- for(i=0;i<csc;i++) {
-  tpage.getContentStream(i).saveChange();
- }
  PageSpace.refresh(x,document);
 }
 
