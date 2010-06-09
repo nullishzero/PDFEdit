@@ -75,6 +75,8 @@ All tools use boost-program-options library so it has to be installed on your
 system if you want to compile them (see later how to enable them). Some
 distributions use a separate package (e.g. Debian) but most others include
 it directly into boost package.
+add_image tool uses libpng and its headers so libpng-dev package has to be 
+installed.
 
 Gui
 ---

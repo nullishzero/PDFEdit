@@ -574,12 +574,12 @@ if test "x$enable_tools" = "xyes"
 then
 	AC_MSG_RESULT(yes)
 	boost_program_options_required=yes
+	png_required=yes
 	if test "x$enable_pdfedit_core_dev" != "xyes"
 	then
 		AC_MSG_ERROR(--enable pdfedit-core-dev is required for tools)
 	fi
 	TOOLS_TARGET="$TOOLS_TARGET tools"
-
 else
 	AC_MSG_RESULT(no)
 fi
@@ -590,6 +590,33 @@ then
 	AC_MSG_CHECKING(for boost-program-options library)
 	AX_BOOST_PROGRAM_OPTIONS
 fi
+
+png_LIBS=""
+png_HEADERS=""
+if test "x$png_required" = "xyes"
+then
+	AC_MSG_CHECKING(for png library)
+	AC_LANG_SAVE
+	AC_LANG_C
+	AC_CHECK_LIB(png, png_check_sig, [pnglib=yes])
+	AC_CHECK_HEADERS(png.h, [pngheader=yes])
+	AC_LANG_RESTORE
+	if test "x$pnglib" = "x" 
+	then
+		AC_MSG_ERROR(libpng is not found)
+	fi
+	if test "x$pngheader" = "x"
+	then
+		AC_MSG_ERROR(png headers is missing)
+	fi
+	AC_MSG_RESULT(yes)
+
+	dnl keep the header specific settings empty and library simply
+	dnl for now but let's integrate it into the rest of the building system
+	png_LIBS="-lpng"
+fi
+AC_SUBST(png_LIBS)
+AC_SUBST(png_CFLAGS)
 
 AC_CONFIG_FILES([Makefile.flags Makefile.rules])
 

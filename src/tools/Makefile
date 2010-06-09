@@ -10,6 +10,7 @@ UTILS_OBJS = $(UTILS_SRCS:.cc=.o)
 
 TOOLS_LIBS = $(MANDATORY_LIBS) $(BOOSTPROGRAMOPTIONS_LIBS)
 
+CXXFLAGS += $(PNGFLAGS)
 # sources for benchmark modules
 TARGET_SRCS = displaycs.cc pagemetrics.cc parse_object.cc pdf_object_printer.cc \
 	      pdf_page_from_ref.cc pdf_page_to_ref.cc flattener.cc delinearizator.cc \
@@ -59,7 +60,7 @@ add_text: add_text.o
 	$(LINK) $(LDFLAGS) -o add_text add_text.o $(TOOLS_LIBS)
 
 add_image: add_image.o
-	$(LINK) $(LDFLAGS) -o add_image add_image.o $(TOOLS_LIBS) -lpng
+	$(LINK) $(LDFLAGS) -o add_image add_image.o $(TOOLS_LIBS) $(PNG_LIBS)
 
 pdf_to_bmp: pdf_to_bmp.o
 	$(LINK) $(LDFLAGS) -o pdf_to_bmp pdf_to_bmp.o $(TOOLS_LIBS)
