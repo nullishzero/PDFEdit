@@ -32,6 +32,7 @@
 
 #include "kernel/ccontentstream.h"
 #include "kernel/stateupdater.h"
+#include "kernel/factories.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -592,6 +593,42 @@ boost::shared_ptr<PdfOperator> createOperatorScale (double width, double height)
 	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
 	ops.push_back (boost::shared_ptr<IProperty>(new CReal (0)));
 	return createOperator("cm", ops);
+}
+
+boost::shared_ptr<PdfOperator> createOperatorText (boost::shared_ptr<CContentStream> &cc,
+		const std::string &fontName, const std::string &op, const std::string &text)
+{
+	utilsPrintDbg(debug::DBG_DBG, "");
+
+	boost::shared_ptr<GfxResources> res = cc->getResources();
+	GfxFont *font = res->lookupFont(fontName.c_str());
+	std::string encText;
+	if (font) {
+		encText = transformToCodeString(text, font);
+	}
+	else {
+		encText = text;
+		utilsPrintDbg(debug::DBG_WARN, "No font found for "+fontName);
+	}
+
+	PdfOperator::Operands ops;
+
+	if (op == "'" || op == "Tj") {
+		ops.push_back(boost::shared_ptr<IProperty>(CStringFactory::getInstance(encText)));
+	} else if (op == "TJ") {
+		boost::shared_ptr<CArray> array(CArrayFactory::getInstance());
+		boost::shared_ptr<IProperty> str(CStringFactory::getInstance(encText));
+		array->addProperty(*str);
+		ops.push_back(array);
+	} else if (op == "\"") {
+		utilsPrintDbg(debug::DBG_WARN, op+" text operator is not supported");
+		throw NotImplementedException(op +" text operator is not supported");
+
+	}else {
+		utilsPrintDbg(debug::DBG_ERR, "Unknown text operator "+op);
+		throw ElementBadTypeException("Unknown text operator "+op);
+	}
+	return createOperator(op, ops);
 }
 
 //

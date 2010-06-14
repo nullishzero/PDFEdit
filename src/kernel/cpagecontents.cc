@@ -517,9 +517,8 @@ CPageContents::addText (const std::string& what,
 	PdfOperator::Operands posOperands = _likely_tm;
     BT->push_back(createOperator("Tm", posOperands), getLastOperator(BT));
 
-    PdfOperator::Operands textOperands;
-    textOperands.push_back(shared_ptr<IProperty>(new CString (what)));
-    BT->push_back(createOperator("Tj", textOperands), getLastOperator(BT));
+    shared_ptr<CContentStream> cc = createContentStream(*_page, NULL);
+    BT->push_back(createOperatorText(cc, fontName, "TJ", what));
     PdfOperator::Operands emptyOperands;
     BT->push_back(createOperator("ET", emptyOperands), getLastOperator(BT));
     q->push_back(createOperator("Q", emptyOperands), getLastOperator(q));
@@ -527,7 +526,7 @@ CPageContents::addText (const std::string& what,
 	std::vector<shared_ptr<PdfOperator> > contents;
     contents.push_back(q);
     
-	addToBack (contents);
+	addToBack (cc, contents);
 }
 
 void 

@@ -325,6 +325,17 @@ boost::shared_ptr<PdfOperator> createOperatorTranslation (double x, double y);
  */
 boost::shared_ptr<PdfOperator> createOperatorScale (double width, double height);
 
+/** Create a text operator with the font encoding translation.
+ * @param cc Content stream wehere the operator will be added (this is not done by this 
+ *           function - we just reuse resources from it).
+ * @param fontName Font for the text.
+ * @param op Text operator to use (tj, ' or TJ).
+ * @param text Text to be used for the operator (unicode encoded).
+ * @throw ElementBadTypeException if an unknown text operator is provided.
+ * @throw NotImplementedException for " text operator.
+ */
+boost::shared_ptr<PdfOperator> createOperatorText (boost::shared_ptr<CContentStream>& cc,
+                const std::string &fontName, const std::string &op, const std::string &text);
 
 /** Is an operator a composite. */
 inline bool 
