@@ -1,3 +1,5 @@
+	* Internal changes
+		- string to font encoding fixed on the library level
 	* Bug 328, 355, 357 fixed
 
 2010-05-11 PDF Editor 0.4.5
