@@ -666,7 +666,7 @@ CContentStream::replaceText (const std::string& what, const std::string& with)
 			dirty = true;
 			boost::shared_ptr<TextSimpleOperator> _cur 
 					= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
-			_cur->setRawText (replaced);
+			_cur->setFontText (replaced);
 		}
 		tit.next();
 	}

@@ -154,9 +154,12 @@ public:
 	virtual void getRawText(std::string& str)const;
 
 	/** 
-	 * Sets raw string.
+	 * Sets string which should be displayed according to the used font.
+	 *
+	 * Method will do the lowlevel transformation to the proper characters
+	 * codes according to font and its encoding.
 	 */
-	void setRawText (std::string& str);
+	void setFontText (const std::string& str);
 
 	/** Returns string represented by this text operator converted 
 	 * according the font encoding.

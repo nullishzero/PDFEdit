@@ -171,6 +171,22 @@ SimpleGenericOperator::init_operands (shared_ptr<observer::IObserver<IProperty> 
 	} // for
 }
 
+namespace utils {
+static std::string transformToCodeString(const std::string& what, const GfxFont *font)
+{
+	std::string out;
+	for (unsigned i=0; i < what.length(); ++i) {
+		int ch = what[i];
+		CharCode code = ch;
+		if (font)
+			code = font->getCodeFromUnicode((const Unicode *)&ch, 1);
+		out += (char)code;
+	}
+	return out;
+
+}
+
+}
 
 void TextSimpleOperator::getRawText(std::string& str)const
 {
@@ -235,12 +251,14 @@ using namespace utils;
 }
 
 void 
-TextSimpleOperator::setRawText (std::string& str)
+TextSimpleOperator::setFontText (const std::string& str)
 {
 		utilsPrintDbg(debug::DBG_DBG, "");
 	
 	std::string name;
 	getOperatorName(name);
+
+	std::string codeStr = utils::transformToCodeString(str, getCurrentFont());
 
 	Operands ops;
 	getParameters(ops);
@@ -251,7 +269,7 @@ TextSimpleOperator::setRawText (std::string& str)
 				utilsPrintDbg(debug::DBG_WARN, "Bad operands for operator " <<name<<" count="<<ops.size()<<" ops[0] type="<< ops[0]->getType());
 				return;
 			}
-		setValueToSimple<CString, pString>(ops[0], str);
+		setValueToSimple<CString, pString>(ops[0], codeStr);
 	}
 	else if (name == "\"")
 	{
@@ -260,7 +278,7 @@ TextSimpleOperator::setRawText (std::string& str)
 				utilsPrintDbg(debug::DBG_WARN, "Bad operands for operator "<<name<<" count="<<ops.size()<<" ops[2] type="<< ops[2]->getType());
 				return;
 			}
-		setValueToSimple<CString, pString>(ops[2], str);
+		setValueToSimple<CString, pString>(ops[2], codeStr);
 	}
 	else if (name == "TJ")
 	{
@@ -279,9 +297,9 @@ TextSimpleOperator::setRawText (std::string& str)
 			while (array->getPropertyCount() > 1)
 				array->delProperty(array->getPropertyCount()-1);
 			shared_ptr<IProperty> p = array->getProperty(0);
-			setValueToSimple<CString, pString>(p, str);
+			setValueToSimple<CString, pString>(p, codeStr);
 		}else
-			setValueToSimple<CString, pString>(ops[0], str);
+			setValueToSimple<CString, pString>(ops[0], codeStr);
 		return;
 
 	}else
