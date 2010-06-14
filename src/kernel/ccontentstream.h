@@ -207,6 +207,21 @@ public:
 					boost::shared_ptr<GfxState> state, 
 					boost::shared_ptr<GfxResources> res);
 
+	/** Internal constructor without streams.
+	 * This one should be used just internally when we need the instance but
+	 * we don't have streams at hands yet. Content stream remains empty
+	 * unless setStreams is called.
+	 *
+	 * @param state Graphical state.
+	 * @param res Graphical resources.
+	 */
+	CContentStream(boost::shared_ptr<GfxState> state, 
+			boost::shared_ptr<GfxResources> res);
+
+	/** Sets streams.
+	 * Cleans up the previous state and forces new parsing.
+	 */
+	void setStreams(CStreams &strs);
 
 	//
 	// Get methods
