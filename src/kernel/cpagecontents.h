@@ -165,6 +165,16 @@ public:
 	template<typename Container>
 	void addToFront (const Container& cont);
 
+	/** Add new content stream to the front.
+	 * This function should be used when we have already preinitialized content stream
+	 * and we want to fill it with the supplied operators.
+	 *
+	 * @param cc Content stream to fill and add.
+	 * @param cont Container of operators to add.
+	 */
+	template<typename Container>
+	void addToFront (boost::shared_ptr<CContentStream> &cc, const Container& cont);
+
 	/**
 	 * Add new content stream to the back. This function adds new entry in the "Contents"
 	 * property of a page. The container of provided operators must form a valid
@@ -180,6 +190,16 @@ public:
 	 */
 	template<typename Container> 
 	void addToBack (const Container& cont);
+
+	/** Add new content stream to the back.
+	 * This function should be used when we have already preinitialized content stream
+	 * and we want to fill it with the supplied operators.
+	 *
+	 * @param cc Content stream to fill and add.
+	 * @param cont Container of operators to add.
+	 */
+	template<typename Container> 
+	void addToBack (boost::shared_ptr<CContentStream> &cc, const Container& cont);
 
 	/**
 	 * Remove content stream. 
@@ -444,6 +464,14 @@ private:
 		~ContentsObserverFreeSection () 
 			{ _cnt->reg_observer();}
 	};
+
+private:
+	/** Helper for content stream creation.
+	 * @param page Page where the created content stream will be placed.
+	 * @param streams Streams (an empty content stream will be created if NULL).
+	 */
+	static boost::shared_ptr<CContentStream> createContentStream(const CPage &page, 
+			CContentStream::CStreams *streams);
 
 }; // class CPageContents
 
