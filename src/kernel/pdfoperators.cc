@@ -265,13 +265,24 @@ TextSimpleOperator::setRawText (std::string& str)
 	else if (name == "TJ")
 	{
 		shared_ptr<IProperty> op = ops[0];
-			if (!isArray(op) || ops.size() != 1)
-			{
-				utilsPrintDbg(debug::DBG_WARN, "Bad operands for TJ operator: ops[type="<< op->getType() <<" size="<<ops.size()<<"]");
-				return;
-			}
-		// am to lazy to do it
-		utilsPrintDbg(debug::DBG_WARN, "todo!");
+		if (!isArray(op) || ops.size() != 1)
+		{
+			utilsPrintDbg(debug::DBG_WARN, "Bad operands for TJ operator: ops[type="<< op->getType() <<" size="<<ops.size()<<"]");
+			return;
+		}
+		// We want to set a new text for this operator so let's 
+		// forget about the original parameters along with the
+		// formatting and add the given string as an only one
+		// parameter in the array.
+		if (isArray(op)) {
+			shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(op);
+			while (array->getPropertyCount() > 1)
+				array->delProperty(array->getPropertyCount()-1);
+			shared_ptr<IProperty> p = array->getProperty(0);
+			setValueToSimple<CString, pString>(p, str);
+		}else
+			setValueToSimple<CString, pString>(ops[0], str);
+		return;
 
 	}else
 	{
