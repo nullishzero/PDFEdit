@@ -165,12 +165,16 @@ public:
 			  Unicode *u, int uSize, int *uLen,
 			  double *dx, double *dy, double *ox, double *oy)const = 0;
 
+  // Transfroms given unicode to the code which can be stored to the
+  // text operator - this is kind of inversion function to getNextChar
+  virtual CharCode getCodeFromUnicode(const Unicode *u, int uSize)const;
 protected:
 
   void readFontDescriptor(XRef *xref, const Dict *fontDict);
   CharCodeToUnicode *readToUnicodeCMap(const Dict *fontDict, int nBits,
 				       CharCodeToUnicode *ctu)const;
   void findExtFontFile();
+  virtual const CharCodeToUnicode * getCtu()const =0;
 
   GString *tag;			// PDF font tag
   Ref id;			// reference (used as unique ID)
@@ -236,6 +240,9 @@ public:
   // Return the Type 3 Resources dictionary, or NULL if none.
   const Dict *getResources()const;
 
+protected:
+  const CharCodeToUnicode *getCtu()const { return ctu; }
+
 private:
 
   char *enc[256];		// char code --> char name
@@ -280,7 +287,8 @@ public:
   // if type is fontCIDType2.
   const Gushort *getCIDToGID()const { return cidToGID; }
   int getCIDToGIDLen()const { return cidToGIDLen; }
-
+protected:
+  const CharCodeToUnicode *getCtu()const { return ctu; }
 private:
 
   CMap *cMap;			// char code --> CID

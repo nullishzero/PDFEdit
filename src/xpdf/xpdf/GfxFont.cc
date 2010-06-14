@@ -400,6 +400,11 @@ char *GfxFont::readEmbFontFile(XRef *xref, int *len) {
   return buf;
 }
 
+CharCode GfxFont::getCodeFromUnicode(const Unicode *u, int uSize)const {
+	CharCode c = getCtu()->mapFromUnicode(u, uSize);
+	return (c & 0xff);
+}
+
 //------------------------------------------------------------------------
 // Gfx8BitFont
 //------------------------------------------------------------------------

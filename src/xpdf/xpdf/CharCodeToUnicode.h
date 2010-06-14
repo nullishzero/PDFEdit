@@ -67,6 +67,10 @@ public:
   // Map a CharCode to Unicode.
   int mapToUnicode(CharCode c, Unicode *u, int size)const;
 
+  // maps given unicode with the given size (in bytes) to the char
+  // code
+  CharCode mapFromUnicode(const Unicode *u, int size)const;
+
   // Return the mapping's length, i.e., one more than the max char
   // code supported by the mapping.
   CharCode getLength()const { return mapLen; }

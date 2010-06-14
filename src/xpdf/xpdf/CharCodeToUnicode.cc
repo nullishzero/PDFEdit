@@ -481,6 +481,31 @@ int CharCodeToUnicode::mapToUnicode(CharCode c, Unicode *u, int size)const {
   return 0;
 }
 
+static bool isUnicodeSame(const Unicode *u1, int size1, const Unicode *u2, int size2) {
+	if (size1 != size2)
+		return false;
+	for (int i = 0; i < size1; ++i)
+		if (u1[i] != u2[i])
+			return false;
+	return true;
+}
+
+CharCode CharCodeToUnicode::mapFromUnicode(const Unicode *u, int size)const {
+	int i;
+	if (size == 1) {
+		for (i = 0; i < mapLen; ++i)
+			if (map[i] == *u)
+				return i;
+	}
+	for (i = 0; i < sMapLen; ++i) {
+		if (isUnicodeSame(u, size, sMap[i].u, sMap[i].len))
+			return sMap[i].c;
+	}
+
+	// Nothing found
+	return -1;
+}
+
 //------------------------------------------------------------------------
 
 CharCodeToUnicodeCache::CharCodeToUnicodeCache(int sizeA) {
