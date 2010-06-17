@@ -211,6 +211,45 @@ public:
    	 */
 	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
 
+	/** 
+	 * Returns property identified by its name.
+	 * This is a convenient method which also does the casting trickery
+	 * and indirect object resolution if the given template type is not
+	 * reference itself.
+	 *
+   	 * @param 	id 	Name of the property.
+	 * @return	Output variable where the value will be stored.
+	 */
+	template<typename ItemType> boost::shared_ptr<ItemType> getProperty(PropertyId id)const {
+		boost::shared_ptr<IProperty> ip = getProperty(id);
+
+		if (ItemType::type != pRef && isRef(ip))
+			ip = utils::getReferencedObject(ip);
+
+		if(ItemType::type != ip->getType()) {
+			kernelPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type 
+					<< " got " << ip->getType () << " key[" << id << "]");
+			throw ElementBadTypeException(id);
+		}
+
+		return IProperty::getSmartCObjectPtr<ItemType>(ip);
+	}
+
+	/** 
+	 * Returns property identified by its name.
+	 * This is a convenient method which also does the casting trickery
+	 * and indirect object resolution if the given template type is not
+	 * reference itself.
+	 *
+   	 * @param 	id 	Name of the property.
+	 * @return	Output variable where the value will be stored.
+	 */
+	template<typename ItemType> boost::shared_ptr<ItemType> getProperty(const char *name)const {
+		assert(name);
+		PropertyId n(name);
+		return getProperty<ItemType>(n);
+	}
+
 	/**
 	 * Returns property type of an item identified by name.
 	 *
