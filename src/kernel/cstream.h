@@ -174,6 +174,11 @@ public:
 	/** Delagate this operation to underlying dictionary. \see CDict */
 	boost::shared_ptr<IProperty> getProperty (PropertyId id) const
 		{return dictionary.getProperty (id);}
+
+	/** Delagate this operation to underlying dictionary. \see CDict */
+	template<typename ItemType>
+	boost::shared_ptr<ItemType> getProperty (PropertyId id) const
+		{return dictionary.getProperty<ItemType> (id);}
 	
 	/** Delagate this operation to underlying dictionary. \see CDict */
 	bool containsProperty (PropertyId id) const
