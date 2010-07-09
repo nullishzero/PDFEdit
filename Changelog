@@ -1,6 +1,6 @@
 	* Internal changes
 		- string to font encoding fixed on the library level
-	* Bug 328, 355, 357 fixed
+	* Bug 328, 355, 357, 359 fixed
 
 2010-05-11 PDF Editor 0.4.5
 	* fix for a bug caused by xpdf code refactoring (const methods and

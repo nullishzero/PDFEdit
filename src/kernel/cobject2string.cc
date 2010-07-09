@@ -242,7 +242,7 @@ simpleValueToString (const std::string& val, std::string& str)
 	{
 		case pString:
 		{
-			std::string validateStr = makeStringPdfValid (val.begin(), val.end());
+			std::string validateStr = makeStringPdfValid (val);
 			if (!isBinaryString(val))
 				str = Specification::CSTRING_PREFIX + validateStr + Specification::CSTRING_SUFFIX;
 			else

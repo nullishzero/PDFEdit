@@ -28,6 +28,7 @@
 // all basic includes
 #include "kernel/static.h"
 #include "kernel/iproperty.h"
+#include <algorithm>
 
 
 //=====================================================================================
@@ -367,30 +368,37 @@ makeNamePdfValid (const char * str)
  * This includes also \0 (NUL) character, therefore we can't use standard
  * str* functions for strings.
  *
- * @param it Start iterator.
- * @param end End iterator.
+ * @param str String to escape.
  */
-template<typename Iter>
-std::string 
-makeStringPdfValid (Iter it, Iter end)
+inline std::string
+makeStringPdfValid (const std::string &str)
 {
-	typedef typename std::string::value_type Item;
-	std::string tmp;
-	for (; it != end; ++it)
-	{
-		if ( '\\' == (*it))
-		{ // Escape every backslash
-			tmp += '\\';
-		}
-		else if ( '(' == (*it) || ')' == (*it))
-		{ // Prepend \ before ( or )
-			tmp += '\\';
-		}
-		
-		tmp += *it;
-	}
-	
-	return tmp;
+        typedef std::string::const_reverse_iterator Iter;
+        std::string tmp;
+        bool need_escape=false;
+        for (Iter it=str.rbegin(); it != str.rend(); ++it)
+        {
+                if ( '\\' == (*it))
+                        need_escape ^= true;
+                else if(need_escape)
+                {
+                        // escape the previously processed character
+                        tmp+='\\';
+                        need_escape = false;
+                }
+                if (!need_escape && ('(' == (*it) || ')' == (*it)))
+                        need_escape = true;
+                tmp += *it;
+        }
+        if(need_escape)
+                tmp+='\\';
+
+        // we have processed the string from the end so we have to
+        // reverse it now (we could insert the character always to the
+        // front but that would require N^2 moves so the reverse is more
+        // optimal)
+        reverse(tmp.begin(), tmp.end());
+        return tmp;
 }
 
 /**
@@ -405,7 +413,7 @@ inline std::string
 makeStringPdfValid (GString * str)
 { 
 	char * string = str->getCString();
-	return makeStringPdfValid (string, string + str->getLength()); 
+	return makeStringPdfValid (string); 
 }
 
 //=========================================================
