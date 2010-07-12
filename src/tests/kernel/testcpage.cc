@@ -695,33 +695,21 @@ public:
 				if(annotsListSize)
 				{
 					// annotations are presented
-					shared_ptr<IProperty> annotsProp=pageDict->getProperty("Annots");
-					shared_ptr<CArray> annotsArray;
-					if(isRef(annotsProp))
-						annotsArray=getCObjectFromRef<CArray>(annotsProp);
-					else
-						if(isArray(annotsProp))
-							annotsArray=IProperty::getSmartCObjectPtr<CArray>(annotsProp);
+					shared_ptr<CArray> annotsArray = pageDict->getProperty<CArray>("Annots");
 					if(annotsArray.get())
 					{
 						// collects all annotation referencies from array
 						CPage::Annotations storage;
 						for(size_t i=0; i<annotsArray->getPropertyCount(); i++)
 						{
-							shared_ptr<IProperty> child=annotsArray->getProperty(i);
-							if(isRef(child))
+							try
 							{
-								try
-								{
-									shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(child);
-									storage.push_back(shared_ptr<CAnnotation>(
-												shared_ptr<CAnnotation>(new CAnnotation(annotDict)))
-											);	
-								}catch(std::exception & e)
-								{
-									// target is not a dictionary or CAnnotation
-									// has failed
-								}
+								shared_ptr<CDict> annotDict=annotsArray->getProperty<CDict>(i);
+								storage.push_back(shared_ptr<CAnnotation>(new CAnnotation(annotDict)));	
+							}catch(std::exception & e)
+							{
+								// target is not a dictionary or CAnnotation
+								// has failed
 							}
 						}
 						CPPUNIT_ASSERT(storage.size()==annotsListSize);
@@ -754,7 +742,7 @@ public:
 				CPPUNIT_ASSERT(annotsList.size()==0);
 
 				// adds text annotation to the array
-				annotsArray=getCObjectFromRef<CArray>(pageDict->getProperty("Annots"));
+				annotsArray=pageDict->getProperty<CArray>("Annots");
 				libs::Rectangle rect(0,0,100,100);
 				shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rect, "Text");
 				IndiRef annotRef=pdf->addIndirectProperty(annot->getDictionary());
@@ -765,7 +753,7 @@ public:
 				
 				// changes reference value of first reference (mess one) to text
 				// annotation
-				annotCRef=IProperty::getSmartCObjectPtr<CRef>(annotsArray->getProperty(0));
+				annotCRef=annotsArray->getProperty<CRef>(0);
 				annotCRef->setValue(annotRef);
 				page->getAllAnnotations(annotsList);
 				CPPUNIT_ASSERT(annotsList.size()==2);
@@ -776,7 +764,7 @@ public:
 				CPPUNIT_ASSERT(annotsList.size()==1);
 				
 				// changes Annots property reference value to messRef
-				annotsArrayCRef=IProperty::getSmartCObjectPtr<CRef>(pageDict->getProperty("Annots"));
+				annotsArrayCRef=pageDict->getProperty<CRef>("Annots");
 				annotsArrayCRef->setValue(messRef);
 				page->getAllAnnotations(annotsList);
 				CPPUNIT_ASSERT(annotsList.size()==0);

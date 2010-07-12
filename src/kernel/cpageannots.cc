@@ -69,14 +69,7 @@ namespace {
 	boost::shared_ptr<CArray> 
 	getAnnotsArray(boost::shared_ptr<CDict> pageDict)
 	{
-		boost::shared_ptr<CArray> annotsArray;
-
-		boost::shared_ptr<IProperty> arrayProp=pageDict->getProperty("Annots");
-		if(isRef(arrayProp))
-			// this will throw if target is not an array
-			annotsArray=getCObjectFromRef<CArray>(arrayProp);
-		else 
-			annotsArray=IProperty::getSmartCObjectPtr<CArray>(arrayProp);
+		boost::shared_ptr<CArray> annotsArray = pageDict->getProperty<CArray>("Annots");
 
 		// just to be sure that return value is initialized
 		assert(annotsArray.get());
@@ -110,19 +103,9 @@ namespace {
 			// dictionaries
 			for(size_t i=0; i<annotsArray->getPropertyCount(); ++i)
 			{
-				// gets elements and ignores those which are not referencies
-				boost::shared_ptr<IProperty> elem=annotsArray->getProperty(i);
-				if(!isRef(elem))
-				{
-					kernelPrintDbg(debug::DBG_WARN, "Annots["<<i<<"] is not reference. Ignoring.");
-					continue;
-				}
-
-				// gets target property which has to be dictionary - if not skips
-				// element
 				try
 				{
-					boost::shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(elem);
+					boost::shared_ptr<CDict> annotDict=annotsArray->getProperty<CDict>(i);
 
 					// creates CAnnotation instance and inserts it to the container
 					boost::shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
@@ -382,9 +365,7 @@ CPageAnnots::add(boost::shared_ptr<CAnnotation> annot)
 		// creates deep copy of given
 		scoped_ptr<IProperty> tmpArray(CArrayFactory::getInstance());
 		_page->getDictionary()->addProperty(Specification::Page::ANNOTS, *tmpArray);
-		annotsArray=IProperty::getSmartCObjectPtr<CArray>(
-				_page->getDictionary()->getProperty(Specification::Page::ANNOTS)
-				);
+		annotsArray=_page->getDictionary()->getProperty<CArray>(Specification::Page::ANNOTS);
 		REGISTER_SHAREDPTR_OBSERVER(annotsArray, _array_wd);	
 	}
 

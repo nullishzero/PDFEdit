@@ -87,12 +87,7 @@ shared_ptr<CDict> getPageTreeRoot(const boost::shared_ptr<CPdf> &pdf)
 	
 	try
 	{
-		shared_ptr<IProperty> pagesProp=pdf->getDictionary()->getProperty("Pages");
-		if(!isRef(pagesProp))
-			// returns null dictionary
-			return result;
-
-		return getCObjectFromRef<CDict>(pagesProp);
+		return pdf->getDictionary()->getProperty<CDict>("Pages");
 	}catch(CObjectException & )
 	{
 	}
@@ -136,11 +131,9 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> &nodeProp)throw(
 	// given node is not root of page tree, chcecks Type field
 	if(nodeDict->containsProperty("Type"))
 	{
-		shared_ptr<IProperty> nodeType=nodeDict->getProperty("Type");
 		try
 		{
-			if(isRef(nodeType))
-				nodeType=getCObjectFromRef<CName>(nodeType);
+			shared_ptr<CName> nodeType=nodeDict->getProperty<CName>("Type");
 			CName::Value typeName=getValueFromSimple<CName>(nodeType);
 			if(typeName=="Page")
 				return LeafNode;
@@ -159,22 +152,14 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> &nodeProp)throw(
 	// Internode should contain at least Kids array field
 	if(nodeDict->containsProperty("Kids"))
 	{
-		shared_ptr<IProperty> kidsProp=nodeDict->getProperty("Kids");
-		if(isArray(kidsProp))
-			return InterNode;
-		if(isRef(kidsProp))
+		try
 		{
-			// Kids property is reference, so checks whether it refer to array,
-			// if yes, returns InterNode
-			try
-			{
-				getCObjectFromRef<CArray>(kidsProp);
-				return InterNode;
-			}catch(...)
-			{
-				// target is not an array, so it's not intermediate node or it
-				// is demaged node
-			}
+			shared_ptr<CArray> kidsProp=nodeDict->getProperty<CArray>("Kids");
+			return InterNode;
+		}catch(...)
+		{
+			// target is not an array, so it's not intermediate node or it
+			// is demaged node
 		}
 	}
 
@@ -189,28 +174,16 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
 	// tries to get Kids array
 	if(interNodeDict->containsProperty("Kids"))
 	{
-		shared_ptr<IProperty> kidsProp=interNodeDict->getProperty("Kids");
-		shared_ptr<CArray> kidsArray;
-		if(isRef(kidsProp))
+		try 
 		{
-			try
-			{
-				kidsArray=getCObjectFromRef<CArray>(kidsProp);
-			}catch(CObjectException &)
-			{
-				// target is not an array
-				return;
-			}
-		}else
+			shared_ptr<CArray> kidsArray = interNodeDict->getProperty<CArray>("Kids");
+			// fills given container with all children
+			kidsArray->_getAllChildObjects(container);
+		}catch(CObjectException &)
 		{
-			if(!isArray(kidsProp))
-				// not an array
-				return;
-			kidsArray=IProperty::getSmartCObjectPtr<CArray>(kidsProp);
+			// target is not an array
+			return;
 		}
-		
-		// fills given container with all children
-		kidsArray->_getAllChildObjects(container);
 	}
 
 }
@@ -2782,20 +2755,12 @@ using namespace utils;
 	bool countChanged=false;
 	if(interNode->containsProperty("Count"))
 	{
-		shared_ptr<IProperty> countProp=interNode->getProperty("Count");
 		shared_ptr<CInt> countInt;
-		if(isRef(countProp))
-		{
-			try
-			{
-				countInt=getCObjectFromRef<CInt>(countProp);
-			}catch(CObjectException & e)
-			{
-				// not int, keeps countInt unintialized
-			}
-		}else
-			if(isInt(countProp))
-				countInt=IProperty::getSmartCObjectPtr<CInt>(countProp);
+		try {
+			countInt = interNode->getProperty<CInt>("Count");
+		}catch(...) {
+			// keep countInt unitialized
+		}
 		// if countInt is unitialized, Count property has bad type
 		if(!countInt.get())
 		{
@@ -2870,9 +2835,7 @@ using namespace utils;
 		shared_ptr<CRef> parentRef;
 		if(childDict->containsProperty("Parent"))
 		{
-			shared_ptr<IProperty> parentProp=childDict->getProperty("Parent");
-			if(isRef(parentProp))
-				parentRef=IProperty::getSmartCObjectPtr<CRef>(parentProp);
+			parentRef=childDict->getProperty<CRef>("Parent");
 
 			// if parentRef is unitialized, Parent has bad type
 			if(!parentRef.get())
@@ -2920,19 +2883,14 @@ using namespace utils;
 		// just prints warning messages and stops recursion
 		if(interNode->containsProperty("Parent"))
 		{
-			shared_ptr<IProperty> parentProp=interNode->getProperty("Parent");
-			if(isRef(parentProp))
+			try
 			{
-				try
-				{
-					shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentProp);
-					return consolidatePageTree(parentDict, true);
-				}catch(CObjectException & e)
-				{
-					kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has bad Parent ref. Target is not a dictionary.");
-				}
-			}else 
-				kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has bad typed Parent field. type="<<parentProp->getType());
+				shared_ptr<CDict> parentDict=interNode->getProperty<CDict>("Parent");
+				return consolidatePageTree(parentDict, true);
+			}catch(CObjectException & e)
+			{
+				kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has bad Parent. Target is not a dictionary.");
+			}
 		}else
 			kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has no Parent field (and it is not root).");
 	}
@@ -2997,19 +2955,18 @@ using namespace utils;
 		currRef=shared_ptr<CRef>(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 		
 		// gets parent of found dictionary which maintains 
-		shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
-		interNode_ptr=getCObjectFromRef<CDict>(parentRef_ptr);
+		interNode_ptr=currentPage_ptr->getProperty<CDict>("Parent");
 	}
 
 	// gets Kids array where to insert new page dictionary
-	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
-	if(kidsProp_ptr->getType()!=pArray)
-	{
-		kernelPrintDbg(DBG_ERR, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
+	shared_ptr<CArray> kids_ptr;
+	try {
+		kids_ptr=interNode_ptr->getProperty<CArray>("Kids");
+	}catch(...) {
+		kernelPrintDbg(DBG_ERR, "Pages Kids field is not an array type");
 		// Kids is not array - malformed intermediate node
 		throw MalformedFormatExeption("Intermediate node Kids field is not an array.");
 	}
-	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
 	
 	// gets index in Kids array where to store.
 	// by default insert at 1st position (index is 0)
@@ -3118,16 +3075,15 @@ using namespace utils;
 	shared_ptr<CRef> currRef(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 	
 	// Gets parent field from found page dictionary and gets its Kids array
-	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
-	shared_ptr<CDict> interNode_ptr=getCObjectFromRef<CDict>(parentRef_ptr);
-	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
-	if(kidsProp_ptr->getType()!=pArray)
-	{
-		kernelPrintDbg(DBG_ERR, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
+	shared_ptr<CDict> interNode_ptr=currentPage_ptr->getProperty<CDict>("Parent");
+	shared_ptr<CArray> kids_ptr;
+	try {
+		kids_ptr=interNode_ptr->getProperty<CArray>("Kids");
+	}catch(...) {
+		kernelPrintDbg(DBG_ERR, "Pages Kids field is not an array type");
 		// Kids is not array - malformed intermediate node
 		throw MalformedFormatExeption("Intermediate node Kids field is not an array.");
 	}
-	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
 
 	// gets index of searched node in Kids array and removes element from found
 	// position - if position can't be determined unambiguously (getPropertyId

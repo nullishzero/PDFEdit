@@ -295,14 +295,7 @@ using namespace debug;
 
 	try
 	{
-		shared_ptr<IProperty> subTypeProp=annotDictionary->getProperty("Subtype");
-		if(!isName(subTypeProp))
-		{
-			// TODO may be problem if value is indirect (what is not very usual)
-			kernelPrintDbg(DBG_WARN, "Subtype is not Name. Type="<<subTypeProp->getType());
-			return Unknown;
-		}
-		shared_ptr<CName> subTypeName=IProperty::getSmartCObjectPtr<CName>(subTypeProp);
+		shared_ptr<CName> subTypeName=annotDictionary->getProperty<CName>("Subtype");
 		string typeName;
 		subTypeName->getValue(typeName);
 		return utils::annotTypeMapping(typeName);
@@ -310,6 +303,9 @@ using namespace debug;
 	{
 		// Subtype field not present
 		kernelPrintDbg(DBG_WARN, "Annotation dictionary doesn't contain Subtype field.");
+		return Unknown;
+	}catch(...) {
+		// bad type
 		return Unknown;
 	}
 }

@@ -106,7 +106,7 @@ CPageFonts::addSystemType1Font (const std::string& fontname, bool winansienc)
 	}
 	
 	// Get Resources
-	shared_ptr<CDict> res = getCDictFromDict (_page->getDictionary(), Specification::Page::RESOURCES);
+	shared_ptr<CDict> res = _page->getDictionary()->getProperty<CDict>(Specification::Page::RESOURCES);
 	
 	if (!res->containsProperty (Specification::Font::TYPE))
 	{	
@@ -115,7 +115,7 @@ CPageFonts::addSystemType1Font (const std::string& fontname, bool winansienc)
 	}
 	
 	// Get "Fonts"
-	shared_ptr<CDict> fonts = getCDictFromDict (res, Specification::Font::TYPE);
+	shared_ptr<CDict> fonts = res->getProperty<CDict>(Specification::Font::TYPE);
 
 	// Get all avaliable fonts
 	CPageFonts::FontList fs;
@@ -162,7 +162,7 @@ CPageFonts::getFontIdsAndNames (FontList& cont) const
 	
 	try 
 	{
-		shared_ptr<CDict> fonts = utils::getCDictFromDict (res, Specification::Font::TYPE);
+		shared_ptr<CDict> fonts = res->getProperty<CDict>(Specification::Font::TYPE);
 		typedef std::vector<std::string> FontNames;
 		FontNames fontnames;
 		// Get all font names (e.g. R14, R15, F19...)
@@ -170,7 +170,7 @@ CPageFonts::getFontIdsAndNames (FontList& cont) const
 		// Get all base names (Symbol, csr12, ...)
 		for (FontNames::iterator it = fontnames.begin(); it != fontnames.end(); ++it)
 		{
-			shared_ptr<CDict> font = utils::getCDictFromDict (fonts, *it);
+			shared_ptr<CDict> font = fonts->getProperty<CDict>(*it);
 			try {
 				std::string fontbasename;
 				

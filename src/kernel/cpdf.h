@@ -1576,7 +1576,7 @@ public:
 		boost::shared_ptr<CDict> toplevel;
 		try {
 			
-			toplevel = utils::getCDictFromDict (docCatalog, "Outlines");
+			toplevel = docCatalog->getProperty<CDict>("Outlines");
 			
 		}catch (ElementNotFoundException&)
 		{

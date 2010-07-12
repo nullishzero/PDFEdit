@@ -61,12 +61,10 @@ setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 		string tmp1, tmp2;
 		cs->getStringRepresentation (tmp1);
 		//oss << tmp << std::endl;
-		#if TEMP_FILES_CREATE
 			ofstream of1;
 			of1.open ("1.txt");
 			of1 << tmp1 << flush;
 			of1.close();
-		#endif
 	
 		// parse the content stream after change
 		CStream::Buffer buf;
@@ -77,9 +75,7 @@ setCS (UNUSED_PARAM	ostream& oss, const char* fileName)
 		//
 		boost::shared_ptr<CDict> dict = page->getDictionary();
 		assert (dict);
-		boost::shared_ptr<IProperty> cstream = utils::getReferencedObject (dict->getProperty("Contents"));
-		if (isStream(cstream))
-			IProperty::getSmartCObjectPtr<CStream> (cstream)->setBuffer (buf);
+		dict->getProperty<CStream>("Contents")->setBuffer(buf);
 		cs->getStringRepresentation (tmp2);
 		
 		//

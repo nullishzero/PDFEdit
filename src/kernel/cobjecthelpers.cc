@@ -40,61 +40,25 @@ using namespace boost;
 
 int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
-	if(prop_ptr->getType() != pInt)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name/*, prop_ptr->getType()*/);
-	}
-
-	shared_ptr<CInt> int_ptr=IProperty::getSmartCObjectPtr<CInt>(prop_ptr);
+	boost::shared_ptr<CInt> int_ptr=dict->getProperty<CInt>(name);
 	return int_ptr->getValue();
 }
 
 IndiRef getRefFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
-	if(prop_ptr->getType() != pRef)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name/*, prop_ptr->getType()*/);
-	}
-
-	shared_ptr<CRef> int_ptr=IProperty::getSmartCObjectPtr<CRef>(prop_ptr);
+	boost::shared_ptr<CRef> int_ptr=dict->getProperty<CRef>(name);
 	return int_ptr->getValue();
 }
 
 std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
-	if(prop_ptr->getType() != pString)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name);
-	}
-
-	shared_ptr<CString> str_ptr=IProperty::getSmartCObjectPtr<CString>(prop_ptr);
+	boost::shared_ptr<CString> str_ptr=dict->getProperty<CString>(name);
 	return str_ptr->getValue();
 }
 	
 std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
-	if(prop_ptr->getType() != pName)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name);
-	}
-
-	shared_ptr<CName> name_ptr=IProperty::getSmartCObjectPtr<CName>(prop_ptr);
+	boost::shared_ptr<CName> name_ptr=dict->getProperty<CName>(name);
 	std::string value;
 	name_ptr->getValue(value);
 

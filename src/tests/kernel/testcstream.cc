@@ -73,10 +73,7 @@ bool setbuffer (UNUSED_PARAM	std::ostream& oss, UNUSED_PARAM	const char* fileNam
 	buf.push_back ('l');
 	buf.push_back ('o');
 	
-	shared_ptr<IProperty> ilen = utils::getReferencedObject (stream->getProperty ("Length"));
-	assert (isInt(ilen));
-	shared_ptr<CInt> clen = IProperty::getSmartCObjectPtr<CInt> (ilen);
-	assert (isInt(ilen));
+	shared_ptr<CInt> clen = stream->getProperty<CInt> ("Length");
 	int len = 0;
 	clen->getValue (len);
 	//oss << "Length: " << len << " " << flush;

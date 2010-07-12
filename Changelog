@@ -1,5 +1,7 @@
 	* Internal changes
 		- string to font encoding fixed on the library level
+		- C{Dict,Array,CStream}::getProperty<Type> added
+		- C{Dict,Array} helpers cleanup
 	* Bug 328, 355, 357, 359 fixed
 
 2010-05-11 PDF Editor 0.4.5

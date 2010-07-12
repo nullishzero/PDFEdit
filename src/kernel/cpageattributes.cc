@@ -57,20 +57,11 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 	if(!attrs._resources.get())
 	{
 		// attrs.__resources field is not specified yet, so tries this dictionary
-		if(pageDict->containsProperty(Specification::Page::RESOURCES))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty(Specification::Page::RESOURCES);
-			if(isRef(prop))
-			{
-				attrs._resources=getCObjectFromRef<CDict>(prop);
-				++initialized;
-			}
-			else
-				if(isDict(prop))
-				{
-					attrs._resources=IProperty::getSmartCObjectPtr<CDict>(prop);
-					++initialized;
-				}
+		try {
+			attrs._resources = pageDict->getProperty<CDict>(Specification::Page::RESOURCES);
+			++initialized;
+		}catch(...) {
+			// ignore
 		}
 	}else
 		++initialized;
@@ -79,19 +70,11 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 	if(!attrs._mediaBox.get())
 	{
 		// attrs._mediaBox field is not specified yet, so tries this array
-		if(pageDict->containsProperty(Specification::Page::MEDIABOX))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty(Specification::Page::MEDIABOX);
-			if(isRef(prop))
-			{
-				attrs._mediaBox=getCObjectFromRef<CArray>(prop);
-				++initialized;
-			}else
-				if(isArray(prop))
-				{
-					attrs._mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-					++initialized;
-				}
+		try {
+			attrs._mediaBox=pageDict->getProperty<CArray>(Specification::Page::MEDIABOX);
+			++initialized;
+		}catch(...) {
+			// ignore
 		}
 	}else
 		++initialized;
@@ -100,19 +83,11 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 	if(!attrs._cropBox.get())
 	{
 		// attrs._cropBox field is not specified yet, so tries this array
-		if(pageDict->containsProperty(Specification::Page::CROPBOX))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty(Specification::Page::CROPBOX);
-			if(isRef(prop))
-			{
-				attrs._cropBox=getCObjectFromRef<CArray>(prop);
-				++initialized;
-			}else
-				if(isArray(prop))
-				{
-					attrs._cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-					++initialized;
-				}
+		try {
+			attrs._cropBox=pageDict->getProperty<CArray>(Specification::Page::CROPBOX);
+			++initialized;
+		}catch(...) {
+			// ignore
 		}
 	}else
 		++initialized;
@@ -121,19 +96,11 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 	if(!attrs._rotate.get())
 	{
 		// attrs._rotate field is not specified yet, so tries this array
-		if(pageDict->containsProperty(Specification::Page::ROTATE))
-		{
-			shared_ptr<IProperty> prop=pageDict->getProperty(Specification::Page::ROTATE);
-			if(isRef(prop))
-			{
-				attrs._rotate=getCObjectFromRef<CInt>(prop);
-				++initialized;
-			}else
-				if(isInt(prop))
-				{
-					attrs._rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
-					++initialized;
-				}
+		try {
+			attrs._rotate=pageDict->getProperty<CInt>(Specification::Page::ROTATE);
+			++initialized;
+		}catch(...) {
+			// ignore
 		}
 	}else
 		++initialized;
@@ -147,12 +114,7 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 		// stops recursion and initializes values with default
 		if(pageDict->containsProperty(Specification::Page::PARENT))
 		{
-			shared_ptr<IProperty> parentRef=pageDict->getProperty(Specification::Page::PARENT);
-			if(!isRef(parentRef))
-				// this should not happen - malformed page tree structure
-				return;
-
-			shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentRef);
+			shared_ptr<CDict> parentDict=pageDict->getProperty<CDict>(Specification::Page::PARENT);
 			CPageAttributes::fillInherited(parentDict, attrs);
 		}else
 		{

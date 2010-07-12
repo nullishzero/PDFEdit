@@ -653,95 +653,6 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 /**
  * Get iproperty casted to specific type from array.
  *
- * @param array Array.
- * @param pos   Position in the array.
- */
-template<typename ItemType, PropertyType ItemPType>
-inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos) DEPRECATED;
-
-// gcc doesn't like __attribute__ in function definition
-template<typename ItemType, PropertyType ItemPType>
-inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
-{
-	//utilsPrintDbg (debug::DBG_DBG, "array[" << pos << "]");
-	
-	// Get the item that is associated with specified key 
-	boost::shared_ptr<IProperty> ip = array->getProperty (pos);
-	//
-	// If it is a Ref forward it to the real object
-	// 
-	ip = getReferencedObject (ip);
-
-	// Check the type
-	if (ItemPType != ip->getType ())
-	{
-		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
-		throw ElementBadTypeException ("getTypeFromArray()");
-	}
-
-	// Cast it to the correct type and return it
-	return IProperty::getSmartCObjectPtr<ItemType> (ip);
-}
-
-/**
- * Get iproperty casted to specific type from array.
- *
- * @param array Array.
- * @param id   Position in the array.
- * @throw ElementBadTypeException if property doesn't have ItemType type.
- */
-template<typename ItemType>
-inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
-{
-	utilsPrintDbg (debug::DBG_DBG, "array[" << pos << "]");
-	
-	// Get the item that is associated with specified key 
-	boost::shared_ptr<IProperty> ip = array->getProperty (pos);
-	//
-	// If it is a Ref forward it to the real object
-	// 
-	ip = getReferencedObject (ip);
-
-	// Check the type
-	if (ItemType::type != ip->getType ())
-	{
-		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type << " got " << ip->getType ());
-		throw ElementBadTypeException ("getTypeFromArray()");
-	}
-
-	// Cast it to the correct type and return it
-	return IProperty::getSmartCObjectPtr<ItemType> (ip);
-}
-
-/** \copydoc getTypeFromArray */
-template<typename ItemType, PropertyType ItemPType>
-inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<IProperty>& array, size_t pos) DEPRECATED;
-
-// gcc doesn't like __attribute__ in function definition
-template<typename ItemType, PropertyType ItemPType>
-inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
-{
-	assert (isArray (ip));
-	if (!isArray (ip))
-	{
-		assert (!"Ip is not an array.");
-		throw ElementBadTypeException ("getTypeFromArray()");
-	}
-
-	// Cast it to array
-	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
-
-	return getTypeFromArray<ItemType, ItemPType> (array, pos);
-}
-
-/**
- * Get iproperty casted to specific type from array.
- *
  * Checks type of given property and if it pArray, casts it to CArray and uses
  * getTypeFromArray with CArray parameter.
  *
@@ -760,7 +671,7 @@ getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
 	// Cast it to array
 	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
 
-	return getTypeFromArray<ItemType> (array, pos);
+	return array->getProperty<ItemType>(pos);
 }
 
 //=====================================================================================

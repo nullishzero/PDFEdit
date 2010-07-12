@@ -340,7 +340,7 @@ getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
 	boost::shared_ptr<CDict> dict; 
 	try {
 
-		dict = getCDictFromDict (topdict, "First");
+		dict = topdict->getProperty<CDict>("First");
 
 	}catch (ElementNotFoundException&) // No child
 		{ return; }
@@ -358,7 +358,7 @@ getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
 		getAllChildrenOfPdfObject (dict, cont);
 		
 		try {
-			dict = getCDictFromDict (dict, "Next");
+			dict = dict->getProperty<CDict>("Next");
 		}catch (ElementNotFoundException&)
 		{
 			return;

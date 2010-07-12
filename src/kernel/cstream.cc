@@ -324,15 +324,12 @@ CStream::getDecodedStringRepresentation (string& str) const
 size_t
 CStream::getLength () const 
 {
-	shared_ptr<IProperty> len = utils::getReferencedObject (dictionary.getProperty("Length"));
-	if (isInt (len))
-	{
+	try {
 		int length;
-		IProperty::getSmartCObjectPtr<CInt>(len)->getValue (length);
+		dictionary.getProperty<CInt>("Length")->getValue (length);
 		assert (0 <= length);
 		return length;
-	
-	}else
+	}catch(...)
 	{
 		assert (!"Bad Length type in stream.");
 		throw CObjInvalidObject ();
