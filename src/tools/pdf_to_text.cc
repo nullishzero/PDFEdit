@@ -47,6 +47,14 @@ namespace {
 	struct _textify {
 		string operator () (shared_ptr<CPage> page)
 		{
+			// Update display params to use media box not default page rect (DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)
+			// TODO upsidedown? get/set
+			DisplayParams dp;
+			dp.useMediaBox = gTrue;
+			dp.crop = gFalse;
+			dp.rotate = page->getRotation ();
+			page->setDisplayParams (dp);
+
 			string text;
 			static const std::string encoding="UTF-8";
 			page->getText (text, &encoding);

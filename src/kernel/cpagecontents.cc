@@ -400,6 +400,12 @@ CPageContents::getText (std::string& text, const string* encoding, const libs::R
 
 	// Get the text
 	libs::Rectangle rec = (rc)? *rc : _page->display()->getPageRect();
+	// if we use rotation 90,270 then we must change the rectangle from which we want the text
+	// accordingly (TODO - verify for all rotations)
+	int rot = _page->getRotation ();
+	if (90 == rot || 270 == rot)
+		std::swap (rec.xright, rec.yright);
+
 	scoped_ptr<GString> gtxt (textDev->getText(rec.xleft, rec.yleft, rec.xright, rec.yright));
 	text = gtxt->getCString();
 }
