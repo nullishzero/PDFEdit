@@ -717,7 +717,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
 	// name that looks like 'Axx' or 'xx', where 'A' is any letter
 	// and 'xx' is two hex digits
 	if ((strlen(charName) == 3 &&
-	     isalpha(charName[0]) &&
+	     isalpha((unsigned char)charName[0]) &&
 	     isxdigit((unsigned char)charName[1]) && isxdigit((unsigned char)charName[2]) &&
 	     ((charName[1] >= 'a' && charName[1] <= 'f') ||
 	      (charName[1] >= 'A' && charName[1] <= 'F') ||
@@ -748,7 +748,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
 	  strcmp(charName, ".notdef")) {
 	n = strlen(charName);
 	code2 = -1;
-	if (hex && n == 3 && isalpha(charName[0]) &&
+	if (hex && n == 3 && isalpha((unsigned char)charName[0]) &&
 	    isxdigit((unsigned char)charName[1]) && isxdigit((unsigned char)charName[2])) {
 	  sscanf(charName+1, "%x", &code2);
 	} else if (hex && n == 2 &&

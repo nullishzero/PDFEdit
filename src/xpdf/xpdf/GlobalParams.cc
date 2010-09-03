@@ -962,7 +962,7 @@ void GlobalParams::parseLine(const char *buf, const GString *fileName, int line)
   tokens = new GList();
   p1 = buf;
   while (*p1) {
-    for (; *p1 && isspace(*p1); ++p1) ;
+    for (; *p1 && isspace((unsigned char)*p1); ++p1) ;
     if (!*p1) {
       break;
     }
@@ -970,7 +970,7 @@ void GlobalParams::parseLine(const char *buf, const GString *fileName, int line)
       for (p2 = p1 + 1; *p2 && *p2 != *p1; ++p2) ;
       ++p1;
     } else {
-      for (p2 = p1 + 1; *p2 && !isspace(*p2); ++p2) ;
+      for (p2 = p1 + 1; *p2 && !isspace((unsigned char)*p2); ++p2) ;
     }
     tokens->append(new GString(p1, p2 - p1));
     p1 = *p2 ? p2 + 1 : p2;

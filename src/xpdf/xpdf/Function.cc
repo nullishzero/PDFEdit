@@ -1097,7 +1097,7 @@ GBool PostScriptFunction::parseCode(Stream *str, int *codePtr) {
       return gFalse;
     }
     p = tok->getCString();
-    if (isdigit(*p) || *p == '.' || *p == '-') {
+    if (isdigit((unsigned char)*p) || *p == '.' || *p == '-') {
       isReal = gFalse;
       for (++p; *p; ++p) {
 	if (*p == '.') {
@@ -1222,17 +1222,17 @@ GString *PostScriptFunction::getToken(Stream *str) {
       }
     } else if (c == '%') {
       comment = gTrue;
-    } else if (!isspace(c)) {
+    } else if (!isspace((unsigned char)c)) {
       break;
     }
   }
   if (c == '{' || c == '}') {
     s->append((char)c);
-  } else if (isdigit(c) || c == '.' || c == '-') {
+  } else if (isdigit((unsigned char)c) || c == '.' || c == '-') {
     while (1) {
       s->append((char)c);
       c = str->lookChar();
-      if (c == EOF || !(isdigit(c) || c == '.' || c == '-')) {
+      if (c == EOF || !(isdigit((unsigned char)c) || c == '.' || c == '-')) {
 	break;
       }
       str->getChar();
@@ -1242,7 +1242,7 @@ GString *PostScriptFunction::getToken(Stream *str) {
     while (1) {
       s->append((char)c);
       c = str->lookChar();
-      if (c == EOF || !isalnum(c)) {
+      if (c == EOF || !isalnum((unsigned char)c)) {
 	break;
       }
       str->getChar();

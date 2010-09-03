@@ -623,7 +623,7 @@ GString *GString::upperCase() {
   int i;
 
   for (i = 0; i < length; ++i) {
-    if (islower(s[i]))
+    if (islower((unsigned char)s[i]))
       s[i] = toupper(s[i]);
   }
   return this;
@@ -633,7 +633,7 @@ GString *GString::lowerCase() {
   int i;
 
   for (i = 0; i < length; ++i) {
-    if (isupper(s[i]))
+    if (isupper((unsigned char)s[i]))
       s[i] = tolower(s[i]);
   }
   return this;

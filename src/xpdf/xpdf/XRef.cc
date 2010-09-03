@@ -365,7 +365,7 @@ Guint XRef::getStartXref() {
   }
 
   // get value for startxref
-  for (i += strlen("startxref"); isspace(buf[i]); ++i) ;
+  for (i += strlen("startxref"); isspace((unsigned char)buf[i]); ++i) ;
   lastXRefPos = strToUnsigned(&buf[i]);
 
   // We are immediatelly after startxref value now. We will try to 
@@ -844,16 +844,16 @@ GBool XRef::constructXRef() {
 	if (isspace((unsigned char)*p)) {
 	  do {
 	    ++p;
-	  } while (*p && isspace(*p));
+	  } while (*p && isspace((unsigned char)*p));
 	  if (isdigit((unsigned char)*p)) {
 	    gen = (int)strtoul(p, NULL, 10);
 	    do {
 	      ++p;
 	    } while (*p && isdigit((unsigned char)*p));
-	    if (isspace(*p)) {
+	    if (isspace((unsigned char)*p)) {
 	      do {
 		++p;
-	      } while (*p && isspace(*p));
+	      } while (*p && isspace((unsigned char)*p));
 	      if (!strncmp(p, "obj", 3)) {
 		if (num >= size) {
 		  newSize = (num + 1 + 255) & ~255;

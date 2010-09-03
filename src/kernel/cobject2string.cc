@@ -210,9 +210,11 @@ simpleValueToString<pRef> (const IndiRef& ref, string& str)
 
 bool isBinaryString(const std::string& val)
 {
-	for(std::string::const_iterator i = val.begin(); i != val.end(); ++i)
-		if(!isprint(*i))
+	for(std::string::const_iterator i = val.begin(); i != val.end(); ++i) {
+		unsigned char ch = *i;
+		if(!isprint(ch))
 			return true;
+	}
 	return false;
 }
 
