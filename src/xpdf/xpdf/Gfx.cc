@@ -475,6 +475,8 @@ Gfx::Gfx(XRef *xrefA, OutputDev *outA, int pageNum, const Dict *resDict,
     out->clip(state);
     state->clearPath();
   }
+
+  parser = NULL;
 }
 
 Gfx::Gfx(XRef *xrefA, OutputDev *outA, const Dict *resDict,
@@ -514,6 +516,8 @@ Gfx::Gfx(XRef *xrefA, OutputDev *outA, const Dict *resDict,
     out->clip(state);
     state->clearPath();
   }
+
+  parser = NULL;
 }
 
 Gfx::~Gfx() {
