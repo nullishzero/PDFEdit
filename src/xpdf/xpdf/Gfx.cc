@@ -1245,6 +1245,8 @@ void Gfx::opSetFillColorN(Object args[], int numArgs) {
       for (i = 0; i < numArgs - 1 && i < gfxColorMaxComps; ++i) {
 	if (args[i].isNum()) {
 	  color.c[i] = dblToCol(args[i].getNum());
+	} else {
+	  color.c[i] = 0; // TODO Investigate if this is what Adobe does
 	}
       }
       state->setFillColor(&color);
@@ -1264,6 +1266,8 @@ void Gfx::opSetFillColorN(Object args[], int numArgs) {
     for (i = 0; i < numArgs && i < gfxColorMaxComps; ++i) {
       if (args[i].isNum()) {
 	color.c[i] = dblToCol(args[i].getNum());
+      } else {
+        color.c[i] = 0; // TODO Investigate if this is what Adobe does
       }
     }
     state->setFillColor(&color);
@@ -1288,6 +1292,8 @@ void Gfx::opSetStrokeColorN(Object args[], int numArgs) {
       for (i = 0; i < numArgs - 1 && i < gfxColorMaxComps; ++i) {
 	if (args[i].isNum()) {
 	  color.c[i] = dblToCol(args[i].getNum());
+	} else {
+	  color.c[i] = 0; // TODO Investigate if this is what Adobe does
 	}
       }
       state->setStrokeColor(&color);
@@ -1307,6 +1313,8 @@ void Gfx::opSetStrokeColorN(Object args[], int numArgs) {
     for (i = 0; i < numArgs && i < gfxColorMaxComps; ++i) {
       if (args[i].isNum()) {
 	color.c[i] = dblToCol(args[i].getNum());
+      } else {
+        color.c[i] = 0; // TODO Investigate if this is what Adobe does
       }
     }
     state->setStrokeColor(&color);
