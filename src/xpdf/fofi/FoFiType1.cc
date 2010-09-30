@@ -224,7 +224,7 @@ void FoFiType1::parse() {
 		code = code * 8 + (*p2 - '0');
 	      }
 	    }
-	    if (code < 256) {
+	    if (code < 256 && code >= 0) {
 	      for (p = p2; *p == ' ' || *p == '\t'; ++p) ;
 	      if (*p == '/') {
 		++p;
