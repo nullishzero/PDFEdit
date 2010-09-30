@@ -3727,8 +3727,14 @@ void Gfx::doForm(const Object *str) {
   }
   for (i = 0; i < 4; ++i) {
     bboxObj.arrayGet(i, &obj1);
-    bbox[i] = obj1.getNum();
-    obj1.free();
+    if (obj1.isNum()) {
+      bbox[i] = obj1.getNum();
+      obj1.free();
+    } else {
+      obj1.free();
+      error(getPos(), "Bad form bounding box value");
+      return;
+    }
   }
   bboxObj.free();
 
@@ -4084,8 +4090,14 @@ void Gfx::drawAnnot(Object *str, AnnotBorderStyle *borderStyle,
     }
     for (i = 0; i < 4; ++i) {
       bboxObj.arrayGet(i, &obj1);
-      bbox[i] = obj1.getNum();
-      obj1.free();
+      if (obj1.isNum()) {
+        bbox[i] = obj1.getNum();
+        obj1.free();
+      } else {
+        obj1.free();
+        error(getPos(), "Bad form bounding box value");
+        return;
+      }
     }
     bboxObj.free();
 
