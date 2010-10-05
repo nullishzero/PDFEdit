@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="cppunitd.lib zdll.lib"
+		AdditionalDependencies="cppunitd.lib zlib1.lib"
 	/>
 </VisualStudioPropertySheet>
