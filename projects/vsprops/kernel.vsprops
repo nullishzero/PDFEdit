@@ -15,7 +15,7 @@
 	/>
 	<Tool
 		Name="VCLibrarianTool"
-		AdditionalDependencies="zdll.lib"
+		AdditionalDependencies="zlib1.lib"
 	/>
 	<Tool
 		Name="VCLinkerTool"
