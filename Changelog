@@ -3,6 +3,8 @@
 		- C{Dict,Array,CStream}::getProperty<Type> added
 		- C{Dict,Array} helpers cleanup
 	* Bug 328, 355, 357, 359 fixed
+	* Security fixes bacported from poppler (CVE-2010-3702 and
+	  CVE-2010-3704 received also CVE numbers)
 
 2010-05-11 PDF Editor 0.4.5
 	* fix for a bug caused by xpdf code refactoring (const methods and
