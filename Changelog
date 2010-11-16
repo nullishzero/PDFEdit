@@ -2,6 +2,7 @@
 		- string to font encoding fixed on the library level
 		- C{Dict,Array,CStream}::getProperty<Type> added
 		- C{Dict,Array} helpers cleanup
+		- --enable-portable-flags configure option added
 	* Bug 328, 355, 357, 359 fixed
 	* Security fixes bacported from poppler (CVE-2010-3702 and
 	  CVE-2010-3704 received also CVE numbers)

@@ -140,8 +140,8 @@ EXTRA_XPDF_CXXFLAGS = @EXTRA_XPDF_CXXFLAGS@ -pedantic
 # same like for compiler stuff we also define 2 levels 
 # CONFIG_{NAME} can be used for qmake direct {NAME} can be used
 # for compilation
-CONFIG_CFLAGS  	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(C_EXTRA) @STACK_PROTECTOR_FLAGS@ -pipe -posix -ansi -std=c99 -pedantic
-CONFIG_CXXFLAGS	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(CXX_EXTRA) $(OBSERVER_CXXFLAGS) @STACK_PROTECTOR_FLAGS@ -pipe -posix -ansi -std=c++98
+CONFIG_CFLAGS  	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(C_EXTRA) @STACK_PROTECTOR_FLAGS@ -pipe @C_PORTABILITY_FLAGS@
+CONFIG_CXXFLAGS	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(CXX_EXTRA) $(OBSERVER_CXXFLAGS) @STACK_PROTECTOR_FLAGS@ -pipe @CXX_PORTABILITY_FLAGS@
 
 CFLAGS = $(CONFIG_CFLAGS)
 CXXFLAGS = $(CONFIG_CXXFLAGS)

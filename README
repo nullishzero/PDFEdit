@@ -223,6 +223,8 @@ uses this feature):
 	 make install will install also header files, libraries and
 	 pdfedit-core-dev-config helper script (see Installation directories
 	 bellow). This option is disabled by default.
+	-poratability-flags - adds compiler flags which force c99/c++98 
+	 standard and posix/ansi portability. This option is enabled by default.
 
 Default configuration process will check for the number of CPUs/cores and 
 use this value for make jobs parallelization (each make will use different
@@ -409,6 +411,14 @@ PATH in cygwin must contain these three directories
 You can use cygwin_build.bat to start the build process (you will need 
 to set CYGWIN_ROOT in the file first). This will create the package in 
 /tmp/pdfedit-package and create pack.bat to pack the package with 7-zip
+
+Please note that we have received reports about PDFedit failing to compile
+under some Cygwin releases. The problem turned out to be related to 
+implementation of c++ standard wrt. to some functions definitions (e.g. mkstemp)
+under Cygwin.
+The only reasonable solution is turning off portability and c/c++ standards
+compiler flags. Please use --enable-portability-flags=no if you encounters
+these problems.
 
 
 FreeBSD build
