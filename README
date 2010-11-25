@@ -490,6 +490,7 @@ RPM based distros
 =================
 * OpenSUSE provides package via the Packman repository
   (http://ftp.skynet.be/pub/packman/suse/10.3/)
+  Build service access - https://build.opensuse.org/package/show?package=pdfedit&project=KDE%3AKDE3
 * Package for Mandriva can be obtained from http://rpmlinux.org
 
 Gentoo package
