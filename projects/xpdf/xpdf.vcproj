@@ -27,7 +27,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
+				CommandLine="if NOT EXIST &quot;$(SolutionDir)\..\src\xpdf\xpdf-aconf.h&quot; copy &quot;$(SolutionDir)\..\src\xpdf\aconf-win32.h&quot; &quot;$(SolutionDir)\..\src\xpdf\xpdf-aconf.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\freetype6.dll $(SolutionDir)\output\freetype6.dll"
+				CommandLine="if NOT EXIST &quot;$(SolutionDir)\output\freetype6.dll&quot; copy &quot;$(SolutionDir)\libs\freetype6.dll&quot; &quot;$(SolutionDir)\output\freetype6.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -83,7 +83,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
+				CommandLine="if NOT EXIST &quot;$(SolutionDir)\..\src\xpdf\xpdf-aconf.h&quot; copy &quot;$(SolutionDir)\..\src\xpdf\aconf-win32.h&quot; &quot;$(SolutionDir)\..\src\xpdf\xpdf-aconf.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\freetype6.dll $(SolutionDir)\output\freetype6.dll"
+				CommandLine="if NOT EXIST &quot;$(SolutionDir)\output\freetype6.dll&quot; copy &quot;$(SolutionDir)\libs\freetype6.dll&quot; &quot;$(SolutionDir)\output\freetype6.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -138,7 +138,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\..\src\xpdf\xpdf-aconf.h copy $(SolutionDir)\..\src\xpdf\aconf-win32.h $(SolutionDir)\..\src\xpdf\xpdf-aconf.h"
+				CommandLine="if NOT EXIST &quot;$(SolutionDir)\..\src\xpdf\xpdf-aconf.h&quot; copy &quot;$(SolutionDir)\..\src\xpdf\aconf-win32.h&quot; &quot;$(SolutionDir)\..\src\xpdf\xpdf-aconf.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -182,7 +182,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if NOT EXIST $(SolutionDir)\output\freetype6.dll copy $(SolutionDir)\libs\freetype6.dll $(SolutionDir)\output\freetype6.dll"
+				CommandLine="if NOT EXIST &quot;$(SolutionDir)\output\freetype6.dll&quot; copy &quot;$(SolutionDir)\libs\freetype6.dll&quot; &quot;$(SolutionDir)\output\freetype6.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
