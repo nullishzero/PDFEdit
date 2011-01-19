@@ -73,7 +73,7 @@ template void CPageChanges::displayChange<vector<shared_ptr<CContentStream> > > 
 //
 //
 void 
-CPageChanges::displayChange (::OutputDev& out, const std::vector<size_t> cs) const
+CPageChanges::displayChange (::OutputDev& out, const std::vector<size_t>& cs) const
 {
 	Changes css;
 	for (std::vector<size_t>::const_iterator it = cs.begin(); it != cs.end(); ++it)

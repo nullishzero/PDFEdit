@@ -93,7 +93,7 @@ public:
 	 */
 	template<typename Container>
 	void displayChange (::OutputDev& out, const Container& cont) const;
-	void displayChange (::OutputDev& out, const std::vector<size_t> cs) const;
+	void displayChange (::OutputDev& out, const std::vector<size_t>& cs) const;
 
 
 }; // class CPageChanges
