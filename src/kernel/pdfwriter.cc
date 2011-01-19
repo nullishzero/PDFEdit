@@ -509,7 +509,7 @@ using namespace boost;
 	shared_ptr<OperationStep> newValue(new OperationStep());
 
 	// prepares offTable and writes objects
-	for(i=objectList.begin(); i!=objectList.end(); i++, index++)
+	for(i=objectList.begin(); i!=objectList.end(); ++i, index++)
 	{
 		::Ref ref=i->first;
 		Object * obj=i->second;
@@ -615,7 +615,7 @@ size_t OldStylePdfWriter::writeTrailer(const Object & trailer,const PrevSecInfo 
 	utilsPrintDbg(DBG_DBG, "Creating subsection offTable");
 	
 	// goes through rest entries of offset offTable
-	for(OffsetTab::iterator i=offTable.begin(); i!=offTable.end(); i++)
+	for(OffsetTab::iterator i=offTable.begin(); i!=offTable.end(); ++i)
 	{
 		int num=(i->first).num;
 		int gen=(i->first).gen;
@@ -666,7 +666,7 @@ size_t OldStylePdfWriter::writeTrailer(const Object & trailer,const PrevSecInfo 
 
 	// writes all subsection
 	size_t index=1;
-	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++, index++)
+	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); ++i, index++)
 	{
 		// at first writes head object number and number of elements in the
 		// subsection
@@ -690,7 +690,7 @@ size_t OldStylePdfWriter::writeTrailer(const Object & trailer,const PrevSecInfo 
 		// 		     end of line character, it is preceeded by one space.
 		// Each entry is exactly 20 bytes long including the end-of-line marker.
 		// We don't provide information about free objects
-		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
+		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); ++entry)
 		{
 			int ret = snprintf(xrefRow, sizeof(xrefRow)-1, 
 					"%010u %05i n ", 
@@ -922,7 +922,7 @@ using namespace debug;
 		utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects("
 				<<objectList.size()<<").");
 		IPdfWriter::ObjectList::iterator i;
-		for(i=objectList.begin(); i!=objectList.end(); i++)
+		for(i=objectList.begin(); i!=objectList.end(); ++i)
 		{
 			xpdf::freeXpdfObject(i->second);
 			i->second=NULL;

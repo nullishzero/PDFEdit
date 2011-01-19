@@ -99,7 +99,7 @@ UniversalAnnotInitializer::SupportedList UniversalAnnotInitializer::getSupported
 {
 	// returns list with names from implList
 	SupportedList list;
-	for(AnnotList::const_iterator i=implList.begin(); i!=implList.end(); i++)
+	for(AnnotList::const_iterator i=implList.begin(); i!=implList.end(); ++i)
 	{
 		string annotType=i->first;
 		list.push_back(annotType);
