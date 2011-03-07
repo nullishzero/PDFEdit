@@ -3,8 +3,11 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="VSprops Release"
-	WholeProgramOptimization="65535"
 	>
+	<Tool
+		Name="VCBscMakeTool"
+		OutputFile="$(OutDir)/bsc/"
+	/>
 	<Tool
 		Name="VCCLCompilerTool"
 		Optimization="2"
@@ -24,5 +27,9 @@
 	<Tool
 		Name="VCResourceCompilerTool"
 		PreprocessorDefinitions="NDEBUG"
+	/>
+	<Tool
+		Name="VCManifestTool"
+		VerboseOutput="true"
 	/>
 </VisualStudioPropertySheet>
