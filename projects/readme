@@ -51,6 +51,10 @@ Include files: (e.g. g:\private\work\projects\pdfedit\freetype\include\)
 if NOT  OK go to #5 and try again?
 if OK continue
 
+==libpng==
+8. download png and create libraries libpng/libpngd
+the same process as above
+
 Select Platform/Configuration Debug-Win32 / Win32 and build it
 
 Troubleshooting
