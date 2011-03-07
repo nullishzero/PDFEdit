@@ -35,7 +35,11 @@
 #undef _HAS_ITERATOR_DEBUGGING
 #endif
 // boost won't work otherwise!
+#ifdef DEBUG
 #define _HAS_ITERATOR_DEBUGGING 1
+#else
+#define _HAS_ITERATOR_DEBUGGING 0
+#endif
 
 
 #include <time.h>
