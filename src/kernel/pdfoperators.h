@@ -280,6 +280,12 @@ public:
 	virtual void getOperatorName (std::string& first) const {first = _opBegin;}
 
 	//
+	//
+	//
+	size_t getWidth() const;
+	size_t getHeight() const;
+
+	//
 	// Clone interface
 	//
 protected:

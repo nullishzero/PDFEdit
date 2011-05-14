@@ -92,9 +92,8 @@ CInlineImage::CInlineImage (::Object& oDict, const CStream::Buffer& buf) : CStre
 	// Init dictionary, we do not have access to dictionary container
 	utils::dictFromXpdfObj (this->dictionary, oDict);
 	assert (0 < this->dictionary.getPropertyCount ());
-	
-	// Set buffer, do not use setRawBuffer because CStream would be ... copied
-	std::copy (buf.begin(), buf.end(), std::back_inserter (this->buffer));
+
+	initialize( buf );
 }
 
 //
@@ -104,8 +103,7 @@ CInlineImage::CInlineImage (const CDict& dict, const CStream::Buffer& buf) : CSt
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 
-	// Set buffer, do not use setRawBuffer because CStream would be ... copied
-	std::copy (buf.begin(), buf.end(), std::back_inserter (this->buffer));
+	initialize( buf );
 }
 
 //
@@ -124,10 +122,28 @@ CInlineImage::CInlineImage (boost::weak_ptr<CPdf> p, ::Object& oDict, const CStr
 	setPdf (p);
 	setIndiRef (rf);
 	
+	initialize( buf );
+}
+
+void CInlineImage::initialize( const CStream::Buffer& buf ) 
+{
+	_width = _height = 0;
+	try {
+	  _width = utils::getDoubleFromDict( dictionary, "Width" );
+	}catch(CObjectException&){}
+	try {
+	  _width = utils::getDoubleFromDict( dictionary, "W" );
+	}catch(CObjectException&){}
+	try {
+	  _height = utils::getDoubleFromDict( dictionary, "Height" );
+	}catch(CObjectException&){}
+	try {
+	  _height = utils::getDoubleFromDict( dictionary, "H" );
+	}catch(CObjectException&){}
+	
 	// Set buffer, do not use setRawBuffer because CStream would be ... copied
 	std::copy (buf.begin(), buf.end(), std::back_inserter (this->buffer));
 }
-
 
 //
 // Get methods

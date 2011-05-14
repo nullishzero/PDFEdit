@@ -453,6 +453,18 @@ UnknownCompositePdfOperator::clone ()
 // InlineImageCompositePdfOperator
 //
 
+size_t 
+InlineImageCompositePdfOperator::getWidth() const 
+{
+  return _inlineimage->width();
+}
+size_t 
+InlineImageCompositePdfOperator::getHeight() const
+{
+  return _inlineimage->height();
+}
+
+
 //
 //
 //

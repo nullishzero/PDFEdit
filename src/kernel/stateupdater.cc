@@ -689,8 +689,17 @@ namespace {
 		utilsPrintDbg (DBG_DBG, "NOT IMPLEMENTED");
 		utilsPrintDbg (DBG_DBG, " " << op->getParametersCount() << " , " << op->getChildrenCount());
 
-		// Set edge of rectangle from actual position on output devices
-		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		const InlineImageCompositePdfOperator* image_op = dynamic_cast<InlineImageCompositePdfOperator*>(op.get());
+		
+		
+		// we know the width/height so add it to x,y left top corner
+		// 4.8.3 pdf spec 
+		// The coordinate origin (0, 0) is at the upper-left corner of the image,
+		// with coordinates ranging from 0 to w horizontally and 0 to h vertically.
+		//
+		rc->xright = rc->xleft + image_op->getWidth();
+		rc->yright = rc->yleft - image_op->getHeight();
 		
 		// return changed state
 		return state;

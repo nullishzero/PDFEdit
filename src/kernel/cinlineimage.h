@@ -54,6 +54,13 @@ namespace pdfobjects {
 class CInlineImage : public CStream
 {
 	//
+	// params
+	//
+private:
+	double _width;
+	double _height;
+	
+	//
 	// Constructors
 	//
 public:
@@ -99,6 +106,19 @@ protected:
 	virtual CStream* _newInstance () const
 		{ return new CInlineImage; }
 
+	
+	//
+	//
+	//
+public:
+	void initialize( const CStream::Buffer& buf );
+	
+	double width() const {
+	  return _width;
+	}
+	double height() const {
+	  return _height;
+	}
 	
 	//
 	// Get methods

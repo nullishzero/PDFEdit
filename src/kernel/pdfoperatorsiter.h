@@ -235,7 +235,7 @@ typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOpera
  * This iterator iterates over all graphical operators on a page this includes
  * lines, rectangles, paths.
  */
-typedef struct AcceptingPdfOperatorIterator<24, itGraphicalIterator> GraphicalOperatorIterator;
+typedef struct AcceptingPdfOperatorIterator<25, itGraphicalIterator> GraphicalOperatorIterator;
 
 
 
