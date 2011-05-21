@@ -732,7 +732,6 @@ template void simpleValueFromXpdfObj<pInt, int&> (const Object&,  int& val);
 template void simpleValueFromXpdfObj<pReal, double&> (const Object&, double& val);
 template void simpleValueFromXpdfObj<pString, string&> (const Object&, string& val);
 template void simpleValueFromXpdfObj<pName, string&> (const Object&, string& val);
-template void simpleValueFromXpdfObj<pNull, NullType&> (const Object&, NullType& val);
 template void simpleValueFromXpdfObj<pRef, IndiRef&> (const Object&, IndiRef& val);
 
 
