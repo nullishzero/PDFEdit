@@ -40,7 +40,11 @@ namespace {
 	// library wrapper
 	struct _pdf_lib {
 		bool _ok;
-		_pdf_lib (int argc, char ** argv) {_ok = (0 == pdfedit_core_dev_init(&argc, &argv));}
+		_pdf_lib (int argc, char ** argv) {
+			struct pdfedit_core_dev_init init;
+			init.fontDir = ".";
+			_ok = (0 == pdfedit_core_dev_init(&argc, &argv, &init));
+		}
 		~_pdf_lib () {pdfedit_core_dev_destroy();}
 	};
 	// what to do with a page
