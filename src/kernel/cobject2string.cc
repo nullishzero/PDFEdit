@@ -244,13 +244,12 @@ simpleValueToString (const std::string& val, std::string& str)
 	{
 		case pString:
 		{
-			std::string validateStr = makeStringPdfValid (val);
-			if (!isBinaryString(val))
-				str = Specification::CSTRING_PREFIX + validateStr + Specification::CSTRING_SUFFIX;
-			else
+			if (!isBinaryString(val)) {
+				str = Specification::CSTRING_PREFIX + makeStringPdfValid(val) + Specification::CSTRING_SUFFIX;
+			}else
 			{
 				str = Specification::CHEXSTRING_PREFIX 
-					+ makeHexString (validateStr.begin(), validateStr.end())
+					+ makeHexString (val.begin(), val.end())
 					+ Specification::CHEXSTRING_SUFFIX;
 			}
 			break;
