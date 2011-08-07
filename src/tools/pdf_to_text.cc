@@ -35,21 +35,26 @@ namespace po = program_options;
 
 namespace {
 
+	// default values
+	const string DEFAULT_ENCODING = "UTF-8";
+	const bool DEFAULT_OUTPUT_PAGES = false;
+	const string DEFAULT_FONT_DIR = ".";
+
 	// pages
 	typedef vector<size_t> Pages;
 	// library wrapper
 	struct _pdf_lib {
 		bool _ok;
-		_pdf_lib (int argc, char ** argv) {
+		_pdf_lib (int argc, char ** argv, const string& font_dir) {
 			struct pdfedit_core_dev_init init;
-			init.fontDir = ".";
+			init.fontDir = font_dir.c_str();
 			_ok = (0 == pdfedit_core_dev_init(&argc, &argv, &init));
 		}
 		~_pdf_lib () {pdfedit_core_dev_destroy();}
 	};
 	// what to do with a page
 	struct _textify {
-		string operator () (shared_ptr<CPage> page)
+		string operator () (shared_ptr<CPage> page, const string& encoding)
 		{
 			// Update display params to use media box not default page rect (DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)
 			// TODO upsidedown? get/set
@@ -60,8 +65,7 @@ namespace {
 			page->setDisplayParams (dp);
 
 			string text;
-			static const std::string encoding="UTF-8";
-			page->getText (text, &encoding);
+			page->getText( text, &encoding );
 			return text;
 		}
 	};
@@ -78,6 +82,9 @@ main(int argc, char ** argv)
 		("help", "produce help message")
 		("file", po::value<string>(), "input file")
 		("what", po::value<Pages>(), "pages to convert")
+		("output-pages", po::value<bool>()->default_value(DEFAULT_OUTPUT_PAGES), "output page number before each page")
+		("encoding", po::value<string>()->default_value(DEFAULT_ENCODING), "encoding to use")
+		("font-dir", po::value<string>()->default_value(DEFAULT_FONT_DIR), "(xpdf) font directory with font definitions(e.g. N019003L.PFB)")
 	;
 
 	po::variables_map vm;
@@ -96,6 +103,9 @@ main(int argc, char ** argv)
 			return 1;
 		}
 	string file = vm["file"].as<string>(); 
+	bool output_pages = vm["output-pages"].as<bool>(); 
+	string encoding = vm["encoding"].as<string>(); 
+	string font_dir = vm["font-dir"].as<string>(); 
 	
 	Pages pages;
 	if (vm.count("what"))
@@ -104,7 +114,7 @@ main(int argc, char ** argv)
 	try
 	{
 		// pdf lib init & work
-		_pdf_lib _lib(argc, argv);
+		_pdf_lib _lib(argc, argv, font_dir);
 			if (!_lib._ok)
 				return 1;
 
@@ -116,7 +126,9 @@ main(int argc, char ** argv)
 			for (size_t i = 1; i <= pdf->getPageCount(); ++i)
 			{
 				shared_ptr<CPage> page = pdf->getPage(i);
-				std::cout << "\nPage " << i << ":\n" << _textify()(page);
+				if (output_pages)
+					std::cout << "\nPage " << i << ":\n";
+				std::cout << _textify()(page, encoding);
 			}
 		}
 		
@@ -130,12 +142,15 @@ main(int argc, char ** argv)
 				}
 
 			shared_ptr<CPage> page = pdf->getPage(*it);
-			std::cout << "\nPage " << *it << ":\n" << _textify()(page);
+			if (output_pages)
+				std::cout << "\nPage " << *it << ":\n";
+			std::cout << _textify()(page, encoding);
 		}
 
 	}catch (std::exception& e)
 	{
 		std::cout << "exception - " << e.what();
+		return -1;
 	}
 
 	return 0;
