@@ -36,9 +36,9 @@ namespace po = program_options;
 namespace {
 
 	// default values
-	const string DEFAULT_ENCODING = "UTF-8";
+	const string DEFAULT_ENCODING( "UTF-8" );
 	const bool DEFAULT_OUTPUT_PAGES = false;
-	const string DEFAULT_FONT_DIR = ".";
+	const string DEFAULT_FONT_DIR( "." );
 
 	// pages
 	typedef vector<size_t> Pages;
@@ -46,7 +46,7 @@ namespace {
 	struct _pdf_lib {
 		bool _ok;
 		_pdf_lib (int argc, char ** argv, const string& font_dir) {
-			struct pdfedit_core_dev_init init;
+			struct pdfedit_core_dev_init init = {0};
 			init.fontDir = font_dir.c_str();
 			_ok = (0 == pdfedit_core_dev_init(&argc, &argv, &init));
 		}
