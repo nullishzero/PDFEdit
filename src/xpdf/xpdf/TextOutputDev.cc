@@ -826,6 +826,7 @@ void TextLineFrag::init(TextLine *lineA, int startA, int lenA) {
   start = startA;
   len = lenA;
   col = line->col[start];
+  base = 0;
 }
 
 void TextLineFrag::computeCoords(GBool oneRot) {
@@ -1264,6 +1265,8 @@ void TextBlock::coalesce(UnicodeMap *uMap) {
     lastWord = word0;
 
     // compute the search range
+    int rot = word0->rot;
+
     fontSize = word0->fontSize;
     minBase = word0->base - maxIntraLineDelta * fontSize;
     maxBase = word0->base + maxIntraLineDelta * fontSize;
@@ -1281,7 +1284,14 @@ void TextBlock::coalesce(UnicodeMap *uMap) {
 	for (word0 = NULL, word1 = pool->getPool(baseIdx);
 	     word1;
 	     word0 = word1, word1 = word1->next) {
-	  if (word1->base >= minBase &&
+
+	 // this mayhem checks for y axis
+	 // - if it is in the desired range than check whether
+	 // the last character is somewhere near (to the right) to the first character of
+	 // the next word( WHICH IS INCORRECT with accented characters splitted into 2)
+	 //  - fixed in addChar rather than in this ...
+	  if (word1->rot == rot && 
+	      word1->base >= minBase &&
 	      word1->base <= maxBase &&
 	      (delta = lastWord->primaryDelta(word1)) >=
 	        minCharSpacing * fontSize) {
@@ -3326,8 +3336,11 @@ GString *TextPage::getText(double xMin, double yMin,
       // insert a return
       if (frag->col < col ||
 	  (i > 0 && fabs(frag->base - frags[i-1].base) >
-	              maxIntraLineDelta * frags[i-1].line->words->fontSize)) {
-	s->append(eol, eolLen);
+	              maxIntraLineDelta * frags[i-1].line->words->fontSize) 
+		|| (i > 0 && frag->line->rot != frags[i-1].line->rot)) {
+	
+  
+  s->append(eol, eolLen);
 	col = 0;
 	multiLine = gTrue;
       }
