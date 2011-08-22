@@ -566,10 +566,14 @@ CPageContents::addInlineImage (const CStream::Buffer& what,
 
 
 	CDict image_dict;
-	image_dict.addProperty ("W", CInt (image_size.x));
-	image_dict.addProperty ("H", CInt (image_size.y));
-	image_dict.addProperty ("CS", CName ("RGB"));
-	image_dict.addProperty ("BPC", CInt (8));
+	CInt W (image_size.x);
+	image_dict.addProperty ("W", W);
+	CInt H (image_size.y);
+	image_dict.addProperty ("H", H);
+	CName RGB ("RGB");
+	image_dict.addProperty ("CS", RGB);
+	CInt _8 (8);
+	image_dict.addProperty ("BPC", _8);
 	CInlineImage img (image_dict, what);
 	shared_ptr<CInlineImage> inline_image (new CInlineImage (image_dict, what));
 	shared_ptr<InlineImageCompositePdfOperator> BI(new InlineImageCompositePdfOperator (inline_image));
