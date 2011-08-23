@@ -101,7 +101,7 @@ template<> struct PropertyTraitSimple<pRef>
  * avoid it.
  */
 template <PropertyType Tp>
-class CObjectSimple : public IProperty
+class CObjectSimple : noncopyable, public IProperty
 {
 public:
 	typedef typename PropertyTraitSimple<Tp>::writeType WriteType;
