@@ -31,20 +31,16 @@
 #		 should be used when reporting bugs.
 #
 # where
-#	VERSION - stands for the last upstream release
-#	RELEASE - contains the times-stamp (in YYYYMMDDHHMMSS format) of the 
-#		  last modified file so that we are able to find out the state 
-#		  of compiled sources (newer than released, patch for testing 
-#		  correctly applied, etc.). 
-#		  This string is empty for upstream releases (when 
-#		  PACKAGE_VERSION variable changes) which is recognized 
-#		  by the times-stamp stored in the RELEASE_STAMP_FILE when we
-#		  do a release. If the current time-stamp is different from
-#		  the one stored in RELEASE_STAMP_FILE (or this file doesn't
-#		  exist - case for CVS checkout) than the release string is
-#		  used - and we know that the compiled version is not from
-#		  the same released sources (or at least we can check that 
-#		  easily).
+#	VERSION - stands for the last upstream release (last tagged tree)
+#	RELEASE - stands for the commit on top of the last released.
+#		  no release is printed if we are at the tagged release.
+#		  if the tree contains some uncommitted changes then we add
+#		  -dirty suffix.
+#       example:
+#		 0.4.5-057a1ef[-dirty] 
+#
+# Released tarbal contains .scmversion file which contains full version with
+# release number
 #
 # Usage:
 # ./getversion [[v] [-r]|[-f]|[-t]
@@ -61,8 +57,31 @@
 #
 # Nothing is printed if no parameter is specified
 
-PACKAGE_VERSION=0.4.5
-PACKAGE_RELEASE=""
+# Get back to the script location because of .scmversion and .git checks
+cd `dirname $0`
+
+if [ -f .scmversion ]
+then
+	PACKAGE_VERSION=`cat .scmversion`
+	PACKAGE_RELEASE=""
+elif [ -d .git ]
+then
+	FULL=`git describe`
+	PACKAGE_VERSION=`echo $FULL | cut -d'-' -f1`
+	if [ $FULL != $PACKAGE_VERSION ]
+	then
+		PACKAGE_RELEASE="-`git rev-parse --verify --short HEAD`"
+	fi
+
+	# Uncommitted changes
+	if [ `git diff-index --name-only HEAD | wc -l` -gt 0 ]
+	then
+		PACKAGE_RELEASE="${PACKAGE_RELEASE}-dirty"
+	fi
+else
+	echo "Eeeek neither a released archive nor a git tree" >&2
+	exit 1
+fi
 GETVERSION_DIR=`dirname $0`
 EXLUDE_FILES="version_exclude"
 RELEASE_STAMP_FILE="release_stamp"
@@ -72,6 +91,11 @@ cd $GETVERSION_DIR
 print_version()
 {
 	echo -n $PACKAGE_VERSION
+}
+
+print_release()
+{
+	echo -n "$PACKAGE_RELEASE"
 }
 
 CWD=`pwd`
@@ -90,25 +114,6 @@ print_timestamp()
 	date --date=@`print_files | xargs stat -c "%Y" | \
 		grep -v -f $EXLUDE_FILES| \
 		sort -r | head -n1` -u +%Y%m%d%H%M%S
-}
-
-print_release()
-{
-	# Files which shouldn't be checked during PACKAGE_RELEASE calculation
-	PACKAGE_RELEASE_FILE="`print_timestamp`"
-
-	# Calculates current release, if we are not releasing
-
-	# set release only if timestamp doesn't exist (sources from CVS)
-	# or timestamp is doesn't match
-	if [ ! -f "$RELEASE_STAMP_FILE" ] || [ "`cat $RELEASE_STAMP_FILE`" != "$PACKAGE_RELEASE_FILE" ]
-	then  
-		echo Using new revision: $PACKAGE_RELEASE_FILE >&2
-		PACKAGE_RELEASE="-$PACKAGE_RELEASE_FILE"
-		echo -n $PACKAGE_RELEASE
-		exit 0
-	fi
-	echo We are at the clean release tree: no release >&2
 }
 
 while [ $# -gt 0 ]
