@@ -43,7 +43,7 @@
 # release number
 #
 # Usage:
-# ./getversion [[v] [-r]|[-f]|[-t]
+# ./getversion [[v] [-r]|[-f]
 # where
 #	-v prints VERSION
 #	-r prints REVISION
@@ -51,9 +51,6 @@
 #	   (all other parameters are ignored if this parameter is specified).
 #	   This can be used for dependency creation for files which directly
 #	   depend on generated revision
-#	-t prints time-stamp for revision (intended for makedist script which 
-#	   should store this time-stamp to the RELEASE_STAMP_FILE)
-#	   (all other parameters are ignored if this parameter is specified).
 #
 # Nothing is printed if no parameter is specified
 
@@ -84,7 +81,6 @@ else
 fi
 GETVERSION_DIR=`dirname $0`
 EXLUDE_FILES="version_exclude"
-RELEASE_STAMP_FILE="release_stamp"
 
 cd $GETVERSION_DIR
 
@@ -108,20 +104,11 @@ print_files()
 	eval $FIND	
 }
 
-print_timestamp()
-{
-	export TZ="UTC"
-	date --date=@`print_files | xargs stat -c "%Y" | \
-		grep -v -f $EXLUDE_FILES| \
-		sort -r | head -n1` -u +%Y%m%d%H%M%S
-}
-
 while [ $# -gt 0 ]
 do
 	case $1 in
 		-v ) PRINT_VERSION="1" ;;
 		-r ) PRINT_RELEASE="1" ;;
-		-t ) print_timestamp; exit 0;;
 		-f ) print_files; exit 0;;
 	esac
 	shift
