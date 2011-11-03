@@ -23,30 +23,9 @@
 
 # This is script that will create distribution tarballs
 
-# This file should be run on exported directory, not directly in CVS tree
-# It is expected that the directory in which the sources are exported is named 
-# 'pdfedit'
-
-# Terminate on any error, so if something fails, broken or incomplete packages won't be generated
-set -e
-
-# Target path is directory where we want to create distribution tarballs
-TARGET_PATH="../"
-if [ $# -gt 0 ]
-then
-	[ -d $1 ] && TARGET_PATH="${1}/"
-fi
-
-# This directory
-RELEASE_DIR=`pwd`
-
-AUTOCONF=`which autoconf`
-
-# creates release timestamp
-./getversion -t > release_stamp
-
 # Checks for configure script and generates it if either
 # existing one is older than configure.in or it doesn't exist at all
+AUTOCONF="`which autoconf`"
 if [ ! -x configure -o configure -ot configure.in ]
 then
 	if [ ! -x $AUTOCONF ]
@@ -75,18 +54,21 @@ cd ../../
 echo Man page generated
 
 #Get version number
-VERSION=`./getversion -v`
-#Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
-rm -f "${TARGET_PATH}pdfedit-$VERSION"
-ln -s "${RELEASE_DIR}" "${TARGET_PATH}pdfedit-$VERSION"
-cd "${TARGET_PATH}"
+VERSION=`./getversion -v -r`
+GENERATED_FILES=".scmversion configure doc src/gui doc/user/pdfedit.1"
 
+TAR_PREFIX="pdfedit-$VERSION/"
+TAR_FILE="pdfedit-${VERSION}.tar"
 
-# creates distribution tarball
-tar -czhf "pdfedit-$VERSION.tar.gz" "pdfedit-$VERSION"/* --exclude-from="pdfedit-$VERSION/dist-exclude"
-echo pdfedit-$VERSION.tar.gz created
-tar -cjhf "pdfedit-$VERSION.tar.bz2" "pdfedit-$VERSION"/* --exclude-from="pdfedit-$VERSION/dist-exclude"
-echo pdfedit-$VERSION.tar.bz2 created
+# Git archive makes it really hard to exclude file (.gitattributes
+# and export-ignore is really awkward) so do not try to use it and
+# just pipe all tracked files directly to tar
+# Make sure all files show up in the TAR_PREFIX subdir
+git ls-tree -rz --name-only HEAD | xargs -0 tar --exclude-from=dist-exclude --transform "s@^@$TAR_PREFIX/@" -cf $TAR_FILE 
 
-cd "$RELEASE_DIR"
-rm "${TARGET_PATH}pdfedit-${VERSION}"
+# Add untracked (generated) files as well
+echo $VERSION > .scmversion
+tar --exclude-from=dist-exclude --transform "s@^@$TAR_PREFIX/@" -rf $TAR_FILE $GENERATED_FILES
+rm .scmversion
+
+gzip "pdfedit-${VERSION}.tar"

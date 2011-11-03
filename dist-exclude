@@ -1,6 +1,6 @@
-.cvsignore
+.gitignore
 autom4te.cache
-CVS
+.git
 TODO
 FEATURES
 maintains
