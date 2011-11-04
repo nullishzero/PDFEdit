@@ -317,7 +317,9 @@ complexValueToString<CDict> (const CDict::Value& val, string& str)
 	CDict::Value::const_iterator it = val.begin ();
 	for (; it != val.end(); ++it) 
 	{
-		str += Specification::CDICT_MIDDLE + (*it).first + Specification::CDICT_BETWEEN_NAMES;
+		string key = (*it).first;
+		str += Specification::CDICT_MIDDLE + makeNamePdfValid(key.begin(), key.end())
+			+ Specification::CDICT_BETWEEN_NAMES;
 		string tmp;
 		(*it).second->getStringRepresentation (tmp);
 		str += tmp;
