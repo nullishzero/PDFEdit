@@ -327,14 +327,16 @@ makeNamePdfValid (Iter it, Iter end)
 	std::string tmp;
 	for (; it != end; ++it)
 	{
-		if ( '!' > (*it) || '~' < (*it))
+		unsigned ch = *it;
+
+		if (ch < sizeof(specialChars) && specialChars[*it])
 		{ // Convert it to ascii
 			char hexstr[4];
-			snprintf(hexstr, sizeof(hexstr), "#%02x", (unsigned)(*it)&0xff);
+			snprintf(hexstr, sizeof(hexstr), "#%02x", ch & 0xff);
 			assert(hexstr[sizeof(hexstr)-1] == '\0');
 			tmp += hexstr;
 		}else
-			tmp += *it;
+			tmp += ch;
 	}
 	
 	return tmp;

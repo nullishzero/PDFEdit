@@ -20,6 +20,7 @@
 
 class XRef;
 
+extern char specialChars[256];
 #define tokBufSize 128		// size of token buffer
 
 //------------------------------------------------------------------------
