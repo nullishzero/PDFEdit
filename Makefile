@@ -94,6 +94,9 @@ source:
 pdfedit-core-dev:
 	cd $(SRCROOT) && $(MAKE) pdfedit-core-dev
 
+cscope:
+	( git ls-files '*.[h,c]' '*.cc' '*.cpp' 2>/dev/null || find . \( -name .git -type d -prune \) -o \( -name '*.[h,c]' -type f -print \) -o \( -name '*.cpp' -type f -print \) -o \( -name "*.cc" -type f -print \) ) | xargs cscope -b
+
 # cleanup
 clean:
 	cd $(DOCROOT) && $(MAKE) clean || true

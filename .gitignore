@@ -8,3 +8,4 @@ Makefile.flags
 Makefile.rules
 autom4te.cache
 configure
+cscope.out
