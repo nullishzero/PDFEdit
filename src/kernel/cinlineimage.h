@@ -104,7 +104,12 @@ protected:
 	 * @return New instance of inline image.
 	 */
 	virtual CStream* _newInstance () const
-		{ return new CInlineImage; }
+		{
+			CInlineImage * i = new CInlineImage;
+			i->_height = _height;
+			i->_width = _width;
+			return i;
+	}
 
 	
 	//
