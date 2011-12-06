@@ -1,3 +1,8 @@
+*.o
+*~
+*.orig
+*.rej
+*.a
 .project
 pdfedit-*.*.*.tar.gz
 pdfedit-*.*.*.tar.bz2
