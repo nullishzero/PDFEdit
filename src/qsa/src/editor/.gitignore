@@ -1,0 +1,4 @@
+moc_qsabrowser.cpp
+moc_qsacompletion.cpp
+moc_qsaeditor.cpp
+moc_qsaeditorinterface.cpp

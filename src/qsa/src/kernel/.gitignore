@@ -1,0 +1,4 @@
+moc_quickdebugger.cpp
+moc_quickdispatchobject.cpp
+moc_quickinterpreter.cpp
+moc_quickobjects.cpp

@@ -1,4 +1,3 @@
-.moc
-.obj
+*.moc
 Makefile.qsa
-.qmake.cache
+*.qmake.cache
