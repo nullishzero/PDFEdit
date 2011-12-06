@@ -8,3 +8,4 @@ menugenerator
 .obj
 .menu-trans.h
 config.h
+version.cc
