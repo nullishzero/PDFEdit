@@ -3,34 +3,97 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = 
-DEPENDPATH += . \
-              core \
-              extern \
-              core/kernel \
-              core/os \
-              core/utils \
-              core/xpdf \
-              core/utils/algorithms \
-              core/utils/types \
-              core/xpdf/fofi \
-              core/xpdf/goo \
-              core/xpdf/splash \
-              core/xpdf/xpdf
-INCLUDEPATH += . \
-               core/kernel \
-               core/os \
-               core/xpdf/xpdf \
-               core \
-               core/xpdf \
-               core/xpdf/goo \
-               core/xpdf/splash \
-               core/utils \
-               core/utils/algorithms \
-               core/utils/types \
-               extern \
-               core/xpdf/fofi
+TARGET = pdfeditor
+# We want to have debug functionality and warnings under controll
+QMAKE_CFLAGS -= -g -Wall
+QMAKE_CXXFLAGS -= -g -Wall
+QMAKE_CFLAGS_RELEASE -= -g -Wall
+QMAKE_CXXFLAGS_RELEASE -= -g -Wall
 
+# include basic definitions from configuration process
+include(../../Makefile.flags)
+
+# check debug/release
+contains( E_RELEASE, no ) {
+ # debug mode
+ # turns off optimalizations
+ CONFIG -= release
+ CONFIG -= warn_off
+ CONFIG *= debug
+ CONFIG *= warn_on
+}
+contains( E_RELEASE, yes ) {
+ # release mode
+ # turns on optimalizations
+ CONFIG -= debug
+ CONFIG -= warn_on
+ CONFIG *= warn_off
+ CONFIG *= release
+}
+
+# cygwin hack 
+# FIXME where do we define this? Is it qmake feature?
+#contains( QMAKE_CYGWIN_EXE, 1 ) {
+#TARGET   = pdfedit.exe
+#}
+
+
+# Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored
+# Note Qt4 is not (yet) supported
+QT += qt3support
+
+# QT_CLEAN_NAMESPACE must be specified, otherwise namespace debug will clash with debug() in QT
+QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions
+
+# Check installation prefix
+isEmpty( PREFIX ) {
+ message("No prefix defined - check Makefile.flags in top-level directory")
+ message("Run ./configure there if the file does not exist")
+ error("PREFIX not defined");
+}
+
+# Binary file installed in binary path (typically /usr/bin)
+target.path    = $$BIN_PATH
+
+TARGETDEPS	+= $(MANDATORY_LIB_FILES)
+
+# Data files installed in application data path (typically /usr/share/pdfedit)
+# Basic data files
+data.path       = $$DATA_PATH
+
+# Force configure compiler and all other programs used for installation
+QMAKE_CC = $(CONFIG_CC)
+QMAKE_CXX = $(CONFIG_CXX)
+QMAKE_LINK = $(CONFIG_LINK)
+QMAKE_LINK_SHLIB = $(CONFIG_LINK)
+QMAKE_RANLIB = $(CONFIG_RANLIB)
+QMAKE_AR = $(CONFIG_AR)
+QMAKE_COPY = $(CONFIG_COPY)
+QMAKE_COPY_FILE = $(CONFIG_COPY_FILE)
+QMAKE_COPY_DIR = $(CONFIG_COPY_DIR)
+QMAKE_DEL_FILE = $(CONFIG_DEL_FILE)
+# qmake doesn't like QMAKE_SYMLINK and ignores it
+QMAKE_SYMLINK = $(CONFIG_SYMLINK)
+QMAKE_DEL_DIR = $(CONFIG_DEL_DIR)
+QMAKE_MOVE = $(CONFIG_MOVE)
+QMAKE_CHK_DIR_EXISTS = $(CONFIG_CHK_DIR_EXISTS)
+QMAKE_MKDIR = $(CONFIG_MKDIR)
+
+# include headers from kernel and used by kernel
+INCPATH += $(MANDATORY_PATHS)
+# adds kernel libraries
+LIBS += $(MANDATORY_LIBS)
+
+# Flags from configuration
+QMAKE_CFLAGS += $(CONFIG_CFLAGS)
+QMAKE_CXXFLAGS += $(CONFIG_CXXFLAGS) $(EXTRA_GUI_CXXFLAGS)
+
+# directories to creating files
+unix {
+  UI_DIR = .ui
+  MOC_DIR = .moc
+  OBJECTS_DIR = .obj
+}
 # Input
 HEADERS += bookmark.h \
            colorpicker.h \
@@ -49,198 +112,8 @@ HEADERS += bookmark.h \
            Search.h \
            TabPage.h \
            tree.h \
-           typedefs.h \
-           core/aconf.h \
-           core/xpdf-aconf.h \
-           extern/zconf.h \
-           extern/zlib.h \
-           core/kernel/cannotation.h \
-           core/kernel/carray.h \
-           core/kernel/ccontentstream.h \
-           core/kernel/cdict.h \
-           core/kernel/cinlineimage.h \
-           core/kernel/cobject.h \
-           core/kernel/cobjecthelpers.h \
-           core/kernel/cobjectsimple.h \
-           core/kernel/cobjectsimpleI.h \
-           core/kernel/contentschangetag.h \
-           core/kernel/coutline.h \
-           core/kernel/cpage.h \
-           core/kernel/cpageannots.h \
-           core/kernel/cpageattributes.h \
-           core/kernel/cpagechanges.h \
-           core/kernel/cpagecontents.h \
-           core/kernel/cpagedisplay.h \
-           core/kernel/cpagefonts.h \
-           core/kernel/cpagemodule.h \
-           core/kernel/cpdf.h \
-           core/kernel/cstream.h \
-           core/kernel/cstreamsxpdfreader.h \
-           core/kernel/cxref.h \
-           core/kernel/delinearizator.h \
-           core/kernel/displayparams.h \
-           core/kernel/exceptions.h \
-           core/kernel/factories.h \
-           core/kernel/flattener.h \
-           core/kernel/indiref.h \
-           core/kernel/iproperty.h \
-           core/kernel/modecontroller.h \
-           core/kernel/operatorhinter.h \
-           core/kernel/pdfedit-core-dev.h \
-           core/kernel/pdfoperators.h \
-           core/kernel/pdfoperatorsbase.h \
-           core/kernel/pdfoperatorsiter.h \
-           core/kernel/pdfspecification.h \
-           core/kernel/pdfwriter.h \
-           core/kernel/stateupdater.h \
-           core/kernel/static.h \
-           core/kernel/streamwriter.h \
-           core/kernel/textoutput.h \
-           core/kernel/textoutputbuilder.h \
-           core/kernel/textoutputengines.h \
-           core/kernel/textoutputentities.h \
-           core/kernel/textsearchparams.h \
-           core/kernel/utils.h \
-           core/kernel/xpdf.h \
-           core/kernel/xrefwriter.h \
-           core/os/compiler.h \
-           core/os/posix.h \
-           core/os/win.h \
-           core/utils/aconf.h \
-           core/utils/algorithms.h \
-           core/utils/confparser.h \
-           core/utils/debug.h \
-           core/utils/doxygen.h \
-           core/utils/iterator.h \
-           core/utils/listitem.h \
-           core/utils/logger.h \
-           core/utils/objectstorage.h \
-           core/utils/observer.h \
-           core/utils/rulesmanager.h \
-           core/utils/types.h \
-           core/xpdf/aconf-dj.h \
-           core/xpdf/aconf-win32.h \
-           core/xpdf/xpdf-aconf.h \
-           core/xpdf/xpdf-aconf2.h \
-           core/utils/algorithms/basic_algos.h \
-           core/utils/types/basic_types.h \
-           core/utils/types/coordinates.h \
-           core/xpdf/fofi/FoFiBase.h \
-           core/xpdf/fofi/FoFiEncodings.h \
-           core/xpdf/fofi/FoFiTrueType.h \
-           core/xpdf/fofi/FoFiType1.h \
-           core/xpdf/fofi/FoFiType1C.h \
-           core/xpdf/goo/FixedPoint.h \
-           core/xpdf/goo/gfile.h \
-           core/xpdf/goo/GHash.h \
-           core/xpdf/goo/GList.h \
-           core/xpdf/goo/gmem.h \
-           core/xpdf/goo/GMutex.h \
-           core/xpdf/goo/GString.h \
-           core/xpdf/goo/gtypes.h \
-           core/xpdf/goo/parseargs.h \
-           core/xpdf/goo/vms_dirent.h \
-           core/xpdf/goo/vms_sys_dirent.h \
-           core/xpdf/goo/vms_unix_time.h \
-           core/xpdf/splash/Splash.h \
-           core/xpdf/splash/SplashBitmap.h \
-           core/xpdf/splash/SplashClip.h \
-           core/xpdf/splash/SplashErrorCodes.h \
-           core/xpdf/splash/SplashFont.h \
-           core/xpdf/splash/SplashFontEngine.h \
-           core/xpdf/splash/SplashFontFile.h \
-           core/xpdf/splash/SplashFontFileID.h \
-           core/xpdf/splash/SplashFTFont.h \
-           core/xpdf/splash/SplashFTFontEngine.h \
-           core/xpdf/splash/SplashFTFontFile.h \
-           core/xpdf/splash/SplashGlyphBitmap.h \
-           core/xpdf/splash/SplashMath.h \
-           core/xpdf/splash/SplashPath.h \
-           core/xpdf/splash/SplashPattern.h \
-           core/xpdf/splash/SplashScreen.h \
-           core/xpdf/splash/SplashState.h \
-           core/xpdf/splash/SplashT1Font.h \
-           core/xpdf/splash/SplashT1FontEngine.h \
-           core/xpdf/splash/SplashT1FontFile.h \
-           core/xpdf/splash/SplashTypes.h \
-           core/xpdf/splash/SplashXPath.h \
-           core/xpdf/splash/SplashXPathScanner.h \
-           core/xpdf/xpdf/about-text.h \
-           core/xpdf/xpdf/Annot.h \
-           core/xpdf/xpdf/Array.h \
-           core/xpdf/xpdf/BuiltinFont.h \
-           core/xpdf/xpdf/BuiltinFontTables.h \
-           core/xpdf/xpdf/Catalog.h \
-           core/xpdf/xpdf/CharCodeToUnicode.h \
-           core/xpdf/xpdf/CharTypes.h \
-           core/xpdf/xpdf/CMap.h \
-           core/xpdf/xpdf/CompactFontTables.h \
-           core/xpdf/xpdf/config.h \
-           core/xpdf/xpdf/CoreOutputDev.h \
-           core/xpdf/xpdf/Decrypt.h \
-           core/xpdf/xpdf/Dict.h \
-           core/xpdf/xpdf/encrypt_utils.h \
-           core/xpdf/xpdf/Error.h \
-           core/xpdf/xpdf/ErrorCodes.h \
-           core/xpdf/xpdf/FontEncodingTables.h \
-           core/xpdf/xpdf/Function.h \
-           core/xpdf/xpdf/Gfx.h \
-           core/xpdf/xpdf/GfxFont.h \
-           core/xpdf/xpdf/GfxState.h \
-           core/xpdf/xpdf/GlobalParams.h \
-           core/xpdf/xpdf/ImageOutputDev.h \
-           core/xpdf/xpdf/JArithmeticDecoder.h \
-           core/xpdf/xpdf/JBIG2Stream.h \
-           core/xpdf/xpdf/JPXStream.h \
-           core/xpdf/xpdf/Lexer.h \
-           core/xpdf/xpdf/Link.h \
-           core/xpdf/xpdf/NameToCharCode.h \
-           core/xpdf/xpdf/NameToUnicodeTable.h \
-           core/xpdf/xpdf/Object.h \
-           core/xpdf/xpdf/Outline.h \
-           core/xpdf/xpdf/OutputDev.h \
-           core/xpdf/xpdf/Page.h \
-           core/xpdf/xpdf/Parser.h \
-           core/xpdf/xpdf/PDFCore.h \
-           core/xpdf/xpdf/PDFDoc.h \
-           core/xpdf/xpdf/PDFDocEncoding.h \
-           core/xpdf/xpdf/PreScanOutputDev.h \
-           core/xpdf/xpdf/PSOutputDev.h \
-           core/xpdf/xpdf/PSTokenizer.h \
-           core/xpdf/xpdf/SecurityHandler.h \
-           core/xpdf/xpdf/SplashOutputDev.h \
-           core/xpdf/xpdf/Stream-CCITT.h \
-           core/xpdf/xpdf/Stream.h \
-           core/xpdf/xpdf/TextOutputDev.h \
-           core/xpdf/xpdf/UnicodeMap.h \
-           core/xpdf/xpdf/UnicodeMapTables.h \
-           core/xpdf/xpdf/UnicodeTypeTable.h \
-           core/xpdf/xpdf/UTF8.h \
-           core/xpdf/xpdf/XPDFApp.h \
-           core/xpdf/xpdf/XPDFCore.h \
-           core/xpdf/xpdf/XpdfPluginAPI.h \
-           core/xpdf/xpdf/XPDFTree.h \
-           core/xpdf/xpdf/XPDFTreeP.h \
-           core/xpdf/xpdf/XPDFViewer.h \
-           core/xpdf/xpdf/XRef.h \
-           core/xpdf/xpdf/xpdfIcon.xpm \
-           core/xpdf/xpdf/leftArrow.xbm \
-           core/xpdf/xpdf/leftArrowDis.xbm \
-           core/xpdf/xpdf/dblLeftArrow.xbm \
-           core/xpdf/xpdf/dblLeftArrowDis.xbm \
-           core/xpdf/xpdf/rightArrow.xbm \
-           core/xpdf/xpdf/rightArrowDis.xbm \
-           core/xpdf/xpdf/dblRightArrow.xbm \
-           core/xpdf/xpdf/dblRightArrowDis.xbm \
-           core/xpdf/xpdf/backArrow.xbm \
-           core/xpdf/xpdf/backArrowDis.xbm \
-           core/xpdf/xpdf/forwardArrow.xbm \
-           core/xpdf/xpdf/forwardArrowDis.xbm \
-           core/xpdf/xpdf/find.xbm \
-           core/xpdf/xpdf/findDis.xbm \
-           core/xpdf/xpdf/print.xbm \
-           core/xpdf/xpdf/printDis.xbm \
-           core/xpdf/xpdf/about.xbm
+           typedefs.h
+
 FORMS += aboutDialog.ui \
          annotationFrame.ui \
          colorPicker.ui \
@@ -277,137 +150,5 @@ SOURCES += bookmark.cpp \
            rotatepagerange.cpp \
            Search.cpp \
            TabPage.cpp \
-           tree.cpp \
-           core/kernel/cannotation.cc \
-           core/kernel/carray.cc \
-           core/kernel/ccontentstream.cc \
-           core/kernel/cdict.cc \
-           core/kernel/cinlineimage.cc \
-           core/kernel/cobject.cc \
-           core/kernel/cobject2string.cc \
-           core/kernel/cobject2xpdf.cc \
-           core/kernel/cobjecthelpers.cc \
-           core/kernel/contentschangetag.cc \
-           core/kernel/coutline.cc \
-           core/kernel/cpage.cc \
-           core/kernel/cpageannots.cc \
-           core/kernel/cpageattributes.cc \
-           core/kernel/cpagechanges.cc \
-           core/kernel/cpagecontents.cc \
-           core/kernel/cpagedisplay.cc \
-           core/kernel/cpagefonts.cc \
-           core/kernel/cpdf.cc \
-           core/kernel/cstream.cc \
-           core/kernel/cxref.cc \
-           core/kernel/delinearizator.cc \
-           core/kernel/factories.cc \
-           core/kernel/flattener.cc \
-           core/kernel/iproperty.cc \
-           core/kernel/modecontroller.cc \
-           core/kernel/pdfedit-core-dev.cc \
-           core/kernel/pdfoperators.cc \
-           core/kernel/pdfoperatorsbase.cc \
-           core/kernel/pdfoperatorsiter.cc \
-           core/kernel/pdfspecification.cc \
-           core/kernel/pdfwriter.cc \
-           core/kernel/stateupdater.cc \
-           core/kernel/static.cc \
-           core/kernel/streamwriter.cc \
-           core/kernel/textoutputbuilder.cc \
-           core/kernel/textoutputengines.cc \
-           core/kernel/textoutputentities.cc \
-           core/kernel/xpdf.cc \
-           core/kernel/xrefwriter.cc \
-           core/utils/confparser.cc \
-           core/utils/debug.cc \
-           core/xpdf/fofi/FoFiBase.cc \
-           core/xpdf/fofi/FoFiEncodings.cc \
-           core/xpdf/fofi/FoFiTrueType.cc \
-           core/xpdf/fofi/FoFiType1.cc \
-           core/xpdf/fofi/FoFiType1C.cc \
-           core/xpdf/goo/FixedPoint.cc \
-           core/xpdf/goo/gfile.cc \
-           core/xpdf/goo/GHash.cc \
-           core/xpdf/goo/GList.cc \
-           core/xpdf/goo/gmem.cc \
-           core/xpdf/goo/gmempp.cc \
-           core/xpdf/goo/GString.cc \
-           core/xpdf/goo/parseargs.c \
-           core/xpdf/goo/vms_directory.c \
-           core/xpdf/goo/vms_unix_times.c \
-           core/xpdf/goo/vms_unlink.c \
-           core/xpdf/splash/Splash.cc \
-           core/xpdf/splash/SplashBitmap.cc \
-           core/xpdf/splash/SplashClip.cc \
-           core/xpdf/splash/SplashFont.cc \
-           core/xpdf/splash/SplashFontEngine.cc \
-           core/xpdf/splash/SplashFontFile.cc \
-           core/xpdf/splash/SplashFontFileID.cc \
-           core/xpdf/splash/SplashFTFont.cc \
-           core/xpdf/splash/SplashFTFontEngine.cc \
-           core/xpdf/splash/SplashFTFontFile.cc \
-           core/xpdf/splash/SplashPath.cc \
-           core/xpdf/splash/SplashPattern.cc \
-           core/xpdf/splash/SplashScreen.cc \
-           core/xpdf/splash/SplashState.cc \
-           core/xpdf/splash/SplashT1Font.cc \
-           core/xpdf/splash/SplashT1FontEngine.cc \
-           core/xpdf/splash/SplashT1FontFile.cc \
-           core/xpdf/splash/SplashXPath.cc \
-           core/xpdf/splash/SplashXPathScanner.cc \
-           core/xpdf/xpdf/Annot.cc \
-           core/xpdf/xpdf/Array.cc \
-           core/xpdf/xpdf/BuiltinFont.cc \
-           core/xpdf/xpdf/BuiltinFontTables.cc \
-           core/xpdf/xpdf/Catalog.cc \
-           core/xpdf/xpdf/CharCodeToUnicode.cc \
-           core/xpdf/xpdf/CMap.cc \
-           core/xpdf/xpdf/CoreOutputDev.cc \
-           core/xpdf/xpdf/Decrypt.cc \
-           core/xpdf/xpdf/Dict.cc \
-           core/xpdf/xpdf/encrypt_utils.cc \
-           core/xpdf/xpdf/Error.cc \
-           core/xpdf/xpdf/FontEncodingTables.cc \
-           core/xpdf/xpdf/Function.cc \
-           core/xpdf/xpdf/Gfx.cc \
-           core/xpdf/xpdf/GfxFont.cc \
-           core/xpdf/xpdf/GfxState.cc \
-           core/xpdf/xpdf/GlobalParams.cc \
-           core/xpdf/xpdf/ImageOutputDev.cc \
-           core/xpdf/xpdf/JArithmeticDecoder.cc \
-           core/xpdf/xpdf/JBIG2Stream.cc \
-           core/xpdf/xpdf/JPXStream.cc \
-           core/xpdf/xpdf/Lexer.cc \
-           core/xpdf/xpdf/Link.cc \
-           core/xpdf/xpdf/NameToCharCode.cc \
-           core/xpdf/xpdf/Object.cc \
-           core/xpdf/xpdf/Outline.cc \
-           core/xpdf/xpdf/OutputDev.cc \
-           core/xpdf/xpdf/Page.cc \
-           core/xpdf/xpdf/Parser.cc \
-           core/xpdf/xpdf/PDFCore.cc \
-           core/xpdf/xpdf/PDFDoc.cc \
-           core/xpdf/xpdf/PDFDocEncoding.cc \
-           core/xpdf/xpdf/pdffonts.cc \
-           core/xpdf/xpdf/pdfimages.cc \
-           core/xpdf/xpdf/pdfinfo.cc \
-           core/xpdf/xpdf/pdftoppm.cc \
-           core/xpdf/xpdf/pdftops.cc \
-           core/xpdf/xpdf/pdftotext.cc \
-           core/xpdf/xpdf/PreScanOutputDev.cc \
-           core/xpdf/xpdf/PSOutputDev.cc \
-           core/xpdf/xpdf/PSTokenizer.cc \
-           core/xpdf/xpdf/SecurityHandler.cc \
-           core/xpdf/xpdf/SplashOutputDev.cc \
-           core/xpdf/xpdf/Stream.cc \
-           core/xpdf/xpdf/TextOutputDev.cc \
-           core/xpdf/xpdf/UnicodeMap.cc \
-           core/xpdf/xpdf/UnicodeTypeTable.cc \
-           core/xpdf/xpdf/xpdf.cc \
-           core/xpdf/xpdf/XPDFApp.cc \
-           core/xpdf/xpdf/XPDFCore.cc \
-           core/xpdf/xpdf/XpdfPluginAPI.cc \
-           core/xpdf/xpdf/XPDFTree.cc \
-           core/xpdf/xpdf/XPDFViewer.cc \
-           core/xpdf/xpdf/XRef.cc
+           tree.cpp 
 RESOURCES += pdf.qrc

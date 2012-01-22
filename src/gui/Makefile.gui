@@ -17,16 +17,3 @@ include ../../Makefile.flags
 QTMAKEFILE = Makefile.qt
 
 include $(QTMAKEFILE)
-
-# Full version including revision
-# Variable is defined here, because it is used only here
-FULL_VERSION=$(shell $(ROOT)/getversion -v -r)
-
-# version.cc is auto-generated file which holds currently up-to-date
-# full version of the package. It depedns on all files which may have
-# influence on FULL_VERSION (returned by getversion -f).
-# TARGET binary is linked with this file, so we don't have to recompile
-# all files which include version.h header and rather regenerate this
-# module, compile and link it.
-version.cc: version.cc.tmpl $(shell $(ROOT)/getversion -f)
-	@sed 's@\(^ *extern.*VERSION *=\).*@\1"$(FULL_VERSION)";@' version.cc.tmpl > version.cc

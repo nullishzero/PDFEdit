@@ -6,7 +6,6 @@ dnl TODO change for devel package
 define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion -v),[]))
 AC_INIT([PDFedit], PDFEDIT_VERSION, 
 	[BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
-AC_CONFIG_SRCDIR([src/gui/base.cc])
 dnl FIXME what do we use src/utils/aconf.h for? No includes according to
 dnl grep. Can we remove it?
 AC_CONFIG_HEADERS(src/utils/aconf.h src/xpdf/xpdf-aconf.h)
@@ -309,26 +308,26 @@ if test "x$enable_gui" = "xyes"; then
 			    - default will be used.])
 
 	AC_MSG_CHECKING(for QT qmake)
-	CHK_EXECUTABLE([qmake],[qmake qmake-qt3],[${QTDIR}/bin /usr/bin /usr/local/bin /usr/lib/qt3/bin],[
-		dnl check the qmake we found is for correct QT version (3.x.x)
-		isqmake3=`$testbin --version 2>&1 | grep '3\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*'`
-		if test -z "$isqmake3"
+	CHK_EXECUTABLE([qmake],[qmake qmake-qt4],[${QTDIR}/bin /usr/bin /usr/local/bin /usr/lib/qt4/bin],[
+		dnl check the qmake we found is for correct QT version (4.x.x)
+		isqmake4=`$testbin --version 2>&1 | grep '4\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*'`
+		if test -z "$isqmake4"
 		then
 			testbin=""
 		fi
-	],[(only for platforms where qmake is not installed under QTDIR/bin, /usr/bin, /usr/local/bin, /usr/lib/qt3/bin or in PATH).])
+	],[(only for platforms where qmake is not installed under QTDIR/bin, /usr/bin, /usr/local/bin, /usr/lib/qt4/bin or in PATH).])
 	if test -z "${qmake_bin}"
 	then
 		AC_MSG_ERROR(unable to find qmake for QT3)
 	fi
 	QMAKE="$QMAKE ${qmake_bin}"
-	AC_MSG_RESULT(Using QT3 with qmake=${qmake_bin})
+	AC_MSG_RESULT(Using QT4 with qmake=${qmake_bin})
 	AC_SUBST(QMAKE)
 
 	dnl check for lrelease
 	AC_MSG_CHECKING(for QT lrelease)
-	CHK_EXECUTABLE([lrelease],[lrelease],[${QTDIR}/bin /usr/bin /usr/local/bin /usr/lib/qt3/bin],[],
-		       [(Only for platforms where lrelease is not installed under QTDIR/bin, /usr/bin, /usr/local/bin, /usr/lib/qt3/bin or in PATH).])
+	CHK_EXECUTABLE([lrelease],[lrelease],[${QTDIR}/bin /usr/bin /usr/local/bin /usr/lib/qt4/bin],[],
+		       [(Only for platforms where lrelease is not installed under QTDIR/bin, /usr/bin, /usr/local/bin, /usr/lib/qt4/bin or in PATH).])
 	if test -z "${lrelease_bin}"
 	then
 		AC_MSG_ERROR(unable to find lrelease localization binary for QT3)
