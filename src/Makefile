@@ -1,5 +1,5 @@
 #makefile for PDF editor
-.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices qsa qsa_configure qsa4 qsa4_configure gui
+.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices gui
 
 # includes basic building rules
 # REL_ADDR has to be defined, because Makefile.rules refers 
@@ -20,7 +20,7 @@ xpdf-extra:
 	cd $(XPDFROOT) && $(MAKE) extralib
 
 # PDF editor
-pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
+pdfedit: utils kernel xpdf qoutputdevices $(GUIROOT)/Makefile.qt
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
 
 # PDFedit core development package for 3rd party code
@@ -61,13 +61,6 @@ $(QOUTPUTDEVROOT)/Makefile.qt: $(QOUTPUTDEVROOT)/Makefile.gui $(QOUTPUTDEVROOT)/
 utils: xpdf
 	cd $(UTILSROOT) && $(MAKE) staticlib
 
-#QSA
-qsa: $(QSAROOT)/Makefile.qsa
-	cd $(QSAROOT) && $(MAKE) staticlib
-
-$(QSAROOT)/Makefile.qsa: $(QSAROOT)/qsa.pro
-	cd $(QSAROOT) && ./configure "${QMAKE}" "${E_RELEASE}"
-
 # Kernel
 kernel: xpdf utils
 	cd $(KERNELROOT) && $(MAKE) staticlib
@@ -87,7 +80,6 @@ dev-rebuild: dev-clean utils kernel tests pdfedit
 # Cleanup
 clean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
-	cd $(QSAROOT) && $(MAKE) clean || true
 	cd $(KERNELROOT) && $(MAKE) clean || true
 	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) clean || true
@@ -108,7 +100,6 @@ dev-clean:
 # Dist Cleanup
 distclean: 
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui distclean || true
-	cd $(QSAROOT) && $(MAKE) distclean || true
 	cd $(KERNELROOT) && $(MAKE) distclean || true
 	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) distclean || true

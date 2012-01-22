@@ -167,8 +167,6 @@ TOOLSROOT	= $(SRCROOT)/tools
 KERNELTESTSROOT = $(TESTSROOT)/kernel
 GUIROOT		= $(SRCROOT)/gui
 OSROOT		= $(SRCROOT)/os
-QSA_QT		= @QSA_DIR@
-QSAROOT		= $(SRCROOT)/$(QSA_QT)
 QOUTPUTDEVROOT  = $(SRCROOT)/kpdf-kde-3.3.2
 
 BOOSTFLAGS 	 = @BOOST_CPPFLAGS@
@@ -180,8 +178,6 @@ PNGFLAGS	 = @png_CFLAGS@
 XPDFLAGS 	 = -I$(XPDFROOT)/ 
 # This is required for qmake which always forces -I when specifying 
 # INCLUDEPATH
-QSAPATH		 = $(QSAROOT)/src/qsa
-QSAFLAGS	 = -I$(QSAPATH)
 QOUTPUTDEVPATH	 = $(QOUTPUTDEVROOT)
 QOUTPUTDEVFLAGS  = -I$(QOUTPUTDEVPATH)
 
@@ -206,7 +202,6 @@ BOOSTPROGRAMOPTIONS_LIBS = @BOOST_PROGRAM_OPTIONS_LIB@
 # PDFedit specific libs
 CPPUNIT_LIBS	 = @CPPUNIT_LIBS@
 QOUTPUTDEV_LIBS	 = -lqoutputdevices -L$(QOUTPUTDEVROOT)/
-QSALIB		 = -lqsa_pdfedit -L$(QSAROOT)/lib/
 PDFEDIT_LIBS     = -lkernel -L$(KERNELROOT) -lutils -L$(UTILSROOT) \
 		   -lxpdf -L$(XPDFROOT)/xpdf -lfofi -L$(XPDFROOT)/fofi \
 		   -lGoo -L$(XPDFROOT)/goo -lsplash -L$(XPDFROOT)/splash 

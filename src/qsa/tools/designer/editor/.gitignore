@@ -1,9 +1,0 @@
-preferences.cpp
-preferences.h
-moc_arghintwidget.cpp
-moc_browser.cpp
-moc_completion.cpp
-moc_editor.cpp
-moc_markerwidget.cpp
-moc_preferences.cpp
-moc_viewmanager.cpp
