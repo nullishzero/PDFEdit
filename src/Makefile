@@ -1,5 +1,5 @@
 #makefile for PDF editor
-.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices gui
+.PHONY: distclean clean pdfedit kernel xpdf utils gui
 
 # includes basic building rules
 # REL_ADDR has to be defined, because Makefile.rules refers 
@@ -20,7 +20,7 @@ xpdf-extra:
 	cd $(XPDFROOT) && $(MAKE) extralib
 
 # PDF editor
-pdfedit: utils kernel xpdf qoutputdevices $(GUIROOT)/Makefile.qt
+pdfedit: utils kernel xpdf $(GUIROOT)/Makefile.qt
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
 
 # PDFedit core development package for 3rd party code
@@ -48,14 +48,6 @@ pdfedit-core-dev:
 # For the same reason we have to generate localization files too
 $(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfeditor.pro
 	cd $(GUIROOT) && $(QMAKE) pdfeditor.pro -o Makefile.qt
-
-# QOutputDevices - uses same trick with Makefile.{gui.qt} like
-# gui - see above
-qoutputdevices: xpdf $(QOUTPUTDEVROOT)/Makefile.qt
-	cd $(QOUTPUTDEVROOT) && $(MAKE) -f Makefile.gui staticlib
-
-$(QOUTPUTDEVROOT)/Makefile.qt: $(QOUTPUTDEVROOT)/Makefile.gui $(QOUTPUTDEVROOT)/qoutputdevices.pro
-	cd $(QOUTPUTDEVROOT) && $(QMAKE) -o Makefile.qt
 
 # Utils
 utils: xpdf
