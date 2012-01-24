@@ -56,8 +56,8 @@
                        Arguments="/x [ProductCode]"/>
         </Component>
         <Component Id='Libraries' Guid='8f654235-16ee-4a04-b607-2f848fc32db1'>
-          <File Id='qtcore' Source='$(env.QTDIR)bin\QtCore4.dll'/>
-          <File Id='qtGui'  Source='$(env.QTDIR)bin\QtGui4.dll'/>
+          <File Id='qtcore' Source='$(env.QTDIR)\bin\QtCore4.dll'/>
+          <File Id='qtGui'  Source='$(env.QTDIR)\bin\QtGui4.dll'/>
           <File Id='freetype' Source='$(var.SolutionDir)\libs\freetype6.dll' />
           <File Id='zdll' Source='$(var.SolutionDir)\libs\zlib1.dll' />
         </Component>
