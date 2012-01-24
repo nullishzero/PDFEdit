@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\src\xpdf;$(SolutionDir)\..\src\xpdf\xpdf;$(SolutionDir)\..\src\xpdf\splash;$(SolutionDir)\..\src\xpdf\goo;$(SolutionDir)\..\src\xpdf\fofi</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4121;4244;4706;4100;4290;4310;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\libs</AdditionalLibraryDirectories>
+    </Lib>
+    <PreBuildEvent>
+      <Message>XPDF needs generated header file for each operating system. Generate it. Remove after first build (xpdf Property Page-&amp;gt;Configuration Properties-&amp;gt;Build Events-&amp;gt;Pre-Build Event)</Message>
+      <Command>copy $(SolutionDir)\..\src\xpdf\xpdf-aconf.h.in $(SolutionDir)\..\src\xpdf\xpdf-aconf.h</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+</Project>

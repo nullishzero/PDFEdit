@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="810f8d63-c296-47a6-b77a-2b1d6dfa55de" Name="Pdf editor (Qt4 version)" Language="1033" Version="1.0.0.0" Manufacturer="pdfSetup2005" UpgradeCode="ae7abe8f-8d16-47cd-ab7d-d5a715b9e977">
+
+    <Package InstallerVersion="200" Compressed="yes" />
+		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+    <Directory Id="TARGETDIR" Name="SourceDir" FileSource="..\..">
+      <Directory Id="TARGETSUBDIR" Name="PdfEditor" FileSource="..\..">
+        <Directory Id="pdfImages" Name="images">
+          <Component Id="ImageSource" Guid="8f654235-16ee-4a04-b607-2f848fc32db5" >
+            <File Id="imgabout" Name="about.png"  />
+            <File Id="imgcomment" Name="comment.png"  />
+            <File Id="imgcontent" Name="content.png"  />
+            <File Id="imgdebug" Name="debug.png"  />
+            <File Id="imgdeletepage" Name="deletepage.png"/>
+            <File Id="imgDeleteText" Name="DeleteText.png"/>
+            <File Id="imgderotate" Name="derotate.png"/>
+            <File Id="imgdownpage" Name="downpage.png"/>
+            <File Id="imgeraseText" Name="eraseText.png"/>
+            <File Id="imghand" Name="hand.png"/>
+            <File Id="imgimages" Name="images.png"/>
+            <File Id="imginserttext" Name="insert_text.png"/>
+            <File Id="imginsertTextMarker" Name="insertTextMarker.png"/>
+            <File Id="imgnextpage" Name="nextpage.png"  />
+            <File Id="imgopen" Name="open.png"/>
+            <File Id="pagedown" Name="page_down.png"/>
+            <File Id="imgpreviousPage" Name="previousPage.png"/>
+            <File Id="redo" Name="redo.png"/>
+            <File Id="rotate" Name="rotate.png"/>
+            <File Id="save" Name="save.png"/>
+            <File Id="saveas" Name="saveas.png"/>
+            <File Id="savecopy" Name="savecopy.png"/>
+            <File Id="saveencoded" Name="save-encoded.png"/>
+            <File Id="search" Name="search.png"/>
+            <File Id="setText" Name="setText.png"/>
+            <File Id="imgTextConvert.png" Name="TextConvert.png"  />
+            <File Id="imgundo.png" Name="undo.png"  />
+            <File Id="imgUppage.png" Name="uppage.png"  />
+            <File Id="imgView.png" Name="view.png"  />
+            <File Id="imgZoom" Name="zoom.png"  />
+            <File Id="imgDecrypt_icon" Name="decrypt_icon.png"  />
+            <File Id="imgOperator" Name="operator.png"  />
+            <File Id="imgAddPage" Name="addpage.png" />
+          </Component>
+        </Directory>
+        <Component Id="Executable" Guid="8f654235-16ee-4a04-b607-2f848fc32db4">
+          <File Id='PdfEditorExe' Name='$(var.TARGETSOURCE)' KeyPath='yes'>
+            <!--             <Shortcut Id="desktopPdfEditor" Directory="DesktopFolder" Name="PdfEditor (Beta)"
+                  WorkingDirectory='INSTALLDIR' Advertise="yes" /> -->
+          </File>
+          <RemoveFile Id="PurgeAppFolder" Name="config" On="uninstall" />
+          <Shortcut Id="UninstallProduct"
+                       Name="UninstallPdfEditor"
+                       Description="Removes pdf Editor from the operating system"
+                       Target="[System64Folder]msiexec.exe"
+                       Arguments="/x [ProductCode]"/>
+        </Component>
+        <Component Id='Libraries' Guid='8f654235-16ee-4a04-b607-2f848fc32db1'>
+          <File Id='qtcore' Source='$(var.QtSdkPath)\QtCore4.dll'/>
+          <File Id='qtGui'  Source='$(var.QtSdkPath)\QtGui4.dll'/>
+          <File Id='freetype' Source='..\..\dlls\freetype6.dll' />
+          <File Id='zdll' Source='..\..\dlls\zlib1.dll' />
+        </Component>
+      </Directory>
+    </Directory>
+    <Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR" />
+    <UIRef Id="WixUI_InstallDir" />
+		<Feature Id="ProductFeature" Title="pdfSetup2005" Level="1">
+			<!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
+			<ComponentRef Id="Executable" />
+      <ComponentRef Id="ImageSource"/>
+      <ComponentRef Id="Libraries"/>
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<ComponentGroupRef Id="Product.Generated" />
+		</Feature>
+	</Product>
+</Wix>

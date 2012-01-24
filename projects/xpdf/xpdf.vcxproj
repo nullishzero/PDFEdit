@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug-Win32Gui|Win32">
+      <Configuration>Debug-Win32Gui</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{005F915C-B7B1-4448-AC1D-A99336E67078}</ProjectGuid>
+    <RootNamespace>xpdf</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Win32Gui|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)\vsprops\base.props" />
+    <Import Project="$(SolutionDir)\vsprops\xpdf.props" />
+    <Import Project="$(SolutionDir)\vsprops\release.props" />
+    <Import Project="$(SolutionDir)\vsprops\win32.props" />
+    <Import Project="$(SolutionDir)\vsprops\lib.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Win32Gui|Win32'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)\vsprops\base.props" />
+    <Import Project="$(SolutionDir)\vsprops\xpdf.props" />
+    <Import Project="$(SolutionDir)\vsprops\debug.props" />
+    <Import Project="$(SolutionDir)\vsprops\win32.props" />
+    <Import Project="$(SolutionDir)\vsprops\lib.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)\vsprops\base.props" />
+    <Import Project="$(SolutionDir)\vsprops\xpdf.props" />
+    <Import Project="$(SolutionDir)\vsprops\debug.props" />
+    <Import Project="$(SolutionDir)\vsprops\win32.props" />
+    <Import Project="$(SolutionDir)\vsprops\lib.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEvent>
+      <Command>if NOT EXIST "$(SolutionDir)\..\src\xpdf\xpdf-aconf.h" copy "$(SolutionDir)\..\src\xpdf\aconf-win32.h" "$(SolutionDir)\..\src\xpdf\xpdf-aconf.h"</Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>false</StringPooling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>if NOT EXIST "$(SolutionDir)\output\freetype6.dll" copy "$(SolutionDir)\libs\freetype6.dll" "$(SolutionDir)\output\freetype6.dll"</Command>
+    </PostBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Win32Gui|Win32'">
+    <PreBuildEvent>
+      <Command>if NOT EXIST "$(SolutionDir)\..\src\xpdf\xpdf-aconf.h" copy "$(SolutionDir)\..\src\xpdf\aconf-win32.h" "$(SolutionDir)\..\src\xpdf\xpdf-aconf.h"</Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>HAVE_SPLASH;HAVE_FREETYPE_FREETYPE_H;HAVE_FREETYPE_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <PostBuildEvent>
+      <Command>if NOT EXIST "$(SolutionDir)\output\freetype6.dll" copy "$(SolutionDir)\libs\freetype6.dll" "$(SolutionDir)\output\freetype6.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent>
+      <Command>if NOT EXIST "$(SolutionDir)\..\src\xpdf\xpdf-aconf.h" copy "$(SolutionDir)\..\src\xpdf\aconf-win32.h" "$(SolutionDir)\..\src\xpdf\xpdf-aconf.h"</Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <BrowseInformation>true</BrowseInformation>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>if NOT EXIST "$(SolutionDir)\output\freetype6.dll" copy "$(SolutionDir)\libs\freetype6.dll" "$(SolutionDir)\output\freetype6.dll"</Command>
+    </PostBuildEvent>
+    <ProjectReference />
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\xpdf\fofi\FoFiBase.h" />
+    <ClInclude Include="..\..\src\xpdf\fofi\FoFiEncodings.h" />
+    <ClInclude Include="..\..\src\xpdf\fofi\FoFiTrueType.h" />
+    <ClInclude Include="..\..\src\xpdf\fofi\FoFiType1.h" />
+    <ClInclude Include="..\..\src\xpdf\fofi\FoFiType1C.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\about-text.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Annot.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Array.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\BuiltinFont.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\BuiltinFontTables.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Catalog.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\CharCodeToUnicode.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\CharTypes.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\CMap.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\CompactFontTables.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\config.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\CoreOutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Decrypt.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Dict.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\encrypt_utils.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Error.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\ErrorCodes.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\FontEncodingTables.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Function.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Gfx.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\GfxFont.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\GfxState.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\GlobalParams.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\ImageOutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\JArithmeticDecoder.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\JBIG2Stream.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\JPXStream.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Lexer.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Link.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\NameToCharCode.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\NameToUnicodeTable.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Object.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Outline.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\OutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Page.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Parser.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\PDFCore.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\PDFDoc.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\PDFDocEncoding.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\PreScanOutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\PSOutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\PSTokenizer.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\SecurityHandler.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Stream-CCITT.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\Stream.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\TextOutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\UnicodeMap.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\UnicodeMapTables.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\UnicodeTypeTable.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\UTF8.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\XRef.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\FixedPoint.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\gfile.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\GHash.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\GList.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\gmem.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\GMutex.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\GString.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\gtypes.h" />
+    <ClInclude Include="..\..\src\xpdf\goo\parseargs.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\Splash.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashBitmap.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashClip.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashErrorCodes.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashFont.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashFontEngine.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashFontFile.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashFontFileID.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashGlyphBitmap.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashMath.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf\SplashOutputDev.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashPath.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashPattern.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashScreen.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashState.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashT1Font.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashT1FontEngine.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashT1FontFile.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashTypes.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashXPath.h" />
+    <ClInclude Include="..\..\src\xpdf\splash\SplashXPathScanner.h" />
+    <ClInclude Include="..\..\src\xpdf\aconf-win32.h" />
+    <ClInclude Include="..\..\src\xpdf\aconf2.h" />
+    <ClInclude Include="..\..\src\xpdf\xpdf-aconf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\xpdf\fofi\FoFiBase.cc" />
+    <ClCompile Include="..\..\src\xpdf\fofi\FoFiEncodings.cc" />
+    <ClCompile Include="..\..\src\xpdf\fofi\FoFiTrueType.cc" />
+    <ClCompile Include="..\..\src\xpdf\fofi\FoFiType1.cc" />
+    <ClCompile Include="..\..\src\xpdf\fofi\FoFiType1C.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Annot.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Array.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\BuiltinFont.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\BuiltinFontTables.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Catalog.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\CharCodeToUnicode.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\CMap.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\CoreOutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Decrypt.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Dict.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\encrypt_utils.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Error.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\FontEncodingTables.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Function.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Gfx.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\GfxFont.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\GfxState.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\GlobalParams.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\ImageOutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\JArithmeticDecoder.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\JBIG2Stream.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\JPXStream.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Lexer.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Link.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\NameToCharCode.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Object.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Outline.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\OutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Page.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Parser.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\PDFDoc.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\PDFDocEncoding.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\PreScanOutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\PSOutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\PSTokenizer.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\SecurityHandler.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\Stream.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\TextOutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\UnicodeMap.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\UnicodeTypeTable.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\XRef.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\FixedPoint.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\gfile.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\GHash.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\GList.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\gmem.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\gmempp.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\GString.cc" />
+    <ClCompile Include="..\..\src\xpdf\goo\parseargs.c" />
+    <ClCompile Include="..\..\src\xpdf\splash\Splash.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashBitmap.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashClip.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFont.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFontEngine.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFontFile.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFontFileID.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFTFont.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFTFontEngine.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashFTFontFile.cc" />
+    <ClCompile Include="..\..\src\xpdf\xpdf\SplashOutputDev.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashPath.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashPattern.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashScreen.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashState.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashT1Font.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashT1FontEngine.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashT1FontFile.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashXPath.cc" />
+    <ClCompile Include="..\..\src\xpdf\splash\SplashXPathScanner.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\other\test_freetype2\test_freetype2.vcxproj">
+      <Project>{36c203e2-1178-496c-a2fc-c120ed9336c9}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
