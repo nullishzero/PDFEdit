@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Search</class>
+ <widget class="QWidget" name="Search">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>324</width>
+    <height>91</height>
+   </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Search</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="2">
+    <widget class="QLineEdit" name="text"/>
+   </item>
+   <item row="0" column="3">
+    <widget class="QToolButton" name="prevButton">
+     <property name="text">
+      <string>Previous</string>
+     </property>
+     <property name="icon">
+      <iconset resource="pdf.qrc">
+       <normaloff>:/images/previousPage.png</normaloff>:/images/previousPage.png</iconset>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonFollowStyle</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QToolButton" name="nextButton">
+     <property name="text">
+      <string>Next</string>
+     </property>
+     <property name="icon">
+      <iconset resource="pdf.qrc">
+       <normaloff>:/images/nextpage.png</normaloff>:/images/nextpage.png</iconset>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonFollowStyle</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="caseSensitive">
+     <property name="text">
+      <string>Case sensitive</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="searchLabel">
+     <property name="text">
+      <string>Search:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="regexp">
+     <property name="text">
+      <string>Regular expression (BETA)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QToolButton" name="stopButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="pdf.qrc">
+       <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="concate">
+     <property name="text">
+      <string>Concate split words</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="pdf.qrc"/>
+ </resources>
+ <connections/>
+</ui>
