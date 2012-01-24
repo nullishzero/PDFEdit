@@ -5,3 +5,5 @@ output/
 *.sdf
 *.opensdf
 *.suo
+bin/
+obj/

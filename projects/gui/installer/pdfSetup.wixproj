@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -5,22 +6,23 @@
     <ProductVersion>3.5</ProductVersion>
     <ProjectGuid>{717b9f7b-04d7-47b4-9c61-78de545a3796}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>PdfEditInstalation</OutputName>
+    <OutputName>pdfedit-installation</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <Name>pdfSetup</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;QtSdkPath=c:\QtSDK\lib;TARGETSOURCE=pdfeditord.exe</DefineConstants>
+    <DefineConstants>Debug;TARGETSOURCE=pdfedit.exe</DefineConstants>
     <WixVariables>
     </WixVariables>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>QtSdkPath=$(QTDIR)\lib;TARGETSOURCE=pdfeditor.exe</DefineConstants>
+    <DefineConstants>TARGETSOURCE=pdfedit.exe</DefineConstants>
     <WixVariables>
     </WixVariables>
   </PropertyGroup>
@@ -34,6 +36,9 @@
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
+  <PropertyGroup>
+    <PreBuildEvent>echo "Please, set QTDIR if not successful."</PreBuildEvent>
+  </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.
@@ -42,7 +47,4 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
-  <PropertyGroup>
-    <PreBuildEvent>copy $(ProjectDir)..\releasePdf\pdfeditor.exe  $(SolutionDir)\..</PreBuildEvent>
-  </PropertyGroup>
 </Project>
