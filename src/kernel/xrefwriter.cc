@@ -644,7 +644,7 @@ using namespace utils;
 			new FileStreamWriter(file, 0, false, 0, &dict));
 
 	// Writes header with the same PDF version
-	pdfWriter->ignoreStream = true;
+	pdfWriter->ignore_stream( true );
 	pdfWriter->writeHeader(getPDFVersion(), *outputStream);
 	IPdfWriter::ObjectList objectList;
 	initReachableObjects();
@@ -686,7 +686,7 @@ using namespace utils;
 	IPdfWriter::PrevSecInfo prevInfo={0, 0}; //TODO other trailers?
 	pdfWriter->writeTrailer(*getTrailerDict(), prevInfo, *outputStream);
 	outputStream->flush();
-	pdfWriter->ignoreStream = false;
+	pdfWriter->ignore_stream( false );
 	return 0;
 }
 int XRefWriter::saveToNew(char * name)

@@ -329,15 +329,14 @@ makeNamePdfValid (Iter it, Iter end)
 	{
 		unsigned ch = *it;
 
-		// peskova: if ( '!' > (*it) || '~' < (*it))
-		if (ch < sizeof(specialChars) && specialChars[*it])
+		if ( '!' > (*it) || '~' < (*it))
 		{ // Convert it to ascii
 			char hexstr[4];
 			snprintf(hexstr, sizeof(hexstr), "#%02x", ch & 0xff);
 			assert(hexstr[sizeof(hexstr)-1] == '\0');
 			tmp += hexstr;
 		}else
-			tmp += ch;
+			tmp += (char)ch;
 	}
 	
 	return tmp;

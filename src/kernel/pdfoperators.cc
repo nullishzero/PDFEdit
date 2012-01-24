@@ -260,6 +260,16 @@ TextSimpleOperator::setFontText (const std::string& str)
 	setRawText(codeStr);
 }
 
+void 
+TextSimpleOperator::setFontText (const std::wstring& wstr)
+{
+		utilsPrintDbg(debug::DBG_DBG, "");
+  // jmisutka - eva merge - THIS IS BAD
+  std::string str ( wstr.begin(), wstr.end() );
+	std::string codeStr = utils::transformToCodeString(str, getCurrentFont());
+
+	setRawText(codeStr);
+}
 
 /** Simple class for font data encapsulation.
  */
@@ -414,34 +424,33 @@ void TextSimpleOperator::getFontText(std::wstring& str)const
   	}
 }
 
-// peskova
-//void TextSimpleOperator::getFontText(std::string& str)const
-//{
-// 	std::string rawStr;
-//	getRawText(rawStr);
-//
-//	//rawStr = "Prílohy";
-// 	int len = rawStr.size();
-// 	GString raw(rawStr.c_str(), len);
-// 	GfxFont* font = getCurrentFont();
-//	if(!font)
-//		return;
-//	utilsPrintDbg(debug::DBG_INFO, "Textoperator uses font="<<fontData->getFontName());
-// 	CharCode code;
-// 	Unicode u;
-// 	int uLen;
-// 	double dx, dy, originX, originY;
-// 	char * p=raw.getCString();
-// 	while(len>0)
-// 	{
-// 		int n = font->getNextChar(p, len, &code, &u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
-// 			    &dx, &dy, &originX, &originY);
-// 		for (int i=0; i<uLen; ++i)
-// 			str += (&u)[i];
-// 		p += n;
-// 		len -= n;
-//  	}
-//}
+void TextSimpleOperator::getFontText(std::string& str)const
+{
+ 	std::string rawStr;
+	getRawText(rawStr);
+
+	//rawStr = "Prílohy";
+ 	int len = rawStr.size();
+ 	GString raw(rawStr.c_str(), len);
+ 	GfxFont* font = getCurrentFont();
+	if(!font)
+		return;
+	utilsPrintDbg(debug::DBG_INFO, "Textoperator uses font="<<fontData->getFontName());
+ 	CharCode code;
+ 	Unicode u;
+ 	int uLen;
+ 	double dx, dy, originX, originY;
+ 	char * p=raw.getCString();
+ 	while(len>0)
+ 	{
+ 		int n = font->getNextChar(p, len, &code, &u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+ 			    &dx, &dy, &originX, &originY);
+ 		for (int i=0; i<uLen; ++i)
+ 			str += (&u)[i];
+ 		p += n;
+ 		len -= n;
+  	}
+}
 
 TextSimpleOperator::~TextSimpleOperator()
 {

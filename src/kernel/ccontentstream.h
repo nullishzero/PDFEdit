@@ -513,7 +513,13 @@ public:
 	/**
 	 * Replaces text in this content stream. Simple method implemented so far.
 	 */
-	void replaceText (const std::string& what, const std::string& with);
+	void replaceText (const std::wstring& what, const std::wstring& with);
+	void replaceText (const std::string& what, const std::string& with) {
+  // jmisutka - eva merge - THIS IS BAD
+    replaceText( std::wstring( what.begin(), what.end() ), 
+                 std::wstring( with.begin(), with.end() ) 
+      );
+  }
 
 
 private:
