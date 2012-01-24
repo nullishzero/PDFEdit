@@ -453,16 +453,16 @@ namespace {
 				// Get Object at i-th position
 				array.arrayGetNF (i, obj.get());
 					
-				shared_ptr<IProperty> cobj;
+				boost::shared_ptr<IProperty> cobj;
 				// Create CObject from it
 				if (isPdfValid(pdf))
 				{
 					hasValidRef (ip);
-					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (pdf, *obj, ip.getIndiRef()));
+					cobj = boost::shared_ptr<IProperty> (createObjFromXpdfObj (pdf, *obj, ip.getIndiRef()));
 
 				}else
 				{
-					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
+					cobj = boost::shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
 				}
 
 				if (cobj)
@@ -504,12 +504,12 @@ namespace {
 				obj->free ();
 				dict.dictGetValNF (i,obj.get());
 
-				shared_ptr<IProperty> cobj;
+				boost::shared_ptr<IProperty> cobj;
 				// Create CObject from it
 				if (isPdfValid (pdf))
-					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (pdf, *obj, ip.getIndiRef()));
+					cobj = boost::shared_ptr<IProperty> (createObjFromXpdfObj (pdf, *obj, ip.getIndiRef()));
 				else
-					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
+					cobj = boost::shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
 
 				if (cobj)
 				{
@@ -780,7 +780,7 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 		string key = dict.dictGetKey (i);
 		dict.dictGetValNF (i,obj.get());
 		// Make IProperty from value
-		scoped_ptr<IProperty> cobj (createObjFromXpdfObj (*obj));
+		boost::scoped_ptr<IProperty> cobj (createObjFromXpdfObj (*obj));
 		if (cobj)
 		{
 			// Store it in the dictionary
@@ -820,7 +820,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	memcpy(pStr, str.c_str(), len);
 	pStr[len] = '\0';
 					
-	scoped_ptr<Parser> parser(
+	boost::scoped_ptr<Parser> parser(
 			new Parser (xref, 
 				new Lexer (xref,
 					new MemStream (pStr, 0, static_cast<int>(len), &dct, gTrue)
@@ -873,7 +873,7 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	
 	// Create stream
 	::Object* objDict = dict._makeXpdfObject ();
-	// Only undelying dictionary is used from objDict, so we can free objDict normally (this is 
+	// Only underlying dictionary is used from objDict, so we can free objDict normally (this is 
 	// due to the strange implementation of xpdf streams, no dict reference counting is used there
 	::Stream* stream = new ::MemStream (tmpbuf, 
 										static_cast<Guint>(0), 
@@ -932,6 +932,7 @@ unsigned char* bufferFromStream(Stream& str, size_t dictLength, size_t& size)
 
 unsigned char* convertStreamToDecodedData(const Object& obj, size_t& size)
 {
+	assert(obj.isStream());
 	Object lenObj;
 	obj.streamGetDict()->lookup("Length", &lenObj);
 	assert(lenObj.isInt());
@@ -1028,7 +1029,7 @@ size_t streamToCharBuffer (const Object & streamObject, Ref* ref, CharBuffer & o
 	// for Dict -> String conversion
 	// initDict increases streamDict's reference thus we need to
 	// decrease it back by free
-	shared_ptr< ::Object> streamDictObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	boost::shared_ptr< ::Object> streamDictObj(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
 	streamDictObj->initDict((Dict *)streamObject.streamGetDict());
 	std::string dict;
 	xpdfObjToString(*streamDictObj, dict);

@@ -329,6 +329,7 @@ makeNamePdfValid (Iter it, Iter end)
 	{
 		unsigned ch = *it;
 
+		// peskova: if ( '!' > (*it) || '~' < (*it))
 		if (ch < sizeof(specialChars) && specialChars[*it])
 		{ // Convert it to ascii
 			char hexstr[4];

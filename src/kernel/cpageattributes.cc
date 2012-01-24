@@ -47,7 +47,7 @@ using namespace utils;
 //
 //
 void 
-CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttributes& attrs)
+CPageAttributes::fillInherited(const boost::shared_ptr<CDict> pageDict, InheritedAttributes& attrs)
 {
 	int initialized=0;
 
@@ -114,14 +114,14 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 		// stops recursion and initializes values with default
 		if(pageDict->containsProperty(Specification::Page::PARENT))
 		{
-			shared_ptr<CDict> parentDict=pageDict->getProperty<CDict>(Specification::Page::PARENT);
+			boost::shared_ptr<CDict> parentDict=pageDict->getProperty<CDict>(Specification::Page::PARENT);
 			CPageAttributes::fillInherited(parentDict, attrs);
 		}else
 		{
 			// Resources is required and at least empty dictionary should be
 			// specified 
 			if(!attrs._resources.get())
-				attrs._resources=shared_ptr<CDict>(CDictFactory::getInstance());
+				attrs._resources=boost::shared_ptr<CDict>(CDictFactory::getInstance());
 
 			// default A4 sized box
 			libs::Rectangle defaultRect(
@@ -148,7 +148,7 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 				// direct usage of static DEFAULT_ROTATE value caused linkage
 				// error
 				int defRot=DisplayParams::DEFAULT_ROTATE;
-				attrs._rotate=shared_ptr<CInt>(CIntFactory::getInstance(defRot));
+				attrs._rotate=boost::shared_ptr<CInt>(CIntFactory::getInstance(defRot));
 			}
 		}
 	}
@@ -160,7 +160,7 @@ CPageAttributes::fillInherited(const shared_ptr<CDict> pageDict, InheritedAttrib
 //
 //
 void 
-CPageAttributes::setInheritable(shared_ptr<CDict>& pageDict)
+CPageAttributes::setInheritable(boost::shared_ptr<CDict>& pageDict)
 {
 	InheritedAttributes attrs;
 	CPageAttributes::fillInherited(pageDict, attrs);

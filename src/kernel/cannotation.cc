@@ -114,13 +114,13 @@ bool UniversalAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict,
 	AnnotList::const_iterator implElem;
 	if((implElem=implList.find(annotType))==implList.end())
 		return false;
-	shared_ptr<IAnnotInitializator> impl=implElem->second;
+	boost::shared_ptr<IAnnotInitializator> impl=implElem->second;
 
 	// use registerd implementator
 	return (*impl)(annotDict, annotType);
 }
 
-bool UniversalAnnotInitializer::registerInitializer(std::string annotType, shared_ptr<IAnnotInitializator> impl, bool forceNew)
+bool UniversalAnnotInitializer::registerInitializer(std::string annotType, boost::shared_ptr<IAnnotInitializator> impl, bool forceNew)
 {
 	AnnotList::iterator elem=implList.find(annotType);
 	if(elem!=implList.end())
@@ -164,27 +164,27 @@ bool TextAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std:
 
 	// Initializes common entries for annotation dictionary - Type, P, Rect fields are
 	// already set
-	scoped_ptr<IProperty> defaultSubType(CNameFactory::getInstance("Text"));
+	boost::scoped_ptr<IProperty> defaultSubType(CNameFactory::getInstance("Text"));
 	checkAndReplace(annotDict, "Subtype", *defaultSubType);
 
-	scoped_ptr<IProperty> defaultContents(CStringFactory::getInstance(CONTENTS));
+	boost::scoped_ptr<IProperty> defaultContents(CStringFactory::getInstance(CONTENTS));
 	checkAndReplace(annotDict, "Contents", *defaultContents);
 
-	scoped_ptr<IProperty> defaultFlags(CIntFactory::getInstance(FLAGS));
+	boost::scoped_ptr<IProperty> defaultFlags(CIntFactory::getInstance(FLAGS));
 	checkAndReplace(annotDict, "F", *defaultFlags);
 
 	// initializes additional entries specific for text annotations according
 	// static default values
-	scoped_ptr<IProperty> defaultOpen(CBoolFactory::getInstance(OPEN));
+	boost::scoped_ptr<IProperty> defaultOpen(CBoolFactory::getInstance(OPEN));
 	checkAndReplace(annotDict, "Open", *defaultOpen);
 
-	scoped_ptr<IProperty> defaultName(CNameFactory::getInstance(NAME));
+	boost::scoped_ptr<IProperty> defaultName(CNameFactory::getInstance(NAME));
 	checkAndReplace(annotDict, "Name", *defaultName);
 
-	scoped_ptr<IProperty> defaultState(CStringFactory::getInstance(STATE));
+	boost::scoped_ptr<IProperty> defaultState(CStringFactory::getInstance(STATE));
 	checkAndReplace(annotDict, "State", *defaultState);
 
-	scoped_ptr<IProperty> defaultStateModel(CStringFactory::getInstance(STATEMODEL));
+	boost::scoped_ptr<IProperty> defaultStateModel(CStringFactory::getInstance(STATEMODEL));
 	checkAndReplace(annotDict, "StateModel", *defaultStateModel);
 
 	return true;
@@ -211,16 +211,16 @@ bool LinkAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std:
 
 	// Initializes common entries for annotation dictionary - Type, P, Rect fields are
 	// already set
-	scoped_ptr<IProperty> defaultSubType(CNameFactory::getInstance("Link"));
+	boost::scoped_ptr<IProperty> defaultSubType(CNameFactory::getInstance("Link"));
 	checkAndReplace(annotDict, "Subtype", *defaultSubType);
 
-	scoped_ptr<IProperty> defaultContents(CStringFactory::getInstance(CONTENTS));
+	boost::scoped_ptr<IProperty> defaultContents(CStringFactory::getInstance(CONTENTS));
 	checkAndReplace(annotDict, "Contents", *defaultContents);
 
-	scoped_ptr<IProperty> defaultDest(CNameFactory::getInstance(DEST));
+	boost::scoped_ptr<IProperty> defaultDest(CNameFactory::getInstance(DEST));
 	checkAndReplace(annotDict, "Dest", *defaultDest);
 
-	scoped_ptr<IProperty> defaultH(CNameFactory::getInstance(H));
+	boost::scoped_ptr<IProperty> defaultH(CNameFactory::getInstance(H));
 	checkAndReplace(annotDict, "H", *defaultH);
 
 	return true;
@@ -229,10 +229,10 @@ bool LinkAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std:
 } // namespace utils
 
 // initialization of static
-shared_ptr<utils::IAnnotInitializator> 
-CAnnotation::annotInit=shared_ptr<utils::IAnnotInitializator>(new utils::UniversalAnnotInitializer());
+boost::shared_ptr<utils::IAnnotInitializator> 
+CAnnotation::annotInit=boost::shared_ptr<utils::IAnnotInitializator>(new utils::UniversalAnnotInitializer());
 
-shared_ptr<CAnnotation> CAnnotation::createAnnotation(libs::Rectangle rect, string annotType)
+boost::shared_ptr<CAnnotation> CAnnotation::createAnnotation(libs::Rectangle rect, string annotType)
 {
 using namespace debug;
 using namespace utils;
@@ -240,16 +240,16 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "");
 	
 	// creates new empty dictionary for annotation
-	shared_ptr<CDict> annotDictionary(CDictFactory::getInstance());
+	boost::shared_ptr<CDict> annotDictionary(CDictFactory::getInstance());
 
 	// initializes annotation dictionary maintaining information:
 	// Type of annotation dictionary has to be Annot (this is not strongly
 	// required by specification, but it is cleaner to do initialize it)
-	scoped_ptr<IProperty> typeField(CNameFactory::getInstance("Annot"));
+	boost::scoped_ptr<IProperty> typeField(CNameFactory::getInstance("Annot"));
 	checkAndReplace(annotDictionary, "Type", *typeField);
 
 	// Rectangle of annotation is constructed from given parameter
-	shared_ptr<IProperty> rectField(getIPropertyFromRectangle(rect));
+	boost::shared_ptr<IProperty> rectField(getIPropertyFromRectangle(rect));
 	checkAndReplace(annotDictionary, "Rect", *rectField);
 
 	// last modified date field (M) is initialized to current local time
@@ -257,7 +257,7 @@ using namespace utils;
 	time(&currTime);
 	struct tm currLocalTime;
 	localtime_r(&currTime, &currLocalTime);
-	shared_ptr<IProperty> mField=getIPropertyFromDate(&currLocalTime);
+	boost::shared_ptr<IProperty> mField=getIPropertyFromDate(&currLocalTime);
 	checkAndReplace(annotDictionary, "M", *mField);
 	
 	// initializes annotation dictionary according desired type - at least Type
@@ -270,7 +270,7 @@ using namespace utils;
 	if(!initialized)
 		kernelPrintDbg(DBG_WARN, "Unable to initialize annotation dictionary with type="<<annotType);
 	
-	return shared_ptr<CAnnotation>(new CAnnotation(annotDictionary));
+	return boost::shared_ptr<CAnnotation>(new CAnnotation(annotDictionary));
 }
 
 void CAnnotation::invalidate()
@@ -285,8 +285,8 @@ using namespace utils;
 	// Uses this instance as newValue, but uses EmptyDeallocator to keep
 	// instance alive when shared_ptr tries to destroy its content.
 	// context is empty
-	shared_ptr<CAnnotation> current(this, EmptyDeallocator<CAnnotation>());
-	notifyObservers(current, shared_ptr<ChangeContext>());
+	boost::shared_ptr<CAnnotation> current(this, EmptyDeallocator<CAnnotation>());
+	notifyObservers(current, boost::shared_ptr<ChangeContext>());
 }
 
 CAnnotation::AnnotType CAnnotation::getType()const
@@ -295,7 +295,7 @@ using namespace debug;
 
 	try
 	{
-		shared_ptr<CName> subTypeName=annotDictionary->getProperty<CName>("Subtype");
+		boost::shared_ptr<CName> subTypeName=annotDictionary->getProperty<CName>("Subtype");
 		string typeName;
 		subTypeName->getValue(typeName);
 		return utils::annotTypeMapping(typeName);

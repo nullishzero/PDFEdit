@@ -120,7 +120,7 @@ public:
 	/**
 	 * Sets display params.
 	 */
-	void setDisplayParams (const DisplayParams& dp);
+	void setDisplayParams (const DisplayParams& dp, bool forceReparse =false);
 
 	/**
 	 * Draws page on an output device.

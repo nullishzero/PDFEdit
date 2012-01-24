@@ -471,6 +471,305 @@ RefState XRefWriter::knowsRef(const IndiRef& ref)const
 	return CXref::createObject(type, ref);
 }
 
+//peskova
+void collectDictRefElems(::XRef &xref, const ::Dict &dict, XRefWriter::RefList &refList);
+
+bool operator==(const ::Ref& r1, const ::Ref& r2)
+{
+	return r1.num == r2.num && r1.gen== r2.gen;
+}
+
+bool containsRef(const XRefWriter::RefList & refList, const ::Ref& ref)
+{
+	XRefWriter::RefList::const_iterator i;
+	for(i=refList.begin(); i!=refList.end(); ++i)
+		if(*i == ref)
+			return true;
+	return false;
+}
+
+void collectReachableRefs(XRef& xref, const ::Object &obj, XRefWriter::RefList &refList)
+{
+	switch(obj.getType())
+	{
+		case objArray:
+		{
+			boost::shared_ptr< ::Object> elem(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+			for(int i=0; i<obj.arrayGetLength(); i++)
+			{
+				if(!obj.arrayGetNF(i, elem.get()))
+				{
+					utilsPrintDbg(debug::DBG_ERR, "Unable to get array entry");
+					throw MalformedFormatExeption("bad data stream");
+				}
+				collectReachableRefs(xref, *elem, refList);
+				elem->free();
+			}
+			break;
+		}
+		case objDict:
+		{
+			const Dict *dict = obj.getDict();
+			collectDictRefElems(xref, *dict, refList);
+			break;
+		}
+		case objStream:
+		{
+			const Dict *streamDict = obj.streamGetDict();
+			collectDictRefElems(xref, *streamDict, refList);
+			break;
+		}
+		case objRef:
+		{
+			::Ref ref = obj.getRef();
+			// check for already seen referencies and skip them
+			if (containsRef(refList, ref))
+				return;
+			// TODO should be sorted by offset to keep the same
+			// ordering in the file as the original document
+			refList.push_back(ref);
+			boost::shared_ptr< ::Object> target(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+			if(!obj.fetch(&xref, target.get()) || !xref.isOk())
+			{
+				kernelPrintDbg(debug::DBG_ERR, ref<<" object fetching failed with code="
+						<<xref.getErrorCode());
+				throw MalformedFormatExeption("bad data stream");
+			}
+			collectReachableRefs(xref, *target, refList);
+			break;
+		}
+		default:
+			// nothing really interesting here
+			break;
+	}
+}
+void collectDictRefElems(::XRef &xref, const ::Dict &dict, XRefWriter::RefList &refList)
+{
+	boost::shared_ptr< ::Object> elem(XPdfObjectFactory::getInstance(), xpdf::object_deleter());
+	for(int i=0; i<dict.getLength(); i++)
+	{
+		if(!dict.getValNF(i, elem.get()))
+		{
+			utilsPrintDbg(debug::DBG_ERR, "Unable to get dictionary entry with index "<<i);
+			throw MalformedFormatExeption("bad data stream");
+		}
+		collectReachableRefs(xref, *elem, refList);
+		elem->free();
+	}
+}
+int XRefWriter::fillObjectList(pdfobjects::utils::IPdfWriter::ObjectList &objectList, int maxObjectCount)
+{
+	using namespace utils;
+	// collects (fetches) all objects from XRef::entries array, which are not 
+	// free, to the objectList. Skips also Linearized dictionary
+	utilsPrintDbg(debug::DBG_DBG, "Collecting objects starting from "<<lastIndex);
+	objectList.clear();
+	for(; lastIndex < reachAbleRefs.size(); lastIndex++)
+	{
+		::Ref ref = reachAbleRefs[lastIndex];
+		// gets object and generation number
+		int num=ref.num, gen=ref.gen;
+
+		// stop if we reach the maximum objects
+		if(maxObjectCount>0 && objectList.size()>=(size_t)maxObjectCount)
+			break;
+
+		::Object * obj=XPdfObjectFactory::getInstance();
+		XRef::fetch(num, gen, obj);
+		//if (obj->isNull())
+		{
+			//try to look in the changed things
+			ChangedStorage::Iterator i;
+			for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
+				if (i->first == ref)
+					obj = i->second->object->clone();
+		}
+		if(!isOk())
+		{
+			kernelPrintDbg(debug::DBG_ERR, ref<<" object fetching failed with code="
+					<<errCode);
+			xpdf::freeXpdfObject(obj);
+			throw MalformedFormatExeption("bad data stream");
+		}
+		objectList.push_back(IPdfWriter::ObjectElement(ref, obj));
+	}
+	utilsPrintDbg(debug::DBG_DBG, "Returned "<<objectList.size()<<" objects");
+	return objectList.size();
+}
+void XRefWriter::initReachableObjects()
+{
+	utilsPrintDbg(debug::DBG_DBG, "Creating a list of the reachable objects");
+	reachAbleRefs.clear();
+
+	// traverses all objects reachable from trailer and put their references
+	// to the reachAbleRefs - this should provide complete list of all objects
+	// required for document
+	const Object *trailer = getTrailerDict();
+	collectReachableRefs(*this, *trailer, reachAbleRefs);
+	utilsPrintDbg(debug::DBG_INFO, reachAbleRefs.size()<<" indirect objects collected");
+	lastIndex=0;
+}
+int XRefWriter::saveDecoded(FILE * file)
+{
+using namespace debug;
+using namespace utils;
+	utilsPrintDbg(DBG_DBG, "");
+	if(!file)
+	{
+		utilsPrintDbg(DBG_ERR, "Bad file handle");
+		return EINVAL;
+	}
+	if(!pdfWriter)
+	{
+		utilsPrintDbg(DBG_ERR, "No pdfWriter specified. Aborting");
+		return EINVAL;
+	}
+
+	// don't use check_need_credentials here, because we don't want to throw
+	// exception in negative case
+	if(getNeedCredentials())
+	{
+		utilsPrintDbg(DBG_ERR, "No credentials available for encrypted document.");
+		return EPERM;
+	}
+	if(isEncrypted())
+	{
+		utilsPrintDbg(DBG_ERR, "Encrypted documents writing is not implemented");
+		throw NotImplementedException("Encrypted document");
+	}
+	
+	// creates outputStream writer from given file
+	Object dict;
+	boost::shared_ptr<StreamWriter> outputStream(
+			new FileStreamWriter(file, 0, false, 0, &dict));
+
+	// Writes header with the same PDF version
+	pdfWriter->ignoreStream = true;
+	pdfWriter->writeHeader(getPDFVersion(), *outputStream);
+	IPdfWriter::ObjectList objectList;
+	initReachableObjects();
+	while (fillObjectList(objectList, writeBatchCount)>0)
+	{
+		// writes collected objects and xref & trailer section
+		utilsPrintDbg(DBG_INFO, "Writing "<<objectList.size()
+				<<" objects to the output outputStream.");
+		pdfWriter->writeContent(objectList, *outputStream);
+		// clean up
+		utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects("
+				<<objectList.size()<<").");
+		IPdfWriter::ObjectList::iterator i;
+		for(i=objectList.begin(); i!=objectList.end(); ++i)
+		{
+			xpdf::freeXpdfObject(i->second);
+			i->second=NULL;
+		}
+	}
+	////save outputStream
+	//{
+	//	IPdfWriter::ObjectList changed;
+	//	ChangedStorage::Iterator i;
+	//	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
+	//	{
+	//		::Ref ref=i->first;
+	//		Object * obj=i->second->object;
+	//		// for sake of paranoia we should send clones and not the
+	//		// object itself to writer which is allowed to alter object
+	//		changed.push_back(IPdfWriter::ObjectElement(ref, obj->clone()));
+	//	}
+
+	//	// delegates writing to pdfWriter using streamWriter stream from storePos
+	//	// position and frees all clones from changed storage.
+	//	pdfWriter->writeContent(changed, *outputStream);
+	//}
+	utilsPrintDbg(DBG_INFO, "Writing xref and trailer section");
+	// no previous section information and all objects are going to be written
+	IPdfWriter::PrevSecInfo prevInfo={0, 0}; //TODO other trailers?
+	pdfWriter->writeTrailer(*getTrailerDict(), prevInfo, *outputStream);
+	outputStream->flush();
+	pdfWriter->ignoreStream = false;
+	return 0;
+}
+int XRefWriter::saveToNew(char * name)
+{
+	//spravime novy streamwriter
+	//StreamWruiier * str =; //ak ako bol inizializovany XRef::str
+	
+using namespace debug;
+
+FILE * file = fopen(name,"wb");
+	utilsPrintDbg(DBG_DBG, "");
+	if(!file)
+	{
+		utilsPrintDbg(DBG_ERR, "Bad file handle");
+		return EINVAL;
+	}
+	if(!pdfWriter)
+	{
+		utilsPrintDbg(DBG_ERR, "No pdfWriter specified. Aborting");
+		return EINVAL;
+	}
+
+	// don't use check_need_credentials here, because we don't want to throw
+	// exception in negative case
+	if(getNeedCredentials())
+	{
+		utilsPrintDbg(DBG_ERR, "No credentials available for encrypted document.");
+		return EPERM;
+	}
+	if(isEncrypted())
+	{
+		utilsPrintDbg(DBG_ERR, "Encrypted documents writing is not implemented");
+		throw NotImplementedException("Encrypted document");
+	}
+	
+	// creates outputStream writer from given file
+
+	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(XRef::str);
+
+	size_t pos=0;
+	size_t written;
+	do
+	{
+		written = streamWriter->cloneToFile(file,pos,10000);
+		pos += written;
+	}
+	while ( written !=0);
+
+	//uloz tiez vsetky zmeny
+	Object nl;
+	nl.initNull();
+	StreamWriter * nStream=new FileStreamWriter(file, 0, gFalse, 0, &nl); //TODO zapamataj odznova
+using namespace utils;
+	// gets vector of all changed objects
+	IPdfWriter::ObjectList changed;
+	ChangedStorage::Iterator i;
+	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
+	{
+		::Ref ref=i->first;
+		Object * obj=i->second->object;
+		// for sake of paranoia we should send clones and not the
+		// object itself to writer which is allowed to alter object
+		changed.push_back(IPdfWriter::ObjectElement(ref, obj->clone()));
+	}
+
+	// delegates writing to pdfWriter using streamWriter stream from storePos
+	// position and frees all clones from changed storage.
+	pdfWriter->writeContent(changed, *nStream, storePos);
+	//write new trailer
+
+	// Stores position of the cross reference section to xrefPos
+	size_t xrefPos=streamWriter->getPos();
+	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::maxObj+1};
+	size_t newEofPos=pdfWriter->writeTrailer(*getTrailerDict(), secInfo, *nStream);
+
+	fclose(file);
+//	pdfWriter->writeContent
+	//// Writes header with the same PDF version
+	//pdfWriter->writeHeader(getPDFVersion(), *outputStream);
+
+	
+	return 0;
+}
 void XRefWriter::saveChanges(bool newRevision)
 {
 	using namespace utils;

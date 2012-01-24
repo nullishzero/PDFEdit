@@ -28,6 +28,7 @@
 // all basic includes
 #include "kernel/static.h"
 #include "kernel/cdict.h"
+#include "kernel/pdfoperatorsbase.h"
 
 
 //=====================================================================================
@@ -311,6 +312,19 @@ public:
 	 */
 	void setRawBuffer (const Buffer& buf);
 
+	void addToBuffer(boost::shared_ptr<PdfOperator> op)
+	{
+		std::string s;
+		op->getStringRepresentation(s);
+		s+=" ";
+		std::back_insert_iterator< Buffer > p( buffer );
+		copy( s.begin( ), s.end( ), p );
+		//buffer.assign(s.begin(), s.end());
+	}
+	void validate()
+	{
+		setBuffer(buffer);//validate this
+	}
 	/**
 	 * Set decoded (raw) buffer. 
 	 * Drops all filters if present.
@@ -501,17 +515,22 @@ namespace utils {
  * @param end End iterator.
  * @param out Output valid string.
  */
+// peskova
 template<typename Iter>
 void
-makeStreamPdfValid (Iter it, Iter end, std::string& out)
+makeStreamPdfValid (Iter it, Iter end, std::string& out) //this is called only when validatin stream
 {
-	for (; it != end; ++it)
+	bool lastCharEscape = false;
+	for (; it != end; ++it) //remove \\ and \( because of text streams -> text in poertator "("
 	{
+		//looking for <6a65 that getStringRepr does not handle well
+		if (*it == '\\')
+			lastCharEscape = true;
+		//----------------- //TODO check
 		//if ( '\\' == (*it))
 		//{ // "Escape" every occurence of '\'
 		//		out += '\\';
 		//}
-
 		out += *it;
 	}
 }

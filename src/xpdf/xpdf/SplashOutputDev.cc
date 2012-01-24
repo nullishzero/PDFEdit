@@ -959,7 +959,18 @@ void SplashOutputDev::updateStrokeOpacity(GfxState *state) {
 void SplashOutputDev::updateFont(GfxState *state) {
   needFontUpdate = gTrue;
 }
-
+SplashFont * SplashOutputDev::getFontById(GfxFont * gfxFont)
+{
+	SplashOutFontFileID *id;
+	id = new SplashOutFontFileID(gfxFont->getID());
+	SplashFontFile *fontFile = fontEngine->getFontFile(id);
+	delete id;
+	if (!fontFile )
+		return NULL;
+	SplashCoord coord[] = {1,0,0,1,0,0};
+	SplashFont * fnt = fontEngine->getFont(fontFile,coord,coord);
+	return fnt;
+}
 void SplashOutputDev::doUpdateFont(GfxState *state) {
   const GfxFont *gfxFont;
   GfxFontType fontType;
@@ -2599,7 +2610,7 @@ void SplashOutputDev::setSoftMask(GfxState *state, const double *bbox,
 #if SPLASH_CMYK
   GfxCMYK cmyk;
 #endif
-  double lum, lum2;
+  double lum=0.0, lum2=0.0;
   int tx, ty, x, y;
 
   tx = transpGroupStack->tx;
@@ -2759,7 +2770,7 @@ void SplashOutputDev::setFillColor(int r, int g, int b) {
 #endif
 }
 
-SplashFont *SplashOutputDev::getFont(GString *name, double *textMatA) {
+SplashFont *SplashOutputDev::getFont(const GString *name, double *textMatA) {
   DisplayFontParam *dfp;
   Ref ref;
   SplashOutFontFileID *id;

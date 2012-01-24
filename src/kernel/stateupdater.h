@@ -211,7 +211,7 @@ public:
 	// Helper functions
 	//
 public:
-	static GfxState* printTextUpdate (GfxState* state, const std::string& txt, BBox* rc);
+	static GfxState* printTextUpdate (GfxState* state, const std::string& txt, BBox* rc, PdfOperator* op=NULL);
 
 };
 	

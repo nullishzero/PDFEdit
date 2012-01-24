@@ -89,9 +89,10 @@ private:
 	// deallocator for this class
 	friend class FileStreamDataDeleter<Flattener>;
 
-protected:
+public:
 	Flattener(FileStreamData &streamData, IPdfWriter * writer);
 
+protected:
 	/** Initializes all reachable objects.
 	 *
 	 * Starts with the Trailer and recursively travels all reachable

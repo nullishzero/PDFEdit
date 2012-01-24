@@ -428,7 +428,7 @@ public:
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
-	void displayPage (::OutputDev& out, const DisplayParams& params, int x = -1, int y = -1, int w = -1, int h = -1);
+	void displayPage (::OutputDev& out, const DisplayParams& params, int x = -1, int y = -1, int w = -1, int h = -1, bool reparse =  false);
 	
 	/**
 	 * Draw page on an output device.

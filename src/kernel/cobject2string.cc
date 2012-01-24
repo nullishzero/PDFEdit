@@ -81,7 +81,7 @@ simpleValueFromString (const std::string& str, int& val)
 void
 simpleValueFromString (const std::string& str, double& val)
 {
-	shared_ptr<Object> ptrObj (xpdfObjFromString(str), xpdf::object_deleter());
+	boost::shared_ptr<Object> ptrObj (xpdfObjFromString(str), xpdf::object_deleter());
 	
 		assert (objReal == ptrObj->getType ());
 		if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
@@ -222,6 +222,9 @@ template<typename Iter>
 std::string makeHexString(Iter it, Iter end)
 {
 	std::string tmp;
+//peskova
+	if (*it == '\\')
+		it++;
 	for (; it != end; ++it)
 	{
 		char hexstr[4];
@@ -244,9 +247,11 @@ simpleValueToString (const std::string& val, std::string& str)
 	{
 		case pString:
 		{
-			if (!isBinaryString(val)) {
-				str = Specification::CSTRING_PREFIX + makeStringPdfValid(val) + Specification::CSTRING_SUFFIX;
-			}else
+//peskova
+			std::string validateStr = makeStringPdfValid (val);
+			if (!isBinaryString(val))
+				str = Specification::CSTRING_PREFIX + validateStr + Specification::CSTRING_SUFFIX;
+			else
 			{
 				str = Specification::CHEXSTRING_PREFIX 
 					+ makeHexString (val.begin(), val.end())

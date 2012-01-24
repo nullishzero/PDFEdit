@@ -168,7 +168,7 @@ void GfxFont::readFontDescriptor(XRef *xref, const Dict *fontDict) {
   int i;
 
   // assume Times-Roman by default (for substitution purposes)
-  flags = fontSerif;
+  flags = PDF_fontSerif;
 
   embFontID.num = -1;
   embFontID.gen = -1;
@@ -832,7 +832,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
   mul = (type == fontType3) ? fontMat[0] : 0.001;
   fontDict->lookup("Widths", &obj1);
   if (obj1.isArray()) {
-    flags |= fontFixedWidth;
+    flags |= PDF_fontFixedWidth;
     if (obj1.arrayGetLength() < lastChar - firstChar + 1) {
       lastChar = firstChar + obj1.arrayGetLength() - 1;
     }
@@ -841,7 +841,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
       if (obj2.isNum()) {
 	widths[code] = obj2.getNum() * mul;
 	if (widths[code] != widths[firstChar]) {
-	  flags &= ~fontFixedWidth;
+	  flags &= ~PDF_fontFixedWidth;
 	}
       }
       obj2.free();
@@ -991,9 +991,9 @@ Gushort *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
     } else if (unicodeCmap >= 0) {
       cmap = unicodeCmap;
       useUnicode = gTrue;
-    } else if ((flags & fontSymbolic) && msSymbolCmap >= 0) {
+    } else if ((flags & PDF_fontSymbolic) && msSymbolCmap >= 0) {
       cmap = msSymbolCmap;
-    } else if ((flags & fontSymbolic) && macRomanCmap >= 0) {
+    } else if ((flags & PDF_fontSymbolic) && macRomanCmap >= 0) {
       cmap = macRomanCmap;
     } else if (macRomanCmap >= 0) {
       cmap = macRomanCmap;
@@ -1434,7 +1434,8 @@ int GfxCIDFont::getNextChar(const char *s, int len, CharCode *code,
   if (ctu) {
     *uLen = ctu->mapToUnicode(cid, u, uSize);
   } else {
-    *uLen = 0;
+	u[0] = *code;
+    *uLen = 1;
   }
 
   // horizontal

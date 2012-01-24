@@ -34,6 +34,7 @@
 
 #include "kernel/static.h"
 #include "kernel/cxref.h"
+#include "kernel/pdfwriter.h"
 
 class StreamWriter;
 
@@ -96,9 +97,23 @@ bool isLatestRevision(const XRefWriter &xref);
  * pdf instance is not in ReadOnly mode and if it is, throws an exception to 
  * prevent from changes.
  */
+#define writeBatchCount 10000
+
 class XRefWriter:public CXref
 {
 public:
+	
+	int lastIndex;
+	// TODO maybe some more lookup efficient structure
+	typedef std::vector<Ref> RefList;
+
+	/** List of all reachable indirect objects.
+	 * Initialized in initReachableObjects.
+	 */
+	RefList reachAbleRefs;
+	void initReachableObjects();
+
+	int fillObjectList(pdfobjects::utils::IPdfWriter::ObjectList &objectList, int maxObjectCount);
 	/** Mode for XRefWriter.
 	 * This controls behaviour. Following values are possible:
 	 * <ul>
@@ -414,6 +429,8 @@ public:
 	 */
 	void saveChanges(bool newRevision=false);
 	
+	int saveDecoded(FILE * file);
+	int saveToNew(char * name);
 	/** Changes revision of document.
 	 * @param revNumber Number of the revision.
 	 *

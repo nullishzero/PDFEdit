@@ -118,6 +118,10 @@ public:
 
 }; // class CPage
 
+// peskova
+
+CPageFonts::FontList::const_iterator 
+findFont (const CPageFonts::FontList& containter, const std::string& name);
 
 //=====================================================================================
 } // namespace pdfobjects

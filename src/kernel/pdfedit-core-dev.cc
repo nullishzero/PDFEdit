@@ -21,6 +21,7 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit
  */
+#include "kernel/static.h"
 #include <errno.h>
 #include "kernel/pdfedit-core-dev.h"
 #include "kernel/pdfwriter.h"

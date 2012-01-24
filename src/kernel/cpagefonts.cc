@@ -46,9 +46,6 @@ using namespace utils;
 // Static initialization
 const char* CPageFonts::PDFEDIT_FONTID = "PDFEDIT_F";
 
-// =====================================================================================
-namespace {
-// =====================================================================================
 
 	/** 
 	 * Looks for a font with the given name.
@@ -65,10 +62,6 @@ namespace {
 		return containter.end();
 	}
 
-// =====================================================================================
-} // namespace 
-// =====================================================================================
-
 
 //
 //
@@ -82,8 +75,8 @@ CPageFonts::addSystemType1Font (const std::string& fontname, bool winansienc)
 	//    /Subtype /Type1
 	//    /BaseFont / ...
 	// >>
-	shared_ptr<CDict> font (new CDict ());
-	shared_ptr<CName> name (new CName (Specification::Font::TYPE));
+	boost::shared_ptr<CDict> font (new CDict ());
+	boost::shared_ptr<CName> name (new CName (Specification::Font::TYPE));
 	font->addProperty (Specification::Dict::TYPE, *name);
 	name->setValue (Specification::Font::TYPE1);
 	font->addProperty (Specification::Font::SUBTYPE, *name);
@@ -106,16 +99,16 @@ CPageFonts::addSystemType1Font (const std::string& fontname, bool winansienc)
 	}
 	
 	// Get Resources
-	shared_ptr<CDict> res = _page->getDictionary()->getProperty<CDict>(Specification::Page::RESOURCES);
+	boost::shared_ptr<CDict> res = _page->getDictionary()->getProperty<CDict>(Specification::Page::RESOURCES);
 	
 	if (!res->containsProperty (Specification::Font::TYPE))
 	{	
-		shared_ptr<CDict> fontdict (new CDict ());
+		boost::shared_ptr<CDict> fontdict (new CDict ());
 		res->addProperty (Specification::Font::TYPE, *fontdict);
 	}
 	
 	// Get "Fonts"
-	shared_ptr<CDict> fonts = res->getProperty<CDict>(Specification::Font::TYPE);
+	boost::shared_ptr<CDict> fonts = res->getProperty<CDict>(Specification::Font::TYPE);
 
 	// Get all avaliable fonts
 	CPageFonts::FontList fs;
@@ -136,8 +129,8 @@ CPageFonts::addSystemType1Font (const std::string& fontname, bool winansienc)
 	//
 	// Create state and resources and update our contentstreams
 	//
-	shared_ptr<GfxResources> gfxres;
-	shared_ptr<GfxState> gfxstate;
+	boost::shared_ptr<GfxResources> gfxres;
+	boost::shared_ptr<GfxState> gfxstate;
 	_page->display()->createXpdfDisplayParams (gfxres, gfxstate);
 
 	typedef std::vector<boost::shared_ptr<CContentStream> > CCs;
@@ -158,11 +151,11 @@ CPageFonts::getFontIdsAndNames (FontList& cont) const
 	
 	CPageAttributes::InheritedAttributes atr;
 	CPageAttributes::fillInherited (_page->getDictionary(), atr);
-	shared_ptr<CDict> res = atr._resources;
+	boost::shared_ptr<CDict> res = atr._resources;
 	
 	try 
 	{
-		shared_ptr<CDict> fonts = res->getProperty<CDict>(Specification::Font::TYPE);
+		boost::shared_ptr<CDict> fonts = res->getProperty<CDict>(Specification::Font::TYPE);
 		typedef std::vector<std::string> FontNames;
 		FontNames fontnames;
 		// Get all font names (e.g. R14, R15, F19...)
@@ -170,7 +163,7 @@ CPageFonts::getFontIdsAndNames (FontList& cont) const
 		// Get all base names (Symbol, csr12, ...)
 		for (FontNames::iterator it = fontnames.begin(); it != fontnames.end(); ++it)
 		{
-			shared_ptr<CDict> font = fonts->getProperty<CDict>(*it);
+			boost::shared_ptr<CDict> font = fonts->getProperty<CDict>(*it);
 			try {
 				std::string fontbasename;
 				

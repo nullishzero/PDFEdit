@@ -79,6 +79,7 @@ public:
   virtual void saveState(GfxState *state);
   virtual void restoreState(GfxState *state);
 
+  SplashFont * getFontById(GfxFont * gfxFont);
   //----- update graphics state
   virtual void updateAll(GfxState *state);
   virtual void updateCTM(GfxState *state, double m11, double m12,
@@ -187,7 +188,7 @@ public:
   void setFillColor(int r, int g, int b);
 
   // Get a font object for a Base-14 font, using the Latin-1 encoding.
-  SplashFont *getFont(GString *name, double *textMatA);
+  SplashFont *getFont(const GString *name, double *textMatA);
 
   SplashFont *getCurrentFont() { return font; }
 

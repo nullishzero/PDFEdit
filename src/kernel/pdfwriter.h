@@ -283,7 +283,7 @@ public:
 	 * @param ref Indirect reference for object (NULL for direct object).
 	 * @param outStream Output stream where to put data.
 	 */
-	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream)const =0;
+	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream,bool use)const =0;
 };
 
 /** Stream writer implementation with no filters.
@@ -312,7 +312,7 @@ public:
 	 *
 	 * Uses streamToCharBuffer with null_extractor extractor.
 	 */
-	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream)const;
+	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream,bool use)const;
 };
 
 /** Implementation of FlateDecode filter stream writer.
@@ -360,7 +360,7 @@ public:
 	 */
 	static unsigned char* deflate(const Object& obj, size_t& size);
 
-	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream)const;
+	virtual void compress(const Object& obj, Ref* ref, StreamWriter& outStream,bool use)const;
 };
 
 /** Interface for pdf content writer.
@@ -394,7 +394,11 @@ public:
  */
 class IPdfWriter:public observer::ObserverHandler<OperationStep>
 {
+	bool ignoreStream;
+
 public:
+	IPdfWriter() : ignoreStream(false){} 
+
 	/** Type for ObjectList element. */
 	typedef std::pair<Ref, Object *> ObjectElement;
 

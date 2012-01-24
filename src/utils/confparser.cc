@@ -23,6 +23,7 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include "utils/confparser.h"
 
 /* TODO - tune for performance - to many string object creation - replace by
