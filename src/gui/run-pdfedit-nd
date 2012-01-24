@@ -1,4 +1,0 @@
-#!/bin/sh
-#Run and filter out kernel debugging messages
-export LD_LIBRARY_PATH=$HOME/qsa
-./pdfedit $* 2>&1| tee /tmp/pdfedit-dbg-output | grep -v "5:\(\.\./kernel\|cpdf\|ccontent\|pdfoper\|iproperty\|cobject\|cxref\)"
