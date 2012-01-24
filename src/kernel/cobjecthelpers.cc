@@ -89,7 +89,7 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
 	// gets reference value and dereferences indirect object
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
-	shared_ptr<CPdf> pdf = refProp->getPdf().lock();
+	boost::shared_ptr<CPdf> pdf = refProp->getPdf().lock();
 	assert(pdf);
 	boost::shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pDict)
@@ -201,7 +201,7 @@ getReferencedObject (boost::shared_ptr<IProperty> ip)
 
 			IndiRef ref;
 			IProperty::getSmartCObjectPtr<CRef>(ip)->getValue(ref);
-			shared_ptr<CPdf> pdf = ip->getPdf().lock();
+			boost::shared_ptr<CPdf> pdf = ip->getPdf().lock();
 			assert(pdf);
 			return pdf->getIndirectProperty (ref);
 
@@ -218,11 +218,11 @@ using namespace boost;
 
 	// pdf specification says that two diagonal corners should be used and
 	// readers has to be prepared to normalize it
-	shared_ptr<CArray> array(CArrayFactory::getInstance());
-	scoped_ptr<IProperty> llx(CRealFactory::getInstance(rect.xleft));
-	scoped_ptr<IProperty> lly(CRealFactory::getInstance(rect.yleft));
-	scoped_ptr<IProperty> urx(CRealFactory::getInstance(rect.xright));
-	scoped_ptr<IProperty> ury(CRealFactory::getInstance(rect.yright));
+	boost::shared_ptr<CArray> array(CArrayFactory::getInstance());
+	boost::scoped_ptr<IProperty> llx(CRealFactory::getInstance(rect.xleft));
+	boost::scoped_ptr<IProperty> lly(CRealFactory::getInstance(rect.yleft));
+	boost::scoped_ptr<IProperty> urx(CRealFactory::getInstance(rect.xright));
+	boost::scoped_ptr<IProperty> ury(CRealFactory::getInstance(rect.yright));
 	array->addProperty(0, *llx);
 	array->addProperty(1, *lly);
 	array->addProperty(2, *urx);
@@ -231,12 +231,12 @@ using namespace boost;
 	return array;
 }
 
-void getRectangleFromProperty(const shared_ptr<IProperty> prop, libs::Rectangle & rect)
+void getRectangleFromProperty(const boost::shared_ptr<IProperty> prop, libs::Rectangle & rect)
 {
 	if(!isArray(prop))
 		throw CObjBadValue();
 	
-	shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(prop);
+	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(prop);
 	if(array->getPropertyCount() != 4)
 		throw CObjBadValue();
 
@@ -250,7 +250,7 @@ boost::shared_ptr<IProperty> getIPropertyFromDate(const tm * time)
 {
 using namespace boost;
 
-	shared_ptr<CString> dateString(CStringFactory::getInstance());
+	boost::shared_ptr<CString> dateString(CStringFactory::getInstance());
 	char buffer[30];
 	memset(buffer, '\0', sizeof(buffer));
 
@@ -268,7 +268,7 @@ bool checkAndReplace(boost::shared_ptr<CDict> annotDict, std::string fieldName, 
 {
 using namespace boost;
 
-	shared_ptr<IProperty> value;
+	boost::shared_ptr<IProperty> value;
 	try
 	{
 		value=annotDict->getProperty(fieldName);
@@ -287,9 +287,9 @@ using namespace boost;
 //
 //
 ::XRef*
-getXRef (shared_ptr<IProperty> ip)
+getXRef (boost::shared_ptr<IProperty> ip)
 {
-	shared_ptr<CPdf> pdf = ip->getPdf().lock();
+	boost::shared_ptr<CPdf> pdf = ip->getPdf().lock();
 	if(!pdf)
 		return NULL;
 	return pdf->getCXref(); 

@@ -229,9 +229,9 @@ GString *GString::appendfv(char *fmt, va_list argList) {
   int idx, width, prec;
   GBool reverseAlign, zeroFill;
   GStringFormatType ft;
-  char buf[65];
-  int len, i;
-  char *p0, *p1, *str;
+  char buf[65] = {};
+  int len=0, i=0;
+  char *p0 = NULL, *p1 = NULL, *str = NULL;
 
   argsLen = 0;
   argsSize = 8;

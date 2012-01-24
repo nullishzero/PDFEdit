@@ -1093,7 +1093,7 @@ GBool PostScriptFunction::parseCode(Stream *str, int *codePtr) {
   char *p;
   GBool isReal;
   int opPtr, elsePtr;
-  int a, b, mid, cmp;
+  int a, b, mid, cmp = 0;
 
   while (1) {
     if (!(tok = getToken(str))) {

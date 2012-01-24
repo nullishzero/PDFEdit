@@ -79,11 +79,11 @@ struct GfxFontCIDWidths {
 // GfxFont
 //------------------------------------------------------------------------
 
-#define fontFixedWidth (1 << 0)
-#define fontSerif      (1 << 1)
-#define fontSymbolic   (1 << 2)
-#define fontItalic     (1 << 6)
-#define fontBold       (1 << 18)
+#define PDF_fontFixedWidth (1 << 0)
+#define PDF_fontSerif      (1 << 1)
+#define PDF_fontSymbolic   (1 << 2)
+#define PDF_fontItalic     (1 << 6)
+#define PDF_fontBold       (1 << 18)
 
 class GfxFont {
 public:
@@ -132,11 +132,11 @@ public:
 
   // Get font descriptor flags.
   int getFlags()const { return flags; }
-  GBool isFixedWidth()const { return flags & fontFixedWidth; }
-  GBool isSerif()const { return flags & fontSerif; }
-  GBool isSymbolic()const { return flags & fontSymbolic; }
-  GBool isItalic()const { return flags & fontItalic; }
-  GBool isBold()const { return flags & fontBold; }
+  GBool isFixedWidth()const { return flags & PDF_fontFixedWidth; }
+  GBool isSerif()const { return flags & PDF_fontSerif; }
+  GBool isSymbolic()const { return flags & PDF_fontSymbolic; }
+  GBool isItalic()const { return flags & PDF_fontItalic; }
+  GBool isBold()const { return flags & PDF_fontBold; }
 
   // Return the font matrix.
   const double *getFontMatrix()const { return fontMat; }

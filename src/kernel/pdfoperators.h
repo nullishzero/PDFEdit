@@ -28,6 +28,7 @@
 
 // static includes
 #include "kernel/pdfoperatorsbase.h"
+#include "kernel/pdfoperatorsiter.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -126,6 +127,8 @@ public:
  */
 class TextSimpleOperator: public SimpleGenericOperator
 {
+	double actualTransform[6];
+
 	// forward declaration
 	class FontData;
 
@@ -133,13 +136,18 @@ class TextSimpleOperator: public SimpleGenericOperator
 	 */
 	FontData* fontData;
 protected:
+	/** position of simple chars
+	*/
+	std::vector<libs::Point> _positions;
+
 	/** Finds current font for operator from fontName.
 	 * Uses resources from content stream to retriev font by name.
 	 * Returned instance must not be deallocated by caller.
 	 * @return Font instance for this operator.
 	 */
-	GfxFont* getCurrentFont()const;
+	
 public:
+	GfxFont* getCurrentFont()const;
 	TextSimpleOperator (const char* opTxt, const size_t numOper, Operands& opers)
 		:SimpleGenericOperator(opTxt, numOper, opers), fontData(NULL) {}
 	TextSimpleOperator(const std::string& opTxt, Operands& opers)
@@ -165,7 +173,8 @@ public:
 	 * according the font encoding.
 	 * @param str String to be set.
 	 */
-	virtual void getFontText(std::string& str)const;
+	virtual void getFontText(std::wstring& str)const;
+	//virtual void getFontText(std::string& str)const;
 
 	/** Sets font specific stuff.
 	 * This method should be called from StateUpdater when we do know the 
@@ -181,7 +190,20 @@ public:
 	 * @return Font name or NULL if not initialized yet.
 	 */
 	const char* getFontName()const;
-
+	
+	// peskova
+	/** returns width of the text */
+	float getWidth(Unicode c);
+	float getFontHeight()const;
+	void getMatrix(float * values, boost::shared_ptr< PdfOperator>  beginOp);
+	void setTransformationMatrix( const double * param1 );
+	void concatTransformationMatrix( const double * param1 );
+	float getOper(const char * wanted, float def,int negative);
+	void clearPositions();
+	void savePosition( double tdx, double tdy );
+	libs::Point getPosition(int i, bool &ok);
+	void setSubPartExclusive( int begin, int end );
+	void setRawText( std::string res );
 }; // class TextSimpleOperator
 
 //==========================================================
@@ -330,6 +352,11 @@ boost::shared_ptr<PdfOperator> createOperatorTranslation (double x, double y);
  * Create scaling operator.
  */
 boost::shared_ptr<PdfOperator> createOperatorScale (double width, double height);
+
+/**
+ * Create rotation operator
+ */
+boost::shared_ptr<PdfOperator> createOperatorRotation (double radians);
 
 /** Create a text operator with the font encoding translation.
  * @param cc Content stream wehere the operator will be added (this is not done by this 

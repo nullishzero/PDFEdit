@@ -57,11 +57,11 @@ public:
   GString *getFontName()const { return fontName; }
 
   // Get font descriptor flags.
-  GBool isFixedWidth()const { return flags & fontFixedWidth; }
-  GBool isSerif()const { return flags & fontSerif; }
-  GBool isSymbolic()const { return flags & fontSymbolic; }
-  GBool isItalic()const { return flags & fontItalic; }
-  GBool isBold()const { return flags & fontBold; }
+  GBool isFixedWidth()const { return flags & PDF_fontFixedWidth; }
+  GBool isSerif()const { return flags & PDF_fontSerif; }
+  GBool isSymbolic()const { return flags & PDF_fontSymbolic; }
+  GBool isItalic()const { return flags & PDF_fontItalic; }
+  GBool isBold()const { return flags & PDF_fontBold; }
 #endif
 
 private:

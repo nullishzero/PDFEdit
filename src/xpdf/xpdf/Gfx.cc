@@ -703,10 +703,8 @@ void Gfx::execOp(const Object *cmd, Object args[], int numArgs) {
 }
 
 Operator *Gfx::findOp(const char *name) {
-  int a, b, m, cmp;
+  int a = -1, b = numOps, m = 0, cmp = 0;
 
-  a = -1;
-  b = numOps;
   // invariant: opTab[a] < name < opTab[b]
   while (b - a > 1) {
     m = (a + b) / 2;
@@ -2127,7 +2125,7 @@ void Gfx::doAxialShFill(GfxAxialShading *shading) {
   double t0, t1, tt;
   double ta[axialMaxSplits + 1];
   int next[axialMaxSplits + 1];
-  GfxColor color0, color1;
+  GfxColor color0 = {}, color1 = {};
   int nComps;
   int i, j, k, kk;
 
@@ -3150,7 +3148,7 @@ void Gfx::doShowText(const GString *s) {
   int wMode;
   double riseX, riseY;
   CharCode code;
-  Unicode u[8];
+  Unicode u[8] = {0};
   double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, lineX, lineY;
   double originX, originY, tOriginX, tOriginY;
   double oldCTM[6], newCTM[6];

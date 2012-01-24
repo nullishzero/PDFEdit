@@ -41,7 +41,6 @@ namespace pdfobjects {
 //==========================================================
 
 using namespace std;
-using namespace boost;
 using namespace observer;
 using namespace utils;
 
@@ -70,8 +69,8 @@ boost::shared_ptr<CContentStream> CPageContents::createContentStream(const CPage
 //
 //
 void 
-CPageContents::ContentsWatchDog::notify (shared_ptr<IProperty> newValue, 
-						  shared_ptr<const IProperty::ObserverContext> context) const throw()
+CPageContents::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue, 
+						  boost::shared_ptr<const IProperty::ObserverContext> context) const throw()
 {
 		kernelPrintDbg (debug::DBG_DBG, "context type=" << context->getType());
 
@@ -99,8 +98,8 @@ CPageContents::ContentsWatchDog::notify (shared_ptr<IProperty> newValue,
 		case ComplexChangeContextType:
 		{
 			// Is it a dictionary Page dictionary
-			shared_ptr<const CDict::CDictComplexObserverContext> ctxtdict =
-				dynamic_pointer_cast<const CDict::CDictComplexObserverContext, 
+			boost::shared_ptr<const CDict::CDictComplexObserverContext> ctxtdict =
+				boost::dynamic_pointer_cast<const CDict::CDictComplexObserverContext, 
 									 const IChangeContext<IProperty> > (context); 
 			if (ctxtdict)
 			{
@@ -117,7 +116,7 @@ CPageContents::ContentsWatchDog::notify (shared_ptr<IProperty> newValue,
 				// 1.2 Contents entry was removed
 				if (isNull(newValue))
 				{
-					shared_ptr<IProperty> oldValue = ctxtdict->getOriginalValue();
+					boost::shared_ptr<IProperty> oldValue = ctxtdict->getOriginalValue();
 					// Unregister observer
 					_cnt->unreg_observer (oldValue);
 				
@@ -131,8 +130,8 @@ CPageContents::ContentsWatchDog::notify (shared_ptr<IProperty> newValue,
 			}
 
 			// Is it an array (Contents) -- do nothing just reparse
-			shared_ptr<const CArray::CArrayComplexObserverContext> ctxtarray =
-				dynamic_pointer_cast<const CArray::CArrayComplexObserverContext, 
+			boost::shared_ptr<const CArray::CArrayComplexObserverContext> ctxtarray =
+				boost::dynamic_pointer_cast<const CArray::CArrayComplexObserverContext, 
 									 const IChangeContext<IProperty> > (context); 
 			if (ctxtarray)
 			{
@@ -177,7 +176,7 @@ namespace {
 	createStreamFromObjects (const Container& cont, boost::weak_ptr<CPdf> pdf)
 	{
 		// Create stream with one default property Length
-		shared_ptr<CStream> newstr (new CStream());
+		boost::shared_ptr<CStream> newstr (new CStream());
 		
 		// Insert our change tag
 		std::string str;
@@ -249,7 +248,7 @@ CPageContents::~CPageContents ()
 }
 
 
-shared_ptr<CContentStream> 
+boost::shared_ptr<CContentStream> 
 CPageContents::getContentStream (CContentStream* cc)
 {
 	init();
@@ -262,7 +261,7 @@ CPageContents::getContentStream (CContentStream* cc)
 }
 
 
-shared_ptr<CContentStream> 
+boost::shared_ptr<CContentStream> 
 CPageContents::getContentStream (size_t pos)
 {
 	init();
@@ -280,7 +279,7 @@ void
 CPageContents::addToFront (boost::shared_ptr<CContentStream> &cc, const Container& cont)
 { 
 	// Create cstream from container of pdf operators
-	shared_ptr<CStream> stream = createStreamFromObjects (cont, _dict->getPdf());
+	boost::shared_ptr<CStream> stream = createStreamFromObjects (cont, _dict->getPdf());
 	assert (hasValidRef (stream)); assert (hasValidPdf (stream));
 	if (!hasValidPdf(stream) || !hasValidPdf(stream))
 		throw CObjInvalidObject ();
@@ -313,8 +312,8 @@ CPageContents::addToFront (const Container& cont)
 	addToFront(cc, cont);
 }
 
-template void CPageContents::addToFront<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
-template void CPageContents::addToFront<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
+template void CPageContents::addToFront<vector<boost::shared_ptr<PdfOperator> > > (const vector<boost::shared_ptr<PdfOperator> >& cont);
+template void CPageContents::addToFront<deque<boost::shared_ptr<PdfOperator> > > (const deque<boost::shared_ptr<PdfOperator> >& cont);
 
 template<typename Container>
 void 
@@ -323,7 +322,7 @@ CPageContents::addToBack (boost::shared_ptr<CContentStream> &cc, const Container
 	// Create cstream from container of pdf operators
 	if (!hasValidPdf(_dict))
 		throw CObjInvalidObject ();
-	shared_ptr<CStream> stream = createStreamFromObjects (cont, _dict->getPdf());
+	boost::shared_ptr<CStream> stream = createStreamFromObjects (cont, _dict->getPdf());
 	assert (hasValidRef (stream)); assert (hasValidPdf (stream));
 	if (!hasValidPdf(stream) || !hasValidPdf(stream))
 		throw CObjInvalidObject ();
@@ -353,8 +352,8 @@ CPageContents::addToBack (const Container& cont)
 	boost::shared_ptr<CContentStream> cc = createContentStream(*_page, NULL);
 	addToBack(cc, cont);
 }
-template void CPageContents::addToBack<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
-template void CPageContents::addToBack<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
+template void CPageContents::addToBack<vector<boost::shared_ptr<PdfOperator> > > (const vector<boost::shared_ptr<PdfOperator> >& cont);
+template void CPageContents::addToBack<deque<boost::shared_ptr<PdfOperator> > > (const deque<boost::shared_ptr<PdfOperator> >& cont);
 
 
 //
@@ -391,12 +390,12 @@ CPageContents::getText (std::string& text, const string* encoding, const libs::R
 		if (!textDev->isOk())
 			throw CObjInvalidOperation ();
 
-	// Display page
-	_page->display()->displayPage (*textDev);	
-
 	// Set encoding
 	if (encoding)
     	globalParams->setTextEncoding(const_cast<char*>(encoding->c_str()));
+
+	// Display page
+	_page->display()->displayPage (*textDev);	
 
 	// Get the text
 	libs::Rectangle rec = (rc)? *rc : _page->display()->getPageRect();
@@ -406,7 +405,7 @@ CPageContents::getText (std::string& text, const string* encoding, const libs::R
 	if (90 == rot || 270 == rot)
 		std::swap (rec.xright, rec.yright);
 
-	scoped_ptr<GString> gtxt (textDev->getText(rec.xleft, rec.yleft, rec.xright, rec.yright));
+	boost::scoped_ptr<GString> gtxt (textDev->getText(rec.xleft, rec.yleft, rec.xright, rec.yright));
 	text = gtxt->getCString();
 }
 
@@ -424,7 +423,7 @@ size_t CPageContents::findText (std::string text,
 					  const TextSearchParams&) const
 {
 	// Create text output device
-	scoped_ptr<TextOutputDev> textDev (new ::TextOutputDev (NULL, gFalse, gFalse, gFalse));
+	boost::scoped_ptr<TextOutputDev> textDev (new ::TextOutputDev (NULL, gFalse, gFalse, gFalse));
 		assert (textDev->isOk());
 		if (!textDev->isOk())
 			throw CObjInvalidOperation ();
@@ -511,11 +510,11 @@ CPageContents::addText (const std::string& what,
 	if (fontName.empty())
 		fontName = "PDFEDIT_F1";
     double fontSize = 15.0;
-    shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
-    shared_ptr<UnknownCompositePdfOperator> BT(new UnknownCompositePdfOperator("BT", "ET"));
+    boost::shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
+    boost::shared_ptr<UnknownCompositePdfOperator> BT(new UnknownCompositePdfOperator("BT", "ET"));
     PdfOperator::Operands fontOperands;
-    fontOperands.push_back(shared_ptr<IProperty>(new CName (fontName)) );
-    fontOperands.push_back(shared_ptr<IProperty>(new CReal (fontSize)));
+    fontOperands.push_back(boost::shared_ptr<IProperty>(new CName (fontName)) );
+    fontOperands.push_back(boost::shared_ptr<IProperty>(new CReal (fontSize)));
     q->push_back(BT,q);
     BT->push_back(createOperator("Tf", fontOperands), getLastOperator(BT));
     
@@ -523,13 +522,13 @@ CPageContents::addText (const std::string& what,
 	PdfOperator::Operands posOperands = _likely_tm;
     BT->push_back(createOperator("Tm", posOperands), getLastOperator(BT));
 
-    shared_ptr<CContentStream> cc = createContentStream(*_page, NULL);
+    boost::shared_ptr<CContentStream> cc = createContentStream(*_page, NULL);
     BT->push_back(createOperatorText(cc, fontName, "TJ", what));
     PdfOperator::Operands emptyOperands;
     BT->push_back(createOperator("ET", emptyOperands), getLastOperator(BT));
     q->push_back(createOperator("Q", emptyOperands), getLastOperator(q));
     
-	std::vector<shared_ptr<PdfOperator> > contents;
+	std::vector<boost::shared_ptr<PdfOperator> > contents;
     contents.push_back(q);
     
 	addToBack (cc, contents);
@@ -557,7 +556,7 @@ CPageContents::addInlineImage (const CStream::Buffer& what,
 	// EI
 	// Q
 	//
-    shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
+    boost::shared_ptr<UnknownCompositePdfOperator> q(new UnknownCompositePdfOperator("q", "Q"));
 
 	// translate
 	q->push_back(createOperatorTranslation(where.x, where.y), getLastOperator(q));
@@ -575,14 +574,14 @@ CPageContents::addInlineImage (const CStream::Buffer& what,
 	CInt _8 (8);
 	image_dict.addProperty ("BPC", _8);
 	CInlineImage img (image_dict, what);
-	shared_ptr<CInlineImage> inline_image (new CInlineImage (image_dict, what));
-	shared_ptr<InlineImageCompositePdfOperator> BI(new InlineImageCompositePdfOperator (inline_image));
+	boost::shared_ptr<CInlineImage> inline_image (new CInlineImage (image_dict, what));
+	boost::shared_ptr<InlineImageCompositePdfOperator> BI(new InlineImageCompositePdfOperator (inline_image));
     
 	q->push_back(BI,getLastOperator(q));
 	PdfOperator::Operands o;
     q->push_back(createOperator("Q", o), getLastOperator(q));
     
-	std::vector<shared_ptr<PdfOperator> > contents;
+	std::vector<boost::shared_ptr<PdfOperator> > contents;
     contents.push_back(q);
     
 	addToBack (contents);
@@ -625,7 +624,7 @@ namespace {
 	// addSomewhere
 	template<OPERWHERE WHERE>
 	void
-	cc_add (shared_ptr<CDict> _dict, CRef& ref)
+	cc_add (boost::shared_ptr<CDict> _dict, CRef& ref)
 	{
 		// contents not present
 		if (!_dict->containsProperty (Specification::Page::CONTENTS))
@@ -637,8 +636,8 @@ namespace {
 		// contents present
 		}else
 		{
-			shared_ptr<IProperty> content = _dict->getProperty (Specification::Page::CONTENTS);
-			shared_ptr<IProperty> realcontent = getReferencedObject(content);
+			boost::shared_ptr<IProperty> content = _dict->getProperty (Specification::Page::CONTENTS);
+			boost::shared_ptr<IProperty> realcontent = getReferencedObject(content);
 				assert (content);
 			// Contents can be either stream or an array of streams
 			if (isStream (realcontent))	
@@ -650,7 +649,7 @@ namespace {
 			}else if (isArray (realcontent))
 			{
 				// We can be sure that streams are indirect objects (pdf spec)
-				shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent);
+				boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent);
 				OpTrait<WHERE>::Oper::add (*array, ref);
 			
 			}else // Neither stream nor array
@@ -702,7 +701,7 @@ CPageContents::toBack (CRef& ref)
  * Indicats that the page changed.
  */
 template<typename Cont>
-void CPageContents::setContents (shared_ptr<CDict> dict, const Cont& cont)
+void CPageContents::setContents (boost::shared_ptr<CDict> dict, const Cont& cont)
 {
 
 	if (dict->containsProperty (Specification::Page::CONTENTS))
@@ -712,7 +711,7 @@ void CPageContents::setContents (shared_ptr<CDict> dict, const Cont& cont)
 	// Loop throug all content streams and add all cstreams from each
 	// content streams to Contents entry of page dictionary
 	//
-	typedef vector<shared_ptr<CStream> > Css;
+	typedef vector<boost::shared_ptr<CStream> > Css;
 	Css css;
 	getAllCStreams (cont, css);
 	
@@ -728,14 +727,14 @@ void CPageContents::setContents (shared_ptr<CDict> dict, const Cont& cont)
 	}
 }
 // Explicit instantiation
-template void CPageContents::setContents<vector<shared_ptr<CContentStream> > >
-	(shared_ptr<CDict> dict, const vector<shared_ptr<CContentStream> >& cont);
+template void CPageContents::setContents<vector<boost::shared_ptr<CContentStream> > >
+	(boost::shared_ptr<CDict> dict, const vector<boost::shared_ptr<CContentStream> >& cont);
 
 //
 //
 //
 void 
-CPageContents::remove (shared_ptr<const CContentStream> cs)
+CPageContents::remove (boost::shared_ptr<const CContentStream> cs)
 {
 		if (!_dict->containsProperty (Specification::Page::CONTENTS))
 			throw CObjInvalidOperation ();
@@ -747,7 +746,7 @@ CPageContents::remove (shared_ptr<const CContentStream> cs)
 		// Loop throug all content streams and add all cstreams from each
 		// content streams to Contents entry of page dictionary
 		//
-		typedef vector<shared_ptr<CStream> > Css;
+		typedef vector<boost::shared_ptr<CStream> > Css;
 		Css css;
 		cs->getCStreams (css);
 		
@@ -773,8 +772,8 @@ CPageContents::remove (shared_ptr<const CContentStream> cs)
 void 
 CPageContents::remove (const IndiRef& rf)
 {
-	shared_ptr<IProperty> content = _dict->getProperty (Specification::Page::CONTENTS);
-	shared_ptr<IProperty> realcontent = getReferencedObject (content);
+	boost::shared_ptr<IProperty> content = _dict->getProperty (Specification::Page::CONTENTS);
+	boost::shared_ptr<IProperty> realcontent = getReferencedObject (content);
 		assert (content);
 	// Contents can be either stream or an array of streams
 	if (isStream (realcontent))	
@@ -786,7 +785,7 @@ CPageContents::remove (const IndiRef& rf)
 	}else if (isArray (realcontent))
 	{
 		// We can be sure that streams are indirect objects (pdf spec)
-		shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent);
+		boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent);
 		for (size_t i = 0; i < array->getPropertyCount(); ++i)
 		{
 			IndiRef _rf = getRefFromArray (array,i);
@@ -851,7 +850,7 @@ CPageContents::parse ()
 	//
 		if (!_dict->containsProperty (Specification::Page::CONTENTS))
 			return true;
-	shared_ptr<IProperty> contents = getReferencedObject (_dict->getProperty (Specification::Page::CONTENTS));
+	boost::shared_ptr<IProperty> contents = getReferencedObject (_dict->getProperty (Specification::Page::CONTENTS));
 		assert (contents);
 	
 	CContentStream::CStreams streams;
@@ -861,13 +860,13 @@ CPageContents::parse ()
 	//
 	if (isStream (contents))	
 	{
-		shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
+		boost::shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
 		streams.push_back (stream);
 	
 	}else if (isArray (contents))
 	{
 		// We can be sure that streams are indirect objects (pdf spec)
-		shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
+		boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
 		for (size_t i = 0; i < array->getPropertyCount(); ++i)
 			streams.push_back (getCStreamFromArray(array,i));
 		
@@ -884,7 +883,7 @@ CPageContents::parse ()
 	// True if Contents is not [ ]
 	while (!streams.empty())
 	{
-		shared_ptr<CContentStream> cc = createContentStream(*_page, &streams);
+		boost::shared_ptr<CContentStream> cc = createContentStream(*_page, &streams);
 		_ccs.push_back (cc);
 	}
 
@@ -939,7 +938,7 @@ CPageContents::reg_observer (boost::shared_ptr<IProperty> ip) const
 		// If it contains Contents register observer on it too
 		if (_dict->containsProperty(Specification::Page::CONTENTS))
 		{
-			shared_ptr<IProperty> prop = _dict->getProperty(Specification::Page::CONTENTS);
+			boost::shared_ptr<IProperty> prop = _dict->getProperty(Specification::Page::CONTENTS);
 			REGISTER_SHAREDPTR_OBSERVER(prop, _wd);
 		}
 	}
@@ -961,7 +960,7 @@ CPageContents::unreg_observer (boost::shared_ptr<IProperty> ip) const
 		// Unregister contents observer
 		if (_dict->containsProperty(Specification::Page::CONTENTS))
 		{
-			shared_ptr<IProperty> prop = _dict->getProperty(Specification::Page::CONTENTS);
+			boost::shared_ptr<IProperty> prop = _dict->getProperty(Specification::Page::CONTENTS);
 			UNREGISTER_SHAREDPTR_OBSERVER(prop, _wd);
 		}
 	}
@@ -991,7 +990,7 @@ CPageContents::_page_pos () const
 //
 //
 void 
-CPageContents::moveAbove (shared_ptr<const CContentStream> ct)
+CPageContents::moveAbove (boost::shared_ptr<const CContentStream> ct)
 {
 	// Get the next item
 	init();
@@ -1003,7 +1002,7 @@ CPageContents::moveAbove (shared_ptr<const CContentStream> ct)
 			throw OutOfRange ();
 
 	// Delete next item but store it
-	shared_ptr<CContentStream> tmp = *itNext;
+	boost::shared_ptr<CContentStream> tmp = *itNext;
 	_ccs.erase (itNext, itNext + 1);
 	// Insert stored item before supplied (simply swap ct with the next item)
 	_ccs.insert (find (_ccs.begin(), _ccs.end(), ct), tmp);
@@ -1021,7 +1020,7 @@ CPageContents::moveAbove (shared_ptr<const CContentStream> ct)
 //
 //
 void 
-CPageContents::moveBelow (shared_ptr<const CContentStream> ct)
+CPageContents::moveBelow (boost::shared_ptr<const CContentStream> ct)
 {
 	// Get the item index
 	unsigned int pos = 0;
@@ -1035,7 +1034,7 @@ CPageContents::moveBelow (shared_ptr<const CContentStream> ct)
 			throw CObjInvalidOperation ();
 	
 	// Swap
-	shared_ptr<CContentStream> tmp = _ccs[pos];
+	boost::shared_ptr<CContentStream> tmp = _ccs[pos];
 	_ccs[pos] = _ccs[pos - 1];
 	_ccs[pos - 1] = tmp;
 

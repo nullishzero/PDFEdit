@@ -631,7 +631,7 @@ Stream * FileStream::clone()
    long startPos=ftell(f);
 
    if(limited && !l) 
-           printf("%s: limited stream with 0 lenght\n", __FUNCTION__);
+           error( currPos, "%s: limited stream with 0 lenght\n", __FUNCTION__);
 
    // if length is 0, calculates it until end of file
    if(!limited && !l)

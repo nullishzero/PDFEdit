@@ -62,6 +62,15 @@ const std::string StrokingOperatorIterator::accepted_opers[StrokingOperatorItera
 	"", "", "", ""
 };
 
+// peskova
+/** Operators changing the state of text operator. */
+/* char space, word space, horizontal scaling, text rise,  */
+template<>
+const std::string TextChangeOperatorIterator::accepted_opers[TextChangeOperatorIterator::namecount] = 
+{
+	"Tc", "Tw", "Tz", "Ts","Tm"
+};
+
 /** Operators accepted by font iterator. */
 template<>
 const std::string FontOperatorIterator::accepted_opers[FontOperatorIterator::namecount] = 

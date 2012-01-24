@@ -876,10 +876,10 @@ GBool JPXStream::readColorSpecBox(Guint dataLen) {
 GBool JPXStream::readCodestream(Guint len) {
   JPXTile *tile;
   JPXTileComp *tileComp;
-  int segType;
+  int segType=0;
   GBool haveSIZ, haveCOD, haveQCD, haveSOT;
-  Guint precinctSize, style;
-  Guint segLen, capabilities, comp, i, j, r;
+  Guint precinctSize=0, style=0;
+  Guint segLen=0, capabilities=0, comp=0, i=0, j=0, r=0;
 
   //----- main header
   haveSIZ = haveCOD = haveQCD = haveSOT = gFalse;
@@ -1405,10 +1405,10 @@ GBool JPXStream::readTilePart() {
   GBool haveSOD;
   Guint tileIdx, tilePartLen, tilePartIdx, nTileParts;
   GBool tilePartToEOC;
-  Guint precinctSize, style;
-  Guint n, nSBs, nx, ny, sbx0, sby0, comp, segLen;
-  Guint i, j, k, cbX, cbY, r, pre, sb, cbi;
-  int segType, level;
+  Guint precinctSize=0, style=0;
+  Guint n=0, nSBs=0, nx=0, ny=0, sbx0=0, sby0=0, comp=0, segLen=0;
+  Guint i=0, j=0, k=0, cbX=0, cbY=0, r=0, pre=0, sb=0, cbi=0;
+  int segType=0, level=0;
 
   // process the SOT marker segment
   if (!readUWord(&tileIdx) ||

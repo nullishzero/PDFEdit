@@ -442,12 +442,16 @@ namespace {
 		// This can happen in really damaged pdfs
  		if (state->getFont()) {
 			TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
+//peskova
+			txtOp->clearPositions();
 			assert(txtOp);
 			// TODO - can we use const GfxFont *?
 			txtOp->setFontData((GfxFont *)state->getFont());
+			txtOp->setTransformationMatrix(state->getCTM());
+			txtOp->concatTransformationMatrix(state->getTextMat());
 			std::string rawStr;
 			txtOp->getRawText(rawStr);
-			StateUpdater::printTextUpdate (state, rawStr, rc);
+			StateUpdater::printTextUpdate (state, rawStr, rc,txtOp);
 		}
 		
 		// return changed state
@@ -508,12 +512,14 @@ namespace {
 
 
 		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
+//peskova
+		txtOp->clearPositions();
 		assert(txtOp);
 		// TODO can we use const GfxFont *?
 		txtOp->setFontData((GfxFont *)state->getFont());
 		std::string rawStr;
 		txtOp->getRawText(rawStr);
-		StateUpdater::printTextUpdate (state, rawStr, rc);
+		StateUpdater::printTextUpdate (state, rawStr, rc,txtOp);
 
 		// Set edge of rectangle from actual position on output devices
 		//state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
@@ -525,8 +531,10 @@ namespace {
 	GfxState *
 	opTJUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, BBox* rc)
 	{
+//peskova
+		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
+		txtOp->clearPositions();
 		assert (1 <= args.size ());
-
 		// This can happen in really damaged pdfs
 		if (!state->getFont()) 
 			return state;
@@ -572,9 +580,10 @@ namespace {
 
 					break;
 			case pString:
-		      		StateUpdater::printTextUpdate (state, getStringFromIProperty (item), & h_rc);
+				{
+		      		StateUpdater::printTextUpdate (state, getStringFromIProperty (item), & h_rc,txtOp);
 					break;
-
+				}
 			default:
 					assert (!"opTJUpdate: Bad object type.");
 					throw ElementBadTypeException ("opTJUpdate: Bad object type.");
@@ -585,10 +594,12 @@ namespace {
 			rc->yright = max( rc->yright, max( h_rc.yleft, h_rc.yright ) );
 		}// for
 		
-		TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(op.get());
 		assert(txtOp);
 		// TODO can we use const GfxFont *?
 		txtOp->setFontData((GfxFont *)state->getFont());
+//peskova
+		txtOp->setTransformationMatrix(state->getCTM());
+		txtOp->concatTransformationMatrix(state->getTextMat());
 		// return changed state
 		return state;
 	}
@@ -686,7 +697,7 @@ namespace {
 		// Set edge of rectangle from actual position on output devices
 		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		utilsPrintDbg (DBG_DBG, "NOT IMPLEMENTED");
+		utilsPrintDbg (DBG_DBG, "Implemented - testing version");
 		utilsPrintDbg (DBG_DBG, " " << op->getParametersCount() << " , " << op->getChildrenCount());
 
 		
@@ -698,8 +709,32 @@ namespace {
 		// The coordinate origin (0, 0) is at the upper-left corner of the image,
 		// with coordinates ranging from 0 to w horizontally and 0 to h vertically.
 		//
-		rc->xright = rc->xleft + image_op->getWidth();
-		rc->yright = rc->yleft - image_op->getHeight();
+//peskova
+		//we must text all four edges
+		double x[4],y[4];
+		x[0] = rc->xleft;
+		x[1] = rc->xleft;
+		x[2] = rc->xleft + image_op->getWidth();
+		x[3] = rc->xleft + image_op->getWidth();
+		y[0] = rc->yleft;
+		y[1] = rc->yleft - image_op->getHeight();
+		y[2] = rc->yleft;
+		y[3] = rc->yleft - image_op->getHeight();
+		state->transform(1, 1, & x[0], & y[0]);
+		state->transform(0, 1, & x[1], & y[1]);
+		state->transform(1, 0, & x[2], & y[2]);
+		state->transform(0, 0, & x[3], & y[3]);
+		rc->xleft = min(rc->xleft,x[0]);
+		rc->xright = max(rc->xleft,x[0]);
+		rc->yleft = max(rc->yleft,y[0]);
+		rc->yright = min(rc->yright,y[0]);
+		for ( int i =0; i < 4; i++)
+		{
+			rc->xleft = min(rc->xleft,x[i]);
+			rc->xright = max(rc->xright,x[i]);
+			rc->yleft = max(rc->yleft,y[i]);
+			rc->yright = min(rc->yright,y[i]);
+		}
 		
 		// return changed state
 		return state;
@@ -758,7 +793,7 @@ namespace {
 // Actual state (position) updaters
 //
 GfxState*
-StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc)
+StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc, PdfOperator* oper)
 {
 	const GfxFont *font;
 	int wMode;
@@ -831,7 +866,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		  {
 			  // Make parser
 			  charProc->getStream()->incRef();	// FIX - charproc's stream was deallocated in ~Lexer
-			  scoped_ptr<Parser> parser (new ::Parser (NULL, 
+			  boost::scoped_ptr<Parser> parser (new ::Parser (NULL, 
 						  new ::Lexer(NULL, charProc->getStream()),
 						  gFalse
 						  )
@@ -950,6 +985,12 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 			originY *= state->getFontSize();
 			state->textTransformDelta(originX, originY, &tOriginX, &tOriginY);
 			state->shift(tdx, tdy);
+//peskova
+	      	if (oper) 
+    	  	{
+				  TextSimpleOperator *txtOp = dynamic_cast<TextSimpleOperator*>(oper);
+				  txtOp->savePosition(tdx,tdy);
+      		}
 			p += n;
 			len -= n;
 		}
@@ -1236,7 +1277,7 @@ bool checkAndFixOperator (const StateUpdater::CheckTypes& ops, PdfOperator::Oper
 			{ // Convert it to real
 				double dval = 0.0;
 				dval = IProperty::getSmartCObjectPtr<CInt>(*it)->getValue();
-				shared_ptr<IProperty> pIp (new CReal (dval));
+				boost::shared_ptr<IProperty> pIp (new CReal (dval));
 				std::replace (operands.begin(), operands.end(), *it, pIp);
 			}
 		}

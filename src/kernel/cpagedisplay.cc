@@ -42,8 +42,10 @@ using namespace utils;
 //
 //
 //
+// peskova
+
 void 
-CPageDisplay::setDisplayParams (const DisplayParams& dp)
+CPageDisplay::setDisplayParams (const DisplayParams& dp, bool forceReparse)
 { 
 		if (_params == dp)
 			return;
@@ -51,7 +53,7 @@ CPageDisplay::setDisplayParams (const DisplayParams& dp)
 	// TODO ROTATION !!!!
 
 	bool need_reparse = false;
-	if (_params.hDpi != dp.hDpi || _params.vDpi != dp.vDpi)
+	if (_params.hDpi != dp.hDpi || _params.vDpi != dp.vDpi ||forceReparse)
 		need_reparse = true;
 
 	_params = dp; 
@@ -83,11 +85,11 @@ CPageDisplay::displayPage (::OutputDev& out, int x, int y, int w, int h)
 //
 void
 CPageDisplay::displayPage (::OutputDev& out, 
-						   shared_ptr<CDict> pagedict, 
+						   boost::shared_ptr<CDict> pagedict, 
 						   int x, int y, int w, int h)
 {
 	// Get xref
-	shared_ptr<CPdf> pdf = pagedict->getPdf().lock();
+	boost::shared_ptr<CPdf> pdf = pagedict->getPdf().lock();
 	XRef* xref = (pdf)?pdf->getCXref ():NULL;
 	assert (NULL != xref);
 	if (!(pagedict))
@@ -96,7 +98,7 @@ CPageDisplay::displayPage (::OutputDev& out,
 	//
 	// Create xpdf object representing CPage
 	//
-	shared_ptr<Object> xpdfPage (pagedict->_makeXpdfObject(), xpdf::object_deleter());
+	boost::shared_ptr<Object> xpdfPage (pagedict->_makeXpdfObject(), xpdf::object_deleter());
 		// Check page dictionary
 		assert (objDict == xpdfPage->getType());
 		if (objDict != xpdfPage->getType ())
@@ -121,7 +123,7 @@ CPageDisplay::displayPage (::OutputDev& out,
 	Page page (xref, 0, xpdfPageDict, new PageAttrs (NULL, xpdfPageDict));
 	
 	// Create catalog
-	scoped_ptr<Catalog> xpdfCatalog (new Catalog (xref));
+	boost::scoped_ptr<Catalog> xpdfCatalog (new Catalog (xref));
 	
 	//
 	// Page object display (..., useMediaBox, crop, links, catalog)
@@ -140,7 +142,7 @@ CPageDisplay::displayPage (::OutputDev& out,
 //
 //
 void 
-CPageDisplay::createXpdfDisplayParams (shared_ptr<GfxResources>& res, shared_ptr<GfxState>& state)
+CPageDisplay::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state)
 {
 	//
 	// Init Gfx resources
@@ -151,13 +153,13 @@ CPageDisplay::createXpdfDisplayParams (shared_ptr<GfxResources>& res, shared_ptr
 	CPageAttributes::fillInherited (_page->getDictionary(),atr);
 	
 	// Start the resource stack
-	shared_ptr<CPdf> pdf = _page->getDictionary()->getPdf().lock();
+	boost::shared_ptr<CPdf> pdf = _page->getDictionary()->getPdf().lock();
 	XRef* xref = (pdf)?pdf->getCXref():NULL;
 	assert (xref);
 	Object* obj = atr._resources->_makeXpdfObject ();
 	assert (obj); 
 	assert (objDict == obj->getType());
-	res = shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
+	res = boost::shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
 	xpdf::freeXpdfObject (obj);
 	
 	//
@@ -165,9 +167,9 @@ CPageDisplay::createXpdfDisplayParams (shared_ptr<GfxResources>& res, shared_ptr
 	//
 	
 	// Create Media (Bounding) box
-	shared_ptr<PDFRectangle> rc (new PDFRectangle (_params.pageRect.xleft,  _params.pageRect.yleft,
+	boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (_params.pageRect.xleft,  _params.pageRect.yleft,
 												  _params.pageRect.xright, _params.pageRect.yright));
-	state = shared_ptr<GfxState> (new GfxState (_params.hDpi, _params.vDpi, 
+	state = boost::shared_ptr<GfxState> (new GfxState (_params.hDpi, _params.vDpi, 
 												rc.get(), _params.rotate, _params.upsideDown));
 }
 
@@ -267,13 +269,13 @@ CPageDisplay::setTransformMatrix (double tm[6])
 	// Create new cm operator
 	//
 	PdfOperator::Operands operands;
-	operands.push_back (shared_ptr<IProperty> (new CReal (tm[0])));
-	operands.push_back (shared_ptr<IProperty> (new CReal (tm[1])));
-	operands.push_back (shared_ptr<IProperty> (new CReal (tm[2])));
-	operands.push_back (shared_ptr<IProperty> (new CReal (tm[3])));
-	operands.push_back (shared_ptr<IProperty> (new CReal (tm[4])));
-	operands.push_back (shared_ptr<IProperty> (new CReal (tm[5])));
-	shared_ptr<PdfOperator> cmop = createOperator("cm", operands);
+	operands.push_back (boost::shared_ptr<IProperty> (new CReal (tm[0])));
+	operands.push_back (boost::shared_ptr<IProperty> (new CReal (tm[1])));
+	operands.push_back (boost::shared_ptr<IProperty> (new CReal (tm[2])));
+	operands.push_back (boost::shared_ptr<IProperty> (new CReal (tm[3])));
+	operands.push_back (boost::shared_ptr<IProperty> (new CReal (tm[4])));
+	operands.push_back (boost::shared_ptr<IProperty> (new CReal (tm[5])));
+	boost::shared_ptr<PdfOperator> cmop = createOperator("cm", operands);
 
 	// Insert at the beginning
 	_page->contents()->getContentStream((size_t)0)->frontInsertOperator (cmop);
