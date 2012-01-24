@@ -1,0 +1,4 @@
+ipch
+output/
+*.user
+*GeneratedFiles*

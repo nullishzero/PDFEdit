@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>pdfedit-kernel</ProjectName>
+    <ProjectGuid>{4E265089-FF11-4B4E-B0DA-7BFDEE750F9F}</ProjectGuid>
+    <RootNamespace>pdfedit</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)\vsprops\base.props" />
+    <Import Project="$(SolutionDir)\vsprops\kernel.props" />
+    <Import Project="$(SolutionDir)\vsprops\release.props" />
+    <Import Project="$(SolutionDir)\vsprops\win32.props" />
+    <Import Project="$(SolutionDir)\vsprops\lib.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)\vsprops\base.props" />
+    <Import Project="$(SolutionDir)\vsprops\kernel.props" />
+    <Import Project="$(SolutionDir)\vsprops\debug.props" />
+    <Import Project="$(SolutionDir)\vsprops\win32.props" />
+    <Import Project="$(SolutionDir)\vsprops\lib.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>kernel/static.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <PostBuildEvent>
+      <Command>if NOT EXIST $(SolutionDir)\output\zlib1.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\zlib1.dll</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>kernel/static.h</PrecompiledHeaderFile>
+      <BrowseInformation>true</BrowseInformation>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>zlib1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>if NOT EXIST $(SolutionDir)\output\zlib1.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\zlib1.dll</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\kernel\cannotation.h" />
+    <ClInclude Include="..\..\src\kernel\carray.h" />
+    <ClInclude Include="..\..\src\kernel\ccontentstream.h" />
+    <ClInclude Include="..\..\src\kernel\cdict.h" />
+    <ClInclude Include="..\..\src\kernel\cinlineimage.h" />
+    <ClInclude Include="..\..\src\kernel\cobject.h" />
+    <ClInclude Include="..\..\src\kernel\cobjecthelpers.h" />
+    <ClInclude Include="..\..\src\kernel\cobjectsimple.h" />
+    <ClInclude Include="..\..\src\kernel\cobjectsimpleI.h" />
+    <ClInclude Include="..\..\src\kernel\contentschangetag.h" />
+    <ClInclude Include="..\..\src\kernel\coutline.h" />
+    <ClInclude Include="..\..\src\kernel\cpage.h" />
+    <ClInclude Include="..\..\src\kernel\cpageannots.h" />
+    <ClInclude Include="..\..\src\kernel\cpageattributes.h" />
+    <ClInclude Include="..\..\src\kernel\cpagechanges.h" />
+    <ClInclude Include="..\..\src\kernel\cpagecontents.h" />
+    <ClInclude Include="..\..\src\kernel\cpagedisplay.h" />
+    <ClInclude Include="..\..\src\kernel\cpagefonts.h" />
+    <ClInclude Include="..\..\src\kernel\cpagemodule.h" />
+    <ClInclude Include="..\..\src\kernel\cpdf.h" />
+    <ClInclude Include="..\..\src\kernel\cstream.h" />
+    <ClInclude Include="..\..\src\kernel\cstreamsxpdfreader.h" />
+    <ClInclude Include="..\..\src\kernel\cxref.h" />
+    <ClInclude Include="..\..\src\kernel\delinearizator.h" />
+    <ClInclude Include="..\..\src\kernel\displayparams.h" />
+    <ClInclude Include="..\..\src\kernel\exceptions.h" />
+    <ClInclude Include="..\..\src\kernel\factories.h" />
+    <ClInclude Include="..\..\src\kernel\flattener.h" />
+    <ClInclude Include="..\..\src\kernel\indiref.h" />
+    <ClInclude Include="..\..\src\kernel\iproperty.h" />
+    <ClInclude Include="..\..\src\kernel\modecontroller.h" />
+    <ClInclude Include="..\..\src\kernel\operatorhinter.h" />
+    <ClInclude Include="..\..\src\kernel\pdfedit-core-dev.h" />
+    <ClInclude Include="..\..\src\kernel\pdfoperators.h" />
+    <ClInclude Include="..\..\src\kernel\pdfoperatorsbase.h" />
+    <ClInclude Include="..\..\src\kernel\pdfoperatorsiter.h" />
+    <ClInclude Include="..\..\src\kernel\pdfspecification.h" />
+    <ClInclude Include="..\..\src\kernel\pdfwriter.h" />
+    <ClInclude Include="..\..\src\kernel\stateupdater.h" />
+    <ClInclude Include="..\..\src\kernel\static.h" />
+    <ClInclude Include="..\..\src\kernel\streamwriter.h" />
+    <ClInclude Include="..\..\src\kernel\textoutput.h" />
+    <ClInclude Include="..\..\src\kernel\textoutputbuilder.h" />
+    <ClInclude Include="..\..\src\kernel\textoutputengines.h" />
+    <ClInclude Include="..\..\src\kernel\textoutputentities.h" />
+    <ClInclude Include="..\..\src\kernel\textsearchparams.h" />
+    <ClInclude Include="..\..\src\kernel\xpdf.h" />
+    <ClInclude Include="..\..\src\kernel\xrefwriter.h" />
+    <ClInclude Include="..\..\src\os\compiler.h" />
+    <ClInclude Include="..\..\src\os\posix.h" />
+    <ClInclude Include="..\..\src\os\win.h" />
+    <ClInclude Include="..\..\src\utils\algorithms.h" />
+    <ClInclude Include="..\..\src\utils\algorithms\basic_algos.h" />
+    <ClInclude Include="..\..\src\utils\types\basic_types.h" />
+    <ClInclude Include="..\..\src\utils\confparser.h" />
+    <ClInclude Include="..\..\src\utils\types\coordinates.h" />
+    <ClInclude Include="..\..\src\utils\debug.h" />
+    <ClInclude Include="..\..\src\utils\iterator.h" />
+    <ClInclude Include="..\..\src\utils\listitem.h" />
+    <ClInclude Include="..\..\src\utils\objectstorage.h" />
+    <ClInclude Include="..\..\src\utils\observer.h" />
+    <ClInclude Include="..\..\src\utils\rulesmanager.h" />
+    <ClInclude Include="..\..\src\utils\types.h" />
+    <ClInclude Include="..\..\src\kernel\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\kernel\cannotation.cc" />
+    <ClCompile Include="..\..\src\kernel\carray.cc" />
+    <ClCompile Include="..\..\src\kernel\ccontentstream.cc" />
+    <ClCompile Include="..\..\src\kernel\cdict.cc" />
+    <ClCompile Include="..\..\src\kernel\cinlineimage.cc" />
+    <ClCompile Include="..\..\src\kernel\cobject.cc" />
+    <ClCompile Include="..\..\src\kernel\cobject2string.cc" />
+    <ClCompile Include="..\..\src\kernel\cobject2xpdf.cc" />
+    <ClCompile Include="..\..\src\kernel\cobjecthelpers.cc" />
+    <ClCompile Include="..\..\src\kernel\contentschangetag.cc" />
+    <ClCompile Include="..\..\src\kernel\coutline.cc" />
+    <ClCompile Include="..\..\src\kernel\cpage.cc" />
+    <ClCompile Include="..\..\src\kernel\cpageannots.cc" />
+    <ClCompile Include="..\..\src\kernel\cpageattributes.cc" />
+    <ClCompile Include="..\..\src\kernel\cpagechanges.cc" />
+    <ClCompile Include="..\..\src\kernel\cpagecontents.cc" />
+    <ClCompile Include="..\..\src\kernel\cpagedisplay.cc" />
+    <ClCompile Include="..\..\src\kernel\cpagefonts.cc" />
+    <ClCompile Include="..\..\src\kernel\cpdf.cc" />
+    <ClCompile Include="..\..\src\kernel\cstream.cc" />
+    <ClCompile Include="..\..\src\kernel\cxref.cc" />
+    <ClCompile Include="..\..\src\kernel\delinearizator.cc" />
+    <ClCompile Include="..\..\src\kernel\factories.cc" />
+    <ClCompile Include="..\..\src\kernel\flattener.cc" />
+    <ClCompile Include="..\..\src\kernel\iproperty.cc" />
+    <ClCompile Include="..\..\src\kernel\modecontroller.cc" />
+    <ClCompile Include="..\..\src\kernel\pdfedit-core-dev.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\src\kernel\pdfoperators.cc" />
+    <ClCompile Include="..\..\src\kernel\pdfoperatorsbase.cc" />
+    <ClCompile Include="..\..\src\kernel\pdfoperatorsiter.cc" />
+    <ClCompile Include="..\..\src\kernel\pdfspecification.cc" />
+    <ClCompile Include="..\..\src\kernel\pdfwriter.cc" />
+    <ClCompile Include="..\..\src\kernel\stateupdater.cc" />
+    <ClCompile Include="..\..\src\kernel\static.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\src\kernel\streamwriter.cc" />
+    <ClCompile Include="..\..\src\kernel\textoutputbuilder.cc" />
+    <ClCompile Include="..\..\src\kernel\textoutputengines.cc" />
+    <ClCompile Include="..\..\src\kernel\textoutputentities.cc" />
+    <ClCompile Include="..\..\src\kernel\xpdf.cc" />
+    <ClCompile Include="..\..\src\kernel\xrefwriter.cc" />
+    <ClCompile Include="..\..\src\utils\confparser.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\debug.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\other\test_boost\test_boost.vcxproj">
+      <Project>{35df7efc-3789-4131-9242-58584c0f6a9b}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\other\test_cppunit\test_cppunit.vcxproj">
+      <Project>{54bd1798-9070-4080-939e-7cfcc7aece12}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\other\test_zlib\test_zlib.vcxproj">
+      <Project>{48c1c762-90ee-4dd3-9909-4d107183d90f}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\xpdf\xpdf.vcxproj">
+      <Project>{005f915c-b7b1-4448-ac1d-a99336e67078}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
