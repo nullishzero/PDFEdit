@@ -548,7 +548,7 @@ using namespace boost;
 		size_t objPos=stream.getPos();
 		offTable.insert(OffsetTab::value_type(ref, objPos));		
 		
-		writeObject(*obj, stream, &ref, true,ignoreStream);	
+		writeObject(*obj, stream, &ref, true, ignore_stream_);	
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		// peskova
 		// calls observers
@@ -787,7 +787,7 @@ size_t OldStylePdfWriter::writeTrailer(const Object & trailer,const PrevSecInfo 
 
 	// stores changed trailer to the file
 	stream.putLine(TRAILER_KEYWORD, strlen(TRAILER_KEYWORD));
-	writeObject(trailer, stream, NULL, false, ignoreStream);
+	writeObject(trailer, stream, NULL, false, ignore_stream_);
 	kernelPrintDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table

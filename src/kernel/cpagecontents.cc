@@ -483,7 +483,7 @@ CPageContents::replaceText (const std::string& what, const std::string& with)
 	init();
 	// Get the objects with specific comparator
 	for (CCs::iterator it = _ccs.begin (); it != _ccs.end(); ++it)
-		(*it)->replaceText (what, with);
+		(*it)->replaceText( what, with );
 }
 
 //

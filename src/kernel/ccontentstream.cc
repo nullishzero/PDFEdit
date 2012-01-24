@@ -656,7 +656,7 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 //
 //
 void 
-CContentStream::replaceText (const std::string& what, const std::string& with)
+CContentStream::replaceText (const std::wstring& what, const std::wstring& with)
 {
 	bool dirty = false;
 		if (operators.empty())
@@ -670,9 +670,9 @@ CContentStream::replaceText (const std::string& what, const std::string& with)
 		// uff
 		boost::shared_ptr<TextSimpleOperator> _cur 
 				= boost::dynamic_pointer_cast<TextSimpleOperator, PdfOperator> (tit.getCurrent());
-		std::string tmp;
-		_cur->getFontText (tmp);
-		string replaced = boost::replace_all_copy (tmp, what, with);
+		std::wstring tmp;
+		_cur->getFontText( tmp );
+		wstring replaced = boost::replace_all_copy (tmp, what, with);
 		if (tmp != replaced)
 		{
 			dirty = true;

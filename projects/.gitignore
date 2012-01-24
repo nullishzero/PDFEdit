@@ -2,3 +2,6 @@ ipch
 output/
 *.user
 *GeneratedFiles*
+*.sdf
+*.opensdf
+*.suo

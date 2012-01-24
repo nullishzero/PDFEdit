@@ -394,10 +394,11 @@ public:
  */
 class IPdfWriter:public observer::ObserverHandler<OperationStep>
 {
-	bool ignoreStream;
+protected:
+  bool ignore_stream_;
 
 public:
-	IPdfWriter() : ignoreStream(false){} 
+	IPdfWriter() : ignore_stream_(false){} 
 
 	/** Type for ObjectList element. */
 	typedef std::pair<Ref, Object *> ObjectElement;
@@ -493,6 +494,11 @@ public:
 	 * cleared here.
 	 */
 	virtual void reset()=0;
+
+  void ignore_stream( bool ignore ) {
+    ignore_stream_ = ignore;
+  }
+
 };
 
 /** Implementator of old style cross reference table pdf writer.

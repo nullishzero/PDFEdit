@@ -167,6 +167,7 @@ public:
 	 * Method will do the lowlevel transformation to the proper characters
 	 * codes according to font and its encoding.
 	 */
+	void setFontText (const std::wstring& str);
 	void setFontText (const std::string& str);
 
 	/** Returns string represented by this text operator converted 
@@ -174,7 +175,7 @@ public:
 	 * @param str String to be set.
 	 */
 	virtual void getFontText(std::wstring& str)const;
-	//virtual void getFontText(std::string& str)const;
+	virtual void getFontText(std::string& str)const;
 
 	/** Sets font specific stuff.
 	 * This method should be called from StateUpdater when we do know the 
