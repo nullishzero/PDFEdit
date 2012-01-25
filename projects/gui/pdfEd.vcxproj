@@ -34,7 +34,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\vsprops\base.props" />
-    <Import Project="..\vsprops\guiqt4.props" />
+    <Import Project="..\vsprops\gui.props" />
     <Import Project="..\vsprops\debug.props" />
     <Import Project="..\vsprops\win32.props" />
     <Import Project="..\vsprops\exe.props" />
@@ -42,7 +42,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\vsprops\base.props" />
-    <Import Project="..\vsprops\guiqt4.props" />
+    <Import Project="..\vsprops\gui.props" />
     <Import Project="..\vsprops\release.props" />
     <Import Project="..\vsprops\win32.props" />
     <Import Project="..\vsprops\exe.props" />
@@ -113,22 +113,22 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\guiqt4\bookmark.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\colorPicker.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\comments.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\fontWidget.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\globalfunctions.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\insertImage.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\insertpagerange.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\main.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\openpdf.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\operatorData.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\page.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\pdfgui.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\rotatepagerange.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\Search.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\TabPage.cpp" />
-    <ClCompile Include="..\..\src\guiqt4\tree.cpp" />
+    <ClCompile Include="..\..\src\gui\bookmark.cpp" />
+    <ClCompile Include="..\..\src\gui\colorPicker.cpp" />
+    <ClCompile Include="..\..\src\gui\comments.cpp" />
+    <ClCompile Include="..\..\src\gui\fontWidget.cpp" />
+    <ClCompile Include="..\..\src\gui\globalfunctions.cpp" />
+    <ClCompile Include="..\..\src\gui\insertImage.cpp" />
+    <ClCompile Include="..\..\src\gui\insertpagerange.cpp" />
+    <ClCompile Include="..\..\src\gui\main.cpp" />
+    <ClCompile Include="..\..\src\gui\openpdf.cpp" />
+    <ClCompile Include="..\..\src\gui\operatorData.cpp" />
+    <ClCompile Include="..\..\src\gui\page.cpp" />
+    <ClCompile Include="..\..\src\gui\pdfgui.cpp" />
+    <ClCompile Include="..\..\src\gui\rotatepagerange.cpp" />
+    <ClCompile Include="..\..\src\gui\Search.cpp" />
+    <ClCompile Include="..\..\src\gui\TabPage.cpp" />
+    <ClCompile Include="..\..\src\gui\tree.cpp" />
     <ClCompile Include="GeneratedFiles\qrc_pdf.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -243,122 +243,122 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\guiqt4\bookmark.h" />
-    <CustomBuild Include="..\..\src\guiqt4\colorpicker.h">
+    <ClInclude Include="..\..\src\gui\bookmark.h" />
+    <CustomBuild Include="..\..\src\gui\colorpicker.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\comments.h">
+    <CustomBuild Include="..\..\src\gui\comments.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="..\..\src\guiqt4\debug.h" />
-    <CustomBuild Include="..\..\src\guiqt4\fontWidget.h">
+    <ClInclude Include="..\..\src\gui\debug.h" />
+    <CustomBuild Include="..\..\src\gui\fontWidget.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="..\..\src\guiqt4\globalfunctions.h" />
-    <CustomBuild Include="..\..\src\guiqt4\insertImage.h">
+    <ClInclude Include="..\..\src\gui\globalfunctions.h" />
+    <CustomBuild Include="..\..\src\gui\insertImage.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\insertpagerange.h">
+    <CustomBuild Include="..\..\src\gui\insertpagerange.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\openpdf.h">
+    <CustomBuild Include="..\..\src\gui\openpdf.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="..\..\src\guiqt4\operatorData.h" />
-    <CustomBuild Include="..\..\src\guiqt4\page.h">
+    <ClInclude Include="..\..\src\gui\operatorData.h" />
+    <CustomBuild Include="..\..\src\gui\page.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\pdfgui.h">
+    <CustomBuild Include="..\..\src\gui\pdfgui.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\rotatepagerange.h">
+    <CustomBuild Include="..\..\src\gui\rotatepagerange.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\Search.h">
+    <CustomBuild Include="..\..\src\gui\Search.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\TabPage.h">
+    <CustomBuild Include="..\..\src\gui\TabPage.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_DEBUG -DDEBUG -D_UNICODE -DUNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I$(BOOST_DIR)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\qtmain" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Filename)%(Extension)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\guiqt4" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -D_HAS_ITERATOR_DEBUGGING=0 -D_WINDOWS -D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -D_UNICODE -D_UNICODE_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NON_CONFORMING_SWPRINTFS -D_SCL_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE "-D$(NOINHERIT)\."  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\qtmain" "-I." "-I." "-I." "-I$(SolutionDir)\..\src\gui" "-I$(SolutionDir)\..\src\xpdf\fofi" "-I$(SolutionDir)\..\src\xpdf\goo" "-I$(SolutionDir)\..\src\xpdf\splash" "-I$(SolutionDir)\..\src\xpdf\xpdf" "-I$(SolutionDir)\..\src\xpdf" "-I$(SolutionDir)\..\src" "-I." "-I." "-I." "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(Configuration)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="..\..\src\guiqt4\tree.h" />
-    <ClInclude Include="..\..\src\guiqt4\typedefs.h" />
+    <ClInclude Include="..\..\src\gui\tree.h" />
+    <ClInclude Include="..\..\src\gui\typedefs.h" />
     <ClInclude Include="GeneratedFiles\ui_aboutDialog.h" />
     <ClInclude Include="GeneratedFiles\ui_annotationFrame.h" />
     <ClInclude Include="GeneratedFiles\ui_colorPicker.h" />
@@ -381,7 +381,7 @@
     <ClInclude Include="GeneratedFiles\ui_textWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\src\guiqt4\aboutDialog.ui">
+    <CustomBuild Include="..\..\src\gui\aboutDialog.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -393,7 +393,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\annotationFrame.ui">
+    <CustomBuild Include="..\..\src\gui\annotationFrame.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -405,7 +405,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\colorPicker.ui">
+    <CustomBuild Include="..\..\src\gui\colorPicker.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -417,7 +417,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\comments.ui">
+    <CustomBuild Include="..\..\src\gui\comments.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -429,7 +429,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\convertPageRange.ui">
+    <CustomBuild Include="..\..\src\gui\convertPageRange.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -441,7 +441,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\debugFrame.ui">
+    <CustomBuild Include="..\..\src\gui\debugFrame.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -453,7 +453,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\exportImage.ui">
+    <CustomBuild Include="..\..\src\gui\exportImage.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -465,7 +465,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\imageFrame.ui">
+    <CustomBuild Include="..\..\src\gui\imageFrame.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -477,7 +477,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\insertImage.ui">
+    <CustomBuild Include="..\..\src\gui\insertImage.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -489,7 +489,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\insertpagerange.ui">
+    <CustomBuild Include="..\..\src\gui\insertpagerange.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -501,7 +501,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\OpenPdf.ui">
+    <CustomBuild Include="..\..\src\gui\OpenPdf.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -513,7 +513,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\page.ui">
+    <CustomBuild Include="..\..\src\gui\page.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -525,7 +525,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\pdfgui.ui">
+    <CustomBuild Include="..\..\src\gui\pdfgui.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -537,7 +537,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\properties.ui">
+    <CustomBuild Include="..\..\src\gui\properties.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -549,7 +549,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\rotatepagerange.ui">
+    <CustomBuild Include="..\..\src\gui\rotatepagerange.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -561,7 +561,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\search.ui">
+    <CustomBuild Include="..\..\src\gui\search.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -573,7 +573,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\Settings.ui">
+    <CustomBuild Include="..\..\src\gui\Settings.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -585,7 +585,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\Tab.ui">
+    <CustomBuild Include="..\..\src\gui\Tab.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -597,7 +597,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\textFrame.ui">
+    <CustomBuild Include="..\..\src\gui\textFrame.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -609,7 +609,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\guiqt4\textWindow.ui">
+    <CustomBuild Include="..\..\src\gui\textWindow.ui">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"
 </Command>
@@ -621,249 +621,249 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\about.png">
+    <CustomBuildStep Include="..\..\src\gui\images\about.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\addComment.png">
+    <CustomBuildStep Include="..\..\src\gui\images\addComment.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\addImage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\addImage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\addLink.png">
+    <CustomBuildStep Include="..\..\src\gui\images\addLink.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\addpage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\addpage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\analyze.png">
+    <CustomBuildStep Include="..\..\src\gui\images\analyze.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\background.png">
+    <CustomBuildStep Include="..\..\src\gui\images\background.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\change.png">
+    <CustomBuildStep Include="..\..\src\gui\images\change.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\comment.png">
+    <CustomBuildStep Include="..\..\src\gui\images\comment.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\commit.png">
+    <CustomBuildStep Include="..\..\src\gui\images\commit.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\content.png">
+    <CustomBuildStep Include="..\..\src\gui\images\content.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\debug.png">
+    <CustomBuildStep Include="..\..\src\gui\images\debug.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\decrypt_icon.png">
+    <CustomBuildStep Include="..\..\src\gui\images\decrypt_icon.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\deletepage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\deletepage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\DeleteText.png">
+    <CustomBuildStep Include="..\..\src\gui\images\DeleteText.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\derotate.png">
+    <CustomBuildStep Include="..\..\src\gui\images\derotate.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\downpage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\downpage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\eraseText.png">
+    <CustomBuildStep Include="..\..\src\gui\images\eraseText.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\export.png">
+    <CustomBuildStep Include="..\..\src\gui\images\export.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\firstPage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\firstPage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\hand.png">
+    <CustomBuildStep Include="..\..\src\gui\images\hand.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\highlight.png">
+    <CustomBuildStep Include="..\..\src\gui\images\highlight.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\images.png">
+    <CustomBuildStep Include="..\..\src\gui\images\images.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\insert_text.png">
+    <CustomBuildStep Include="..\..\src\gui\images\insert_text.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\insertTextMarker.png">
+    <CustomBuildStep Include="..\..\src\gui\images\insertTextMarker.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\lastPage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\lastPage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\nextpage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\nextpage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\open.png">
+    <CustomBuildStep Include="..\..\src\gui\images\open.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\operator.png">
+    <CustomBuildStep Include="..\..\src\gui\images\operator.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\page_down.png">
+    <CustomBuildStep Include="..\..\src\gui\images\page_down.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuild Include="..\..\src\guiqt4\pdf.qrc">
+    <CustomBuild Include="..\..\src\gui\pdf.qrc">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Rcc%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(FullPath);..\..\src\guiqt4\images\commit.png;..\..\src\guiqt4\images\export.png;..\..\src\guiqt4\images\lastPage.png;..\..\src\guiqt4\images\firstPage.png;..\..\src\guiqt4\images\addComment.png;..\..\src\guiqt4\images\addLink.png;..\..\src\guiqt4\images\decrypt_icon.png;..\..\src\guiqt4\images\refresh.png;..\..\src\guiqt4\images\snapshot.png;..\..\src\guiqt4\images\about.png;..\..\src\guiqt4\images\addpage.png;..\..\src\guiqt4\images\analyze.png;..\..\src\guiqt4\images\operator.png;..\..\src\guiqt4\images\background.png;..\..\src\guiqt4\images\comment.png;..\..\src\guiqt4\images\content.png;..\..\src\guiqt4\images\addImage.png;..\..\src\guiqt4\images\debug.png;..\..\src\guiqt4\images\decrypt_icon.png;..\..\src\guiqt4\images\deletepage.png;..\..\src\guiqt4\images\DeleteText.png;..\..\src\guiqt4\images\derotate.png;..\..\src\guiqt4\images\downpage.png;..\..\src\guiqt4\images\eraseText.png;..\..\src\guiqt4\images\hand.png;..\..\src\guiqt4\images\highlight.png;..\..\src\guiqt4\images\change.png;..\..\src\guiqt4\images\images.png;..\..\src\guiqt4\images\insert_text.png;..\..\src\guiqt4\images\insertTextMarker.png;..\..\src\guiqt4\images\nextpage.png;..\..\src\guiqt4\images\open.png;..\..\src\guiqt4\images\operator.png;..\..\src\guiqt4\images\page_down.png;..\..\src\guiqt4\images\previousPage.png;..\..\src\guiqt4\images\redo.png;..\..\src\guiqt4\images\rotate.png;..\..\src\guiqt4\images\save.png;..\..\src\guiqt4\images\saveas.png;..\..\src\guiqt4\images\savecopy.png;..\..\src\guiqt4\images\save-encoded.png;..\..\src\guiqt4\images\search.png;..\..\src\guiqt4\images\setText.png;..\..\src\guiqt4\..\..\src\guiqt4\src\guiqt4\images\TextConvert.png;..\..\src\guiqt4\images\undo.png;..\..\src\guiqt4\images\unknown.png;..\..\src\guiqt4\images\uppage.png;..\..\src\guiqt4\images\view.png;..\..\src\guiqt4\images\zoom.png;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(FullPath);..\..\src\gui\images\commit.png;..\..\src\gui\images\export.png;..\..\src\gui\images\lastPage.png;..\..\src\gui\images\firstPage.png;..\..\src\gui\images\addComment.png;..\..\src\gui\images\addLink.png;..\..\src\gui\images\decrypt_icon.png;..\..\src\gui\images\refresh.png;..\..\src\gui\images\snapshot.png;..\..\src\gui\images\about.png;..\..\src\gui\images\addpage.png;..\..\src\gui\images\analyze.png;..\..\src\gui\images\operator.png;..\..\src\gui\images\background.png;..\..\src\gui\images\comment.png;..\..\src\gui\images\content.png;..\..\src\gui\images\addImage.png;..\..\src\gui\images\debug.png;..\..\src\gui\images\decrypt_icon.png;..\..\src\gui\images\deletepage.png;..\..\src\gui\images\DeleteText.png;..\..\src\gui\images\derotate.png;..\..\src\gui\images\downpage.png;..\..\src\gui\images\eraseText.png;..\..\src\gui\images\hand.png;..\..\src\gui\images\highlight.png;..\..\src\gui\images\change.png;..\..\src\gui\images\images.png;..\..\src\gui\images\insert_text.png;..\..\src\gui\images\insertTextMarker.png;..\..\src\gui\images\nextpage.png;..\..\src\gui\images\open.png;..\..\src\gui\images\operator.png;..\..\src\gui\images\page_down.png;..\..\src\gui\images\previousPage.png;..\..\src\gui\images\redo.png;..\..\src\gui\images\rotate.png;..\..\src\gui\images\save.png;..\..\src\gui\images\saveas.png;..\..\src\gui\images\savecopy.png;..\..\src\gui\images\save-encoded.png;..\..\src\gui\images\search.png;..\..\src\gui\images\setText.png;..\..\src\gui\..\..\src\gui\src\gui\images\TextConvert.png;..\..\src\gui\images\undo.png;..\..\src\gui\images\unknown.png;..\..\src\gui\images\uppage.png;..\..\src\gui\images\view.png;..\..\src\gui\images\zoom.png;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Rcc%27ing %(Filename)%(Extension)...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp
 </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(FullPath);..\..\src\guiqt4\images\commit.png;..\..\src\guiqt4\images\export.png;..\..\src\guiqt4\images\lastPage.png;..\..\src\guiqt4\images\firstPage.png;..\..\src\guiqt4\images\addComment.png;..\..\src\guiqt4\images\addLink.png;..\..\src\guiqt4\images\decrypt_icon.png;..\..\src\guiqt4\images\refresh.png;..\..\src\guiqt4\images\snapshot.png;..\..\src\guiqt4\images\about.png;..\..\src\guiqt4\images\addpage.png;..\..\src\guiqt4\images\analyze.png;..\..\src\guiqt4\images\operator.png;..\..\src\guiqt4\images\background.png;..\..\src\guiqt4\images\comment.png;..\..\src\guiqt4\images\content.png;..\..\src\guiqt4\images\addImage.png;..\..\src\guiqt4\images\debug.png;..\..\src\guiqt4\images\decrypt_icon.png;..\..\src\guiqt4\images\deletepage.png;..\..\src\guiqt4\images\DeleteText.png;..\..\src\guiqt4\images\derotate.png;..\..\src\guiqt4\images\downpage.png;..\..\src\guiqt4\images\eraseText.png;..\..\src\guiqt4\images\hand.png;..\..\src\guiqt4\images\highlight.png;..\..\src\guiqt4\images\change.png;..\..\src\guiqt4\images\images.png;..\..\src\guiqt4\images\insert_text.png;..\..\src\guiqt4\images\insertTextMarker.png;..\..\src\guiqt4\images\nextpage.png;..\..\src\guiqt4\images\open.png;..\..\src\guiqt4\images\operator.png;..\..\src\guiqt4\images\page_down.png;..\..\src\guiqt4\images\previousPage.png;..\..\src\guiqt4\images\redo.png;..\..\src\guiqt4\images\rotate.png;..\..\src\guiqt4\images\save.png;..\..\src\guiqt4\images\saveas.png;..\..\src\guiqt4\images\savecopy.png;..\..\src\guiqt4\images\save-encoded.png;..\..\src\guiqt4\images\search.png;..\..\src\guiqt4\images\setText.png;..\..\src\guiqt4\images\TextConvert.png;..\..\src\guiqt4\images\undo.png;..\..\src\guiqt4\images\unknown.png;..\..\src\guiqt4\images\uppage.png;..\..\src\guiqt4\images\view.png;..\..\src\guiqt4\images\zoom.png;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(FullPath);..\..\src\gui\images\commit.png;..\..\src\gui\images\export.png;..\..\src\gui\images\lastPage.png;..\..\src\gui\images\firstPage.png;..\..\src\gui\images\addComment.png;..\..\src\gui\images\addLink.png;..\..\src\gui\images\decrypt_icon.png;..\..\src\gui\images\refresh.png;..\..\src\gui\images\snapshot.png;..\..\src\gui\images\about.png;..\..\src\gui\images\addpage.png;..\..\src\gui\images\analyze.png;..\..\src\gui\images\operator.png;..\..\src\gui\images\background.png;..\..\src\gui\images\comment.png;..\..\src\gui\images\content.png;..\..\src\gui\images\addImage.png;..\..\src\gui\images\debug.png;..\..\src\gui\images\decrypt_icon.png;..\..\src\gui\images\deletepage.png;..\..\src\gui\images\DeleteText.png;..\..\src\gui\images\derotate.png;..\..\src\gui\images\downpage.png;..\..\src\gui\images\eraseText.png;..\..\src\gui\images\hand.png;..\..\src\gui\images\highlight.png;..\..\src\gui\images\change.png;..\..\src\gui\images\images.png;..\..\src\gui\images\insert_text.png;..\..\src\gui\images\insertTextMarker.png;..\..\src\gui\images\nextpage.png;..\..\src\gui\images\open.png;..\..\src\gui\images\operator.png;..\..\src\gui\images\page_down.png;..\..\src\gui\images\previousPage.png;..\..\src\gui\images\redo.png;..\..\src\gui\images\rotate.png;..\..\src\gui\images\save.png;..\..\src\gui\images\saveas.png;..\..\src\gui\images\savecopy.png;..\..\src\gui\images\save-encoded.png;..\..\src\gui\images\search.png;..\..\src\gui\images\setText.png;..\..\src\gui\images\TextConvert.png;..\..\src\gui\images\undo.png;..\..\src\gui\images\unknown.png;..\..\src\gui\images\uppage.png;..\..\src\gui\images\view.png;..\..\src\gui\images\zoom.png;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\previousPage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\previousPage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\redo.png">
+    <CustomBuildStep Include="..\..\src\gui\images\redo.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\refresh.png">
+    <CustomBuildStep Include="..\..\src\gui\images\refresh.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\rotate.png">
+    <CustomBuildStep Include="..\..\src\gui\images\rotate.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\save-encoded.png">
+    <CustomBuildStep Include="..\..\src\gui\images\save-encoded.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\save.png">
+    <CustomBuildStep Include="..\..\src\gui\images\save.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\saveas.png">
+    <CustomBuildStep Include="..\..\src\gui\images\saveas.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\savecopy.png">
+    <CustomBuildStep Include="..\..\src\gui\images\savecopy.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\search.png">
+    <CustomBuildStep Include="..\..\src\gui\images\search.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\setText.png">
+    <CustomBuildStep Include="..\..\src\gui\images\setText.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\snapshot.png">
+    <CustomBuildStep Include="..\..\src\gui\images\snapshot.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\TextConvert.png">
+    <CustomBuildStep Include="..\..\src\gui\images\TextConvert.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\undo.png">
+    <CustomBuildStep Include="..\..\src\gui\images\undo.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\unknown.png">
+    <CustomBuildStep Include="..\..\src\gui\images\unknown.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\uppage.png">
+    <CustomBuildStep Include="..\..\src\gui\images\uppage.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\view.png">
+    <CustomBuildStep Include="..\..\src\gui\images\view.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <CustomBuildStep Include="..\..\src\guiqt4\images\zoom.png">
+    <CustomBuildStep Include="..\..\src\gui\images\zoom.png">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
