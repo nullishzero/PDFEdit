@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="810f8d63-c296-47a6-b77a-2b1d6dfa55de" Name="Pdf edit" Language="1033" Version="1.0.0.0" Manufacturer="PdfEdit team by Autosystem from Mazoea" UpgradeCode="ae7abe8f-8d16-47cd-ab7d-d5a715b9e977">
+	<Product Id="6C11089A-E23F-4E9B-B12C-316BF1A4376B" 
+           Name="Pdfedit" 
+           Language="1033" 
+           Version="4.5.0.0" 
+           Manufacturer="PdfEdit team" 
+           UpgradeCode="6C11089A-E23F-4E9B-B12C-316BF1A4376B">
 
-    <Package InstallerVersion="200" Compressed="yes" />
-		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
-    <Directory Id="TARGETDIR" Name="SourceDir" FileSource="..\..\">
-      <Directory Id="TARGETSUBDIR" Name="PdfEdit" FileSource="..\..\output">
-        <Directory Id="pdfImages" Name="images">
-          <Component Id="ImageSource" Guid="8f654235-16ee-4a04-b607-2f848fc32db5" >
-            <File Id="imgabout" Name="about.png"  />
-            <File Id="imgcomment" Name="comment.png"  />
-            <File Id="imgcontent" Name="content.png"  />
-            <File Id="imgdebug" Name="debug.png"  />
-            <File Id="imgdeletepage" Name="deletepage.png"/>
-            <File Id="imgDeleteText" Name="DeleteText.png"/>
-            <File Id="imgderotate" Name="derotate.png"/>
-            <File Id="imgdownpage" Name="downpage.png"/>
-            <File Id="imgeraseText" Name="eraseText.png"/>
-            <File Id="imghand" Name="hand.png"/>
-            <File Id="imgimages" Name="images.png"/>
-            <File Id="imginserttext" Name="insert_text.png"/>
-            <File Id="imginsertTextMarker" Name="insertTextMarker.png"/>
-            <File Id="imgnextpage" Name="nextpage.png"  />
-            <File Id="imgopen" Name="open.png"/>
-            <File Id="pagedown" Name="page_down.png"/>
-            <File Id="imgpreviousPage" Name="previousPage.png"/>
-            <File Id="redo" Name="redo.png"/>
-            <File Id="rotate" Name="rotate.png"/>
-            <File Id="save" Name="save.png"/>
-            <File Id="saveas" Name="saveas.png"/>
-            <File Id="savecopy" Name="savecopy.png"/>
-            <File Id="saveencoded" Name="save-encoded.png"/>
-            <File Id="search" Name="search.png"/>
-            <File Id="setText" Name="setText.png"/>
-            <File Id="imgTextConvert.png" Name="TextConvert.png"  />
-            <File Id="imgundo.png" Name="undo.png"  />
-            <File Id="imgUppage.png" Name="uppage.png"  />
-            <File Id="imgView.png" Name="view.png"  />
-            <File Id="imgZoom" Name="zoom.png"  />
-            <File Id="imgDecrypt_icon" Name="decrypt_icon.png"  />
-            <File Id="imgOperator" Name="operator.png"  />
-            <File Id="imgAddPage" Name="addpage.png" />
-          </Component>
+    <Package
+      InstallerVersion="200"
+      Compressed="yes" />
+    <Media Id='1' 
+           Cabinet='Sample.cab' 
+           EmbedCab='yes' />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+        <Directory Id="INSTALLDIR" Name="Pdfedit">
+          <Directory Id="pdfImages" Name="images">
+            <Component Id="ImageSource" Guid="8f654235-16ee-4a04-b607-2f848fc32db5" >
+              <File Id="imgabout" Name="about.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\about.png' />
+              <File Id="imgcomment" Name="comment.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\comment.png' />
+              <File Id="imgcontent" Name="content.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\content.png' />
+              <File Id="imgdebug" Name="debug.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\debug.png' />
+              <File Id="imgdeletepage" Name="deletepage.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\deletepage.png' />
+              <File Id="imgDeleteText" Name="DeleteText.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\DeleteText.png' />
+              <File Id="imgderotate" Name="derotate.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\derotate.png' />
+              <File Id="imgdownpage" Name="downpage.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\downpage.png' />
+              <File Id="imgeraseText" Name="eraseText.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\eraseText.png' />
+              <File Id="imghand" Name="hand.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\hand.png' />
+              <File Id="imgimages" Name="images.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\images.png' />
+              <File Id="imginserttext" Name="insert_text.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\insert_text.png' />
+              <File Id="imginsertTextMarker" Name="insertTextMarker.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\insertTextMarker.png' />
+              <File Id="imgnextpage" Name="nextpage.png"  DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\nextpage.png'  />
+              <File Id="imgopen" Name="open.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\open.png' />
+              <File Id="pagedown" Name="page_down.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\page_down.png' />
+              <File Id="imgpreviousPage" Name="previousPage.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\previousPage.png' />
+              <File Id="redo" Name="redo.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\redo.png' />
+              <File Id="rotate" Name="rotate.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\rotate.png' />
+              <File Id="save" Name="save.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\save.png' />
+              <File Id="saveas" Name="saveas.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\saveas.png' />
+              <File Id="savecopy" Name="savecopy.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\savecopy.png' />
+              <File Id="saveencoded" Name="save-encoded.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\save-encoded.png' />
+              <File Id="search" Name="search.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\search.png' />
+              <File Id="setText" Name="setText.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\setText.png' />
+              <File Id="imgTextConvert.png" Name="TextConvert.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\TextConvert.png' />
+              <File Id="imgundo.png" Name="undo.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\undo.png' />
+              <File Id="imgUppage.png" Name="uppage.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\uppage.png' />
+              <File Id="imgView.png" Name="view.png"  DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\view.png' />
+              <File Id="imgZoom" Name="zoom.png"  DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\zoom.png'  />
+              <File Id="imgDecrypt_icon" Name="decrypt_icon.png"  DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\decrypt_icon.png'  />
+              <File Id="imgOperator" Name="operator.png"  DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\operator.png'  />
+              <File Id="imgAddPage" Name="addpage.png" DiskId='1' Source='$(var.SolutionDir)\..\src\gui\images\addpage.png'  />
+            </Component>
         </Directory>
         <Component Id="Executable" Guid="8f654235-16ee-4a04-b607-2f848fc32db4">
-          <File Id='PdfEditExe' Name='$(var.TARGETSOURCE)' KeyPath='yes'>
-            <!--             <Shortcut Id="desktopPdfEdit" Directory="DesktopFolder" Name="PdfEditor (Beta)"
-                  WorkingDirectory='INSTALLDIR' Advertise="yes" /> -->
+          <File Id='PdfEditExe' Name='$(var.TARGETSOURCE)' KeyPath='yes' Source='$(var.SolutionDir)\output\$(var.TARGETSOURCE)'>
           </File>
           <RemoveFile Id="PurgeAppFolder" Name="config" On="uninstall" />
           <Shortcut Id="UninstallProduct"
                        Name="UninstallPdfEdit"
-                       Description="Removes pdf Editor from the operating system"
+                       Description="Removes pdf edit from the operating system"
                        Target="[System64Folder]msiexec.exe"
                        Arguments="/x [ProductCode]"/>
         </Component>
@@ -78,7 +86,7 @@
       </Directory>
     </Directory>
     <Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR" />
-    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="InstallerUI" />
 		<Feature Id="ProductFeature" Title="pdfSetup" Level="1">
 			<!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
 			<ComponentRef Id="Executable" />
@@ -88,4 +96,6 @@
 			<ComponentGroupRef Id="Product.Generated" />
 		</Feature>
 	</Product>
+
+
 </Wix>

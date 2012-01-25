@@ -28,6 +28,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
+    <Compile Include="UiDefinition.wxs" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
@@ -37,9 +38,7 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy /I /Y $(SolutionDir)\..\src\gui\images $(SolutionDir)\output\images
-
-echo "Please, set QTDIR if not successful."</PreBuildEvent>
+    <PreBuildEvent>echo "Please, set QTDIR if not successful."</PreBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
