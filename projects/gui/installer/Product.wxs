@@ -60,6 +60,20 @@
           <File Id='qtGui'  Source='$(env.QTDIR)\bin\QtGui4.dll'/>
           <File Id='freetype' Source='$(var.SolutionDir)\libs\freetype6.dll' />
           <File Id='zdll' Source='$(var.SolutionDir)\libs\zlib1.dll' />
+          <File Id='D050000L' Source='$(var.SolutionDir)\libs\D050000L.PFB' />
+          <File Id='N019003L' Source='$(var.SolutionDir)\libs\N019003L.PFB' />
+          <File Id='N019004L' Source='$(var.SolutionDir)\libs\N019004L.PFB' />
+          <File Id='N019023L' Source='$(var.SolutionDir)\libs\N019023L.PFB' />
+          <File Id='N019024L' Source='$(var.SolutionDir)\libs\N019024L.PFB' />
+          <File Id='N021003L' Source='$(var.SolutionDir)\libs\N021003L.PFB' />
+          <File Id='N021004L' Source='$(var.SolutionDir)\libs\N021004L.PFB' />
+          <File Id='N021023L' Source='$(var.SolutionDir)\libs\N021023L.PFB' />
+          <File Id='N021024L' Source='$(var.SolutionDir)\libs\N021024L.PFB' />
+          <File Id='N022003L' Source='$(var.SolutionDir)\libs\N022003L.PFB' />
+          <File Id='N022004L' Source='$(var.SolutionDir)\libs\N022004L.PFB' />
+          <File Id='N022023L' Source='$(var.SolutionDir)\libs\N022023L.PFB' />
+          <File Id='N022024L' Source='$(var.SolutionDir)\libs\N022024L.PFB' />
+          <File Id='S050000L' Source='$(var.SolutionDir)\libs\S050000L.PFB' />
         </Component>
       </Directory>
     </Directory>
