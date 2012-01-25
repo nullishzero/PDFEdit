@@ -1,5 +1,5 @@
 #makefile for PDF editor
-.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices qsa qsa_configure qsa4 qsa4_configure gui
+.PHONY: distclean clean pdfedit kernel xpdf utils gui
 
 # includes basic building rules
 # REL_ADDR has to be defined, because Makefile.rules refers 
@@ -20,7 +20,7 @@ xpdf-extra:
 	cd $(XPDFROOT) && $(MAKE) extralib
 
 # PDF editor
-pdfedit: utils kernel xpdf qoutputdevices qsa $(GUIROOT)/Makefile.qt
+pdfedit: utils kernel xpdf $(GUIROOT)/Makefile.qt
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
 
 # PDFedit core development package for 3rd party code
@@ -46,29 +46,12 @@ pdfedit-core-dev:
 # QT makefile is created (because of file expansion used in project
 # file)
 # For the same reason we have to generate localization files too
-$(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfedit.pro
-	$(SHELL) $(ROOT)/tools/generate_online_help.sh "$(DOCROOT)" "$(GUIROOT)"
-	$(SHELL) $(ROOT)/tools/generate_lang.sh "$(GUIROOT)" "$(LRELEASE)"
-	cd $(GUIROOT) && $(QMAKE) pdfedit.pro -o Makefile.qt
-
-# QOutputDevices - uses same trick with Makefile.{gui.qt} like
-# gui - see above
-qoutputdevices: xpdf $(QOUTPUTDEVROOT)/Makefile.qt
-	cd $(QOUTPUTDEVROOT) && $(MAKE) -f Makefile.gui staticlib
-
-$(QOUTPUTDEVROOT)/Makefile.qt: $(QOUTPUTDEVROOT)/Makefile.gui $(QOUTPUTDEVROOT)/qoutputdevices.pro
-	cd $(QOUTPUTDEVROOT) && $(QMAKE) -o Makefile.qt
+$(GUIROOT)/Makefile.qt: $(GUIROOT)/Makefile.gui $(GUIROOT)/pdfeditor.pro
+	cd $(GUIROOT) && $(QMAKE) pdfeditor.pro -o Makefile.qt
 
 # Utils
 utils: xpdf
 	cd $(UTILSROOT) && $(MAKE) staticlib
-
-#QSA
-qsa: $(QSAROOT)/Makefile.qsa
-	cd $(QSAROOT) && $(MAKE) staticlib
-
-$(QSAROOT)/Makefile.qsa: $(QSAROOT)/qsa.pro
-	cd $(QSAROOT) && ./configure "${QMAKE}" "${E_RELEASE}"
 
 # Kernel
 kernel: xpdf utils
@@ -89,7 +72,6 @@ dev-rebuild: dev-clean utils kernel tests pdfedit
 # Cleanup
 clean:
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
-	cd $(QSAROOT) && $(MAKE) clean || true
 	cd $(KERNELROOT) && $(MAKE) clean || true
 	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) clean || true
@@ -110,7 +92,6 @@ dev-clean:
 # Dist Cleanup
 distclean: 
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui distclean || true
-	cd $(QSAROOT) && $(MAKE) distclean || true
 	cd $(KERNELROOT) && $(MAKE) distclean || true
 	cd $(TOOLSROOT) && $(MAKE) clean || true
 	cd $(TESTSROOT) && $(MAKE) distclean || true
