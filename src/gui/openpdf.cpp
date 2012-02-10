@@ -222,9 +222,7 @@ void OpenPdf::saveAs()
 void OpenPdf::open(QString name)
 {
 	TabPage * page = NULL;
-#ifndef _DEBUG
 	try
-#endif
 	{
 		page = new TabPage(this, name);
 		QIcon icon(":/images/enabled.png");
@@ -258,19 +256,18 @@ void OpenPdf::open(QString name)
 		setCurrentIndex(count() -1);
 		setMode(ModeDoNothing);
 	}
-#ifndef _DEBUG
 	catch (MalformedFormatExeption e)
 	{
 		QMessageBox::warning(this, "Unable to load",QString("Pdf is corrupted"), QMessageBox::Ok, QMessageBox::Ok);
 	}
 	catch (PdfOpenException e)
 	{
-		QMessageBox::warning(this, "Pdf library unable to perform action",QString("Reason") + QString(e.what()), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "Pdf library unable to perform action",QString("Reason:") + QString(e.what()), QMessageBox::Ok, QMessageBox::Ok);
 
 	}
 	catch (PdfException e)
 	{
-		QMessageBox::warning(this, "Pdf library unable to perform action",QString("Reason : ") + QString(e.what()), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "Pdf library unable to perform action",QString("Reason: ") + QString(e.what()), QMessageBox::Ok, QMessageBox::Ok);
 
 	//	return;
 	}
@@ -280,9 +277,8 @@ void OpenPdf::open(QString name)
 	}
 	catch (std::exception e)
 	{
-		QMessageBox::warning(this, "Unexpected exception",QString("Reason : ") + QString(e.what()), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "Unexpected exception",QString("Reason: ") + QString(e.what()), QMessageBox::Ok, QMessageBox::Ok);
 	}
-#endif // _DEBUG
 
 }
 //void OpenPdf::resizeEvent(QResizeEvent *event)

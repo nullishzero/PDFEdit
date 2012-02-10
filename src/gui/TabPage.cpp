@@ -1626,7 +1626,6 @@ void TabPage::highLightBegin(int x, int y) //nesprav nic, pretoze to bude robit 
 #if _DEBUG
 	std::string m;
 	op->getStringRepresentation(m);
-	DEBUGLINE("Operator found");
 #endif
 	sTextIt = _textList.begin();
 	setTextData(sTextIt,_textList.end(),op);

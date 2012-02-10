@@ -17,11 +17,15 @@
    <item>
     <widget class="QLabel" name="info">
      <property name="text">
-      <string>Pdf Editor v1.12
+      <string>Pdf Editor v1.13
 
- Created by Eva Peskova 
+ Originally created by Eva Peskova 
 
-peva@matfyz.cz</string>
+peva@matfyz.cz
+
+supervised and maintained by jm from the PDFedit team
+
+http://www.pdfedit.cz</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

@@ -45,6 +45,13 @@ extern "C" int unlink(char *filename);
 
 //------------------------------------------------------------------------
 
+// Type 3 font cache size parameters
+#define type3FontCacheAssoc   8
+#define type3FontCacheMaxSets 8
+#define type3FontCacheSize    (128*1024)
+
+//------------------------------------------------------------------------
+
 // Divide a 16-bit value (in [0, 255*255]) by 255, returning an 8-bit result.
 static inline Guchar div255(int x) {
   return (Guchar)((x + (x >> 8) + 0x80) >> 8);
@@ -510,21 +517,23 @@ T3FontCache::T3FontCache(const Ref *fontIDA, double m11A, double m12A,
   glyphW = glyphWA;
   glyphH = glyphHA;
   validBBox = validBBoxA;
+  // sanity check for excessively large glyphs (which most likely
+  // indicate an incorrect BBox)
+  i = glyphW * glyphH;
+  if (i > 100000 || glyphW > INT_MAX / glyphH || glyphW <= 0 || glyphH <= 0) {
+    glyphW = glyphH = 100;
+    validBBox = gFalse;
+  }
   if (aa) {
     glyphSize = glyphW * glyphH;
   } else {
     glyphSize = ((glyphW + 7) >> 3) * glyphH;
   }
-  cacheAssoc = 8;
-  if (glyphSize <= 256) {
-    cacheSets = 8;
-  } else if (glyphSize <= 512) {
-    cacheSets = 4;
-  } else if (glyphSize <= 1024) {
-    cacheSets = 2;
-  } else {
-    cacheSets = 1;
-  }
+  cacheAssoc = type3FontCacheAssoc;
+  for (cacheSets = type3FontCacheMaxSets;
+       cacheSets > 1 &&
+	 cacheSets * cacheAssoc * glyphSize > type3FontCacheSize;
+       cacheSets >>= 1) ;
   cacheData = (Guchar *)gmallocn(cacheSets * cacheAssoc, glyphSize);
   cacheTags = (T3FontCacheTag *)gmallocn(cacheSets * cacheAssoc,
 					 sizeof(T3FontCacheTag));
