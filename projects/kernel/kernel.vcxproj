@@ -46,6 +46,8 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -56,7 +58,8 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>if NOT EXIST $(SolutionDir)\output\zlib1.dll copy $(SolutionDir)\libs\zlib1.dll $(SolutionDir)\output\zlib1.dll</Command>
+      <Command>:: IF NOT EXIST $(SolutionDir)output\zlib1.dll 
+:: copy $(SolutionDir)libs\zlib1.dll $(SolutionDir)output\zlib1.dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
